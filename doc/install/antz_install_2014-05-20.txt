@@ -1,0 +1,93 @@
+﻿antz_install_2014_05_20.txt
+
+Latest app ver and up-to-date docs at - http://openantz.com
+
+--------------
+
+1) App Install
+2) Dev Install
+
+----------------------------------------------------------------------------
+Application Install - MSW, OSX, Linux
+----------------------------------------------------------------------------
+
+--- MS Windows ---
+
+ANTz app can run from any location!
+
+Required .DLL files: freeglut.dll, mysqllib.dll & oscpack.dll
+ (as of 2014-05-20) 
+
+On most systems ANTz does not require any installation and will just run.
+Older MS Windows (XP, Win2003) require a 2008 version of vcredist_x86.exe
+
+- Windows 7 (32 bit & 64bit) - 
+	
+   Just run antz.exe
+
+- Windows XP (32 Pro) and Win 2003 (Enterprise R2 SP1) -
+
+1) Download 'vcredist_x86_2008.exe' at:
+      http://sf.net/p/openantz/files/ms_windows/
+
+2) Install the vcredist_x86_2008.exe
+
+3) Run antz.exe
+
+*You can save space with multiple copies of antz.exe by keeping a single 
+copy of DLL files in the system folder:
+  MSW 64bit - C:\Windows\SysWOW64\
+  MSW 32bit - C:\Windows\System\
+
+--- OSX ---
+	
+  Just run ANTz (X11 Unix executable)
+
+--- Linux ---
+
+Tested to work with CentOS 5.5 (32bit & 64bit), Ubuntu (32bit)
+
+Prerequisites:
+   Internet Connection
+	
+1) Install freeglut library, open terminal and type:
+   sudo yum install freeglut-devel
+	
+2) Run antz (Linux executable)
+
+
+----------------------------------------------------------------------------
+Development Install
+----------------------------------------------------------------------------
+
+Environment:
+   W7-64bit with VS2008 project
+   CentOS 5.5 with makefile
+   OSX 10.6.x with Xcode project
+
+libraries:
+   freeglut - MSW & Linux
+   GLUT - OSX
+   SOIL - MSW, OSX & Linux
+   MySQL - MSW, OSX & Linux
+
+--- MSW Libraries ---
+
+copy any .DLL files from the antz app folder to './sdk/vs/vs2008/Debug'
+
+VS project is configured with all libraries located in '/sdk/libs' folder.
+
+Currently using freeglut, oscpack and mysql
+
+freeglut is included in the antz lib\ folder and does not require install.
+But, some useful VS project install instructions are at:
+http://blog.thegabrielflores.com/2008/02/installing-freeglut-on-visual-studio.html
+
+--- zSpace ---
+
+There is a separate project file for the zSpace (previously 'infinite z')
+
+Current IZ project files available ONLY upon request!!!
+
+To request, please send an email to: makecontact@openantz.com
+

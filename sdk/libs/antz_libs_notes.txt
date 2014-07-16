@@ -1,0 +1,47 @@
+﻿antz_install_2014_05_20.txt
+
+Latest app ver and up-to-date docs at - http://openantz.com
+
+----------------------------------------------------------------------------
+Development Environment
+----------------------------------------------------------------------------
+
+ W7-64bit VS2008 project
+ OSX 10.6.x with Xcode project
+ Linux CentOS 5.5 makefile
+ *Android and/or iOS
+ *Various Linux/Unix
+ *Jetson TK1 - ARM with Linux
+
+*Planned platforms.
+**ANTz is currently 32-bit, has be compiled for 64bit on OSX and Linux.
+
+----------------------------------------------------------------------------
+Libraries
+----------------------------------------------------------------------------
+
+   freeglut - MSW & Linux
+   GLUT - OSX
+   SOIL - MSW, OSX & Linux
+   MySQL - MSW, OSX & Linux
+
+--- MSW Libraries ---
+
+copy any .DLL files from the antz app folder to './sdk/vs/vs2008/Debug'
+
+VS project is configured with all libraries located in '/sdk/libs' folder.
+
+Currently using freeglut, oscpack and mysql
+
+freeglut is included in the antz lib\ folder and does not require install.
+But, some useful VS project install instructions are at:
+http://blog.thegabrielflores.com/2008/02/installing-freeglut-on-visual-studio.html
+
+--- zSpace ---
+
+There is a separate project file for the zSpace (previously 'infinite z')
+
+Current IZ project files available ONLY upon request!!!
+
+To request, please send an email to: makecontact@openantz.com
+
