@@ -1,9 +1,10 @@
 # Object files
 *.o
 *.ko
-*.obj
+# *.obj - included below in the VS stuff
 *.elf
 
+## at this time, we want our libs, apps, binaries, etc.
 # Libraries
 # *.lib
 # *.a
