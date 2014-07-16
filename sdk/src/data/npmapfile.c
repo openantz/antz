@@ -354,7 +354,7 @@ void npMapCSVvOne(pNPnode node)
 		//rotate.x is converted to translate.x
 		if (node->branchLevel >= 2)	//child node rotation different from root
 		{
-			node->translate.z = node->translate.x;
+			node->translate.z = node->translate.x;		// z = x
 
 			if (node->branchLevel == 2)	//map orientation, 0 deg is N y-axis
 				node->translate.x = node->rotate.x * kRADtoDEG - 90.0f;
@@ -1534,7 +1534,7 @@ int npLoadTags (const char* buffer, int size, void* dataRef)
 
 		//print part of the first few lines of data
 		recordCount++;
-		if ( 1)//recordCount <= 3)
+		if ( recordCount <= 3)
 		{
 			printf("id: %d  record_id: %d table_id: %d tag: %.12s \n", //desc: %.8s\n",
 				tag->id, tag->recordID, tag->tableID, tag->title );//tag->desc);

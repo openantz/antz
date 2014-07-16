@@ -190,7 +190,8 @@ void DrawPin (int selectedRootNode, pNPnode node, void* dataRef)
 	glPushMatrix();
 
 	// position the node and scale the z position based on root grid scale
-	glTranslatef (node->translate.x, node->translate.y, 
+	glTranslatef(	node->translate.x * rootGrid->scale.x,
+					node->translate.y * rootGrid->scale.y, 
 					node->translate.z * rootGrid->scale.z);	//global grid height
 
 	// rotate to node orientation
@@ -305,7 +306,9 @@ void DrawPin (int selectedRootNode, pNPnode node, void* dataRef)
 	}
 	else
 	{
-		node->world = node->translate;
+		//node->world = node->translate;
+		node->world.x = node->translate.x * rootGrid->scale.x;
+		node->world.y = node->translate.y * rootGrid->scale.y;
 		node->world.z = node->translate.z * rootGrid->scale.z;
 	}
 		

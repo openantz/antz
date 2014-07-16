@@ -213,7 +213,7 @@ void npInitMap (void* dataRef)
 
 		{ kNPid,				kNPint,			"id",				"tag ID" },
 		{ kNPrecordID,			kNPint,			"record_id",		"Record ID" },
-		{ kNPmapID,			kNPint,			"table_id",			"Table ID" },
+		{ kNPmapID,				kNPint,			"table_id",			"Table ID" },
 		{ kNPtitle,				kNPcharArray,	"title",			"Title" },
 		{ kNPdesc,				kNPcharArray,	"description",		"Description" }
 	}; // debug db
@@ -228,6 +228,16 @@ void npInitMap (void* dataRef)
 		{ kNPchMapTableID,		kNPint,			"ch_map_table_id",	"Channel Map Table ID"},
 		{ kNPrecordID,			kNPint,			"record_id",		"Record ID"		}
 	}; // debug db //zzsql
+	
+	//zz color
+	static NPmapType palette[] = {
+
+		{ kNPid,				kNPint,			"id",			"Color Palette Index" },
+		{ kNPrecordID,			kNPint,			"red",			"Red" },
+		{ kNPmapID,				kNPint,			"green",		"Green" },
+		{ kNPtitle,				kNPint,			"blue",			"Blue" },
+		{ kNPdesc,				kNPint,			"alpha",		"Alpha Transparency" }
+	};
 	
 
 	//-------
@@ -250,6 +260,8 @@ void npInitMap (void* dataRef)
 	data->map.typeMapGrid		= grid;
 	data->map.typeMapTag		= tag;		// debug db //zzsql
 	data->map.typeMapChMap		= ChMap;	// debug db //zzsql
+	
+	data->map.typeMapPalette	= palette;
 
 	data->map.typeMapGlobals	= NULL;		//zz debug
 	

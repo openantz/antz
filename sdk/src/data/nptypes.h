@@ -866,42 +866,42 @@ typedef struct NPgl * pNPgl;
 
 
 struct NPmap {
-	void**	node;					//root node array, size of kNPnodeRootMax
-	void**	sort;					//used for z-sort during GL draw
+	void**		node;					//root node array, uses kNPnodeRootMax
+	void**		sort;					//used for z-sort during GL draw
 
-	int		sortSwap;				//0 for sortA and 1 for sortB			//zzhp
-	int		sortSwapFlag;			//sort is done and ready for swap
-	void**	sortA;					//double buffered async sort
-	void**	sortB;					//double buffered async sort			//zzhp
+	int			sortSwap;				//0 for sortA and 1 for sortB			//zzhp
+	int			sortSwapFlag;			//sort is done and ready for swap
+	void**		sortA;					//double buffered async sort
+	void**		sortB;					//double buffered async sort			//zzhp
 
-	void**	nodeID;					//maps nodeID to pNPnode, kNPnodeMax
-	void**	sortID;					//maps nodeID for sorting nodes
+	void**		nodeID;					//maps nodeID to pNPnode, kNPnodeMax
+	void**		sortID;					//maps nodeID for sorting nodes
 
-	int*	parentID;				//maps node ID to parentID
-	int*	orphanList;				//list of orphans by node ID
-	int		orphanCount;
-	int		sortCount;														//zzhp
-	int		sortCountA;
-	int		sortCountB;														//zzhp
+	int*		parentID;				//maps node ID to parentID
+	int*		orphanList;				//list of orphans by node ID
+	int			orphanCount;
+	int			sortCount;														//zzhp
+	int			sortCountA;
+	int			sortCountB;														//zzhp
 
-	bool	syncNodes;
-	bool	syncTagsReady;
-									// 2^24 max for picking algorithm
-	int		nodeCount;				//total for root and children nodes
-	int		nodeRootCount;			//number of root nodes
-	int		nodeRootIndex;			//the active node root
+	bool		syncNodes;
+	bool		syncTagsReady;
+										// 2^24 max for picking algorithm
+	int			nodeCount;				//total for root and children nodes
+	int			nodeRootCount;			//number of root nodes
+	int			nodeRootIndex;			//the active node root
 	
-	pNPnode previousNode;			//used for clicking away...
-	pNPnode	currentNode;			//active node, commands, traversing tree
-	pNPnode	currentCam;				//active camera used for zsort distance
+	pNPnode		previousNode;			//used for clicking away...
+	pNPnode		currentNode;			//active node, commands, traversing tree
+	pNPnode		currentCam;				//active camera used for zsort distance
 
-	pNPnode	selectedGrid;			//selected grid
-	pNPnode	selectedPinNode;		//current node selection, can be a child branch
-	int		selectedPinIndex;		//helpful to know which tree we are on
-	pNPnode selectedHUD;			//the currently selected HUD item
+	pNPnode		selectedGrid;			//selected grid
+	pNPnode		selectedPinNode;		//currently selected node
+	int			selectedPinIndex;		//helpful to know which tree we are on
+	pNPnode		selectedHUD;			//the currently selected HUD item
 
-	NPboolXYZ	selectSet;			//current selection set to add too
-	int			selectAll;			//true when all nodes selected
+	NPboolXYZ	selectSet;				//current selection set to add too
+	int			selectAll;				//true when all nodes selected
 
 	pNPmapColor	color[kNPpaletteMax];	// #define kNPpaletteMax	65535
 
@@ -913,18 +913,20 @@ struct NPmap {
 	pNPmapType	typeMapPin;
 	pNPmapType	typeMapGrid;
 		
-	pNPmapType	typeMapTag;		// debug db //zzssql 
-	pNPmapType	typeMapChMap;	// debug db //zzssql
+	pNPmapType	typeMapTag;				// debug db //zzssql 
+	pNPmapType	typeMapChMap;			// debug db //zzssql
 
-	pNPmapType		mapTypeList;
-	int				mapTypeCount;
+	pNPmapType	typeMapPalette;				//zz color
 
-	pNPmapLink		typeMapGlobals;
-	pNPmapLink		typeMapOSC;
-	int				globalsCount;
-	int				oscCount;
+	pNPmapType	mapTypeList;
+	int			mapTypeCount;
 
-	int		size;					// memory used, add/del should modify this, debug zz
+	pNPmapLink	typeMapGlobals;
+	pNPmapLink	typeMapOSC;
+	int			globalsCount;
+	int			oscCount;
+
+	int			size;					// memory used, add/del should modify this, debug zz
 };
 typedef struct NPmap NPmap;
 typedef struct NPmap * pNPmap;

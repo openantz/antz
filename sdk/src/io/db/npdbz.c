@@ -771,6 +771,9 @@ char* npNewGenMysqlFields(int count, int type, void* dataRef)
 			//Change INT(10) to INT(11), debug db
 			switch (map[i].type)
 			{
+				case kNPvoidPtr :
+					count += sprintf ((fields + count), "%s INT(10)", '0' );
+					break;
 				case kNPfloat :
 					count += sprintf ((fields + count), "%s FLOAT(10)", map[i].name );		//zz debug, added this to fix ration bug#83
 					break;
