@@ -32,6 +32,15 @@
 // #include <unistd.h>			//debug zz
 
 //-----------------------------------------------------------------------------
+void signal_callback_handler(int signum)
+{
+  printf("Caught signal %d\n", signum);
+  // Clean up and close stuff here
+
+  // Terminate program
+  exit(signum);
+}
+
 void npLinuxGetAppPath (char* buffer, int* size)
 {
 	static bool firstTimeCalled = true;

@@ -1,0 +1,296 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.6	//
+BUGFIX_MATRIX	npgl.c	306;"	d	file:
+CreateCircle	gl/npgeometry.c	/^void CreateCircle (NPcirclePtr circle)$/;"	f
+CreatePinDL	gl/npgeometry.c	/^GLuint CreatePinDL()$/;"	f
+CreatePinWireDL	gl/npgeometry.c	/^GLuint CreatePinWireDL()$/;"	f
+CreateTorus	gl/npgeometry.c	/^void CreateTorus (NPtorusPtr torus)$/;"	f
+CreateTorusDL	gl/npgeometry.c	/^GLuint CreateTorusDL()$/;"	f
+CreateTorusWireDL	gl/npgeometry.c	/^GLuint CreateTorusWireDL()$/;"	f
+CreateTracks	npch.c	/^void CreateTracks (int numberTracks, void *dataRef)$/;"	f
+DeleteCircle	gl/npgeometry.c	/^void DeleteCircle (NPcirclePtr circle)$/;"	f
+DrawCamera	gl/npgldraw.c	/^void DrawCamera (NPnodePtr node)$/;"	f
+DrawDefault	gl/npgldraw.c	/^void DrawDefault (NPnodePtr node)$/;"	f
+DrawGrid	gl/npgldraw.c	/^void DrawGrid (NPnodePtr node, void* dataRef)$/;"	f
+DrawPin	gl/npgldraw.c	/^void DrawPin (int selectedRootNode, NPnodePtr node, void* dataRef)$/;"	f
+DrawPinChild	gl/npgldraw.c	/^void DrawPinChild (NPnodePtr node, void* dataRef)$/;"	f
+DrawPinDL	gl/npgeometry.c	/^void DrawPinDL() $/;"	f
+DrawPinWireDL	gl/npgeometry.c	/^void DrawPinWireDL() $/;"	f
+DrawPoints	gl/npgldraw.c	/^void DrawPoints (NPnodePtr node)$/;"	f
+DrawSurface	gl/npgldraw.c	/^void DrawSurface (NPnodePtr node)$/;"	f
+DrawTorusDL	gl/npgeometry.c	/^void DrawTorusDL() $/;"	f
+DrawTorusWireDL	gl/npgeometry.c	/^void DrawTorusWireDL() $/;"	f
+DrawVideo	gl/npgldraw.c	/^void DrawVideo (NPnodePtr node)$/;"	f
+DumpChannel	npch.c	/^void DumpChannel(char* str, pNPch ch)$/;"	f
+GetTrackOffset	npch.c	/^int GetTrackOffset(char** trackScanner, char* propertyName)$/;"	f
+InitTorus	gl/npgeometry.c	/^void InitTorus (void* dataRef)$/;"	f
+MapTrackOffset	npch.c	/^void MapTrackOffset(int trackOffset, NPnodePtr node, char* propertyName, void* dataRef)$/;"	f
+MapTrackToFloatAttribute	npch.c	/^void MapTrackToFloatAttribute (int trackOffset, float* attributeValuePtr, void* dataRef)$/;"	f
+MapTrackToIntAttribute	npch.c	/^void MapTrackToIntAttribute (int trackOffset, int* attributeValuePtr, void* dataRef)$/;"	f
+MapTrackToUcharAttribute	npch.c	/^void MapTrackToUcharAttribute (int trackOffset, unsigned char* attributeValuePtr, void* dataRef)$/;"	f
+NPAUXDB_H_	db/npauxdb.h	26;"	d
+NPCH_H_	npch.h	26;"	d
+NPCSV_H_	file/npcsv.h	26;"	d
+NPDB_H_	npdb.h	26;"	d
+NPFILE_H_	npfile.h	26;"	d
+NPGDAL_H_	file/npgdal.h	26;"	d
+NPGLDRAW_H_	gl/npgldraw.h	26;"	d
+NPGLSURFACE_H_	gl/npgeometry.h	26;"	d
+NPGLUT_H_	npglut.h	26;"	d
+NPGL_H_	npgl.h	26;"	d
+NPJSON_H_	file/npjson.h	26;"	d
+NPKML_H_	file/npkml.h	26;"	d
+NPMYSQL_H_	db/npmysql.h	26;"	d
+NPOBJ_H_	file/npobj.h	26;"	d
+NPTAGS_H_	gl/nptags.h	26;"	d
+NPTEXMAP_H_	gl/nptexmap.h	26;"	d
+NPXML_H_	file/npxml.h	26;"	d
+NPcircle	gl/npgeometry.c	/^struct NPcircle {$/;"	s	file:
+NPcircle	gl/npgeometry.c	/^typedef struct NPcircle NPcircle;$/;"	t	typeref:struct:NPcircle	file:
+NPcirclePtr	gl/npgeometry.c	/^typedef struct NPcircle * NPcirclePtr;$/;"	t	typeref:struct:NPcircle	file:
+NPtorus	gl/npgeometry.c	/^struct NPtorus {$/;"	s	file:
+NPtorus	gl/npgeometry.c	/^typedef struct NPtorus NPtorus;$/;"	t	typeref:struct:NPtorus	file:
+NPtorusPtr	gl/npgeometry.c	/^typedef struct NPtorus * NPtorusPtr;$/;"	t	typeref:struct:NPtorus	file:
+SaveData	npch.c	/^bool SaveData(int numberTracks, int offset, float** trackData, unsigned char** trackUcharData, int** trackIntData, char** buffer)$/;"	f
+SaveHeader	npch.c	/^void SaveHeader(int offset, char* header, void *dataRef)$/;"	f
+SaveHeaders	npch.c	/^int SaveHeaders(char** headers, void *dataRef)$/;"	f
+SetIndexColor	gl/npgldraw.c	/^void SetIndexColor (NPubyteRGBA *color, int *colorIndex)$/;"	f
+WATCH	watchtools.h	54;"	d
+WATCH	watchtools.h	67;"	d
+WATCH_BOOL	watchtools.h	45;"	d
+WATCH_BOOL	watchtools.h	59;"	d
+WATCH_END	watchtools.h	57;"	d
+WATCH_END	watchtools.h	70;"	d
+WATCH_FLOAT	watchtools.h	48;"	d
+WATCH_FLOAT	watchtools.h	62;"	d
+WATCH_FMT	watchtools.h	53;"	d
+WATCH_FMT	watchtools.h	65;"	d
+WATCH_FUNC	watchtools.h	55;"	d
+WATCH_FUNC	watchtools.h	68;"	d
+WATCH_FUNCCOUNT	watchtools.h	56;"	d
+WATCH_FUNCCOUNT	watchtools.h	69;"	d
+WATCH_INT	watchtools.h	46;"	d
+WATCH_INT	watchtools.h	60;"	d
+WATCH_ON	watchtools.h	29;"	d
+WATCH_PTR	watchtools.h	50;"	d
+WATCH_SEP	watchtools.h	39;"	d
+WATCH_SEP	watchtools.h	41;"	d
+WATCH_STR	watchtools.h	49;"	d
+WATCH_STR	watchtools.h	63;"	d
+WATCH_UINT	watchtools.h	47;"	d
+WATCH_UINT	watchtools.h	61;"	d
+WATCH_VEC	watchtools.h	51;"	d
+WATCH_VEC	watchtools.h	64;"	d
+WATCH_VEC2	watchtools.h	52;"	d
+WATCH_VEC2	watchtools.h	66;"	d
+comparePinsDistanceFromCamera	gl/npgldraw.c	/^int comparePinsDistanceFromCamera (const void* a, const void* b)$/;"	f
+kNPavgCount	npmouse.c	35;"	d	file:
+kNPfileMax	npfile.h	33;"	d
+kNPinvertDeg	gl/npgldraw.c	277;"	d	file:
+kTorusScreenSizeCount	gl/npgeometry.c	31;"	d	file:
+kTorusThicknessCount	gl/npgeometry.c	32;"	d	file:
+kWindowHeight	npglut.c	40;"	d	file:
+kWindowPositionX	npglut.c	41;"	d	file:
+kWindowPositionY	npglut.c	42;"	d	file:
+kWindowWidth	npglut.c	39;"	d	file:
+loadTracksIntoCircularBuffer	npch.c	/^void loadTracksIntoCircularBuffer (void* dataRef)$/;"	f
+loopAtEndOfTrack	npch.c	/^bool loopAtEndOfTrack = true;	\/\/zz,  move to data->io.ch$/;"	v
+npAddTag	gl/nptags.c	/^void npAddTag (pNPtextTag tag, void* dataRef)$/;"	f
+npAddTagToDraw	gl/npgldraw.c	/^void npAddTagToDraw (NPnodePtr node, void* dataRef)$/;"	f
+npAppLoopGlut	npglut.c	/^void npAppLoopGlut (void* dataRef)$/;"	f
+npCSVDialog	file/npcsv.c	/^FILE* npCSVDialog (const char* fileName, int dialogType, void* dataRef)$/;"	f
+npCSVGetAttrib	file/npcsv.c	/^void npCSVGetAttrib (int size, void* dataRef)$/;"	f
+npCSVSetAttrib	file/npcsv.c	/^void npCSVSetAttrib (int size, void* dataRef)$/;"	f
+npCSVtoMap	file/npcsv.c	/^void npCSVtoMap (FILE* file, int type, void*dataRef)$/;"	f
+npChCloseInputStream	npch.c	/^void npChCloseInputStream (int needToFigureOut, void* dataRef)$/;"	f
+npChCloseOutStream	npch.c	/^void npChCloseOutStream (int needToFigureOut, void* dataRef)$/;"	f
+npChDataExport	npch.c	/^void npChDataExport (char* buffer, int *size, void* dataRef)$/;"	f
+npChDataImport	npch.c	/^void npChDataImport (char* buffer, int size, void* dataRef)	\/\/antzch0001.csv$/;"	f
+npChFileTokens	npch.c	/^char** npChFileTokens (FILE* file, void* dataRef)$/;"	f
+npChGetChannelAfter	npch.c	/^int npChGetChannelAfter(pNPch ch, int channelNumber) $/;"	f
+npChGetChannelBefore	npch.c	/^int npChGetChannelBefore(pNPch ch, int channelNumber) $/;"	f
+npChGetMaxChannel	npch.c	/^int npChGetMaxChannel (pNPch ch)$/;"	f
+npChGetMinChannel	npch.c	/^int npChGetMinChannel (pNPch ch)$/;"	f
+npChMapAttributeAdd	npch.c	/^void npChMapAttributeAdd (int channel, int attribute, int track, void* dataRef)$/;"	f
+npChMapAttributeDelete	npch.c	/^void npChMapAttributeDelete (int channel, int attribute, void* dataRef)$/;"	f
+npChMapExport	npch.c	/^void npChMapExport (char* buffer, int *size, void* dataRef)$/;"	f
+npChMapImport	npch.c	/^void npChMapImport (char* buffer, int size, void* dataRef)$/;"	f
+npChOpenInputStream	npch.c	/^void npChOpenInputStream (int needToFigureOut, void* dataRef)$/;"	f
+npChOpenOutputStream	npch.c	/^void npChOpenOutputStream (int needToFigureOut, void* dataRef)$/;"	f
+npChReadLine	npch.c	/^void* npChReadLine(char* bufferStart, int maxLength, FILE* file)$/;"	f
+npChRemoveMemoryReferences	npch.c	/^void npChRemoveMemoryReferences (pNPnodePropertyTracks propertyTracks, void* boundaryStart, void* boundaryEnd)$/;"	f
+npChRemoveNode	npch.c	/^void npChRemoveNode (NPnodePtr node, void* dataRef)$/;"	f
+npChSetBuildPath	npfile.c	/^void npChSetBuildPath(char* path, char* csvPath, char* filePrefix, $/;"	f
+npChSubscribeNode	npch.c	/^void npChSubscribeNode (NPnodePtr node, void* dataRef)$/;"	f
+npChTrackFileTokens	npch.c	/^char** npChTrackFileTokens (FILE* file, void* dataRef)$/;"	f
+npCloseAuxDB	db/npauxdb.c	/^void npCloseAuxDB (void* dataRef)		\/\/clean-up$/;"	f
+npCloseCSV	file/npcsv.c	/^void npCloseCSV (void* dataRef)$/;"	f
+npCloseCh	npch.c	/^void npCloseCh (void* dataRef)		\/\/clean-up$/;"	f
+npCloseDB	npdb.c	/^void npCloseDB (void* dataRef)		\/\/clean-up$/;"	f
+npCloseFile	npfile.c	/^void npCloseFile (void* dataRef)$/;"	f
+npCloseFileCSV	file/npcsv.c	/^void npCloseFileCSV (int size, void* dataRef)$/;"	f
+npCloseGDAL	file/npgdal.c	/^void npCloseGDAL (void* dataRef)$/;"	f
+npCloseGL	npgl.c	/^void npCloseGL (void* dataRef) $/;"	f
+npCloseGLPrimitive	gl/npgeometry.c	/^void npCloseGLPrimitive (void* dataRef)$/;"	f
+npCloseGlut	npglut.c	/^void npCloseGlut (void* dataRef)$/;"	f
+npCloseJSON	file/npjson.c	/^void npCloseJSON (void* dataRef)$/;"	f
+npCloseKML	file/npkml.c	/^void npCloseKML (void* dataRef)$/;"	f
+npCloseKey	npkey.c	/^void npCloseKey (void* dataRef)$/;"	f
+npCloseMouse	npmouse.c	/^void npCloseMouse (void* dataRef)$/;"	f
+npCloseMySQL	db/npmysql.c	/^void npCloseMySQL (void* dataRef)		\/\/clean-up$/;"	f
+npCloseOBJ	file/npobj.c	/^void npCloseOBJ (void* dataRef)$/;"	f
+npCloseTags	gl/nptags.c	/^void npCloseTags (void* dataRef)		\/\/clean-up$/;"	f
+npCloseTexMap	gl/nptexmap.c	/^void npCloseTexMap (void* dataRef)		\/\/clean-up$/;"	f
+npCloseXML	file/npxml.c	/^void npCloseXML (void* dataRef)$/;"	f
+npCopyGPUtoCPU	npgl.c	/^void npCopyGPUtoCPU (void* dataRef)$/;"	f
+npCreatePrimitiveDL	gl/npgeometry.c	/^GLuint npCreatePrimitiveDL(void)$/;"	f
+npDelDir	npfile.c	/^void npDelDir (int size, void* dataRef)$/;"	f
+npDeleteAllTags	gl/nptags.c	/^void npDeleteAllTags (void* dataRef)$/;"	f
+npDeleteChannel	npch.c	/^void npDeleteChannel (int channel, void* dataRef)$/;"	f
+npDeleteTag	gl/nptags.c	/^void npDeleteTag (int recordID, int tableID, void* dataRef)$/;"	f
+npDistance	gl/npgldraw.c	/^float npDistance( NPfloatXYZ vecA, NPfloatXYZ vecB )$/;"	f
+npDrawCompass	gl/npgldraw.c	/^void npDrawCompass (void* dataRef)$/;"	f
+npDrawConsole	gl/npgldraw.c	/^void npDrawConsole (void* dataRef)$/;"	f
+npDrawFPS	gl/npgldraw.c	/^void npDrawFPS (void* dataRef)$/;"	f
+npDrawHUD	gl/npgldraw.c	/^void npDrawHUD (void* dataRef)$/;"	f
+npDrawNodeTags	gl/nptags.c	/^void npDrawNodeTags (void* dataRef)$/;"	f
+npDrawNodeTextTag	gl/nptags.c	/^void npDrawNodeTextTag (NPnodePtr node, void* dataRef)$/;"	f
+npDrawNodes	gl/npgldraw.c	/^void npDrawNodes (void* dataRef)$/;"	f
+npDrawSort	gl/npgldraw.c	/^void npDrawSort(void* dataRef)$/;"	f
+npDrawTextTag	gl/nptags.c	/^void npDrawTextTag (pNPtextTag tag, void* dataRef)$/;"	f
+npDrawTorus	gl/npgeometry.c	/^void npDrawTorus (int geometry, GLfloat innerRadius)$/;"	f
+npExportCSV	file/npcsv.c	/^void npExportCSV (FILE* file, void* dataRef)$/;"	f
+npExportTagsToCSV	gl/nptags.c	/^void npExportTagsToCSV (char* buffer, int* size, int* wordSize, void* dataRef)$/;"	f
+npFileClose	npfile.c	/^int npFileClose (FILE* file, void* dataRef)$/;"	f
+npFileDialog	npfile.c	/^FILE* npFileDialog (const char* fileName, int dialogType, void* dataRef)$/;"	f
+npFileExport	npfile.c	/^void npFileExport (int size, void* dataRef)$/;"	f
+npFileImport	npfile.c	/^void npFileImport (const char* fileName, void* dataRef)$/;"	f
+npFileNew	npfile.c	/^FILE* npFileNew (const char* fileName, const char* mode, void* dataRef)$/;"	f
+npFileOpen	npfile.c	/^FILE* npFileOpen (const char* fileName, const char* mode, void* dataRef)$/;"	f
+npFileOpenChMap	npfile.c	/^void npFileOpenChMap (const char* filePath, void* dataRef)$/;"	f
+npFileOpenChMeta	npfile.c	/^void npFileOpenChMeta (const char* filePath, void* dataRef)$/;"	f
+npFileOpenChSet	npfile.c	/^void npFileOpenChSet (const char* filePath, void* dataRef)$/;"	f
+npFileOpenChTracks	npfile.c	/^void npFileOpenChTracks (const char* filePath, void* dataRef)$/;"	f
+npFileRead	npfile.c	/^int npFileRead (void* readBuffer, int elementSize, int elementCount, $/;"	f
+npFileRewind	npfile.c	/^void npFileRewind (FILE* file)$/;"	f
+npFileSeek	npfile.c	/^int npFileSeek (FILE* file, long offSet, int origin)$/;"	f
+npFileTell	npfile.c	/^long npFileTell (FILE* file)$/;"	f
+npFileWrite	npfile.c	/^int npFileWrite (const void* str, int wordSize, int size, FILE* file, void* dataRef)$/;"	f
+npGLDrawScene	npgl.c	/^void npGLDrawScene (void* dataRef) $/;"	f
+npGLLighting	npgl.c	/^void npGLLighting (void* dataRef)$/;"	f
+npGLPrimitive	gl/npgeometry.c	/^void npGLPrimitive (int geometry, float ratio)$/;"	f
+npGLResizeScene	npgl.c	/^void npGLResizeScene (int width, int height)							$/;"	f
+npGLShading	npgl.c	/^void npGLShading (dataRef)$/;"	f
+npGLSolidCone	npglut.c	/^void npGLSolidCone (GLdouble base, GLdouble height, GLint slices, GLint stacks)$/;"	f
+npGLSolidSphere	npglut.c	/^void npGLSolidSphere (GLdouble radius, GLint slices, GLint stacks)$/;"	f
+npGLSolidTorus	npglut.c	/^void npGLSolidTorus (GLdouble innerRadius, GLdouble outerRadius, $/;"	f
+npGLSurface	gl/npgeometry.c	/^void npGLSurface (bool texture, NPnodePtr node, void* dataRef)$/;"	f
+npGLTexture	gl/npgeometry.c	/^void npGLTexture (int geometry, int textureID, void* dataRef)$/;"	f
+npGLWireCone	npglut.c	/^void npGLWireCone (GLdouble base, GLdouble height, GLint slices, GLint stacks)$/;"	f
+npGLWireSphere	npglut.c	/^void npGLWireSphere (GLdouble radius, GLint slices, GLint stacks)$/;"	f
+npGLWireTorus	npglut.c	/^void npGLWireTorus (GLdouble innerRadius, GLdouble outerRadius, $/;"	f
+npGetCWD	npfile.c	/^void npGetCWD (char* buffer, int* size)					$/;"	f
+npGetFileAttrib	npfile.c	/^void npGetFileAttrib (int size, void* dataRef)$/;"	f
+npGetFileRef	npfile.c	/^FILE* npGetFileRef (int index)$/;"	f
+npGetMap	npfile.c	/^void npGetMap (int mapType, int format, void* dataRef)$/;"	f
+npGetOpenFilePath	npfile.c	/^void npGetOpenFilePath (char* buffer, int* size, void* dataRef)$/;"	f
+npGetTag	gl/nptags.c	/^pNPtextTag npGetTag (int recordID, int tableID, void* dataRef)$/;"	f
+npGlutDrawGLScene	npglut.c	/^void npGlutDrawGLScene(void) $/;"	f
+npGlutDrawGLSceneIdle	npglut.c	/^void npGlutDrawGLSceneIdle(void)$/;"	f
+npGlutKeyDown	npglut.c	/^void npGlutKeyDown (unsigned char key, int x, int y) $/;"	f
+npGlutKeyDownSpecial	npglut.c	/^void npGlutKeyDownSpecial (int key, int x, int y) $/;"	f
+npGlutKeyUp	npglut.c	/^void npGlutKeyUp (unsigned char key, int x, int y) $/;"	f
+npGlutKeyUpSpecial	npglut.c	/^void npGlutKeyUpSpecial (int key, int x, int y) $/;"	f
+npGlutPrimitive	npglut.c	/^void npGlutPrimitive (int primitive)$/;"	f
+npHideSubNodes	npgl.c	/^void npHideSubNodes (bool hide, NPnodePtr node, void* dataRef)$/;"	f
+npIDtoRGB	gl/npgldraw.c	/^void npIDtoRGB( int id, int* r, int* g, int* b )$/;"	f
+npImportCSV	file/npcsv.c	/^void npImportCSV (FILE* file, int type, void* dataRef)$/;"	f
+npImportTagsFromCSV	gl/nptags.c	/^void npImportTagsFromCSV (char* buffer, int size, int wordSize, void* dataRef)$/;"	f
+npInitAuxDB	db/npauxdb.c	/^void npInitAuxDB (void* dataRef)$/;"	f
+npInitCSV	file/npcsv.c	/^void npInitCSV (void* dataRef)$/;"	f
+npInitCh	npch.c	/^void npInitCh (void* dataRef)$/;"	f
+npInitDB	npdb.c	/^void npInitDB (void* dataRef)$/;"	f
+npInitFile	npfile.c	/^void npInitFile (void* dataRef)$/;"	f
+npInitGDAL	file/npgdal.c	/^void npInitGDAL (void* dataRef)$/;"	f
+npInitGL	npgl.c	/^void npInitGL(void* dataRef) $/;"	f
+npInitGLDraw	gl/npgldraw.c	/^void npInitGLDraw(void* dataRef)$/;"	f
+npInitGLPrimitive	gl/npgeometry.c	/^void npInitGLPrimitive (void* dataRef)$/;"	f
+npInitGlut	npglut.c	/^void npInitGlut (int argc, char **argv, void* dataRef)$/;"	f
+npInitJSON	file/npjson.c	/^void npInitJSON (void* dataRef)$/;"	f
+npInitKML	file/npkml.c	/^void npInitKML (void* dataRef)$/;"	f
+npInitKey	npkey.c	/^void npInitKey (void* dataRef)$/;"	f
+npInitMouse	npmouse.c	/^void npInitMouse (void* dataRef)$/;"	f
+npInitMySQL	db/npmysql.c	/^void npInitMySQL (void* dataRef)$/;"	f
+npInitOBJ	file/npobj.c	/^void npInitOBJ (void* dataRef)$/;"	f
+npInitTags	gl/nptags.c	/^void npInitTags (void* dataRef)$/;"	f
+npInitTexMap	gl/nptexmap.c	/^void npInitTexMap (void* dataRef)$/;"	f
+npInitXML	file/npxml.c	/^void npInitXML (void* dataRef)$/;"	f
+npKeyEvent	npkey.c	/^void npKeyEvent (int key, int keyEventType)$/;"	f
+npKeyGlut	npkey.c	/^void npKeyGlut (int key, int x, int y, int keyTypeGlut, int modifiers)$/;"	f
+npListDir	npfile.c	/^void npListDir (int size, void* dataRef)$/;"	f
+npLoadChMap	npch.c	/^void npLoadChMap (const char* filePath, void* dataRef)$/;"	f
+npLoadChMeta	npch.c	/^void npLoadChMeta (const char* filePath, void* dataRef)$/;"	f
+npLoadChTracks	npch.c	/^void npLoadChTracks (const char* filePath, void* dataRef)$/;"	f
+npLoadTextures	npgl.c	/^void npLoadTextures(void* dataRef) $/;"	f
+npLowPassFilter	npmouse.c	/^float npLowPassFilter( float start, float target, float fac )$/;"	f
+npMakeDir	npfile.c	/^void npMakeDir (int size, void* dataRef)$/;"	f
+npMouseEvent	npmouse.c	/^void npMouseEvent (int button, int state, int x, int y)$/;"	f
+npMouseMotion	npmouse.c	/^void npMouseMotion (int x, int y)$/;"	f
+npNewChannel	npch.c	/^void npNewChannel (int channel, void* dataRef)$/;"	f
+npNewStrcpy	npfile.c	/^char* npNewStrcpy (const char* str, void* dataRef) $/;"	f
+npNodeTraverseTree	gl/nptags.c	/^void npNodeTraverseTree ( void (*nodeFunc)(NPnodePtr node, void* dataRef), $/;"	f
+npOpenAntz	npfile.c	/^void npOpenAntz (const char* command, void* dataRef)$/;"	f
+npOpenApp	npfile.c	/^void npOpenApp (const char* command, void* dataRef)$/;"	f
+npOpenCSV	file/npcsv.c	/^FILE* npOpenCSV (const char* fileName, const char* mode, void* dataRef)$/;"	f
+npOpenURL	npfile.c	/^void npOpenURL (const char* command, void* dataRef)$/;"	f
+npPick	npgl.c	/^void npPick (int x, int y, void* dataRef)$/;"	f
+npPickTool	npgl.c	/^void npPickTool (NPnodePtr node, void* dataRef)$/;"	f
+npProjectWorldToScreen	gl/npgldraw.c	/^NPfloatXYZ npProjectWorldToScreen (const pNPfloatXYZ offset)$/;"	f
+npRGBtoID	gl/npgldraw.c	/^int npRGBtoID( int r, int g, int b )$/;"	f
+npReadCSV	file/npcsv.c	/^int npReadCSV (void* readBuffer, int elementSize, int elementCount, $/;"	f
+npResizeConsole	npgl.c	/^void npResizeConsole (void* dataRef)$/;"	f
+npSave	npfile.c	/^void npSave (FILE* file, void* dataRef)$/;"	f
+npSaveAs	npfile.c	/^void npSaveAs (int size, void* dataRef)$/;"	f
+npSaveCSV	file/npcsv.c	/^void npSaveCSV (FILE* file, void* dataRef)$/;"	f
+npSaveChMap	npch.c	/^void npSaveChMap (const char* filePath, void* dataRef)$/;"	f
+npSetCamTarget	npmouse.c	/^void npSetCamTarget (void* dataRef)$/;"	f
+npSetFileAttrib	npfile.c	/^void npSetFileAttrib (int size, void* dataRef)$/;"	f
+npSetNodeTag	gl/nptags.c	/^void npSetNodeTag (NPnodePtr node, void* dataRef)$/;"	f
+npSyncChMap	npch.c	/^void npSyncChMap (void* dataRef)$/;"	f
+npSyncTags	gl/nptags.c	/^void npSyncTags (void* dataRef)$/;"	f
+npTagNode	gl/nptags.c	/^void npTagNode (NPnodePtr node, void* dataRef)$/;"	f
+npTestCSV	file/npcsv.c	/^void npTestCSV (void* fileName, int wordSize, int size, void* dataRef)$/;"	f
+npUpdateAuxDB	db/npauxdb.c	/^void npUpdateAuxDB (void* dataRef)							\/\/add to ctrl loop, debug zz$/;"	f
+npUpdateCh	npch.c	/^void npUpdateCh (void* dataRef)$/;"	f
+npUpdateDB	npdb.c	/^void npUpdateDB (void* dataRef)							\/\/add to ctrl loop, debug zz$/;"	f
+npUpdateMouse	npmouse.c	/^void npUpdateMouse (void* dataRef)$/;"	f
+npUpdateMySQL	db/npmysql.c	/^void npUpdateMySQL (void* dataRef)							\/\/add to ctrl loop, debug zz$/;"	f
+npUpdateNodes	npch.c	/^void npUpdateNodes(void *dataRef)$/;"	f
+npUpdateTags	gl/nptags.c	/^void npUpdateTags (void* dataRef)							\/\/add to ctrl loop, debug zz$/;"	f
+npUpdateTexMap	gl/nptexmap.c	/^void npUpdateTexMap (void* dataRef)							\/\/add to ctrl loop, debug zz$/;"	f
+npUpdateTextTag	gl/nptags.c	/^void npUpdateTextTag (pNPtextTag tag, void* dataRef)$/;"	f
+npWriteCSV	file/npcsv.c	/^int npWriteCSV (const void* str, int wordSize, int size, FILE* file, void* dataRef)$/;"	f
+npchPause	npch.c	/^void npchPause (void* dataRef)	\/\/zz-JJ$/;"	f
+npglFullscreen	npglut.c	/^void npglFullscreen (void* dataRef)$/;"	f
+npkey_H_	npkey.h	26;"	d
+npmouse_H_	npmouse.h	26;"	d
+pin_dl	gl/npgeometry.c	/^static GLint pin_dl;$/;"	v	file:
+pin_wire_dl	gl/npgeometry.c	/^static GLint pin_wire_dl;$/;"	v	file:
+primitiveDL	gl/npgeometry.c	/^GLint primitiveDL;$/;"	v
+quadArray	gl/npgeometry.c	/^	GLint*			quadArray;$/;"	m	struct:NPtorus	file:
+quadArraySize	gl/npgeometry.c	/^	GLint			quadArraySize;$/;"	m	struct:NPtorus	file:
+radius	gl/npgeometry.c	/^	GLfloat			radius;$/;"	m	struct:NPcircle	file:
+segments	gl/npgeometry.c	/^	int				segments;$/;"	m	struct:NPcircle	file:
+segments	gl/npgeometry.c	/^	int				segments;$/;"	m	struct:NPtorus	file:
+selectedID	npgl.h	/^int selectedID;$/;"	v
+slices	gl/npgeometry.c	/^	int				slices;$/;"	m	struct:NPtorus	file:
+thickness	gl/npgeometry.c	/^	GLfloat			thickness;$/;"	m	struct:NPtorus	file:
+torus_dl	gl/npgeometry.c	/^static GLint torus_dl;$/;"	v	file:
+torus_wire_dl	gl/npgeometry.c	/^static GLint torus_wire_dl;$/;"	v	file:
+vArray	gl/npgeometry.c	/^	NPfloatXY*		vArray;$/;"	m	struct:NPcircle	file:
+vArray	gl/npgeometry.c	/^	NPfloatXYZ*		vArray;$/;"	m	struct:NPtorus	file:
+vArraySize	gl/npgeometry.c	/^	GLint			vArraySize;$/;"	m	struct:NPtorus	file:

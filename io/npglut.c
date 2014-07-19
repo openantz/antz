@@ -60,15 +60,19 @@ void npInitGlut (int argc, char **argv, void* dataRef)
 	GLboolean stereoSupport = false;
 	int depth = 0;
 	int result = 0;
+	int ver = 0;
 	int gMainWindow = 0;
 
 	pData data = (pData) dataRef;
+
 
 	data->io.gl.fullScreen = true;			//S3D
 //	data->io.gl.stereo = false;				//S3D
 
 	glutInit (&argc, argv);
 
+	ver = glutGet(GLUT_VERSION);
+	printf("\nGLUT VERSION IS %d\n", ver);
 	glGetBooleanv(GL_STEREO, &stereoSupport);
 	data->io.gl.stereo = stereoSupport;
 

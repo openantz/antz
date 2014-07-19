@@ -34,7 +34,7 @@ void npInitIO (void* dataRef)
 {
 	npInitMouse (dataRef);
 	npInitFile (dataRef);			// may update default init from pref file
-	npInitCh (dataRef);	//zz-JJ
+//	npInitCh (dataRef);	//zz-JJ // voidptr3
 }
 
 
@@ -43,7 +43,7 @@ void npCloseIO (void* dataRef)
 {
 	npCloseFile (dataRef);
 	npCloseMouse (dataRef);
-	npCloseCh (dataRef);	//zz-JJ
+//	npCloseCh (dataRef);	//zz-JJ // voidptr3
 }
 
 
@@ -58,7 +58,7 @@ void npUpdateIO (void* dataRef)
 	//we double buffer the mouse delta movement to maintain engine cycle sync
 	npUpdateMouse (dataRef);
 
-	npUpdateCh (dataRef);	//zz-JJ
+//	npUpdateCh (dataRef);	//zz-JJ  // voidptr3
 }
 
 

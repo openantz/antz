@@ -32,8 +32,8 @@
 
 //add the namespace, debug zz
 
-// #define NP_LINUX_
-#define NP_MSW_
+#define NP_LINUX_
+//#define NP_MSW_
 // #define NP_OSX_
 
 #ifdef NP_MSW_

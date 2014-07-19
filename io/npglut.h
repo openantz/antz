@@ -36,6 +36,8 @@
 #endif
 #ifdef NP_LINUX_
 	#include <GL/freeglut.h>
+	//#include "../lib/freeglut/freeglut_2012_02_05/include/GL/freeglut.h"
+	//#include "/root/Desktop/freeglut-2.8.0/include/GL/freeglut.h"
 #endif
 
 

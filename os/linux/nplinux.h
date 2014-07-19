@@ -27,6 +27,9 @@
 
 #include "../../npdata.h"
 
+// Linux Signals----------------------------------------------------------------
+void signal_callback_handler(int signum);
+
 //------------------------------------------------------------------------------
 void npLinuxGetAppPath (char* buffer, int* size);
 

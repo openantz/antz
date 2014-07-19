@@ -280,6 +280,7 @@ void npGLShading (dataRef)
 //------------------------------------------------------------------------------
 void npGLDrawScene (void* dataRef) 
 {
+
 	int err = 0;
 	//MB-LABEL
 	NPfloatXYZ	trans;
@@ -360,6 +361,7 @@ void npGLDrawScene (void* dataRef)
 	err = glGetError();
 	if (err)
 		printf("err: 2388 - OpenGL error: %d\n", err);
+
 }
 
 

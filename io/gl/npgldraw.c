@@ -675,6 +675,7 @@ void DrawGrid (NPnodePtr node, void* dataRef)
 
 
 	//Draw Texture Quad
+	// node->textureID voidptr4
 	if (node->textureID)	//allow for click on background tex's for mouse flying
 	{
 		//if not pickPass then enable and bind texture, set color to white
@@ -698,6 +699,7 @@ void DrawGrid (NPnodePtr node, void* dataRef)
 	}
 
 	//draw grid lines unless hidden
+	//!node->hide , voidptr4
 	if (!node->hide)
 	{
 		// if not pickPass then set the node color
@@ -709,13 +711,15 @@ void DrawGrid (NPnodePtr node, void* dataRef)
 		glLineWidth (node->lineWidth);
 
 		//draw grid lines
-		glBegin (GL_LINES);
+//		glBegin (GL_LINES); 
 			for (i=0; i <= node->segments.z; i++)
 			{
 				//need to do this before rest of grid lines, otherwise no showup
 				//if currentNode then draw yellow selection box
 				if (node == data->map.currentNode)
+		        //	if(0)
 				{
+					glBegin(GL_LINES);	
 					glColor4ub(255,255,0,192);	//yellow, 75% opacity
 
 					glVertex3f (0.0f, 0.0f, z);			//side one
@@ -735,29 +739,51 @@ void DrawGrid (NPnodePtr node, void* dataRef)
 
 					glVertex3f (0.0f, length.y * 0.5f, z);	 //cross hairs
 					glVertex3f (length.x, length.y * 0.5f, z);
-
+					glEnd();			
 					// restore node color 
 					glColor4ub (node->color.r, node->color.g, node->color.b, node->color.a);
 				}
 
+				x = 0.0f;
+				y = 0.0f;
 				for (j=0; j <= node->segments.x; j++)
 				{
+					printf("\nnode->segments.x == %d\n", node->segments.x);
+					glBegin(GL_LINES);
+				//	x = 360.0f;
 					glVertex3f (x, 0.0f, z);
 					glVertex3f (x, length.y, z);
+				//	glVertex3f (0.0f, 0.0f, 0.0f);
+				//	glVertex3f (0.0f, 360.0f, 0.0f);
 					x += grid->spacing.x;
+					printf("\nX Value: %f\n", x);
+					glEnd();
+				//	x += 30.0f;
 				}
+
+				x = 0.0f;
+				y = 0.0f;
 				for (j=0; j <= node->segments.y; j++)
 				{
+					printf("\nnode->segments.y == %d\n", node->segments.y);
+					glBegin(GL_LINES);
+				//	y = 360.0f;
 					glVertex3f (0.0f, y, z);
 					glVertex3f (length.x, y, z);
+			//		glVertex3f (0.0f, 0.0f, 0.0f);
+			//		glVertex3f (360.0f, 0.0f, 0.0f);
 					y += grid->spacing.y;
+					printf("\nY Value: %f\n", y);
+				//	y += 30.0f;
+					glEnd();
 				}
+
 
 				x = 0.0f;						//reset x and y
 				y = 0.0f;
 				z += grid->spacing.z;			//set the z for 3D stacked grids
 			}
-		glEnd();
+//		glEnd();
 
 		glLineWidth (1.0f);
 //		glEnable (GL_DEPTH_TEST);
@@ -778,13 +804,13 @@ void DrawGrid (NPnodePtr node, void* dataRef)
 	if (node == data->map.node[kNPnodeRootGrid])
 		glPopMatrix();				//restore for root grid only
 
-	//recursively traverse and draw children
-	for (i=0; i < node->childCount; i++)
-		DrawGrid(node->child[i], data);
+	//recursively traverse and draw children  //voidptr4
+//	for (i=0; i < node->childCount; i++) // voidptr
+//		DrawGrid(node->child[i], data); //voidptr
 
 	//for all other nodes the transformations are inherited
-	if (node != data->map.node[kNPnodeRootGrid])
-		glPopMatrix();				// restore after traversing child nodes
+//	if (node != data->map.node[kNPnodeRootGrid])  //voidptr
+//		glPopMatrix();				// restore after traversing child nodes
 }
 
 
@@ -1203,6 +1229,7 @@ void npDrawNodes (void* dataRef)
 	int count = data->map.nodeRootCount;
 
 	//z-sort nodes, back to front for proper transparency
+
 	npDrawSort(data);
 
 	//first drawing grids causes improper transparency, debug zz
@@ -1239,6 +1266,7 @@ void npDrawNodes (void* dataRef)
 	//update this to allow a specified draw order using the node->shader
 	//for example, root grid should probably be drawn before nodes and
 	//sub-grids after nodes,											 debug zz
+
 	DrawGrid (data->map.node[kNPnodeRootGrid], data);
 }
 
