@@ -68,7 +68,7 @@ void npCSVtoMap (FILE* file, int type, void*dataRef);
 int npMapGlobalsFromCSV (char* csvStr, int size, void* dataRef);
 int npMapGlobalsToCSV (char* csvStr, int size, void* dataRef);
 
-int npSaveMapToCSV (char* filePath, int mapTypeID, void* dataRef);
+int npSaveMapToCSV( char* datasetName, int mapTypeID, void* dataRef );
 int npOpenGlobalsCSV (char* filePath, int wordSize, int size, void* dataRef);
 
 void npMapTypeInit (void* dataRef);		//zz debug move thes to npmap.h etc...

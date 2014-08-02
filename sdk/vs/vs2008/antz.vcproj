@@ -626,30 +626,6 @@
 					Name="db"
 					>
 					<File
-						RelativePath="..\..\src\io\db\mysqlFormatFuncs.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\io\db\mysqlGenFuncs.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\io\db\mysqlGetFuncs.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\io\db\mysqlInitFuncs.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\io\db\mysqlLoadIntoAntz.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\io\db\mysqlSetFuncs.h"
-						>
-					</File>
-					<File
 						RelativePath="..\..\src\io\db\mysqlStructures.h"
 						>
 					</File>

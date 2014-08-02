@@ -37,11 +37,15 @@
 #include "io/net/nposc.h"
 
 //#include "io/db/npmysql.h"	//zz dbz
+#include "io/npdb.h"			//zz db
 
 #include "ctrl/npcmd.h"
 #include "ctrl/npengine.h"
 
 #include "os/npos.h"
+
+#include "io/npfile.h"
+
 
 void npInitCPU (void* dataRef);
 
@@ -384,10 +388,18 @@ void npCtrlFile (int command, void* dataRef)
 
 		//navigate folders, files and DBs
 		case kNPcmdViewer :
-			if (data->io.key.modShift)
-				npdbSaveAntzStateToDatabase(dataRef);				//zzsql //zz dbz
+			if (data->io.key.modAlt )
+			{
+				if (data->io.key.modShift) //save to default server with default timestamp DB name
+					npdbSaveUpdate( dataRef );						//zz db
+				else
+					//npdbLoadUpdate( dataRef );
+					npdbPullScene( dataRef );						//zz db
+			}
+			else if (data->io.key.modShift) //save to default server with default timestamp DB name
+				npdbSaveScene( dataRef );						//zz db
 			else
-				npViewer (dataRef);
+				npViewer( dataRef );	//load scene from menu list
 			break;
 
 		case kNPcmdFileOpen :
@@ -397,7 +409,7 @@ void npCtrlFile (int command, void* dataRef)
 			npFileDialog (NULL, kNPfileDialogClose, dataRef);
 			break;
 		case kNPcmdFileSave :
-			nposTimeStampCSV( name );
+			nposTimeStampName( name );
 			npSaveScene( kNPmapCSV, name, data );
 			break;
 		case kNPcmdFileSaveAs :
@@ -1760,9 +1772,9 @@ void npCtrlGlobal (int command, void* dataRef)
 				npPostMsg( "Background Black", kNPmsgCtrl, dataRef );
 			
 				testOSC[0] = toggle = &data->io.clear.a;
-				npOscTx( 0, "/3/toggle3 ", "f", testOSC, dataRef );
+		//zzsql		npOscTx( 0, "/3/toggle3 ", "f", testOSC, dataRef );	//zz-osc
 			
-			//	cppTx (0, "/3/xy", "f", &data->io.clear.r, dataRef );
+			//	cppTx (0, "/3/xy", "f", &data->io.clear.r, dataRef );	
 			}
 			else
 			{
@@ -1777,7 +1789,7 @@ void npCtrlGlobal (int command, void* dataRef)
 				//npTxOSC (0, "/3/toggle1", "f", (void*)&data->io.clear.a, dataRef );
 			
 				testOSC[0] = toggle = &data->io.clear.a;
-				npOscTx( 0, "/3/toggle3 ", "f", testOSC, dataRef );	
+		//zzsql		npOscTx( 0, "/3/toggle3 ", "f", testOSC[0], dataRef ); // Contributing to crash on 'b'
 			}
 			break;
 

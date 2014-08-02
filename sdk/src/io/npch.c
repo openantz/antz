@@ -29,6 +29,9 @@
 #include "npfile.h"
 #include "../os/npos.h"
 
+#include "net/nposcpack.h"									//JJ-zz //zz osc
+
+
 #include <time.h>
 
 

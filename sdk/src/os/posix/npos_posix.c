@@ -155,7 +155,7 @@ FILE* nposFileDialog (const char* fileName, int dialogType, void* dataRef)
 }
 
 //-----------------------------------------------------------------------------
-void nposTimeStampCSV (char* fileName)
+void nposTimeStampName (char* fileName)
 {
 	return;																//debug zz
 }

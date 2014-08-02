@@ -77,7 +77,7 @@ double nposGetTime (void);
 void nposUpdateTime (void* dataRef);
 void nposSleep (double seconds);
 
-void nposTimeStampCSV (char* fileName);
+void nposTimeStampName (char* fileName);
 
 //JJ begin threading code here
 void nposBeginThread (voidFnPtr vfp, void* dataRef);

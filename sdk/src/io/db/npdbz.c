@@ -1,3 +1,26 @@
+/* -----------------------------------------------------------------------------
+*
+*  npdbz.c
+*
+*  ANTz - realtime 3D data visualization tools for the real-world, based on NPE.
+*
+*  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
+*
+*  Written in 2010-2014 by Shane Saxon - saxon@openantz.com
+*
+*  Please see main.c for a complete list of additional code contributors.
+*
+*  To the extent possible under law, the author(s) have dedicated all copyright 
+*  and related and neighboring rights to this software to the public domain
+*  worldwide. This software is distributed without any warranty.
+*
+*  Released under the CC0 license, which is GPL compatible.
+*
+*  You should have received a copy of the CC0 Public Domain Dedication along
+*  with this software (license file named COPYING.txt). If not, see
+*  http://creativecommons.org/publicdomain/zero/1.0/
+*
+* --------------------------------------------------------------------------- */
 
 //#include "../../npdata.h"							//defines which OS to compile for
 #include "npdbz.h"
@@ -7,8 +30,180 @@
 #include "../../os/npos.h"
 #include "../../data/npmapfile.h"
 
-char* npMysqlCreateStatement(char* dbname);
-char* npMysqlUseStatement(char* dbname);
+char* npMysqlCreateStatement(char* dbName);
+char* npMysqlUseStatement(char* dbName);
+
+// This is for a single node
+// void (*nodeAction)(int id, void* dataRef), 
+
+void assignNodePropertiesFromArray(char** row, pNPnode node)
+{
+	pNPnode nodeParent;
+	if(node->type == 1)
+	{
+		return;
+	}
+
+	node->selected = atoi(row[3]);
+	node->childIndex = atoi(row[7]);
+	
+	node->chInputID		= atoi(row[9]);
+	node->chOutputID	= atoi(row[10]);
+	node->chLastUpdated	= atoi(row[11]);
+		
+	node->average		= atoi(row[12]);
+	node->interval		= atoi(row[13]); // Samples???
+		
+	node->auxA.x		= atoi(row[14]);
+	node->auxA.y		= atoi(row[15]);
+	node->auxA.z		= atoi(row[16]);
+	node->auxB.x		= atoi(row[17]);
+	node->auxB.y		= atoi(row[18]);
+	node->auxB.z		= atoi(row[19]);
+		
+	node->colorShift	= npatof(row[20]);
+		
+	node->rotateVec.x		= npatof(row[21]);		//was rotate
+	node->rotateVec.y		= npatof(row[22]);
+	node->rotateVec.z		= npatof(row[23]);
+	node->rotateVec.angle	= npatof(row[24]);	
+		
+	node->scale.x		= npatof(row[25]);
+	node->scale.y		= npatof(row[26]);
+	node->scale.z		= npatof(row[27]);
+		
+	node->translate.x	= npatof(row[28]);
+	node->translate.y	= npatof(row[29]);
+	node->translate.z	= npatof(row[30]);
+		
+	node->tagOffset.x	= npatof(row[31]);
+	node->tagOffset.y	= npatof(row[32]);
+	node->tagOffset.z	= npatof(row[33]);
+		
+	node->rotateRate.x	= npatof(row[34]);
+	node->rotateRate.y	= npatof(row[35]);
+	node->rotateRate.z	= npatof(row[36]);
+		
+	node->rotate.x		= npatof(row[37]);					//was rotateRad
+	node->rotate.y		= npatof(row[38]);
+	node->rotate.z		= npatof(row[39]);
+		
+	node->scaleRate.x	= npatof(row[40]);
+	node->scaleRate.y	= npatof(row[41]);
+	node->scaleRate.z	= npatof(row[42]);
+		
+	node->translateRate.x = npatof(row[43]);
+	node->translateRate.y = npatof(row[44]);
+	node->translateRate.z = npatof(row[45]);
+		
+	node->translateVec.x = npatof(row[46]);
+	node->translateVec.y = npatof(row[47]);
+	node->translateVec.z = npatof(row[48]);
+		
+	node->shader		= atoi(row[49]);
+	node->geometry		= atoi(row[50]);
+		
+	node->lineWidth		= npatof(row[51]);
+	node->pointSize		= npatof(row[52]);
+	node->ratio			= npatof(row[53]);
+		
+	node->colorIndex	= atoi(row[54]);
+		
+	node->color.r		= atoi(row[55]);
+	node->color.g		= atoi(row[56]);
+	node->color.b		= atoi(row[57]);
+	node->color.a		= atoi(row[58]);
+		
+	node->colorFade		= atoi(row[59]);
+	node->textureID		= atoi(row[60]);
+		
+	node->hide			= atoi(row[61]);
+	node->freeze		= atoi(row[62]);
+		
+	//	node->center		= center;		//removed	
+		
+	node->topo			= atoi(row[63]);			//moved topo
+	node->facet			= atoi(row[64]);		//added topo facet number
+		
+	node->autoZoom.x	= atoi(row[65]);	//moved down a slot
+	node->autoZoom.y	= atoi(row[66]);
+	node->autoZoom.z	= atoi(row[67]);
+		
+	//	node->scroll		= scroll;		//removed made space for facet, zz debug
+		
+	node->triggerHi.x	= atoi(row[68]);
+	node->triggerHi.y	= atoi(row[69]);
+	node->triggerHi.z	= atoi(row[70]);
+		
+	node->triggerLo.x	= atoi(row[71]);
+	node->triggerLo.y	= atoi(row[72]);
+	node->triggerLo.z	= atoi(row[73]);
+		
+	node->setHi.x		= npatof(row[74]);
+	node->setHi.y		= npatof(row[75]);
+	node->setHi.z		= npatof(row[76]);
+		
+	node->setLo.x		= npatof(row[77]);
+	node->setLo.y		= npatof(row[78]);
+	node->setLo.z		= npatof(row[79]);
+		
+	node->proximity.x	= npatof(row[80]);
+	node->proximity.y	= npatof(row[81]);
+	node->proximity.z	= npatof(row[82]);
+		
+	node->proximityMode.x = atoi(row[83]);			//int cast supports 1st ver CSV
+	node->proximityMode.y = atoi(row[84]);
+	node->proximityMode.z = atoi(row[85]);
+		
+	node->segments.x	= atoi(row[86]);		//grid segments were stored in node->data,
+	node->segments.y	= atoi(row[87]);		//was node->data->segments.x
+	node->segments.z	= atoi(row[88]);		//now node->segments.x
+		
+	node->tagMode		= atoi(row[89]);
+	node->formatID		= atoi(row[90]);
+	node->tableID		= atoi(row[91]);
+	node->recordID		= atoi(row[92]);
+
+	if (node->topo == 0 && node->type == kNodePin)
+	{
+		////zzdb printf ("topo = 0   id: %d\n", node->id);
+		if (node->branchLevel == 0)
+			node->topo = kNPtopoPin;	//set root topo to a pin
+		else if (node->parent != NULL)  //orhpan child methods in npMapSort
+		{
+			nodeParent = node->parent;
+			if ( nodeParent->topo == kNPtopoPin || nodeParent->topo == 0
+				|| nodeParent->topo == kNPtopoTorus )
+				node->topo = kNPtopoTorus;
+			else
+				node->topo = kNPtopoPin;
+		}	
+	}
+
+
+}
+
+void updateNodeFromMysqlRow (MYSQL_ROW *row, void* dataRef) // Generalize here
+{
+//	MYSQL_ROW row;
+	pData data = (pData) dataRef;
+	pNPnode node = NULL;
+	pNPnode nodeParent = NULL;
+	int id = 0, type = 0, branchLevel = 0, parentID = 0, x = 0, count = 0;
+
+	id = atoi( (const char*)row[0] );
+	node = npGetNodeByID(data->io.dbs->myDatabase[0].idMap[id], dataRef);
+	assignNodePropertiesFromArray( (char**)row, node );
+}
+
+void updateNodesFromMysqlResult(MYSQL_RES *result, void* dataRef)
+{
+	MYSQL_ROW row;
+	while( row = mysql_fetch_row( result ))
+	{
+		updateNodeFromMysqlRow( (MYSQL_ROW*)row, dataRef );
+	}
+}
 
 
 
@@ -47,8 +242,9 @@ void npLoadNodeStateResultIntoAntz(MYSQL_RES *result, void* dataRef)
 		branchLevel = atoi(row[5]);
 		parentID = atoi(row[4]);
 		node = npMapNodeAdd (id, type, branchLevel, parentID, kNPmapNodeCSV, dataRef); // kNPmapNodeCSVvTwo is format		
-		
-		
+		data->io.dbs->myDatabase[0].idMap[id] = node->id;
+		assignNodePropertiesFromArray(row, node);
+		/*
 		node->selected = atoi(row[3]);
 		node->childIndex = atoi(row[7]);
 		
@@ -193,6 +389,7 @@ void npLoadNodeStateResultIntoAntz(MYSQL_RES *result, void* dataRef)
 			
 			
 		}
+		*/
 		
 	}
 	//buffer[count] = '\0';
@@ -217,7 +414,7 @@ struct newChunksObj* npInitAllChunkObjects(struct newChunksObj *chunks, void* da
 	for(chunkIndex = 0; chunkIndex < chunks->numOfChunks; chunkIndex++)
 	{
 		if( (chunks->chunk[chunkIndex].csvObjects = malloc(sizeof(struct csvStrObjects))) == NULL )
-			getch();
+			getch();				//zz db debug???
 	}
 
 	return chunks;
@@ -738,7 +935,7 @@ char* npNewGenMysqlFields(int count, int type, void* dataRef)
 				map = data->map.typeMapGrid;
 				itemCount = kNPgridItemCount;
 				break;
-			case kNPpin :						//zz debug changed constant name
+			case kNPpin :
 				map = data->map.typeMapPin;
 				itemCount = kNPpinItemCount;
 				break;
@@ -771,9 +968,6 @@ char* npNewGenMysqlFields(int count, int type, void* dataRef)
 			//Change INT(10) to INT(11), debug db
 			switch (map[i].type)
 			{
-				case kNPvoidPtr :
-					count += sprintf ((fields + count), "%s INT(10)", '0' );
-					break;
 				case kNPfloat :
 					count += sprintf ((fields + count), "%s FLOAT(10)", map[i].name );		//zz debug, added this to fix ration bug#83
 					break;
@@ -849,38 +1043,42 @@ char* npNewGenMysqlFields(int count, int type, void* dataRef)
 }
 
 
-char* npMysqlCreateTableStatement(char* tblname, char* fields)
+char* npMysqlCreateTableStatement(char* table, char* fields)
 {
-	char* statement = malloc(sizeof(char) * (16 + strlen(tblname) + strlen(fields)));
-	sprintf(statement, "CREATE TABLE %s(%s)", tblname, fields);
+	char* statement = malloc(sizeof(char) * (16 + strlen(table) + strlen(fields)));
+	sprintf(statement, "CREATE TABLE %s(%s)", table, fields);
 	return statement;
 }
 
-int npCreateTable2(struct dbFunction *db, int connid, char* tblname, char* fields)
+int npCreateTable2(struct dbFunction *db, int dbID, char* table, char* fields)
 {
-	char* statement = npMysqlCreateTableStatement(tblname, fields);
-	(*db->query)(connid, statement);
+	char* statement = npMysqlCreateTableStatement(table, fields);
+	(*db->query)(dbID, statement);
 	free(statement);
 
 	return 0;
 }
 
-char* npMysqlSelectStatement(char* tblname)
+char* npMysqlSelectStatement(char* table)
 {
-	char* statement = malloc(sizeof(char) * (15 + strlen(tblname)));
+	char* statement = malloc(sizeof(char) * (15 + strlen(table)));
 	int count = 0;
 
-	count = sprintf(statement, "SELECT * FROM %s", tblname);
+	count = sprintf(statement, "SELECT * FROM %s", table);
 	return statement;
 }
 
-char* npMysqlInsertStatement(char* tblname, struct newChunkObj *value)
+char* npMysqlInsertStatement(char* table, struct newChunkObj *value)
 {
 	char* statement = NULL;
 	int count = 0;
 	int index = 0;
-	statement = malloc(sizeof(char) * (21 + strlen(tblname) + value->chunkSize + (value->csvObjects->numOfcsvStrObjects * 6) ) ); //*6 is too much, reduce, debug db
-	count = sprintf(statement, "INSERT INTO %s VALUES ", tblname);
+
+	statement = malloc(sizeof(char) * (21 + strlen(table) + value->chunkSize + (value->csvObjects->numOfcsvStrObjects * 6) ) ); //*6 is too much, reduce, debug db
+//zz	statement = malloc(sizeof(char) * (64 + strlen(table) + value->chunkSize + (value->csvObjects->numOfcsvStrObjects * 6) ) ); //*6 is too much, reduce, debug db
+// count = sprintf(statement, "TRUNCATE %s", table);
+	count = sprintf(statement, "INSERT INTO %s VALUES ", table);
+					//	count = sprintf(statement, "UPDATE SET %s VALUES ", table);
 
 	for(index = 0; index <=	value->csvObjects->numOfcsvStrObjects; index++) 
 	{
@@ -893,22 +1091,22 @@ char* npMysqlInsertStatement(char* tblname, struct newChunkObj *value)
 	return statement;
 }
 
-void npInsert(int connid, struct dbFunction *db, char* tblname, struct newChunkObj *value)
+void npInsert(int dbID, struct dbFunction *db, char* table, struct newChunkObj *value)
 {
 	int queryReturnValue = 0;
 	char* statement = NULL;
-	statement = (*db->createInsertStatement)(tblname, value);
-	queryReturnValue = (*db->query)(connid, statement);
+	statement = (*db->createInsertStatement)(table, value);
+	queryReturnValue = (int)(*db->query)(dbID, statement);
 	free(statement);
 }
 
-int npSelect(int connid, struct dbFunction *db, char* tblname) //Add field(s) choice later
+int npSelect(int dbID, struct dbFunction *db, char* table) //Add field(s) choice later
 {
-	int error = 0; 
-	char* statement = (*db->createSelectStatement)(tblname);
-	error = (*db->query)(connid, statement); //Create a function to process mysql error codes
+	int error = 0;
+	char* statement = (*db->createSelectStatement)(table);
+	error = (int)(*db->query)(dbID, statement); //Create a function to process mysql error codes
 	//printf("\nreturned value : %d\n", queryReturnValue);
-	printf("\nnpSelect error : %d", error);
+	//printf("\nnpSelect error : %d", error);
 	free(statement);
 	return error; //Zero for success, nonzero if error occurred
 }
@@ -930,29 +1128,29 @@ char* npMysqlShowStatement(char* showWhat)
 }
 
 /*
-char* npMysqlInsertStatement(char* tblname)
+char* npMysqlInsertStatement(char* table)
 {
 	int count = 0;
-	char* statement = malloc(sizeof(char) * (20 + strlen(tblname))); //Account for all parens, debug db
-	count = sprintf(statement, "INSERT INTO %s VALUES ", tblname);
+	char* statement = malloc(sizeof(char) * (20 + strlen(table))); //Account for all parens, debug db
+	count = sprintf(statement, "INSERT INTO %s VALUES ", table);
 	
 	return statement;
 }
 */
 
-char* npMysqlCreateStatement(char* dbname)
+char* npMysqlCreateStatement(char* dbName)
 {
-	char* statement = malloc(sizeof(char) * ( 17 + strlen(dbname) ) ); //16 for "CREATE DATABASE " + 1 for null terminator
-	sprintf(statement, "CREATE DATABASE %s", dbname); // This should be dynamic
+	char* statement = malloc(sizeof(char) * ( 17 + strlen(dbName) ) ); //16 for "CREATE DATABASE " + 1 for null terminator
+	sprintf(statement, "CREATE DATABASE %s", dbName); // This should be dynamic
 
 	return statement;
 }
 
-char* npMysqlUseStatement(char* dbname)
+char* npMysqlUseStatement(char* dbName)
 {
 	int count = 0;
-	char* statement = malloc(sizeof(char) * ( 5 + strlen(dbname) ) ); //4 for "USE " + 1 for null terminator
-	count = sprintf(statement, "USE %s", dbname); // This should be dynamic
+	char* statement = malloc(sizeof(char) * ( 5 + strlen(dbName) ) ); //4 for "USE " + 1 for null terminator
+	count = sprintf(statement, "USE %s", dbName); // This should be dynamic
 	statement[count] = '\0';
 
 	return statement;
@@ -998,15 +1196,15 @@ int dbHook(struct dbFunction *db, char* filePath, int dbtype)
 
 //void interpretError(
 
-void* npShowDatabases(int connid, struct dbFunction *db)
+void* npShowDatabases(int dbID, struct dbFunction *db)
 {
 	char* statement;
 	void* error = 0;
 	printf("\nA"); 
 	statement = (*db->showStatement)("Databases");
 	printf("\nB : %s", statement);
-	error = (*db->query)(connid, statement);
-//	error = mysql_query(connid, statement);
+	error = (*db->query)(dbID, statement);
+//	error = mysql_query(dbID, statement);
 	printf("\nC");
 	free(statement);
 	printf("\nD");
@@ -1014,7 +1212,7 @@ void* npShowDatabases(int connid, struct dbFunction *db)
 	return error;
 }
 
-//void* npdbGetList(int connid, struct dbFunction *db, void* dataRef)
+//void* npdbGetList(int dbID, struct dbFunction *db, void* dataRef)
 void* npdbGetList(struct database *db)
 {
 	void* myResult;
@@ -1027,17 +1225,17 @@ void* npdbGetList(struct database *db)
 	pNPdatabases dbList = NULL;				//zzsql
 
 	printf("\nBefore npShowDatabases");
-	npShowDatabases(db->connid, db->db);
+	npShowDatabases(db->id, db->db);
 	printf("\nAfter npShowDatabases");
-//	myResult = (*db->storeResult)(db->connid);
+//	myResult = (*db->storeResult)(db->dbID);
 	printf("\nStore Result");
-	myResult = (*db->db->storeResult)(db->connid);
+	myResult = (*db->db->storeResult)(db->id);
 
 	printf("\nNum Fields");;
-	numFields = (*db->db->db_num_fields)(myResult);
+	numFields = (int)(*db->db->db_num_fields)(myResult);
 //	numRows = (*db->db_num_rows)(myResult);
 	printf("\nNum Rows");
-	numRows = (*db->db->db_num_rows)(myResult);
+	numRows = (int)(*db->db->db_num_rows)(myResult);
 
 	printf("\nmalloc dbList");
 	dbList = malloc(sizeof(struct NPdatabases));		//zzsql
@@ -1064,43 +1262,53 @@ void* npdbGetList(struct database *db)
 	return (void*)dbList;
 }
 
-int npUseDatabase2(int connid, struct dbFunction *db, char* dbname)
+int npUseDatabase2(int dbID, struct dbFunction *db, char* dbName)
 {
 	int error;
-	char* statement = (*db->useStatement)(dbname);
-	error = (*db->query)(connid, statement);
+	char* statement = (*db->useStatement)(dbName);
+	error = (int)(*db->query)(dbID, statement);
+
 	return 0;
 }
 
 
 //Should queries be renamed to statements
-int npCreateDatabase2(int connid, struct dbFunction *db, char* dbname)
+int npCreateDatabase2(int dbID, struct dbFunction *db, char* dbName)
 {
-	char* statement = (*db->createStatement)(dbname);
-	(*db->query)(connid, statement);
+	char* statement = (*db->createStatement)(dbName);
+	(*db->query)(dbID, statement);
 	free(statement);
 
 	return 0;
 }
 
-int npDropDatabase(int connid, struct dbFunction *db, char* dbname)
+int npDropDatabase(int dbID, struct dbFunction *db, const char* dbName)
 {
-	char* statement = (*db->dropStatement)("DATABASE", dbname);
-	(*db->query)(connid, statement);
+	char* statement = (*db->dropStatement)("DATABASE", dbName);
+	(*db->query)(dbID, statement);
 	free(statement);
 
 	return 0;
 }
 
-int npDropTable(int connid, struct dbFunction *db, char* tblname)
+int npDropTable(int dbID, struct dbFunction *db, char* table)
 {
-	char* statement = (*db->dropStatement)("TABLE", tblname);
-	(*db->query)(connid, statement);
+	char* statement = (*db->dropStatement)("TABLE", table);
+	(*db->query)(dbID, statement);
 	free(statement);
 
 	return 0;
 }
 
+int npdbTruncate(int dbID, struct dbFunction *db, char* table)
+{
+	char statement[128];
+
+	sprintf( statement, "%s%s","TRUNCATE ", table);
+	(*db->query)(dbID, statement);
+
+	return 0;
+}
 
 int npConnectToDatabaseServer(struct dbNewConnect *connect, void* dataRef)
 {
@@ -1111,9 +1319,9 @@ int npConnectToDatabaseServer(struct dbNewConnect *connect, void* dataRef)
 /*
 void main2(void* dataRef)
 {
-	char* nodetblFields;
+	char* nodeFields;
 	int sqlinit = 0;
-	int connid = 0;
+	int dbID = 0;
 	int x = 1;
 	int index = 0;
 	int success = 0;
@@ -1126,20 +1334,20 @@ void main2(void* dataRef)
 	x = dbHook(dbFunctions, "libmysql.dll", 0);
 	
 	sqlinit = (*dbFunctions->init)(NULL);
-	connid = (*dbFunctions->connect)(sqlinit, "localhost", "root", "admin", "", 3306, NULL, 0);
-//	printf("\nconnid %p\n", connid);
+	dbID = (*dbFunctions->connect)(sqlinit, "localhost", "root", "admin", "", 3306, NULL, 0);
+//	printf("\nhostID %p\n", dbID);
 	
 	//Code for saving
 	
-	npCreateDatabase2(connid, dbFunctions, "antz1");
+	npCreateDatabase2(dbID, dbFunctions, "antz1");
 	
-	success = npUseDatabase2(connid, dbFunctions, "antz1");
+	success = npUseDatabase2(dbID, dbFunctions, "antz1");
 	
-	nodetblFields = npNewGenMysqlFields(kNPmapFileBufferMax, kNPnode, dataRef);
+	nodeFields = npNewGenMysqlFields(kNPmapFileBufferMax, kNPnode, dataRef);
 
 	
-	success = npCreateTable2(dbFunctions, connid, "node_tbl", nodetblFields);
-	free(nodetblFields);
+	success = npCreateTable2(dbFunctions, dbID, "node_tbl", nodeFields);
+	free(nodeFields);
 	
 
 	printf("\nnodevalues");
@@ -1158,7 +1366,7 @@ void main2(void* dataRef)
 	for(index = 0; index <= chunks->numOfChunks; index++)
 	{
 		printf("\nchunkIndex : %d", index);
-		npInsert(connid,dbFunctions,"node_tbl", &chunks->chunk[index]);
+		npInsert(dbID,dbFunctions,"node_tbl", &chunks->chunk[index]);
 	}
 	printf("\nStop Time : %f\n", nposGetTime());
 	
@@ -1166,26 +1374,26 @@ void main2(void* dataRef)
 
 	// Code for loading 
 	 
-	success = npUseDatabase2(connid, dbFunctions, "antz1");
+	success = npUseDatabase2(dbID, dbFunctions, "antz1");
 	success = 0;
-	success = npSelect(connid, dbFunctions, "node_tbl");
+	success = npSelect(dbID, dbFunctions, "node_tbl");
 
-	myResult = (*dbFunctions->storeResult)(connid);	
+	myResult = (*dbFunctions->storeResult)(dbID);	
 	printf("\nBefore");
 	npLoadNodeStateResultIntoAntz(myResult, dataRef);
 	printf("\nAfter");
 	
 	//	npMysqlInsertStatement("node_tbl", &chunks->chunk[0]);
-//	npCreateDatabase(connid, dbFunc, "chMapTable");
-//	npUseDatabase(connid, dbFunc, "chMapTable");
-//	npDropDatabase(connid, dbFunc, "node_tbl");
-//	npDropDatabase(connid, dbFunc, "chMapTable");
+//	npCreateDatabase(dbID, dbFunc, "chMapTable");
+//	npUseDatabase(dbID, dbFunc, "chMapTable");
+//	npDropDatabase(dbID, dbFunc, "node_tbl");
+//	npDropDatabase(dbID, dbFunc, "chMapTable");
 
 	printf("\nclose");
-	(*dbFunctions->close)(connid);
+	(*dbFunctions->close)(dbID);
 
 	free(dbFunctions);
-//	free(nodetblFields);
+//	free(nodeFields);
 //	printf("\nReturning");
 
 }
@@ -1201,11 +1409,11 @@ void npRevisedFreeNodeValues(struct csvStrObjects *nodes, void* dataRef)
 	}
 }
 
-void npInsertAllChunks(struct newChunksObj *chunks, int connid, struct database *db, char* tblname)
+void npInsertAllChunks(struct newChunksObj *chunks, int dbID, struct database *db, char* table)
 {
 	int index = 0;
 	for(; index <= chunks->numOfChunks; index++)
-		npInsert(connid, db->db, tblname, &chunks->chunk[index]);
+		npInsert(dbID, db->db, table, &chunks->chunk[index]);
 }
 
 int npdbLoadNodeTbl(int menuItem, void* dataRef)
@@ -1215,7 +1423,7 @@ int npdbLoadNodeTbl(int menuItem, void* dataRef)
 	struct database *myDb = &data->io.dbs->myDatabase[0];
 	struct dbFunction *myDbFuncs = data->io.dbs->myDatabase[0].db;
 
-	int myConnid = data->io.dbs->myDatabase[0].connid;
+	int myConnid = data->io.dbs->myDatabase[0].id;
 	int success = 0;
 
 	pNPdatabases dbList = ((struct databases*)data->io.dbs)->dbList;
@@ -1226,6 +1434,7 @@ int npdbLoadNodeTbl(int menuItem, void* dataRef)
 	printf("\n-----YOU SELECTED %s-----\n", selectedItem);
 	
 	success = npUseDatabase2(myConnid, myDbFuncs, selectedItem);
+	strcpy(myDb->currentlyUsedDatabase, selectedItem);
 
 	npSelect(myConnid, myDbFuncs, "node_tbl");
 
@@ -1246,48 +1455,284 @@ int npdbLoadNodeTbl(int menuItem, void* dataRef)
 	return 0;
 }
 
-void npdbSaveAntzStateToDatabase(void* dataRef)
+void npdbUpdateAntzStateFromDatabase(void* dataRef)
 {
-	char* nodetblFields;
-	int sqlinit = 0;
-	int connid = 0;
-	int x = 1;
-	int i = 0;
-	int index = 0;
-	int success = 0;
-	struct csvStrObjects *nodes = NULL;
-	struct newChunksObj *chunks = NULL;
 	pData data = (pData) dataRef;
-	char *databaseName = malloc(65);	// was 4096 but the maximum length for a database identifier is 64 characters
-	int myConnid = data->io.dbs->myDatabase[0].connid;
-	struct dbFunction *myDbFuncs = data->io.dbs->myDatabase[0].db;
+	MYSQL_RES *myResult;
+//	MYSQL_ROW row;				//zz db
+	pNPnode node = NULL;
+	pNPnode nodeParent = NULL;
+	int dbNodeID = 0;
+	int i = 0;
+//	int **idMap = data->io.dbs->myDatabase[0].idMap;
 
+	printf("\nnpdbUpdateAntzStateFromDatabaseTTTTTTTTTTT\n\n");
+//	getch();
+	/*
+	for(i = 0; i < kNPnodeMax; i++) // First index is database id, second index is antz id
+	{
+		printf("\n%d : %d", data->io.dbs->myDatabase[0].idMap[i][0], data->io.dbs->myDatabase[0].idMap[i][1]);
+		if(data->io.dbs->myDatabase[0].idMap[i][0] == -1 && data->io.dbs->myDatabase[0].idMap[i][1] == -1)
+		{
+			break;
+		}
 
-	nposTimeStampCSV(databaseName);
+	}
+	*/
+	// Index is database id, box contains antz id
+	// Do a select, iterate against idMap, perform updates CATMANDO
+//	printf("\nBefore Select : %s", data->io.dbs->myDatabase[0].currentlyUsedDatabase);
+	if(data->io.dbs->myDatabase[0].currentlyUsedDatabase[0] != '\0')
+	{
+		npSelect(data->io.dbs->myDatabase[0].id, data->io.dbs->myDatabase[0].db, "node_tbl");
 	
-	while(databaseName[i] != '.'){i++;}
-	databaseName[i] = '\0';					//zzsql	trunkating .csv
-	
-	npCreateDatabase2(myConnid, myDbFuncs, databaseName);
-	
-	success = npUseDatabase2(myConnid, myDbFuncs, databaseName);
-	
-	nodetblFields = npNewGenMysqlFields(kNPmapFileBufferMax, kNPnode, dataRef);
-	
-	success = npCreateTable2(myDbFuncs, myConnid, "node_tbl", nodetblFields);
-	free(nodetblFields);
+//	printf("\nAfter Select");
 
-	nodes = npRevisedNodeValues(dataRef); 
-	chunks = npEvenNewerAllChunk(nodes, dataRef); 
-	
-	success = 0;
-	npInsertAllChunks(chunks, myConnid, &data->io.dbs->myDatabase[0], "node_tbl");
+	if( (myResult = (*data->io.dbs->myDatabase[0].db->storeResult)(data->io.dbs->myDatabase[0].id)) == NULL )
+		printf("\nError storing result");
 
-	npNewFreeChunks(chunks, dataRef);
+	updateNodesFromMysqlResult(myResult, dataRef);
+	}
+	/*
+	while( row = mysql_fetch_row(myResult) )
+	{
+		dbNodeID = atoi(row[0]);
+		node = npGetNodeByID(data->io.dbs->myDatabase[0].idMap[dbNodeID], dataRef);
+		printf("\nThe dbNodeID is %d", dbNodeID);
+		printf("\nThe internal antz node id is %d", node->id);
+		
+		node->type = atoi(row[1]);
+		node->branchLevel = atoi(row[5]);
+		//parentID = atoi(row[4]);
 
-	free(databaseName);
+		node->selected = atoi(row[3]);
+		node->childIndex = atoi(row[7]);
+		
+		node->chInputID		= atoi(row[9]);
+		node->chOutputID	= atoi(row[10]);
+		node->chLastUpdated	= atoi(row[11]);
+		
+		node->average		= atoi(row[12]);
+		node->interval		= atoi(row[13]); // Samples???
+		
+		node->auxA.x		= atoi(row[14]);
+		node->auxA.y		= atoi(row[15]);
+		node->auxA.z		= atoi(row[16]);
+		node->auxB.x		= atoi(row[17]);
+		node->auxB.y		= atoi(row[18]);
+		node->auxB.z		= atoi(row[19]);
+		
+		node->colorShift	= npatof(row[20]);
+		
+		node->rotateVec.x		= npatof(row[21]);		//was rotate
+		node->rotateVec.y		= npatof(row[22]);
+		node->rotateVec.z		= npatof(row[23]);
+		node->rotateVec.angle	= npatof(row[24]);	
+		
+		node->scale.x		= npatof(row[25]);
+		node->scale.y		= npatof(row[26]);
+		node->scale.z		= npatof(row[27]);
+		
+		node->translate.x	= npatof(row[28]);
+		node->translate.y	= npatof(row[29]);
+		node->translate.z	= npatof(row[30]);
+		
+		node->tagOffset.x	= npatof(row[31]);
+		node->tagOffset.y	= npatof(row[32]);
+		node->tagOffset.z	= npatof(row[33]);
+		
+		node->rotateRate.x	= npatof(row[34]);
+		node->rotateRate.y	= npatof(row[35]);
+		node->rotateRate.z	= npatof(row[36]);
+		
+		node->rotate.x		= npatof(row[37]);					//was rotateRad
+		node->rotate.y		= npatof(row[38]);
+		node->rotate.z		= npatof(row[39]);
+		
+		node->scaleRate.x	= npatof(row[40]);
+		node->scaleRate.y	= npatof(row[41]);
+		node->scaleRate.z	= npatof(row[42]);
+		
+		node->translateRate.x = npatof(row[43]);
+		node->translateRate.y = npatof(row[44]);
+		node->translateRate.z = npatof(row[45]);
+		
+		node->translateVec.x = npatof(row[46]);
+		node->translateVec.y = npatof(row[47]);
+		node->translateVec.z = npatof(row[48]);
+		
+		node->shader		= atoi(row[49]);
+		node->geometry		= atoi(row[50]);
+		
+		node->lineWidth		= npatof(row[51]);
+		node->pointSize		= npatof(row[52]);
+		node->ratio			= npatof(row[53]);
+		
+		node->colorIndex	= atoi(row[54]);
+		
+		node->color.r		= atoi(row[55]);
+		node->color.g		= atoi(row[56]);
+		node->color.b		= atoi(row[57]);
+		node->color.a		= atoi(row[58]);
+		
+		node->colorFade		= atoi(row[59]);
+		node->textureID		= atoi(row[60]);
+		
+		node->hide			= atoi(row[61]);
+		node->freeze		= atoi(row[62]);
+		
+		//	node->center		= center;		//removed	
+		
+		node->topo			= atoi(row[63]);			//moved topo
+		node->facet			= atoi(row[64]);		//added topo facet number
+		
+		node->autoZoom.x	= atoi(row[65]);	//moved down a slot
+		node->autoZoom.y	= atoi(row[66]);
+		node->autoZoom.z	= atoi(row[67]);
+		
+		//	node->scroll		= scroll;		//removed made space for facet, zz debug
+		
+		node->triggerHi.x	= atoi(row[68]);
+		node->triggerHi.y	= atoi(row[69]);
+		node->triggerHi.z	= atoi(row[70]);
+		
+		node->triggerLo.x	= atoi(row[71]);
+		node->triggerLo.y	= atoi(row[72]);
+		node->triggerLo.z	= atoi(row[73]);
+		
+		node->setHi.x		= npatof(row[74]);
+		node->setHi.y		= npatof(row[75]);
+		node->setHi.z		= npatof(row[76]);
+		
+		node->setLo.x		= npatof(row[77]);
+		node->setLo.y		= npatof(row[78]);
+		node->setLo.z		= npatof(row[79]);
+		
+		node->proximity.x	= npatof(row[80]);
+		node->proximity.y	= npatof(row[81]);
+		node->proximity.z	= npatof(row[82]);
+		
+		node->proximityMode.x = atoi(row[83]);			//int cast supports 1st ver CSV
+		node->proximityMode.y = atoi(row[84]);
+		node->proximityMode.z = atoi(row[85]);
+		
+		node->segments.x	= atoi(row[86]);		//grid segments were stored in node->data,
+		node->segments.y	= atoi(row[87]);		//was node->data->segments.x
+		node->segments.z	= atoi(row[88]);		//now node->segments.x
+		
+		node->tagMode		= atoi(row[89]);
+		node->formatID		= atoi(row[90]);
+		node->tableID		= atoi(row[91]);
+		node->recordID		= atoi(row[92]);
+		//node->size		= lineSize;				// handled during node creation
+		
+		//support for first version CSV
+		//	if (format == kNPmapNodeCSVvOne)
+		//	npMapCSVvOne (node);
+		
+		//file compatability prior to 2012-04-22
+		if (node->topo == 0 && node->type == kNodePin)
+		{
+			////zzdb printf ("topo = 0   id: %d\n", node->id);
+			if (node->branchLevel == 0)
+				node->topo = kNPtopoPin;	//set root topo to a pin
+			else if (node->parent != NULL)  //orhpan child methods in npMapSort
+			{
+				nodeParent = node->parent;
+				if ( nodeParent->topo == kNPtopoPin || nodeParent->topo == 0
+					|| nodeParent->topo == kNPtopoTorus )
+					node->topo = kNPtopoTorus;
+				else
+					node->topo = kNPtopoPin;
+			}
+			
+			
+			
+		}
+
+	}
+	*/
 }
 
+
+//---------------------------------------------------------------------------
+int npdbSaveAs( int dbID, const char* dbName, void* dataRef )
+{
+	int err = 0;
+	char* nodeFields = NULL;
+
+	struct csvStrObjects *nodes = NULL;
+	struct newChunksObj *chunks = NULL;
+	struct dbFunction *myDbFuncs = NULL;
+
+	pData data = (pData) dataRef;
+
+	myDbFuncs = data->io.dbs->myDatabase[0].db;
+	
+	printf("\ndatabase name : %s\n", dbName);
+
+	//if DB exists then truncate it, deletes all rows to do update
+	//else create a new DB
+	if (0)
+	{
+		err = npDropDatabase( dbID, myDbFuncs, dbName );
+		return err;
+	}
+	else if( 0 )
+	{			//if DB exists then truncate it to delete all rows for update
+		err = npdbTruncate( dbID, myDbFuncs, "node_tbl" );
+		if( err ) return err;
+	}
+	else	//create DB tables with defined fields
+	{
+		err = npCreateDatabase2( dbID, myDbFuncs, (char*)dbName );
+		if( err ) return err; 
+
+		err = npUseDatabase2( dbID, myDbFuncs, (char*)dbName );
+		if( err ) return err;
+
+		nodeFields = npNewGenMysqlFields( kNPmapFileBufferMax, kNPnode, data );
+		if( nodeFields != NULL)
+		{
+			err = npCreateTable2( myDbFuncs, dbID, "node_tbl", nodeFields );	
+			free( nodeFields );
+			if( err ) return err; 
+		}
+	}
+
+	//insert the current scene nodes into the empty DB
+	nodes = npRevisedNodeValues( dataRef ); 
+	chunks = npEvenNewerAllChunk( nodes, dataRef ); 
+	
+	err = 0;
+	npInsertAllChunks( chunks, dbID, &data->io.dbs->myDatabase[0], "node_tbl");
+
+	npNewFreeChunks( chunks, dataRef );
+
+	return err;
+}
+
+
+//---------------------------------------------------------------------------
+void npdbSaveScene( void* dataRef )
+{
+	int dbID = 0;
+	char *dbName = malloc(65);	//max db identifier is 64 chars
+	char defaultAnswer[256];
+	char question[256];
+
+	pData data = (pData) dataRef;
+
+	dbID = data->io.dbs->myDatabase[0].id;
+
+	nposTimeStampName( dbName );
+/*
+	strcpy( question, "Save New Database As?");
+	strcpy( defaultAnswer, dbName );
+	dbName = npConsoleAskUser( question, defaultAnswer, data );
+*/
+	npdbSaveAs( dbID, dbName, data );
+}
 
 void npNewFreeChunks(struct newChunksObj * chunks, void* dataRef)
 {
@@ -1319,7 +1764,7 @@ int npOpenDb(struct database *db)
 {
 	int success = 0;
 	int sqlinit = 0;
-	int connid  = 0;
+	int dbID  = 0;
 
 	if( strcasecmp("mysql", db->dbType) <= 0 ) //Make switch statement
 	{
@@ -1327,9 +1772,11 @@ int npOpenDb(struct database *db)
 		db->port = 3306; //Move this
 	}
 
-	sqlinit = (*db->db->init)(NULL); //db->db could be confusing....change to db->dbFunc
-	db->connid = (*db->db->connect)(sqlinit, db->hostIP, db->user, db->password, "", db->port, NULL, 0);
-	printf("\ndb->connid == %d", db->connid);
+	sqlinit = (int)(*db->db->init)(NULL); //db->db could be confusing....change to db->dbFunc
+	db->id = (int)(*db->db->connect)(sqlinit, db->hostIP, db->user, db->password, "", db->port, NULL, 0);
+
+	db->currentlyUsedDatabase[0] = '\0';
+	printf("\ndb->dbID == %d", db->id);
 	printf("dbFunc %p", db->db);
 //	getch();
 
@@ -1337,17 +1784,23 @@ int npOpenDb(struct database *db)
 }
 
 //zz db2
-int npAddDb(struct databases *dbs, char* dbType, char* hostIP, char* user, char* pass, char* dbname, void* dataRef)
+int npAddDb(struct databases *dbs, char* dbType, char* hostIP, char* user, char* pass, char* dbName, void* dataRef)
 {
+	int i = 0;
 	if( dbs->numberOfDatabases == 0 )
 	{
 		dbs->myDatabase = malloc(sizeof(struct database) * 1);
 		dbs->myDatabase[0].db = malloc(sizeof(struct dbFunction));
+		
+		for(i = 0; i < kNPnodeMax; i++)
+		{
+			dbs->myDatabase[0].idMap[i] = -1;
+		}
 	
 		strcpy( dbs->myDatabase[0].hostIP, hostIP );
 		strcpy( dbs->myDatabase[0].user, user );
 		strcpy( dbs->myDatabase[0].password, pass );
-		strcpy( dbs->myDatabase[0].currentlyUsedDatabase, dbname );
+		strcpy( dbs->myDatabase[0].currentlyUsedDatabase, dbName );
 		strcpy( dbs->myDatabase[0].dbType, dbType );
 		dbs->numberOfDatabases++;
 	}
@@ -1361,4 +1814,121 @@ int npAddDb(struct databases *dbs, char* dbType, char* hostIP, char* user, char*
 	return 0;
 }
 //zz db2 - end
+
+
+//zz
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+int npdbPushScene ( int dbID, const char* dbName, void* dataRef )							//add to ctrl loop, debug zz
+{
+int err = 0;
+	char* nodeFields = NULL;
+//	char* dbName = NULL;
+
+	struct csvStrObjects *nodes = NULL;
+	struct newChunksObj *chunks = NULL;
+/*	struct dbFunction *myDbFuncs = NULL;
+
+	pData data = (pData) dataRef;
+
+//	if(data->io.dbs->myDatabase[0].currentlyUsedDatabase[0] != '\0')
+//		npSelect(data->io.dbs->myDatabase[0].id, data->io.dbs->myDatabase[0].db, "node_tbl");
+	printf("\ndatabase id: %d\n", dbID);
+	myDbFuncs = data->io.dbs->myDatabase[0].db;
+	dbName = selectedItem = dbList->list[menuItem];//((struct databases*)data->io.dbs)->dbList->list[dbID];
+printf("\ndatabase id: %d\n", dbID);
+	printf("database name : %s\n", dbName);
+*/
+	
+	int success = 0;
+	char msg[4096];
+	char hostName[kNPurlMax] = "localhost";
+
+	pData data = (pData) dataRef;
+
+	struct database *myDb = &data->io.dbs->myDatabase[0];
+	struct dbFunction *myDbFuncs = data->io.dbs->myDatabase[0].db;
+
+	pNPdatabases dbList = ((struct databases*)data->io.dbs)->dbList;
+
+	MYSQL_RES *myResult;
+
+//	dbID = data->io.dbs->myDatabase[0].id;
+//	dbName = dbList->list[dbID];
+
+//	dbID = 38;
+	printf( "push db_id: %d db_name: %s\n", dbID, dbName );
+
+	success = npUseDatabase2(dbID, myDbFuncs, (char*)dbName);
+	strcpy(myDb->currentlyUsedDatabase, dbName);
+
+//	npSelect(dbID, myDbFuncs, "node_tbl");
+
+	//if DB exists then truncate it to delete all rows for update
+	err = npdbTruncate( dbID, myDbFuncs, "node_tbl" );
+	if( err ) return err;
+
+	printf("TRUNCATE node_tbl\n");
+
+//		err = npUseDatabase2( dbID, myDbFuncs, (char*)dbName );
+//		if( err ) return err;
+
+	//insert the current scene nodes into the empty DB
+	nodes = npRevisedNodeValues( dataRef ); 
+	chunks = npEvenNewerAllChunk( nodes, dataRef ); 
+	
+	npInsertAllChunks( chunks, dbID, &data->io.dbs->myDatabase[0], "node_tbl");
+
+	sprintf( msg, "Updated DB: %s host: %s", dbName, hostName );
+	npPostMsg( msg, kNPmsgDB, data );
+
+	npNewFreeChunks( chunks, dataRef );
+
+	return err;
+}
+
+/*
+int npdbLoadNodeTbl(int menuItem, void* dataRef)
+{
+/*	char msg[4096];
+	pData data = (pData) dataRef;
+	struct database *myDb = &data->io.dbs->myDatabase[0];
+	struct dbFunction *myDbFuncs = data->io.dbs->myDatabase[0].db;
+
+	int myConnid = data->io.dbs->myDatabase[0].id;
+	int success = 0;
+
+	pNPdatabases dbList = ((struct databases*)data->io.dbs)->dbList;
+
+	char* selectedItem = dbList->list[menuItem];
+	MYSQL_RES *myResult;
+
+	printf("\n-----YOU SELECTED %s-----\n", selectedItem);
+	
+	success = npUseDatabase2(myConnid, myDbFuncs, selectedItem);
+	strcpy(myDb->currentlyUsedDatabase, selectedItem);
+
+	npSelect(myConnid, myDbFuncs, "node_tbl");
+	*/
+/*
+	if( (myResult = (*data->io.dbs->myDatabase[0].db->storeResult)(myConnid)) == NULL )
+		printf("\nError storing result");
+	
+	//dbTagsResult = npNewdbCtrl(connect, TABLE, TAGS_TABLE, "tagsTable", NULL, NULL, NULL, NULL, Select, dataRef);
+	
+	npLoadNodeStateResultIntoAntz(myResult, dataRef);
+
+	npSelectNode(data->map.node[kNPnodeRootPin], data);
+	npPostMsg("Done Loading Database", kNPmsgDB, data);
+
+	sprintf(msg, "%d nodes loaded from database", (data->map.nodeCount)-31); //This isn't accurate super accurate, please disregard it...I'll fix it later.
+	npPostMsg(msg, kNPmsgDB, dataRef);
+
+
+	return 0;
+}
+*/
 

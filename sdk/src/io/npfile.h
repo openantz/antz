@@ -108,5 +108,8 @@ int	npLoadScene( int format, char* datasetName, void* dataRef);
 bool npOpenNodeFile( pNPnode node, void* dataRef );
 bool npOpenNode( pNPnode node, void* dataRef );
 
+//builds a node tree of the file directory structure
+bool npNewDirTree(const char *basePath, pNPnode parent, void* dataRef);
+
 #endif
 

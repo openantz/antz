@@ -29,7 +29,14 @@
 #ifndef NPOSCPACK_H_
 #define NPOSCPACK_H_
 
+//zz osc
+//create listener, returns listener id
+//either IPv4 or IPv6 as a string "255.1.1.1"
+//requires DNS lookup, unless is a numeric IP address
+int npOscNewListener( char* txURL, char* txIP, int txPort,
+					  char* rxURL, char* rxIP, int rxPort, void* dataRef );
 
+//use above function instead of custom data struct
 struct NPoscPackListener {
 	int id;
 
@@ -46,6 +53,11 @@ struct NPoscPackListener {
 typedef struct NPoscPackListener NPoscPackListener;
 typedef struct NPoscPackListener* pNPoscPackListener;
 
+struct NPoscPackSender {
+	int oscPackIdx; // index into array that holds the oscpack instances
+};
+typedef struct NPoscPackSender NPoscPackSender;
+typedef struct NPoscPackSender* pNPoscPackSender;
 // listener functions
 void npStartListeners( pNPoscPackListener oscListener, int argc, char** argv, void* dataRef );
 void npInitOscPackListener( pNPoscPackListener oscListener, void* dataRef );
@@ -54,12 +66,7 @@ void npStartOscPackListener( pNPoscPackListener oscListener );
 // read a line that has been received by listener
 char* npOscReadLine( char* bufferStart, int maxLength, int udpFd );
 
-struct NPoscPackSender {
-	int oscPackIdx; // index into array that holds the oscpack instances
-};
 
-typedef struct NPoscPackSender NPoscPackSender;
-typedef struct NPoscPackSender* pNPoscPackSender;
 
 // Tx sender functions
 void npInitOscPackSender( pNPoscPackSender oscSender, char* ip, int port );

@@ -243,7 +243,7 @@ void npScreenGrab( char* filePath, int type, int x, int y, int w, int h,  void* 
 		memcpy( &pixelBuf[(h-i) * w * 3], tempLine, w );
 	}
 
-	nposTimeStampCSV( timeStamp );
+	nposTimeStampName( timeStamp );
 	sprintf( filePath, "usr/images/%s.bmp", timeStamp );
     SOIL_save_image
 		(
@@ -289,7 +289,7 @@ void npGlutDrawGLScene(void)
 		h = tempH = data->io.gl.height;
 
 		//construct the filename path
-		nposTimeStampCSV( timeStamp );
+		nposTimeStampName( timeStamp );
 		strcpy( filePath, data->io.file.mapPath );
 		strcat( filePath, timeStamp );
 		

@@ -44,6 +44,8 @@ void npConsole (void* dataRef);
 //
 void npPostNodeID( pNPnode node, void* dataRef );	//zz debug move -> io/...
 
+pNPmenu npdbGetMenu (void* dataRef);
+
 #ifdef __cplusplus
 	}
 #endif

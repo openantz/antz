@@ -50,7 +50,7 @@ void npInitFile (void* dataRef)
 	pData data = (pData) dataRef;
 
 
-	// builds soft-coded defualt routing maps using mapItem descriptors
+	// builds soft-coded default routing maps using mapItem descriptors
 	npMapTypeInit(dataRef);									//zz debug, move to npmap.c
 
 	// save the globals csv file
@@ -67,8 +67,10 @@ void npInitFile (void* dataRef)
 	}
 	else
 		printf("Loaded %s\n", filePath);
+
 //	result = npOpenMapCSV ("antzosc.csv", kNPmapMapOSC, dataRef);
 
+/*								//zz osc this worked but now broken... err 4427
 	// if no globals csv file then create one
 	strcpy (filePath, data->io.file.csvPath);
 	strcat (filePath, "antzosc.csv");
@@ -79,7 +81,7 @@ void npInitFile (void* dataRef)
 	}
 	else
 		printf("Loaded %s\n", filePath);
-
+*/
 	return;
 }
 
@@ -927,8 +929,8 @@ pNPnode npNewDirNode( pNPnode node, char* path, int type, int view, void* dataRe
 	return node;
 }
 
+
 //builds a node tree of the file directory structure
-bool npNewDirTree(const char *basePath, pNPnode parent, void* dataRef);
 //---------------------------------------------------------------------------
 bool npNewDirTree(const char *basePath, pNPnode parent, void* dataRef)
 {

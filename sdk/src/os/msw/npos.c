@@ -450,7 +450,7 @@ void nposSleep (double seconds)
 
 
 //------------------------------------------------------------------------------
-void nposTimeStampCSV (char* fileName)
+void nposTimeStampName (char* fileName)
 {
 	SYSTEMTIME time;
 

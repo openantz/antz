@@ -54,7 +54,7 @@ void npInitIO (void* dataRef)
 	//start network connections which in turn can further update init state
 	npInitOSC (dataRef);			//zz-osc
 
-	npConnectDB (dataRef);				//zzsql	//zz db2
+	npConnectDB (dataRef);				//zzsql
 }
 
 
@@ -73,6 +73,8 @@ void npUpdateIO (void* dataRef)
 {
 	pData data = (pData) dataRef;
 
+	pNPdb db = &data->io.db[0];		//zz db
+
 	data->io.cycleCount++;
 
 	//we double buffer the mouse delta movement to maintain engine cycle sync
@@ -81,6 +83,20 @@ void npUpdateIO (void* dataRef)
 	npUpdateConsole (dataRef);
 
 	npUpdateCh (dataRef);	//zz-JJ
+
+//	npUpdateDB( dataRef );
+	//zzsql //zz db
+	if(0)// db->autoUpdate )
+	{
+		if( data->io.cycleCount % db->updatePeriod == 0 )
+			db->update = true;
+	}
+
+	if( db->update )
+	{
+		npdbUpdateAntzStateFromDatabase( dataRef );
+		db->update = false;
+	}
 }
 
 
@@ -152,7 +168,7 @@ void npdbLoadMenuItem (int menuItem, void* dataRef)
 }
 */
 //zz debug, test function can be used as a template
-pNPmenu npdbGetMenu (void* dataRef);
+
 //------------------------------------------------------------------------------
 pNPmenu npdbGetMenu (void* dataRef)
 {
@@ -161,12 +177,14 @@ pNPmenu npdbGetMenu (void* dataRef)
 
 //	char name[256] = "antz1209111652\0";
 	char* name = NULL;
-	char path[kNPmaxPath] = "127.0.0.1\0"; //data->io.db.list[i]			//zzsql
+//	char path[kNPmaxPath] = "127.0.0.1\0"; //data->io.db.list[i]			//zzsql
+	char path[kNPmaxPath]; 
 
 	pNPdatabases dbList = NULL;
 	pNPmenu menu = NULL;
 
 	pData data = (pData) dataRef;
+
 
 	//get current list of databases and store it in the global data struct
 	printf("\nnpdbGetList");
@@ -206,8 +224,11 @@ pNPmenu npdbGetMenu (void* dataRef)
 			return NULL;
 		}
 //		name = ((struct dbNewConnect*)data->io.dbs)->dbList->list[i];		  //zzsql
+		//get the host address, can be URL, IPv4 or IPv6 as a string
+		strcpy( path, data->io.dbs->myDatabase[0].hostIP );
+
 		name = ((struct databases*)data->io.dbs)->dbList->list[i];
-		sprintf (menu->list[i], "|%4.0d.| %16s | %40s |", i, (const char*)name, path); //zzsql
+		sprintf (menu->list[i], "|%4.0d.| %-42s| %-26s|", i, (const char*)name, path); //zzsql
 		printf("\n%s", menu->list[i]);
 //		sprintf (menu->list[i], "|%4.0d.| %16s | %40s |", i, name, path);	//zzsql
 		//dbList->list[i].name, dbList->list[i].details
@@ -357,4 +378,5 @@ void npPostNodeID( pNPnode node, void* dataRef )
 			
 		npPostMsg (msg, kNPmsgCtrl, dataRef);
 }
+
 

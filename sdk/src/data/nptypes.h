@@ -25,15 +25,43 @@
 #ifndef NPTYPES_H_
 #define NPTYPES_H_
 
-#include <time.h>
 
 #include "stdbool.h"
-#include "../io/net/nposcpack.h"		//JJ-zz				//zz debug, remove this
+#include "../io/net/nposcpack.h"		//JJ-zz   //zz debug, remove this, see nposcpack.h
 
 //#include "../io/npkey.h"					//zz debug, add this and move key codes
 //#include "npmath.h"
 
 
+// define NP_API_C to build dynamic libraries either as .dll or .ro
+//---------------------------------------------------------------------------
+//#define NP_C_API_DLL			// build MSW dynamic libraries .dll
+//#define NP_C_API_RO			// build X11 resource object lib .ro
+
+// Choose app framework OR use NP_API_C to build dynamic lib .dll or .ro
+//---------------------------------------------------------------------------
+//#define NP_APP_CONSOLE		// console app works without drawing = no GL
+#define NP_APP_FREEGLUT			// freeglut app framework on MSW and linux
+//#define NP_APP_APPLE_GLUT		// Apple GLUT app framework for OSX
+//#define NP_APP_SDL			// SDL app on Linux, MSW, OSX, iOS & Android  //zz v2
+
+// OPTIONAL 3rd party freeware (library) plugins
+//---------------------------------------------------------------------------
+//#define NP_PLUGIN_ASSIMP		// 3D model load and save, non-KML
+//#define NP_PLUGIN_CJSON		// JSON parser, lightweight
+//#define NP_PLUGIN_CURL		// network with ftp, http, smtp, ssh, etc...
+//#define NP_PLUGIN_DEVIL		// texture map image load and save library#define NP_PLUGIN_JANNSON		// JSON parser
+//#define NP_PLUGIN_FREETYPE	// GL friendly font library
+//#define NP_PLUGIN_MINIZ		// ZIP file compression
+#define NP_PLUGIN_MYSQL			// MySQL database access
+#define NP_PLUGIN_OSCPACK		// OSC network communication
+//#define NP_PLUGIN_POSTGRESQL	// PostgreSQL DB access
+#define NP_PLUGIN_SOIL			// texture map image load and save library
+
+
+//---------------------------------------------------------------------------
+// Globals
+//---------------------------------------------------------------------------
 #define	kNPtextureCountMax	2000
 #define kNPpaletteMax		65535			//max number of color palettes
 
@@ -142,6 +170,8 @@
 #define kNPwindowHeight 510
 #define kNPwindowPositionX 40
 #define kNPwindowPositionY 40
+
+#define kNPdbMax				4096		//max number of databases	//zz db
 
 //------------------------------------------------------------------------------
 // Base Types - designed to be directly compatible with OpenGL
@@ -325,6 +355,31 @@ struct NPrecordSet						//generic list struct
 };
 typedef struct NPrecordSet NPrecordSet;
 typedef struct NPrecordSet* pNPrecordSet;
+
+/*
+//zz osc
+struct NPoscPackListener {
+	int id;
+
+	char* txURL;	//requires DNS lookup, unless is a numeric IP address
+	char* rxURL;
+
+	char* txIP;		//either IPv4 or IPv6 as a string "255.1.1.1"
+	char* rxIP;
+
+	int txPort;
+	int rxPort;
+	//int oscPackIdx;  // index into array that holds the oscpack instances
+};
+typedef struct NPoscPackListener NPoscPackListener;
+typedef struct NPoscPackListener* pNPoscPackListener;
+
+struct NPoscPackSender {
+	int oscPackIdx; // index into array that holds the oscpack instances
+};
+typedef struct NPoscPackSender NPoscPackSender;
+typedef struct NPoscPackSender* pNPoscPackSender;
+*/
 
 struct NPoscItem {
 	int		id;
@@ -699,6 +754,32 @@ struct NPmessage
 };
 typedef struct NPmessage NPmessage;
 typedef struct NPmessage * pNPmessage;
+
+struct NPnodeList {
+	int		id;				//db_id reference
+
+	void**	list;
+	int		count;
+	int		type;
+
+	int		size;			//number of items in the list
+};
+typedef struct NPnodeList NPnodeList;
+typedef struct NPnodeList * pNPnodeList;
+
+
+//zz db
+struct NPdb {
+	int		id;				//db_id reference
+
+	int		autoUpdate;
+	int		updatePeriod;
+	bool	update;
+
+	int		size;			//number of items in the list
+};
+typedef struct NPdb NPdb;
+typedef struct NPdb * pNPdb;
 
 //struct pNPdatabases { //zzsql
 struct NPdatabases {
@@ -1076,6 +1157,7 @@ struct NPio {
 
 //	struct	dbNewConnect *connect;	//zzsql							//zz debug	//zz dbz
 	struct databases *dbs;			//zz dbz
+	NPdb		db[kNPdbMax];
 
 //	NPoscPackListener oscListener;		//JJ-zz
 	pNPconnect	connect[kNPmaxConnect];	//zz osc

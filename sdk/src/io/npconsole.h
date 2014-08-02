@@ -66,7 +66,9 @@ void npConsolePrompt(pNPconsole console, void* dataRef);
 //pass in question to ask user with which user (consoleRef)
 //once user enters response, will call pAskCallback with answer
 void npConsoleAsk( void (*pAskCallback)(const char* answer, void* dataRef),
-				   const char* askUser, pNPconsole console, void* dataRef);
+				   const char* askUser, char* answer, void* dataRef);
+
+//char* npConsoleAskUser( char* question, char* defaultAnswer, void dataRef );
 
 #endif
 
