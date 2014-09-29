@@ -28,42 +28,60 @@
 #include "io/npch.h"
 #include "io/npmouse.h"
 #include "io/npconsole.h"
-#include "io/npdb.h"
 #include "io/net/nposc.h"
-#include "io/db/npdbz.h"
+
+#include "io/db/npdb.h"
 
 
+/*! Initialize IO systems
+*
+*	@param dataRef is a global map reference instance
+*
+*	@todo add shared resource handling for multiple global map instances
+*
+*/
 //-----------------------------------------------------------------------------
-void npInitIO (void* dataRef)
+void npInitIO( void* dataRef )
 {
+	/// init the local IO devices
 
-	//init the local IO devices
+	/// launch file services and updates hard-coded global variables from file
+	npInitFile( dataRef );
+
+	/// Plugin Manager for native libraries and 3rd party modules.
+	/// Once loaded, plugins can modify any method or data.
+	npInitPlugin( dataRef );
+
+	/// IO channels use both local drives and networking
+	npInitCh( dataRef );	
+
+	/// keyboard mapping and event handling
 //	npInitKeyboard (dataRef);		//zz
-	npInitMouse (dataRef);
+
+	/// mouse event handling
+	npInitMouse( dataRef );
 //	npInitSerial (dataRef);			//zz support terminal based system boot-up
 
-	//launch file services and updates hard-coded global variables from file
-	npInitFile (dataRef);
-
-	//IO channels use both local drives and networking
-	npInitCh (dataRef);													//zz-JJ
-
-	//audio video input and output
+	/// audio video input and output
 //  npInitAV (dataRef);				//zz
+	npInitVideo( dataRef );
 
-	//start network connections which in turn can further update init state
-	npInitOSC (dataRef);			//zz-osc
+	/// start network connections which in turn can further update init state
+	npInitOSC( dataRef );			//zz-osc
 
-	npConnectDB (dataRef);				//zzsql
+	/// @todo change npConnectDB over to npInitDB
+	npInitDB( dataRef );
+
 }
 
 
 //-----------------------------------------------------------------------------
 void npCloseIO (void* dataRef)
 {
-	npCloseFile (dataRef);
-	npCloseMouse (dataRef);
-	npCloseCh (dataRef);	//zz-JJ
+	npCloseDB( dataRef );
+	npCloseMouse( dataRef );
+	npCloseCh( dataRef );	//zz-JJ
+	npCloseFile( dataRef );
 }
 
 
@@ -73,8 +91,6 @@ void npUpdateIO (void* dataRef)
 {
 	pData data = (pData) dataRef;
 
-	pNPdb db = &data->io.db[0];		//zz db
-
 	data->io.cycleCount++;
 
 	//we double buffer the mouse delta movement to maintain engine cycle sync
@@ -82,21 +98,9 @@ void npUpdateIO (void* dataRef)
 	
 	npUpdateConsole (dataRef);
 
-	npUpdateCh (dataRef);	//zz-JJ
+	npUpdateCh (dataRef);			//zz-JJ
 
-//	npUpdateDB( dataRef );
-	//zzsql //zz db
-	if(0)// db->autoUpdate )
-	{
-		if( data->io.cycleCount % db->updatePeriod == 0 )
-			db->update = true;
-	}
-
-	if( db->update )
-	{
-		npdbUpdateAntzStateFromDatabase( dataRef );
-		db->update = false;
-	}
+	npUpdateDB( dataRef );			//zzd
 }
 
 
@@ -114,148 +118,26 @@ void npViewFiles (void* dataRef)
 //	npFileBrowser (dataRef);
 }
 
-//void npdbLoadByName (int item, void* dataRef);
 
-//zz debug, test function can be used as a template
-void npdbLoadMenuItem (int menuItem, void* dataRef);
-//------------------------------------------------------------------------------
-void npdbLoadMenuItem (int menuItem, void* dataRef)
-{
-
-	pData data = (pData) dataRef;											//zzsql
-	pNPdatabases dbList = ((struct databases*)data->io.dbs)->dbList;
-	char *selectedItem = NULL;
-
-	//load database by item index using same list that generated the menu
-	selectedItem = dbList->list[menuItem];
-	
-	npdbLoadNodeTbl(menuItem, dataRef);
-}
-//zz dbz
-/*
-//zz debug, test function can be used as a template
-void npdbLoadMenuItem (int menuItem, void* dataRef);
-//------------------------------------------------------------------------------
-void npdbLoadMenuItem (int menuItem, void* dataRef)
-{
-//	char msg[4096];
-
-	pData data = (pData) dataRef;											//zzsql
-	char *selectedItem = NULL;
-	//pNPmenu menu = data->io.gl.hud.console.menu;
-	struct databaseObject *dbResult = NULL;
-	pNPdatabases dbList = ((struct dbNewConnect*)data->io.connect)->dbList;
-	
-	selectedItem = dbList->list[menuItem];
-	
-	
-	//load database by item index using same list that generated the menu
-//	sprintf (msg, "Loading: %d", item);
-//	npPostMsg (msg, kNPmsgView, dataRef);
-
-	printf("\n-----YOU SELECTED %s-----\n", selectedItem);
-	
-	npdbCtrl(data->io.connect, DATABASE, 0, selectedItem, NULL, NULL, 0, NULL, Use, dataRef);
-	
-	dbResult = npdbCtrl(data->io.connect, TABLE, NODE_STATE_TABLE, "node_tbl", NULL, NULL, 0, NULL, Select, dataRef);
-	
-	//dbTagsResult = npdbCtrl(connect, TABLE, TAGS_TABLE, "tagsTable", NULL, NULL, NULL, NULL, Select, dataRef);
-	
-	npNewLoadNodeStateResultIntoAntz(dbResult->dbObject, dataRef);			//zzsql
-
-	npSelectNode(data->map.node[kNPnodeRootPin], data);
-	npPostMsg("Done Loading Database", kNPmsgDB, data);
-}
-*/
-//zz debug, test function can be used as a template
-
-//------------------------------------------------------------------------------
-pNPmenu npdbGetMenu (void* dataRef)
-{
-	int i = 0;
-	int itemCount = 50;		//arbitrary
-
-//	char name[256] = "antz1209111652\0";
-	char* name = NULL;
-//	char path[kNPmaxPath] = "127.0.0.1\0"; //data->io.db.list[i]			//zzsql
-	char path[kNPmaxPath]; 
-
-	pNPdatabases dbList = NULL;
-	pNPmenu menu = NULL;
-
-	pData data = (pData) dataRef;
-
-
-	//get current list of databases and store it in the global data struct
-	printf("\nnpdbGetList");
-//	dbList = (pNPdatabases)npdbGetList(dataRef);
-	dbList = (pNPdatabases)npdbGetList(&data->io.dbs->myDatabase[0]);
-
-	printf("\nAfter npdbGetList");
-//	data->io.db.list = dbList;
-//	data->io.dbs->dbList->list = dbList;
-
-//	dbList = (pNPdatabases)npdbGetList(dataRef);											//zzsql
-	((struct databases*)data->io.dbs)->dbList = dbList;
-//	((struct dbNewConnect*)data->io.dbs)->dbList = dbList;				//zzsql
-	
-	menu = malloc(sizeof(NPmenu));
-	if (!menu)
-	{
-		npPostMsg("err 2255 - malloc failed npdbGetMenu", kNPmsgErr, dataRef);
-		return NULL;
-	}
-	
-//	itemCount = ((struct dbNewConnect*)data->io.dbs)->dbList->size;		//zzsql
-	itemCount = ((struct databases*)data->io.dbs)->dbList->size;
-	menu->list = malloc(sizeof(char*) * itemCount);
-
-	//set the menubar fields
-	menu->name = npNewStrcpy("DB Name", data);
-	menu->details = npNewStrcpy("Location", data);
-
-	//copy the db list to the menu format
-	for (i=1; i <= itemCount; i++)
-	{
-		menu->list[i] = malloc(80 + 1);
-		if (!menu)
-		{
-			npPostMsg("err 2256 - malloc failed npdbGetMenu", kNPmsgErr, dataRef);
-			return NULL;
-		}
-//		name = ((struct dbNewConnect*)data->io.dbs)->dbList->list[i];		  //zzsql
-		//get the host address, can be URL, IPv4 or IPv6 as a string
-		strcpy( path, data->io.dbs->myDatabase[0].hostIP );
-
-		name = ((struct databases*)data->io.dbs)->dbList->list[i];
-		sprintf (menu->list[i], "|%4.0d.| %-42s| %-26s|", i, (const char*)name, path); //zzsql
-		printf("\n%s", menu->list[i]);
-//		sprintf (menu->list[i], "|%4.0d.| %16s | %40s |", i, name, path);	//zzsql
-		//dbList->list[i].name, dbList->list[i].details
-	}
-
-	//set the list size
-	menu->count = itemCount;
-
-	return menu;
-}
-
-
+/// @todo move npViewDatabases, related to: DB, ctrl, map, gl scene, hud, file
 //view catalog of DBs from pathmap
 //------------------------------------------------------------------------------
 void npViewDatabases (void* dataRef)
 {
-	pNPmenu menuList = NULL;
-
 	pData data = (pData) dataRef;
 	pNPconsole console = &data->io.gl.hud.console;
 
-	menuList = malloc(sizeof(NPmenu));
+	//menuList = malloc(sizeof(NPmenu));
 
-	console->menu = npdbGetMenu(dataRef);
+	console->menu = &console->menuStruct;
+
+	console->menu = npdbGetMenu(console->menu, dataRef); //get the list
+
 	if (console->menu == NULL)
+	{
+		printf( "err 5517 - null console->menu \n" );
 		return;					//failed to get menu
-
+	}
 	//call menu function, pass list ptr and callback function ptr
 	npConsoleMenu (npdbLoadMenuItem, console, dataRef);
 }
@@ -322,61 +204,3 @@ void npViewer (void* dataRef)
 
 	return;
 }
-
-//zz tag debug move this to npconsole.c
-//this is the entry point for the current user focus console
-//zz add multi-console support here , like multi-window handling
-//------------------------------------------------------------------------------
-void npConsole (void* dataRef)
-{
-	pData data = (pData) dataRef;
-	pNPconsole console = &data->io.gl.hud.console;
-
-	//activate command console
-	npConsoleCmd( console, dataRef );
-}
-
-//------------------------------------------------------------------------------
-void npPostNodeID( pNPnode node, void* dataRef )
-{
-	pData data = (pData) dataRef;
-
-	char msg[256];
-	char msgPart[256];
-
-	msg[0] = '\0';
-	msgPart[0] = '\0';
-
-	if( node->type == kNodeLink )
-		strcpy( msg, "edge  " );
-	else if( node->branchLevel && !node->childCount )
-		strcpy( msg, "leaf  " );
-	else if( !node->childCount )
-		strcpy( msg, "solo  " );				//tree with only root node
-	else if ( !node->branchLevel )
-		strcpy( msg, "root  " );
-	else
-		strcpy( msg, "nexus " );				//internal node that is neither root nor leaf
-	
-
-	if (node->type == kNodeCamera)
-		sprintf(msgPart, "%s cam ", msg);
-	if (node->type == kNodeGrid)
-		sprintf(msgPart, "%s grid", msg);
-	if (node->type == kNodePin)
-		sprintf(msgPart, "%s pin ", msg);
-	if (node->type == kNodeLink)
-		sprintf(msgPart, "%s link", msg);
-
-		//display id level and tag							//zz add subspace grid_id?
-		if (node->recordID)									
-			sprintf( msg, "%s level: %-3d id: %-6d rec: %-6d tag: %s", msgPart,
-				node->branchLevel + 1, node->id, node->recordID, node->tag->title );
-		else
-			sprintf( msg, "%s level: %-3d id: %-6d", msgPart,
-				node->branchLevel + 1, node->id );
-			
-		npPostMsg (msg, kNPmsgCtrl, dataRef);
-}
-
-

@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------------------
 *
-*  npdbgen.h
+*  npvideo.h
 *
 *  ANTz - realtime 3D data visualization tools for the real-world, based on NPE.
 *
@@ -22,8 +22,18 @@
 *
 * --------------------------------------------------------------------------- */
 
-int npGenMysqlFields(char* fields, int count, int type, void* dataRef);
-void npGenMysqlQuery(struct mysqlObject *object, void* dataRef);
-void npGenMysqlDatabaseQuery(struct mysqlObject *object);
-void npGenMysqlTableQuery(struct mysqlObject *object, void* dataRef);
+#ifndef NPVIDEO_H_
+#define NPVIDEO_H_
+
+/*! @todo add Video IO support for live capture, record and playback. <br>
+*		Calls upon OS specific and hardware specific libraries. <br>
+*		Provides video pipeline between the GPU and CPU.					  */
+
+
+void npInitVideo (void* dataRef);
+void npCloseVideo (void* dataRef);
+void npUpdateVideo (void* dataRef);
+
+
+#endif
 

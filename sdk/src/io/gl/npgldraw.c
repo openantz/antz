@@ -33,6 +33,9 @@
 #include "../../os/npos.h"
 
 
+/// @todo add Legend as a hybrid 2D/3D HUD element
+
+
 void DrawDefault (pNPnode node);
 void DrawCamera (pNPnode node);
 void DrawSurface (pNPnode node);
@@ -1085,11 +1088,17 @@ void DrawGrid (pNPnode node, void* dataRef)
 			//rather sharp setting, but probably best for mapping
 			//for video use GL_LINEAR_MIPMAP_NEAREST when the angle is close 
 			//to perpendicular less artifacts and a bit more blurry
-	//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);		//zz debug, add mipmapping...
-	//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		//zz debug, add mipmapping...
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//zz mipmap
+			if(0)//gl->mipmap		
+			{
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);		//zz debug, add mipmapping...
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+			}
+			else
+			{
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		//zz debug, add mipmapping...
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			}
 
 			glTexGenfv( GL_S, GL_OBJECT_PLANE, sgenparams );
 			glTexGenfv( GL_T, GL_OBJECT_PLANE, tgenparams );

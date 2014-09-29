@@ -21,8 +21,14 @@
 *  http://creativecommons.org/publicdomain/zero/1.0/
 *
 * --------------------------------------------------------------------------- */
+/*! Console Under Construction!!! */
+/*! ---------------------------------------------------------------------------
+* multiple ASCII consoles with hybrid 2D and 3D console/menu/object interaction
+* supports multiple user focus domains with grouped input/output devices
+* -------------------------------------------------------------------------- */
 
 #include "npconsole.h"
+
 
 #include "../npdata.h"
 #include "../npio.h"
@@ -31,29 +37,14 @@
 #include "../data/npmapfile.h"	//zz debug remove, used by npFileOpenMap(), instead create npCmdOpen
 #include "gl/nptags.h"
 
-#include "npdb.h"
+#include "db/npdb.h"
 
 #include "npmouse.h"
-
-#ifdef NP_MSW_
-	#include <freeglut.h>
-#endif
-#ifdef NP_OSX_
-	#include <GLUT/glut.h>
-	#include <OpenGL/gl.h>
-#endif
-#ifdef NP_LINUX_
-	#include <GL/freeglut.h>
-#endif
 
 #include "../npctrl.h"
 
 
-//zz debug console under construction!!!
-/* -----------------------------------------------------------------------------
-* multiple ASCII consoles with hybrid 2D and 3D console/menu/object interaction
-* supports multiple user focus domains with grouped input/output devices
-* --------------------------------------------------------------------------- */
+/// @todo build-out DB commands, err handling and user feedback
 
 void npKeyEvent (int key, int keyEventType);
 void npUpdateConsoleText (pNPconsole console, void* dataRef);
@@ -416,30 +407,159 @@ void npConsoleCmdText( pNPconsole console, void* dataRef )
 //	console->mode = kNPconsoleCmd;
 	npConsolePrompt( console, dataRef );
 }
+
+//------------------------------------------------------------------------------
+void npConsoleExit( pNPconsole console, void* dataRef )
+{
+	console->mode = kNPconsoleMessage;
+	console->cursorShow = false;
+	//npPostMsg("Exit Console -> Keyboard: Game Mode", kNPmsgCtrl, dataRef);
+	npPostMsg("Exit Console Mode", kNPmsgCtrl, dataRef);
+	npPostMsg("Keyboard: Game Mode", kNPmsgCtrl, dataRef);
+}
+//------------------------------------------------------------------------------
+void npConsolePromptInputStr( pNPconsole console, void* dataRef )
+{
+	char msg[kNPurlMax];
+
+	console->selectText = true;
+
+	sprintf( msg, ">%s", console->inputStr );
+	npPostMsg( msg, kNPmsgView, dataRef );
+	npConsolePrompt( console, dataRef );
+}
+
+	
+//------------------------------------------------------------------------------
+void npConsolePromptBlank( pNPconsole console, void* dataRef )
+{
+	npPostMsg( ">", kNPmsgView, dataRef );
+	console->inputStr[0] = '\0';
+	console->cursorColumn = 1;
+	console->inputIndex = 0;
+	npConsolePrompt( console, dataRef );
+}
+
+
+//------------------------------------------------------------------------------
+char* npGetConsoleMenuName( pNPconsole console, char* input, void* dataRef )
+{
+	int i = 0;
+	int size = 0;
+	int item = 0;
+	int itemCount = 0;
+	char* dbName = NULL;
+	char msg[kNPurlMax];
+	
+	pData data = (pData) dataRef;
+
+	pNPdatabases dbList = data->io.dbs->dbList;
+	
+	itemCount = console->menu->count;
+
+   	//if input is NOT digits then check (by name) to see if its in the list
+	if ( input[0] < '0' || input[0] > '9' )
+	{
+		//itemName = nbConsoleGetMenuItemFromName( console, input, data );
+		//zz replace dbList with menuList[i]->name
+		for( item=1; item <= itemCount; item++ )
+			if( strcmp( input, dbList->list[item] ) == 0 )
+				dbName = dbList->list[item];
+
+		if( !dbName )
+		{
+			sprintf( msg, "%s Not Found: %s",  console->menu->name, input );
+			npPostMsg(msg, kNPmsgView, data );
+			npConsolePromptInputStr( console, data );
+		}
+	}
+	else
+	{
+		size = strlen( input );
+
+		for( i=1; i < size; i++ )
+			if( input[i] < '0' || input[i] > '9' ) //check to make sure is all digits
+			{
+				npPostMsg( "unknown menu item # or database name", kNPmsgView, data );
+				npConsolePromptInputStr( console, data );
+				return NULL;
+			}
+
+		item = npatoi( input );
+		if( item > 0 && item <= itemCount )
+			dbName = dbList->list[item];
+		else
+		{
+			sprintf( msg, "item# %d not in range: 1 - %d", item,
+				 console->menu->count );
+			npPostMsg(msg, kNPmsgView, data );
+			npConsolePromptInputStr( console, data );
+		}
+	}
+
+	return dbName;
+}
+
+/*!
+ Proccess user input string command and parameters.
+ @param console pointer to process and execute user input from.
+ @param dataRef global map context reference.
+ @return void
+*/
 //------------------------------------------------------------------------------
 void npConsoleMenuText( pNPconsole console, void* dataRef )
 {
+	int i = 0;
 	int dbID = 0;
 	int restoreAuto = 0;
 	int err = 0;
-	char msg[256];
-	int itemChosen = 0; //menuID
+	char msg[kNPurlMax];
+	int itemChosen = 0; //menuItem
 	char* input = NULL;
+	char* dbName = NULL;
 
 	pData data = (pData) dataRef;
-	pNPdatabases dbList = ((struct databases*)data->io.dbs)->dbList;
-	input = console->inputStr;
 	
+	pNPdatabase dbItem = NULL;
+	pNPdatabase activeDB = data->io.db.activeDB;
+	pNPdbHost host = NULL;
+
+	if( activeDB )
+		host = activeDB->host;
+
+//	pNPdatabases dbList = ((struct databases*)data->io.dbs)->dbList;
+	input = console->inputStr;
+
+
 	//zz clean-up
 	//zz db
-	restoreAuto = data->io.db->autoUpdate;
-	data->io.db->autoUpdate = false;
 
-/*	if( !strncmp(input, "merge ", 6) || !strncmp(input, "MERGE ", 6) )
+//	restoreAuto = data->io.db.autoUpdate;
+//	data->io.db.autoUpdate = false;
+
+	//get command and force lower case
+	
+	//if (parameters) then set param=input[start of params]
+	//parameters = input+;
+
+	/*! Exit console */
+	if( !strncasecmp( input, "exit", 4 ) )
+	{
+		npConsoleExit( console, data );
+		return;
+	}
+/*	else if( !strncmp(input, "refresh", 7) || !strncmp(input, "REFRESH", 7) )
+	{
+		//refresh the menu list from DB host
+	}
+	else if( !strncmp(input, "merge ", 6) || !strncmp(input, "MERGE ", 6) )
 	{
 		//current default behavior... change to auto-delete scene before loading
 	}
 	else if( !strncmp(input, "append ", 7) || !strncmp(input, "APPEND ", 7) )
+	{
+		//same as saveUpate but w/o truncate & needs to reassign node id's
+	}else if( !strncmp(input, "append ", 7) || !strncmp(input, "APPEND ", 7) )
 	{
 		//same as saveUpate but w/o truncate & needs to reassign node id's
 	}
@@ -462,13 +582,30 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 		//else need to load and turn on auto update
 
 		//auto-update from DB
-		err = npdbUse( dbList->list[itemChosen], dataRef );
+		err = npdbUse_old( dbList->list[itemChosen], dataRef );
 		restoreAuto = data->io.db->autoUpdate = true;
-	}
-	else */ 
-	if( !strncmp(input, "set ", 4) || !strncmp(input, "SET ", 4) )
+	}*/ /*! Database SET statement */
+	else if( !strncasecmp( input, "set ", 4 ) )
 	{
 		input += 4;
+
+		//dbName = npdbActiveDB( data );
+		if( !activeDB )
+		{
+			npPostMsg( "No Active DB - LOAD, SAVE or USE to set Active DB", 
+						kNPmsgView, data );
+			npConsolePromptBlank( console, data );
+			goto endPoint;
+		}
+
+		npdbSet( NULL, "node_tbl", input, data );
+	//	err = npdbSet( NULL, "node_tbl", input, data );
+	//	if( err )
+		{
+	//		npPostMsg( "SET command failed - check syntax", kNPmsgView, data );
+	//		npConsolePromptInputStr( console, data );
+	//		goto endPoint;
+		}
 
 		//mysql UPDATE statement used to SET node 'selected' field
 		//user inputs both the SET and WHERE syntax
@@ -476,16 +613,14 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 		sprintf(msg,"SET %s", input );
 		npPostMsg(msg, kNPmsgView, data );
 		
-		npdbSet( NULL, "node_tbl", input, data );
-		npdbPullScene( dataRef );
+		npdbLoadUpdate( dataRef );
 
-		console->cursorShow = false;
-		return;
+		npConsolePromptBlank( console, data );
 	}
-	else if( !strncmp(input, "select ", 7) || !strncmp(input, "SELECT ", 7)
-		 	 || !strncmp(input, "sel ", 4) || !strncmp(input, "SEL ", 4) )
+	else if( !strncasecmp( input, "sel ", 4 ) 
+		  || !strncasecmp( input, "select ", 7 ) )
 	{	
-		if( !strncmp(input, "sel ", 4) || !strncmp(input, "SEL ", 4) )
+		if( !strncasecmp( input, "sel ", 4) )
 			input += 4;
 		else
 			input += 7;
@@ -497,90 +632,172 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 		sprintf(msg,"WHERE %s", input );
 		npPostMsg(msg, kNPmsgView, data );
 
+		/// @todo npdbSelect name is confusing with othe npdbSelectZZ etc.
 		npdbSelect( NULL, "node_tbl", input, data );
-		npdbPullScene( dataRef );
+		//npdbSelectNodesWhere( activeDB, "node_tbl" );
+		npdbLoadUpdate( dataRef );
 
-		console->cursorShow = false;
+		npConsolePromptBlank( console, data );
 		return;
 	}
-	else if( !strncmp(input, "use ", 4) || !strncmp(input, "USE ", 4) )
+	else if( !strncasecmp(input, "use ", 4) )
 	{
-		itemChosen = npatoi( input + 4 );
+		input += 4;
+	//	pNPdatabase npdbGetByName( char* dbName, data);
+		dbItem = npdbGetByName( input, data ); //1st search active host, then others
+		if( !dbItem )
+		{
+			npPostMsg( "database item name not found",kNPmsgView, data );
+			npConsolePromptInputStr( console, data );
+			return;
+		}
 
-		sprintf(msg,"USE Database %s", dbList->list[itemChosen]);
+		sprintf(msg,"USE Database %s", dbItem->name);
 		npPostMsg(msg, kNPmsgView, dataRef);
-		err = npdbUse( dbList->list[itemChosen], dataRef );
+	//	err = npdbUse_old( dbList->list[itemChosen], dataRef );
+		err = npdbUse( dbItem );
+		if( err )
+			npPostMsg("USE command failed!", kNPmsgCtrl, dataRef);
 
-		//exit menu mode
-		console->mode = kNPconsoleMessage;
-		console->cursorShow = false;
-		npPostMsg("Back to Game Mode", kNPmsgCtrl, dataRef);
+		//npPostMsg("Back to Game Mode", kNPmsgCtrl, dataRef);
+		//npPostItemInfo();	//zz build
 
-		console->cursorShow = false;
+		npConsolePromptBlank( console, data );
 		return;
 	}
-	else if( !strncmp(input, "save ", 5) || !strncmp(input, "SAVE ", 5) )
+	else if( !strncasecmp(input, "save", 4) )
 	{
-		itemChosen = npatoi( input + 5 );
-	//	if (itemChosen < 0 || itemChosen >  console->menu->count)
+	/*	
+		if( !dbName || !host )
+		{
+			printf("host: %s   db: %s\n", host, dbName);
+			npPostMsg( "cannot save update - No Active DB", kNPmsgDB, data );
+			npPostMsg( "LOAD, SAVE or USE a DB to make Active!", kNPmsgDB, data );
+			return 4242;
+		}
+	*/
+		//if no DB name parameter, 'save' by itself
+		if( strlen(input) == 4 )
+		{
+			if( activeDB )
+				npdbSaveUpdate( activeDB, data );	//save update to active DB
+			else
+				npdbSaveScene( data );	//save a new DB with time-stamp name
+		}
+		else	//save with name
+		{
+			input +=5 ;
+			
+			if( 0 )// npdbExists(input, data) )
+				npdbSaveUpdate( activeDB, dataRef );	//save update to active DB
+			else
+			{
+				// @todo add handling for saving to a menu item number
+				// itemChosen = npatoi( input );
+				// if (itemChosen < 0 || itemChosen >  console->menu->count)
+	
+				/// get the first connected host to save to
+				host = npdbGetConnectedHost( &data->io.db );
+				if( !host )
+					sprintf(msg,"err 5401 - no host connection, cannot save DB");
+				else
+				{
+					sprintf(msg,"Saving New Database %s", input );
+					npPostMsg(msg, kNPmsgView, dataRef);
+					
+					//zzd fix
+					if( npdbSaveAs( input, host, dataRef ) == NULL )
+						sprintf( msg, "err 5402 - failed to Save DB: %s", input);
+					else
+						strcpy( msg, "Done Saving!" );
+				}
+				npPostMsg(msg, kNPmsgView, dataRef);
+			}
+		}
+		//zz add menu update
 
-		dbID = data->io.dbs->myDatabase[0].id;
-
-		sprintf(msg,"Saving New Database %s", input+5 );
-		npPostMsg(msg, kNPmsgView, dataRef);
-		err = npdbSaveAs( dbID, input+5, dataRef );
-		npPostMsg( "Done!", kNPmsgView, data );
-
-		//exit menu mode
-		console->mode = kNPconsoleMessage;
-		console->cursorShow = false;
-		npPostMsg("Back to Game Mode", kNPmsgCtrl, dataRef);
-
-		console->cursorShow = false;
+		//npPostMsg( ">", kNPmsgView, data );
+		npConsolePromptBlank( console, data );
 		return;
 	}
-	else if( !strncmp(input, "drop ", 5) || !strncmp(input, "DROP ", 5) )
-	{
-		itemChosen = npatoi( input + 5 );
-	//	if (itemChosen < 0 || itemChosen >  console->menu->count)
-
-		sprintf(msg,"DROP Database %s", dbList->list[itemChosen]);
-		npPostMsg(msg, kNPmsgView, dataRef);
-		err = npdbDrop( dbList->list[itemChosen], dataRef );
-
-		console->menu = npdbGetMenu(dataRef);
-		npUpdateConsoleMenu(console, data);
-		npConsolePrompt(console, dataRef);
-
-		console->cursorShow = false;
-		return;
-	}
-
-	itemChosen = npatoi(console->inputStr);
-
-	if (itemChosen > 0 && itemChosen <=  console->menu->count)
+	else if( !strncasecmp(input, "drop ", 5) )
 	{	
-		sprintf(msg,"item %s", console->menu->list[itemChosen]);
-		npPostMsg(msg, kNPmsgView, dataRef);
+		input+=5;
 
-		//exit menu mode
-		console->mode = kNPconsoleMessage;
-		console->cursorShow = false;
-		npPostMsg("Exit Console Menu", kNPmsgCtrl, dataRef);			//send as kNPmsgCtrl
-		npPostMsg("Keyboard: Game Mode", kNPmsgCtrl, dataRef);
+		dbName = npGetConsoleMenuName( console, input, data );
+		if( !dbName )
+			goto endPoint;
 
-		console->pMenuCallback(itemChosen, dataRef);
+		/// DROP blocked database list, to prevent breaking the DB.
+		/// @todo add if npdbBlockedDB(dbName) method support npglobals table
+		if(    strcmp( "information_schema", dbName ) == 0
+			|| strcmp( "mysql", dbName ) == 0
+			|| strcmp( "performance_schema", dbName ) == 0  
+		   )
+		{
+			sprintf( msg,"DROP %s COMMAND BLOCKED - protected server DB", dbName ); 
+			npPostMsg( msg, kNPmsgView, data );
+			npConsolePromptInputStr( console, data );
+		}
+		else
+		{
+			sprintf( msg,"DROP %s", dbName );
+			err = npdbDrop( dbName, data );
+			if( err )
+			{
+				npPostMsg( "err 5547 - DROP command failed", kNPmsgView, data );
+				npConsolePromptInputStr( console, data );
+			}
+			else
+			{
+				//npdbUpdateMenuList();
+				console->menu = npdbGetMenu( console->menu, data );
+				if( !console->menu )
+					npConsoleExit( console, data );
+				else
+				{
+					npUpdateConsoleMenu( console, data );
+					//sprintf(msg,"DROP %s", dbName);	//do before drop
+					npPostMsg( msg, kNPmsgView, data );
+
+					npPostMsg( "Database Destroyed!", kNPmsgView, data );
+					npConsolePromptBlank( console, data );	
+				}	
+			}
+		}
 	}
 	else
-	{						
-		// npUpdateConsoleMenu(console, data);
-		sprintf(msg,"Unknown Item - range is 1 to %d", console->menu->count);
-		npPostMsg(msg, kNPmsgView, dataRef);
+	{
+		itemChosen = npatoi( console->inputStr);
 
-		npConsolePrompt(console, dataRef);
+		if ( itemChosen > 0 && itemChosen <= console->menu->count )
+		{	
+			sprintf( msg,"item %s", console->menu->list[itemChosen] );
+			npPostMsg( msg, kNPmsgView, data );
+
+			//exit menu mode
+			console->mode = kNPconsoleMessage;
+			console->cursorShow = false;
+		//	npPostMsg( "Exit Console", kNPmsgCtrl, dataRef );			//send as kNPmsgCtrl
+		//	npPostMsg( "Keyboard: Game Mode", kNPmsgCtrl, dataRef );
+
+			///call the menu item event processing function to load selected item
+			console->pMenuCallback( itemChosen, dataRef );
+			npPostMsg( "Exit Console - Keyboard: Game Mode", kNPmsgCtrl, dataRef );
+		}
+		else
+		{						
+			// npUpdateConsoleMenu(console, data);
+			sprintf(msg,"unknown command or item # (range 1 to %d)", console->menu->count);
+			npPostMsg( msg, kNPmsgView, dataRef );
+
+			npConsolePromptInputStr( console, dataRef );
+		}
 	}
 
-	data->io.db->autoUpdate = restoreAuto;	//zz db end
+endPoint:
+//	data->io.db.autoUpdate = restoreAuto;	//zz db end
+	return;
 }
 
 //------------------------------------------------------------------------------
@@ -741,7 +958,7 @@ void npConsoleKeyEvent (int key, int keyEventType, void* dataRef)
 						case kNPconsoleMenu :
 							console->page--;
 							if (console->page < 0)				//rollover to last page
-								console->page = console->menu->count / kNPmenuPerPageMax;		
+								console->page = (console->menu->count - 1) / kNPmenuPerPageMax;		
 							npUpdateConsoleMenu(console, data);
 							break;
 						default : break;
@@ -761,8 +978,7 @@ void npConsoleKeyEvent (int key, int keyEventType, void* dataRef)
 						case kNPconsoleEdit : break;
 						case kNPconsoleMenu :
 							console->page++;					//calc last page
-							if (console->page > (console->menu->count / kNPmenuPerPageMax))
-								console->page = 0;
+							
 							npUpdateConsoleMenu(console, data);
 							break;
 						
@@ -812,12 +1028,13 @@ void npUpdateConsole (void* dataRef)
 //	npUpdateConsoleUserText(&data->io.gl.hud.console, data);	
 }
 
-
-//entry point for cmd, tag... use of inputStr
-//displays a menu list passed in and registers callback function then returns
-//selected item sent to callback function upon user action
 //------------------------------------------------------------------------------
 // void npConsoleText (void (*pTextCallback)(char* textEntry, void* dataRef),
+
+/*! entry point for cmd, tag... use of inputStr.
+* displays a menu list passed in and registers callback function then returns.
+* selected item sent to callback function upon user action.
+* --------------------------------------------------------------------------- */
 void npConsoleCmd( pNPconsole console, void* dataRef )
 {
 	pData data = (pData) dataRef;
@@ -1083,18 +1300,6 @@ void npUpdateConsoleUserText(pNPconsole console, void* dataRef)
 }
 //zz tag end
 
-/*
-//------------------------------------------------------------------------------
-void npdbActiveHost( char* hostName, void* dataRef)
-{
-	strcpy( hostName, "localhost" );
-}
-//------------------------------------------------------------------------------
-void npdbActiveDB( char* dbName, void* dataRef)
-{
-	strcpy( dbName, "antz140731174918" );
-}
-*/
 
 //------------------------------------------------------------------------------
 void npUpdateConsoleMenu (pNPconsole console, void* dataRef)
@@ -1105,11 +1310,11 @@ void npUpdateConsoleMenu (pNPconsole console, void* dataRef)
 	int pageItemCount = 0;		//number of items on page
 	char lineStr[256];
 	char msg[256];
-	char dbName[256];
-	char hostName[256];
+	char* dbName = NULL;
 
 	pNPmenu menu = NULL;
 	pData data = (pData) dataRef;
+	pNPdatabase activeDB = data->io.db.activeDB;
 
 	if(!console)
 	{
@@ -1121,9 +1326,13 @@ void npUpdateConsoleMenu (pNPconsole console, void* dataRef)
 
 	npConsoleCLS(console, data);	//clear screen
 
+	if (console->page > (( console->menu->count - 1) / kNPmenuPerPageMax))
+		console->page = 0;
+
 	//display names and paths of indexed files from paths table
 	//page at a time with index number next to each entry for user to punch in
-
+    //use up arrow to recall previous commands, or down arrow to access next menu page //zz
+	
 	firstItem = console->page * kNPmenuPerPageMax + 1;
 
 	//if last page then calculate number of items on last page
@@ -1134,41 +1343,47 @@ void npUpdateConsoleMenu (pNPconsole console, void* dataRef)
 
 	lastItem = firstItem + pageItemCount - 1;
 
+	//create string to display active DB if an
+
+	if( !activeDB )
+		sprintf( msg, "No Active DB - load, save or use to make ACTIVE" );
+	else
+		sprintf( msg, "Active DB: %s", activeDB->name);//, hostName );
+
 	//build this out for mouse and cursor to highlight specific item...    zz debug
 	//arrows as page up/down, alternate method is press 'Spacebar' for next
-	sprintf(lineStr,"Showing %d to %d (of %d) - press up/down arrow keys for next page", 
-			firstItem, lastItem, menu->count);
-	npPostMsg (lineStr, kNPmsgView, dataRef);
+	//npPostMsg("| INFO [name or #] display DB details             INFO 42                     |", kNPmsgView, dataRef);
+	npPostMsg ("'Esc' to exit console", kNPmsgView, dataRef); //zz this line is for '>' bug workaround
+	npPostMsg ("+-----------------------------------------------------------------------------+", kNPmsgView, dataRef);
+	npPostMsg ("|                         Database Command Console                            |", kNPmsgView, dataRef);
+	npPostMsg ("+-----------------------------------------------------------------------------+", kNPmsgView, dataRef);
+	npPostMsg ("| LOAD [name or #] load or sync update from DB    LOAD antz_world             |", kNPmsgView, dataRef);
+	npPostMsg ("| SAVE [name or #] update or create new DB        SAVE my_antz                |", kNPmsgView, dataRef);
+	npPostMsg ("| DROP [name or #] will destroy a DB forever      DROP 42                     |", kNPmsgView, dataRef);
+	npPostMsg ("| SYNC [name or #] update from DB at RATE [secs]  SYNC my_antz RATE 3.5       |", kNPmsgView, dataRef);
+	npPostMsg ("| AUTO [name or #] save scene to DB RATE          AUTO my_antz RATE 15        |", kNPmsgView, dataRef);
+//	npPostMsg ("| VIEW [name or #] subsample a preview            VIEW my_antz LIMIT 4096     |", kNPmsgView, dataRef);
+	npPostMsg ("| USE  [name or #] switches Active DB             USE my_antz                 |", kNPmsgView, dataRef);
+//	npPostMsg ("| QUERY a raw statement using the Active DB       Q TRUNCATE node_tbl         |", kNPmsgView, dataRef);
+	npPostMsg ("| SELECT nodes using WHERE syntax                 SEL branch_level=0, type=5  |", kNPmsgView, dataRef);
+	npPostMsg ("| SET [fields] WHERE [conditions]                 SET topo=7 WHERE selected=1 |", kNPmsgView, dataRef);
 
 	//format and print the menubar header
-	npPostMsg ("+-----+-------------------------------------------+---------------------------+", kNPmsgView, dataRef);
-	sprintf (lineStr, "|   # | %-42s| %-26s|", menu->name, menu->details);
+	npPostMsg ("+-----------------------------------------------------------------------------+", kNPmsgView, dataRef);
+	sprintf (lineStr, "|   # | %-33s| %-35s|", menu->name, menu->details);
 	npPostMsg (lineStr, kNPmsgView, dataRef);	
-	npPostMsg ("+-----+-------------------------------------------+---------------------------+", kNPmsgView, dataRef);
+	npPostMsg ("+-----+----------------------------------+------------------------+-----------+", kNPmsgView, dataRef);
 
-	//print the current page of items
+	//print the current page of menu items
 	for (i = firstItem; i <= lastItem; i++)
 		npPostMsg (menu->list[i], kNPmsgView, dataRef);
 
-	npPostMsg ("+-----+-------------------------------------------+---------------------------+", kNPmsgView, dataRef);
-
-	//display the active DB if an
-	npdbActiveHost( hostName, data );
-	npdbActiveDB( dbName, data );
-	if( dbName == '\0')
-		sprintf( msg, "no active database" );
-	else
-		sprintf( msg, "active: %s   %s", dbName, hostName );
-	npPostMsg (msg, kNPmsgView, dataRef);
-
 	npPostMsg ("+-----------------------------------------------------------------------------+", kNPmsgView, dataRef);
-	npPostMsg (" SAVE [name] creates new DB               ex: SAVE antz_demo", kNPmsgView, dataRef);
-	npPostMsg (" USE [item#] switches active update DB    ex: USE 42", kNPmsgView, dataRef);
-	npPostMsg (" DROP [item#] will FOREVER delete a DB    ex: DROP 42", kNPmsgView, dataRef);
-	npPostMsg (" SELECT nodes using MySQL 'WHERE' syntax  ex: SEL branch_level=0", kNPmsgView, dataRef);
-	npPostMsg (" SET ... WHERE ... using MySQL synatax    ex: SET topo=7 WHERE selected=1", kNPmsgView, dataRef);
+	sprintf(lineStr,"| items %3d to %-3d (of %-3d) | %-47s |", firstItem, lastItem, menu->count, msg );
+	npPostMsg (lineStr, kNPmsgView, dataRef);
+	npPostMsg ("+-----------------------------------------------------------------------------+", kNPmsgView, dataRef);
 	npPostMsg ("", kNPmsgView, dataRef);
-	npPostMsg (" ...or to Load a DB just enter the item#  ex: 42", kNPmsgView, dataRef);
+	npPostMsg ("...Enter item # or command - Press 'down-arrow' for next page - 'Esc' to exit", kNPmsgView, dataRef); //zz this line is for '>' bug workaround
 	npPostMsg (">", kNPmsgView, dataRef);
 	
 	console->cursorShow = true;
@@ -1528,5 +1743,63 @@ void npSystemConsoleHelp (int argc, char** argv)
 		exit(0);		//exit
 	
 	return;				//they hit 'Enter' continue to startup
+}
+
+
+//zz tag debug move this to npconsole.c
+//this is the entry point for the current user focus console
+//zz add multi-console support here , like multi-window handling
+//------------------------------------------------------------------------------
+void npConsole (void* dataRef)
+{
+	pData data = (pData) dataRef;
+	pNPconsole console = &data->io.gl.hud.console;
+
+	//activate command console
+	npConsoleCmd( console, dataRef );
+}
+
+
+//------------------------------------------------------------------------------
+void npPostNodeID( pNPnode node, void* dataRef )
+{
+	pData data = (pData) dataRef;
+
+	char msg[256];
+	char msgPart[256];
+
+	msg[0] = '\0';
+	msgPart[0] = '\0';
+
+	if( node->type == kNodeLink )
+		strcpy( msg, "edge  " );
+	else if( node->branchLevel && !node->childCount )
+		strcpy( msg, "leaf  " );
+	else if( !node->childCount )
+		strcpy( msg, "solo  " );				//tree with only root node
+	else if ( !node->branchLevel )
+		strcpy( msg, "root  " );
+	else
+		strcpy( msg, "nexus " );				//internal node that is neither root nor leaf
+	
+
+	if (node->type == kNodeCamera)
+		sprintf(msgPart, "%s cam ", msg);
+	if (node->type == kNodeGrid)
+		sprintf(msgPart, "%s grid", msg);
+	if (node->type == kNodePin)
+		sprintf(msgPart, "%s pin ", msg);
+	if (node->type == kNodeLink)
+		sprintf(msgPart, "%s link", msg);
+
+		//display id level and tag							//zz add subspace grid_id?
+		if (node->recordID)									
+			sprintf( msg, "%s level: %-3d id: %-6d rec: %-6d tag: %s", msgPart,
+				node->branchLevel + 1, node->id, node->recordID, node->tag->title );
+		else
+			sprintf( msg, "%s level: %-3d id: %-6d", msgPart,
+				node->branchLevel + 1, node->id );
+			
+		npPostMsg (msg, kNPmsgCtrl, dataRef);
 }
 

@@ -28,7 +28,7 @@
 #include "../../os/npos.h"
 #include "../npfile.h"
 
-#include "../db/npdbz.h"			//zz db2 added to access member elements
+#include "../db/npdb.h"			//zz db2 added to access member elements
 
 #include "../gl/nptags.h"
 #include "../npgl.h"
@@ -768,11 +768,11 @@ void npMapTypeInit (void* dataRef)
 		{ &data->io.mouse.camMode,	kNPint,			kNPmouseCamMode,	0,	"np_mouse",		1,	"cam_mode",			"i",	"Mouse Camera Mode" },
 		{ &data->io.mouse.pickMode,	kNPint,			kNPmousePickMode,	0,	"np_mouse",		1,	"pick_mode",		"i",	"Mouse Pick Mode" },
 
-		
-		{ &data->io.dbs->myDatabase[0].hostIP,		kNPcstrPtr, kNPloginHostIP,	0,	"np_db",	1,	"host_ip",			"s",	"Host IP address" },
-		{ &data->io.dbs->myDatabase[0].user,		kNPcstrPtr, kNPloginUser,	0,	"np_db",	1,	"user",				"s",	"Username" },
-		{ &data->io.dbs->myDatabase[0].password,	kNPcstrPtr, kNPloginPassword, 0, "np_db",	1,	"password",			"s",	"Password" },
-		{ &data->io.dbs->myDatabase[0].dbType,		kNPcstrPtr, kNPloginHostType, 0, "np_db",	1,	"db_type",			"s",	"Database Type" },
+		//zzd
+		{ &data->io.dbs->activeDB[0].hostIP,		kNPcstrPtr, kNPloginHostIP,	0,	"np_db",	1,	"host_ip",			"s",	"Host IP address" },
+		{ &data->io.dbs->activeDB[0].user,			kNPcstrPtr, kNPloginUser,	0,	"np_db",	1,	"user",				"s",	"Username" },
+		{ &data->io.dbs->activeDB[0].password,		kNPcstrPtr, kNPloginPassword, 0, "np_db",	1,	"password",			"s",	"Password" },
+		{ &data->io.dbs->activeDB[0].dbType,		kNPcstrPtr, kNPloginHostType, 0, "np_db",	1,	"db_type",			"s",	"Database Type" },
 	
 	//	{ &data->io.mouse.PickMode,	kNPint,			kNPmouseCamMode,	0,	"np_mouse",		1,	"cam_mode",			"i",	"Mouse Camera Mode" },
 	
@@ -1381,8 +1381,9 @@ void npUpdateGlobals( void* dataRef )
 */
 }
 
+/// @todo add parallel (threaded) file and database parsing routines
 // file parsing tends to be CPU intensive, be mindful of performance
-// min target spec is 10Gbps (1.2GB/sec) with 250k IOPS (4KB blocks)
+// the parsing routines are optimized for native antz structures
 // max bandwidth is achieved through large block read/write such as 4MB or 8MB
 // currently some systems perform well up to 12MB block size, others slow down
 // high IOPS can only be achieved with good flow control and efficient parsing

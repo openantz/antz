@@ -28,8 +28,9 @@
 #include "npconsole.h"
 #include "../os/npos.h"
 #include "../npctrl.h"
-#include "../io/npgl.h"		//used for npPostTool()						zz, debug
+#include "../io/npgl.h"		   //used for npPostTool()						zz, debug
 #include "../io/gl/nptags.h"
+#include "file/npdot.h"		   //<! parses DOT files from doxygen with graphviz
 
 //-----------------------------------------------------------------------------
 FILE* npGetFileRef (int index)

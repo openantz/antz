@@ -25,20 +25,24 @@
 #ifndef NPDB_H_
 #define NPDB_H_
 
-#include "../npdata.h"
+#include "../../npdata.h"
+#include "../../os/npos.h"	
 
-#include "db/npdbz.h"
+#include "npdbz.h"
+
+
 // #include "db/npmysql.h"	//zz debug move to npdb.c and re-direct dependencies	//zz dbz
 
 //------------------------------------------------------------------------------
-void npInitDB (void* dataRef);
-void npConnectDB (void* dataRef);	//zz db2
-void npCloseDB (void* dataRef);
+void npInitDB( void* dataRef );
+void npCloseDB( void* dataRef );
 
-void npUpdateDB (void* dataRef);
+void npUpdateDB( void* dataRef );
+
+int npdbConnect( pNPdbHost host );
 
 //get list of databases by name
-pNPdatabases npdbGetDatabases (void* dataRef);
+pNPdatabases npdbGetDatabases( void* dataRef );
 
 //format list of DBs as a menu struct
 pNPmenu npdbFormatMenu (pNPdatabases dbList, void* dataRef);
@@ -54,24 +58,22 @@ void npMigrate(int tableMap, void* dataRef);
 //manual database Load, Save and Update methods
 //auto update logic is done at a higher level, shared with DB, file, OSC...
 
-//save scene with given name, set dbName = NULL to use timestamped name
-//int npdbSaveAs( int serverID, const char* dbName, void* dataRef );
-
 //delete (drop) the database from the server
 //int npdbDrop( int serverID, const char* dbName, void* dataRef );
 
 //loads scene from specified database and (any) referenced databases/sources
-int npdbLoadScene( int dbID, void* dataRef );
+/// @todo make DB functions use a dbID ref instead of string names
+int npdbLoadScene( pNPdatabase dbItem, void* dataRef );
 int npdbLoadRange( int minNodeID, int maxNodeID, void* dataRef );
 int npdbLoadList( int dbID, pNPnodeList nodes, void* dataRef );
 
-//updates entire scene using ALL datasets
-int npdbPullScene( void* dataRef );
-int npdbUpdateScene( void* dataRef );
+/// updates entire scene from ALL datasets
 int npdbLoadUpdate( dataRef );
 
-	//	data->io.db[0].update = true;
-int npdbSaveUpdate( void* dataRef );
+	//	data->io.db.update = true;
+int npdbSaveUpdate( pNPdatabase dbItem, void* dataRef );
+
+void npdbSaveScene(void* dataRef);
 
 //save entire scene to specified database
 //if DB exists then overwrites all of it
@@ -79,21 +81,21 @@ int npdbSaveUpdate( void* dataRef );
 //int npdbSaveScene( int serverID, const char* dbName, dataRef );	//zz debug
 
 //appends the scene to pre-existing DB, does NOT delete anything
-int npdbAppendScene( int serverID, const char* dbName, void* dataRef );
+int npdbAppendScene( pNPdatabase dbItem, void* dataRef );
 
 //updates the range of nodes
 //to update all, set both min and max to 0
 //to update single node, set both min and max to the node ID
-int npdbPullNodeRange( int dbID, int minNodeID, int maxNodeID, void* dataRef );
+int npdbPullNodeRange( pNPdatabase dbID, int minNodeID, int maxNodeID, void* dataRef );
 
 //handles node tables with multiple table_id references
-int npdbPullRecRange( int dbID, int tableID, int minRecID, int maxRecID, void* dataRef );
+int npdbPullRecRange( pNPdatabase dbID, int tableID, int minRecID, int maxRecID, void* dataRef );
 
 int npdbPullNodeList( pNPnodeList nodes, void* dataRef );
 
 //update only the specified field(s) of the listed nodes
-int npdbPullFields( int dbID, void* fields, pNPnodeList nodes, void* dataRef );
-int npdbPushFields( int dbID, void* fields, pNPnodeList nodes, void* dataRef );
+int npdbPullFields( pNPdatabase dbID, void* fields, pNPnodeList nodes, void* dataRef );
+int npdbPushFields( pNPdatabase dbID, void* fields, pNPnodeList nodes, void* dataRef );
 /*
 //save to new DB only the specified field(s) of the listed nodes
 int npdbSaveFields(int dbID, int dbpNPfields fields, pNPnodeList nodes, void* dataRef );
@@ -110,18 +112,51 @@ int npdbSelectNodes( int dbID, const char* query, void* dataRef );
 //returns a dbID reference
 int npdbNew( int serverID, const char* dbName, void* dataRef );
 
-//connects to the DB and returns a generated dbID
-int npdbConnect( int serverID, const char* dbName, void* dataRef );
 
 int npdbSample( int dbID, int sampleType, int min, int max, int count, void* dataRef);//load sample using interval/random/exp... 
 */
 
 int npdbDrop( const char* dbName, void* dataRef );
-int npdbUse( const char* dbName, void* dataRef );
+//int npdbUse_old( const char* dbName, void* dataRef );
 void npdbActiveHost( char* hostName, void* dataRef);
-void npdbActiveDB( char* dbName, void* dataRef);
+char* npdbActiveDB( void* dataRef );
 void npdbSet( char* dbName, char* tblName, char* setStatement, void* dataRef);
 void npdbSelect( char* dbName, char* tblName, char* selectWhere, void* dataRef);
+
+void npdbAttachHostFuncSets( pNPdbs dbs );
+
+pNPdatabase npdbGetByName( char* dbName, void* dataRef);
+
+int npdbUse( pNPdatabase dbItem );
+int npdbSelectTable( pNPdatabase dbItem, char* table );
+//int npdbSelectTable( pNPtable table );
+int npdbShowDatabases( pNPdbHost host );
+int npdbAddHostDatabases( pNPdbHost host, pNPdbs dbs );
+
+
+int npdbHostErr( pNPdbHost host );
+int npdbItemErr( pNPdatabase dbItem );
+
+
+int npdbUpdateAntzStateFromDatabase( void* dataRef );	//zz db
+
+int npdbTruncate(void* dbID, struct dbFunction *db, char* table); //zz db
+int npdbPushScene ( void* dbID, const char* dbName, void* dataRef );
+int npDropDatabase(int dbID, struct dbFunction *db, const char* dbName, void* dataRef );
+pNPdatabase npdbSaveAs( char* dbName, pNPdbHost host, void* dataRef );
+
+pNPdbFuncSet npdbNewFuncSet( pNPdbs dbs );
+
+int npdbClearDatabaseList( pNPdbs dbs );
+
+/// @todo add error handling and cleanp-up the newly added methods
+/// @todo add support for all table types: tag, chmap, tracks, globals, etc...
+
+int npdbLoadNodes( pNPdbFuncSet func, void* result, void* dataRef);
+
+pNPmenu npdbGetMenu ( pNPmenu menu, void* dataRef);
+int npdbLoadMenuItem (int item, void* dataRef);
+pNPdbHost npdbGetConnectedHost( pNPdbs dbs );
 
 #endif
 

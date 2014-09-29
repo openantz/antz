@@ -28,6 +28,7 @@
 
 #include "../../npdata.h"
 
+/// @todo Support multiple color palletes with load, save and user sedit tools.
 //------------------------------------------------------------------------------
 
 void npInitColor (void* dataRef);

@@ -32,7 +32,7 @@
 #include "io/npgl.h"
 #include "os/npos.h"
 
-#include "io/npdb.h"		//zz db
+#include "io/db/npdb.h"		//zz db
 
 void* gData;
 
@@ -560,6 +560,7 @@ void npInitDataFile (pNPfile file, void* dataRef)
 	memset (&file->userSelectedPath, '\0', kNPmaxPath);
 	memset (&file->currentOpenPath, '\0', kNPmaxPath);
 
+	/// @todo move nposGetAppPath to npInitIO branch
 	nposGetAppPath (file->appPath, &length);
 
 	strcat (file->csvPath, file->appPath);
@@ -634,41 +635,132 @@ data->io.connectCount = 0;
 	osc->size = sizeof(NPosc) + size;
 }
 
+pNPdatabase npdbAddTable( void );
+pNPdatabase npdbAddTable( void )
+{
+	pNPdatabase database = NULL;
+	
+	database = malloc( sizeof(NPdbTable) );
+	if( !database )
+	{
+		printf( "err 5512 - malloc failed db->dbList[i] \n" );
+		return NULL;
+	}
+
+
+	return database;
+}
+
+pNPdatabase npInitDatabase( void )
+{
+	pNPdatabase database = NULL;
+	
+	database = malloc( sizeof(NPdatabase) );
+	if( !database )
+	{
+		printf( "err 5512 - malloc failed db->dbList[i] \n" );
+		return NULL;
+	}
+
+	/// @todo add thread mutex locks for generating id's
+	database->id = 0;
+	database->format = 0;
+
+	database->name[0] = '\0';
+
+	database->host = NULL;
+
+	database->tables = NULL;
+	database->tableInUse = NULL;
+	database->tableCount = 0;
+
+	database->nodeCount = 0;
+
+	database->loadUpdateRate = 0.0f;
+	database->saveUpdateRate = 0.0f;
+
+	return database;
+}
+
+pNPdbHost npInitHostDB( void )
+{
+	pNPdbHost host = NULL;
+
+	host = malloc( sizeof(NPdbHost) );
+	if( !host )
+	{
+		printf( "err 5513 - malloc failed to allocate NPdbHost \n" );
+		return NULL;
+	}
+
+	host->id = 0;
+	host->hostFuncSet = NULL;
+	host->conn = NULL;
+	host->type[0] = '\0';
+	host->ip[0] = '\0';
+	host->port = 0;
+	host->user[0] = '\0';
+	host->password[0] = '\0';
+	host->inUseDB[0] = '\0';
+	host->dbCount = 0;
+
+	return host;
+}
+
+//zzd
+/// allocate and initialize the core 'db' structure
 //------------------------------------------------------------------------------
 void npInitDataDB (struct databases* dbs, void* dataRef)
 {
 	int i = 0;
 	
 	pData data = (pData) dataRef;
+	pNPdbs db = &data->io.db;
 
-	pNPdb db = NULL;
-
-	npInitDB (dataRef);				//zz db
-
-	for( i=0; i < kNPdbMax; i++ )
-	{
-		db = &data->io.db[i];
-
-		db->id = i;
-
-		db->autoUpdate = 0;
-		db->updatePeriod = 300;
-		db->update = false;
-	}
-
-/*
-	data->io.dbs = npMalloc( 0, sizeof(struct databases), data);
-	if ( !data->io.dbs )
-		return;
-
-	data->io.dbs->numberOfDatabases = 0;
-//	npAddDb(dbs, "mysql", "localhost", "root", "admin", "", dataRef);
-
-	npAddDb(data->io.dbs, "mysql", "localhost", "root", "admin", "", dataRef);	
+	db->coreNode = NULL;	///< core nodes are created after all data map inits.
+							///< npAddCoreNode( kNPcoreDB, db, dataRef );
+							///< init the core node, creates one if does not exist
 	
-//	dbs->size = sizeof(NPosc) + size;
-*/
+	/// init single instance (global) variables
+	db->running = false;		///< false during data init, set true by IO init
+	db->loadUpdateRate = 0.0f;	///< startup with auto update OFF = 0
+	db->saveUpdateRate = 0.0f;	///< startup with auto update OFF = 0
+	db->activeDB = NULL;
+
+	/// clear the lists for hosts, databases and function sets
+	for( i=0; i < kNPdbHostMax; i++)
+		db->hosts[i] = NULL;
+	for( i=0; i < kNPdbFuncSetMax; i++)
+		db->funcSetList[i] = NULL;
+	for( i=0; i < kNPdbMax; i++)
+		db->dbList[i] = NULL;
+
+	/// create a blank host and database in slot 0 of each array, for safety
+	db->hosts[0] = npInitHostDB();
+	db->dbList[0] = npInitDatabase();
+
+	db->hostCount = 1;		///< host count = 1 for the null item in slot 0
+	db->funcSetCount = 0;	///< function sets are initialized by npInitDB
+	db->dbCount = 1;		///< DB count = 1 for the null item in slot 0
+
+	/// Add our default host now, this is needed for antzglobals.csv file.
+	///	'localhost' is same as 127.0.0.1 and mysql default port is 3306.
+	npdbAddHost( "mysql", "localhost", 3306, "root", "admin", data );
+
+	/// add access to the antz public database 
+	// npdbAddHost( "mysql", "openantz.com", 3306, "guest", "guest", dataRef);	//zzd
+	
+	db->size = 0;			///< @todo add methods to track memory usage
+
+//------------- //zzd r
+	data->io.dbs = malloc(sizeof(struct databases));
+	data->io.dbs->numberOfDatabases = 0;
+	data->io.dbs->dbList = NULL;
+	npAddDb( data->io.dbs, "mysql", "localhost", "root", "admin", "", dataRef);	//zzd r
+//	data->io.dbs->activeDB[0].currentlyUsedDatabase[0] = '\0';	//zz hmm
+
 }
+
 
 //------------------------------------------------------------------------------
 void npInitDataQue (pNPque que, void* dataRef)
@@ -681,8 +773,8 @@ void npInitDataQue (pNPque que, void* dataRef)
 	
 	size = que->max * sizeof(NPqueItem);
 
+	
 	que->list = npCalloc( kNPqueItem, size, data );
-//	memset( osc->list, NULL, kNPoscListMax );
 
 	que->id = 0;
 	que->type = 0;
@@ -731,14 +823,11 @@ void npInitDataIO(int argc, char** argv, void* dataRef)
 	memset (&io->url, '\0', kNPurlMax);
 	sprintf (io->url, "http://openantz.com/code/docs/id.html");
 
-	// setup initial key command assignments
-	npInitKey (data);
+	npInitKey (data);					///< setup key command assignments	
 	npInitDataGL (data);
 	npInitDataChannel (data);
-	
 	npInitDataOSC (&io->osc, data);
-	npInitDataDB (io->dbs, data);		//zz db2
-
+	npInitDataDB (io->dbs, data);		///< create core db structure
 	npInitDataFile (&io->file, data);	//zz file io to npglobals.csv needs to be last
 
 	io->size = sizeof(NPio);	//memory size of this struct, runtime dynamic
@@ -966,7 +1055,7 @@ void npDataPreset (int preset, void* dataRef)
 			// draw 6x6 grid of pins
 			for(i = -16; i < 16; i++)		//zzhp
 				for(j=-16; j < 16; j++)		//zzhp
-					for(k=0; k < 32; k++)		//zzhp
+					for(k=0; k < 24; k++)		//zzhp
 				{
 					// create the root pin
 					node = npNodeNew (kNodePin, NULL, dataRef);
@@ -1243,8 +1332,11 @@ void npPostMsg (char* message, int type, void* dataRef)
 #endif
 
 	if( data->ctrl.startup )
-		printf( message );
-												//zz debug, update to send messages elsewhere
+	{
+		printf( "%s\n", message );
+		return;					//zz debug, update to store messages elsewhere
+	}
+	
 	if ( data->io.gl.hud.console.mode == kNPconsoleMenu && type != kNPmsgView )
 		return;
 

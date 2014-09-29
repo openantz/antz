@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------------------
 *
-*  npio.h
+*  nphadoop.c
 *
 *  ANTz - realtime 3D data visualization tools for the real-world, based on NPE.
 *
@@ -22,25 +22,25 @@
 *
 * --------------------------------------------------------------------------- */
 
-#ifndef NPIO_H_
-#define NPIO_H_
+#include "nphadoop.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
-#include "npdata.h"
-#include "io/npconsole.h"
-#include "io/plugin/npplugin.h"
+//------------------------------------------------------------------------------
+void npInitHadoop (void* dataRef)
+{
+	return;
+}
 
-void npInitIO (void* data);			// may update default init from pref file
-void npCloseIO (void* data);
-void npUpdateIO (void* dataRef);
+//------------------------------------------------------------------------------
+void npCloseHadoop (void* dataRef)
+{
+	return;
+}
 
-void npViewer (void* dataRef);
+//------------------------------------------------------------------------------
+void npUpdateHadoop (void* dataRef)
+{
+	return;
+}
 
-#ifdef __cplusplus
-	}
-#endif
-#endif
 

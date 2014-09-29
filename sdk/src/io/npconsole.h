@@ -70,5 +70,8 @@ void npConsoleAsk( void (*pAskCallback)(const char* answer, void* dataRef),
 
 //char* npConsoleAskUser( char* question, char* defaultAnswer, void dataRef );
 
+void npConsole (void* dataRef);
+void npPostNodeID( pNPnode node, void* dataRef );	//zz debug move -> io/...
+
 #endif
 

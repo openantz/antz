@@ -475,14 +475,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\io\npdb.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\io\npdb.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\io\npfile.c"
 					>
 				</File>
@@ -582,6 +574,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\src\io\file\npdot.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\file\npdot.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\io\file\npgdal.c"
 						>
 					</File>
@@ -626,10 +626,6 @@
 					Name="db"
 					>
 					<File
-						RelativePath="..\..\src\io\db\mysqlStructures.h"
-						>
-					</File>
-					<File
 						RelativePath="..\..\src\io\db\npauxdb.c"
 						>
 					</File>
@@ -638,11 +634,59 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\src\io\db\npdb.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\db\npdb.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\io\db\npdbz.c"
 						>
 					</File>
 					<File
 						RelativePath="..\..\src\io\db\npdbz.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\db\nphadoop.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\db\nphadoop.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\db\npmongo.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\db\npmongo.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\db\npmysql.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\db\npmysql.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\db\npostgresql.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\db\npostgresql.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\db\npsqlite.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\db\npsqlite.h"
 						>
 					</File>
 				</Filter>
@@ -695,6 +739,30 @@
 					</File>
 					<File
 						RelativePath="..\..\src\io\net\npscraper.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="video"
+					>
+					<File
+						RelativePath="..\..\src\io\video\npvideo.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\video\npvideo.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="plugin"
+					>
+					<File
+						RelativePath="..\..\src\io\plugin\npplugin.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\plugin\npplugin.h"
 						>
 					</File>
 				</Filter>

@@ -28,6 +28,8 @@
 #include "../../npdata.h"
 #include "../file/npcsv.h"
 
+/// @todo Build-out mapping of commands and data to 3rd party OSC Schemas.
+
 void npInitOSC( void* dataRef );			//zz-osc
 //		npCloseOSC (dataRef);			//zz-osc//
 //

@@ -79,8 +79,8 @@ void npLoadTextures(void* dataRef)
 			filename,
 			SOIL_LOAD_AUTO,
 			SOIL_CREATE_NEW_ID,
-			SOIL_FLAG_INVERT_Y
-			//	SOIL_FLAG_MIPMAPS |			//disabling breaks RGBA textures
+			SOIL_FLAG_INVERT_Y |
+			SOIL_FLAG_MIPMAPS //|			//disabling breaks RGBA textures
 			// | SOIL_FLAG_NTSC_SAFE_RGB	//we want the entire RGB spectrum
 			// | SOIL_FLAG_COMPRESS_TO_DXT	//no lossy compression, faster too
 		);																// texture, debug zz

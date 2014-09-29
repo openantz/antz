@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------------------
 *
-*  npdbget.h
+*  npostgresql.h
 *
 *  ANTz - realtime 3D data visualization tools for the real-world, based on NPE.
 *
@@ -22,7 +22,18 @@
 *
 * --------------------------------------------------------------------------- */
 
-void npGetTextTagsFromMySQL(MYSQL_RES *result, void* dataRef);
-char** npGetRetrieveTextTagsValues(char** buffer, int *numberOfChunks, int debug, void* dataRef);
-char** npGetNodesValues(char **buffer, int *numberOfChunks, void* dataRef);
+#ifndef NPOSTGRES_H_
+#define NPOSTGRES_H_
+
+//#include <postgresql.h>
+
+/// @todo Implement PostGreSQL database client library.
+
+
+void npInitPostgreSQL (void* dataRef);
+void npClosePostgreSQL (void* dataRef);
+void npUpdatePostgreSQL (void* dataRef);
+
+
+#endif
 

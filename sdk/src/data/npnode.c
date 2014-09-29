@@ -31,7 +31,7 @@
 
 void InitNodeSurface (pNPnode node);
 void InitNodePoints (pNPnode node);
-void InitNodePin (pNPnode node);
+int InitNodePin (pNPnode node);
 void InitNodeVideo (pNPnode node);
 void InitNodeGrid (pNPnode node);
 void npInitNodeHUD (pNPnode node);
@@ -226,7 +226,7 @@ pNPnode npNodeNew (int nodeType, pNPnode nodeParent, void* dataRef)
 	}
 	data->map.nodeCount++;
 
-	// set the unique node type properties
+	/// allocate node data and init the unique node type properties
 	switch (nodeType)
 	{
 		case kNodeCamera :	
@@ -287,7 +287,8 @@ pNPnode npNodeNew (int nodeType, pNPnode nodeParent, void* dataRef)
 		case kNodeSurface :	InitNodeSurface (node); break;
 		case kNodePoints :	InitNodePoints (node); break;
 		case kNodePin :
-			InitNodePin (node);
+			if( InitNodePin (node) )	/// if init fails then return NULL
+				return NULL;		
 			// position node based on branchLevel and sibling count
 			if (node->branchLevel == 0)
 			{
@@ -947,23 +948,25 @@ void InitNodePoints (pNPnode node)
 
 
 //-----------------------------------------------------------------------------
-void InitNodePin (pNPnode node)
+int InitNodePin (pNPnode node)
 {
-	NPpinPtr data = (NPpinPtr) malloc (sizeof(NPpin));
-	if (data == NULL)
-	{
-		printf ("\n 4217 error malloc failed cannot write file \n");
-		return;
-	}
+	NPpinPtr data = NULL;
+	
+	if( !node )
+		{ printf( "err 4217 - InitNodePin has null node\n" ); return 4217; }
+
+	data = (NPpinPtr) malloc( sizeof(NPpin));
+	if( !data )
+		{ printf( "err 4218 - malloc failed InitNodePin \n" ); return 4218; }
 
 	node->data  = (void*) data;
-
 
 	node->type			= kNodePin;
 	node->topo			= kNPtopoPin;
 	node->geometry		= kNPgeoPin;		//ice-cream cone shape
 
 	data->id			= node->id;
+	data->type			= kNodePin;
 
 	data->innerRadius	= 0.1f;			//inner radius of the toroid
 	data->outerRadius	= 1.0f;			//outer radius of the toroid
@@ -989,6 +992,8 @@ void InitNodePin (pNPnode node)
 	data->rotateTex.angle = 0.0f;			//orientation of texture map
 
 	data->size = sizeof(NPpin);
+
+	return 0;	//success
 }
 
 

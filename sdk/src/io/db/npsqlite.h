@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------------------
 *
-*  npio.h
+*  npsqlite.h
 *
 *  ANTz - realtime 3D data visualization tools for the real-world, based on NPE.
 *
@@ -22,25 +22,17 @@
 *
 * --------------------------------------------------------------------------- */
 
-#ifndef NPIO_H_
-#define NPIO_H_
+#ifndef NPSQLITE_H_
+#define NPSQLITE_H_
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
+//#include <postgresql.h>
 
-#include "npdata.h"
-#include "io/npconsole.h"
-#include "io/plugin/npplugin.h"
+/// @todo add SQLite embedded DB server, based on local file system
 
-void npInitIO (void* data);			// may update default init from pref file
-void npCloseIO (void* data);
-void npUpdateIO (void* dataRef);
+void npInitSQLite (void* dataRef);
+void npCloseSQLite (void* dataRef);
+void npUpdateSQLite (void* dataRef);
 
-void npViewer (void* dataRef);
 
-#ifdef __cplusplus
-	}
-#endif
 #endif
 

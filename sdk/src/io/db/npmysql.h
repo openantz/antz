@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------------------
 *
-*  npio.h
+*  npmysql.h
 *
 *  ANTz - realtime 3D data visualization tools for the real-world, based on NPE.
 *
@@ -22,25 +22,31 @@
 *
 * --------------------------------------------------------------------------- */
 
-#ifndef NPIO_H_
-#define NPIO_H_
+#ifndef NPMYSQL_H_
+#define NPMYSQL_H_  
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
-#include "npdata.h"
-#include "io/npconsole.h"
-#include "io/plugin/npplugin.h"
+/// @todo move all MySQL function calls here, from npdbz.c and elsewhere
 
-void npInitIO (void* data);			// may update default init from pref file
-void npCloseIO (void* data);
-void npUpdateIO (void* dataRef);
+void npInitMySQL (void* dataRef);
+void npCloseMySQL (void* dataRef);
+void npUpdateMySQL (void* dataRef);
 
-void npViewer (void* dataRef);
+/// @todo remove any dependency to dbz
 
-#ifdef __cplusplus
-	}
-#endif
+int npMysqlServerCtrl(void (*ctrlFunction)(void*), void* parameters);
+
+char* npMysqlStatementUse(char* dbName);
+char* npMysqlStatementShow(char* showWhat);
+char* npMysqlStatementCreate(char* dbName);
+char* npMysqlStatementCreateTable(char* table, char* fields);
+char* npMysqlStatementInsert(char* table, struct newChunkObj *value);
+char* npMysqlStatementSelect(char* table);
+char* npMysqlStatementTruncate( int dbID, char* tableName );
+char* npMysqlStatementUpdate( int dbID, char* tableName );
+char* npMysqlStatementDrop(char* dropType, char* dropName);
+
+char* npMysqlGetTableFields( int type, void* dataRef );
+
 #endif
 

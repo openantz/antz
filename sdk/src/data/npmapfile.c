@@ -213,6 +213,7 @@ int npWriteMapHeader (char* bufferIndex, int count, int type, void* dataRef)
 			case kNPfloatXYZA : 
 				count += sprintf ((bufferIndex + count), "%s_x,%s_y,%s_z,%s_a",
 						map[i].name, map[i].name, map[i].name, map[i].name );
+				break;
 			case kNPfloatXYZS : 
 				count += sprintf ((bufferIndex + count), "%s_x,%s_y,%s_z,%s_s",
 						map[i].name, map[i].name, map[i].name, map[i].name );
@@ -2182,6 +2183,13 @@ int npFileOpenAuto (const char* filePath, FILE* file, void* dataRef)
 	threadFile->filePath = npNewStrcpy(filePath, dataRef);
 	threadFile->file = file;
 	threadFile->dataRef = dataRef;
+
+	if ( threadFile->filePath || !threadFile->file )
+	{
+		printf( "err 5558 - npdbGetMenu failed to allocate npNewStrcpy \n" );
+		return 2;
+	}
+
 	//store the filePath for the thread process to retrieve
 	//	strcpy (data->io.file.currentOpenPath, msg);
 //	while (gThreadTagFileLock) sleep(0.001);

@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------------------
 *
-*  npio.h
+*  npmongo.c
 *
 *  ANTz - realtime 3D data visualization tools for the real-world, based on NPE.
 *
@@ -22,25 +22,25 @@
 *
 * --------------------------------------------------------------------------- */
 
-#ifndef NPIO_H_
-#define NPIO_H_
+#include "npmongo.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
-#include "npdata.h"
-#include "io/npconsole.h"
-#include "io/plugin/npplugin.h"
+//------------------------------------------------------------------------------
+void npInitMongoDB (void* dataRef)
+{
+	return;
+}
 
-void npInitIO (void* data);			// may update default init from pref file
-void npCloseIO (void* data);
-void npUpdateIO (void* dataRef);
+//------------------------------------------------------------------------------
+void npCloseMongoDB (void* dataRef)
+{
+	return;
+}
 
-void npViewer (void* dataRef);
+//------------------------------------------------------------------------------
+void npUpdateMongoDB (void* dataRef)
+{
+	return;
+}
 
-#ifdef __cplusplus
-	}
-#endif
-#endif
 

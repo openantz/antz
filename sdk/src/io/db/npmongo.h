@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------------------
 *
-*  npdbinit.h
+*  npmongo.h
 *
 *  ANTz - realtime 3D data visualization tools for the real-world, based on NPE.
 *
@@ -22,8 +22,18 @@
 *
 * --------------------------------------------------------------------------- */
 
-struct mysqlObject* npInitMySQLDatabase(char* name);
-struct mysqlObject* npNewInitMySQLTable(char *name);
-struct mysqlObject* npInitMysqlQuery();
-void npInitDbConnectMySQL (struct dbConnectMysql *connection, char* host, char* user, char* pass, char* db);
+#ifndef NPMONGO_H_
+#define NPMONGO_H_
+
+//#include <postgresql.h>
+
+/// @todo Implement MongoDB client library.
+
+
+void npInitMongoDB (void* dataRef);
+void npCloseMongoDB (void* dataRef);
+void npUpdateMongoDB (void* dataRef);
+
+
+#endif
 

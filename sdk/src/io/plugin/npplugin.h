@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------------------
 *
-*  npdbformat.h
+*  npplugin.h
 *
 *  ANTz - realtime 3D data visualization tools for the real-world, based on NPE.
 *
@@ -22,8 +22,17 @@
 *
 * --------------------------------------------------------------------------- */
 
-char** npFinalFormatChunks(char **buffer, int *numberOfChunks);
-int npFormatChunk(char *buffer, char* formattedValues, char* values);
-char** npNewChunkAllValues(char* buffer, int *numOfChunks, void* dataRef);
-int fixedChunkValues(char* buffer, char* chunked, int chunkSize);
+#ifndef NPPLUGIN_H_
+#define NPPLUGIN_H_
+
+/*! @todo add Plugin support for native libraries and 3rd party addons <br>
+*	Plugin types include import filters, draw routines, control methods, etc. */
+
+
+void npInitPlugin (void* dataRef);
+void npClosePlugin (void* dataRef);
+void npUpdatePlugin (void* dataRef);
+
+
+#endif
 

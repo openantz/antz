@@ -27,6 +27,8 @@
 
 #include "../npdata.h"
 
+#include "video/npvideo.h"		///< live video capture, record and playback
+
 //JJ
 
 //channel methods allow live IO or file based track data to animate the scene

@@ -71,13 +71,13 @@ struct dbFunction {
 	void* (__stdcall *db_fetch_lengths) ();
 	void* (__stdcall *db_num_fields) ();
 	void* (__stdcall *db_num_rows) ();
-	void* (*createInsertStatement)  ();
-	void* (*createStatement)  ();
-	void* (*createTableStatement) ();
-	void* (*useStatement)     ();
-	void* (*showStatement)    ();
-	void* (*dropStatement)    ();
-	void* (*createSelectStatement) ();
+	void* (*StatementInsert)  ();
+	void* (*StatementCreate)  ();
+	void* (*StatementCreateTable) ();
+	void* (*StatementUse)     ();
+	void* (*StatementShow)    ();
+	void* (*StatementDrop)    ();
+	void* (*StatementSelect) ();
 	void* (__stdcall *show)   ();
 	void* (__stdcall *storeResult) ();
 	void* (__stdcall *close)  ();
@@ -93,7 +93,8 @@ struct database {
 	char user[kNPurlMax];     // root
 	char password[kNPurlMax]; // admin 
 	char currentlyUsedDatabase[kNPurlMax];
-	int idMap[kNPnodeMax];
+	int* idMap;
+	//int idMap[kNPnodeMax];
 
 	struct dbFunction *db;
 };
@@ -101,9 +102,9 @@ struct database {
 
 struct databases //This should be renamed as struct server ...or not
 {
-	pNPdatabases dbList;
+	pNPdatabases dbList;	///< @todo make this pNPdatabase* dbList
 	int numberOfDatabases;
-	struct database *myDatabase;
+	struct database *activeDB;	///< @todo make this single DB ptr to dbList or dbID index
 };
 
 /*
@@ -122,25 +123,22 @@ int dbHook(struct dbFunction *db, char* filePath, int dbtype);
 //int npConnectToDatabaseServer(struct dbNewConnect *connect, void* dataRef);
 void main2(void* dataRef);
 
-int npAddDb(struct databases *dbs, char* dbType, char* hostIP, char* user, char* pass, char* dbName, void* dataRef);
-int npUseDatabase2(int connid, struct dbFunction *db, char* dbName);
-int npSelect(int connid, struct dbFunction *db, char* table); //Add field(s) choice later
+int npAddDb(struct databases *dbs, char* dbType, char* hostIP, char* user, char* pass, char* dbName, void* dataRef); //zzd r
+int npUseDatabase2(void* conn, pNPdbFuncSet func, char* dbName);
+int npSelect(void* conn, pNPdbFuncSet func, char* table); //Add field(s) choice later
 void npNewFreeChunks(struct newChunksObj * chunks, void* dataRef);
-char* npMysqlInsertStatement(char* table, struct newChunkObj *value);
-int npdbLoadNodeTbl(int menuItem, void* dataRef);
-void npdbSaveScene(void* dataRef);
+
 int npOpenDb(struct database *db);
 int npAttachDbsToDataRef(struct databases *dbs, void* dataRef);
 
-void* npdbGetList( struct database *db );				//zz db
-void npdbUpdateAntzStateFromDatabase( void* dataRef );	//zz db
+int npdbAddHost(  char* type, char* ip, int port, char* user, char* pass, void* dataRef);	//zzd
+int npdbLoadNodeTbl( pNPdatabase dbItem, void* dataRef );
 
-//int npdbSaveAs( int connectID, const char* dbName, void* dataRef )
+void npMysqlHook_old (HINSTANCE dbLib, void* dataRef);
 
-int npdbTruncate(int dbID, struct dbFunction *db, char* table); //zz db
-int npdbPushScene ( int dbID, const char* dbName, void* dataRef );
-int npDropDatabase(int dbID, struct dbFunction *db, const char* dbName);
-int npdbSaveAs( int dbID, const char* dbName, void* dataRef );
+struct csvStrObjects* npRevisedNodeValues(void* dataRef);
+struct newChunksObj* npEvenNewerAllChunk(struct csvStrObjects *csvObjects, void* dataRef);
+void npInsertAllChunks(struct newChunksObj *chunks, void* dbID, pNPdbFuncSet func, char* table);
 
 #endif
 

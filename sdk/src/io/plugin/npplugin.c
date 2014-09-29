@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------------------
 *
-*  npdbset.h
+*  npostgres.c
 *
 *  ANTz - realtime 3D data visualization tools for the real-world, based on NPE.
 *
@@ -22,8 +22,25 @@
 *
 * --------------------------------------------------------------------------- */
 
-void npSetMysqlQueryObject(struct dbConnectMysql *connect, struct mysqlObject* query, struct mysqlObject *dbOrTable, void* dataRef);
-int npSetMysqlQueryCommand(struct dbConnectMysql *connect, struct mysqlObject *query, int command, void* dataRef);
-void npSetMysqlQueryFields(struct dbConnectMysql *connect, struct mysqlObject *query, char *fields);
-void npSetMysqlQueryValues(struct dbConnectMysql *connect, struct mysqlObject *object, struct chunksObj *valueChunks);
+#include "npplugin.h"
+
+
+//------------------------------------------------------------------------------
+void npInitPlugin (void* dataRef)
+{
+	return;
+}
+
+//------------------------------------------------------------------------------
+void npClosePlugin (void* dataRef)		//clean-up
+{
+	return;
+}
+
+//------------------------------------------------------------------------------
+void npUpdatePlugin (void* dataRef)							//add to ctrl loop, debug zz
+{
+	return;
+}
+
 
