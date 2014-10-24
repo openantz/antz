@@ -373,7 +373,7 @@ void npSyncTags (void* dataRef)
 	for (i=0; i < j; i++)
 	{	npTagNode(nodes[i], data);
 	node = (pNPnode)nodes[i];
-	printf("id: %d  tag: %s\n",  node->id, node->tag->title);
+	//printf("id: %d  tag: %s\n",  node->id, node->tag->title); // Commented out because it was flooding console, lde
 	}
 	printf("tag count J: %d\n", j);
 	//loop through all nodes and attach tagPtr based on recordID and tableID
