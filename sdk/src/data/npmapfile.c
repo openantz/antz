@@ -1472,7 +1472,7 @@ int npLoadNodesCSV (const char* buffer, int size, int type, void* dataRef)
 
 int npCSVtoC (pNPrecordSet recSet, const char* read, int size, void* dataRef);
 //-----------------------------------------------------------------------------
-//zz debug, use a func ptr to npLoadCSV() from genreic parent file IO process	
+//zz debug, use a func ptr to npLoadCSV() from generic parent file IO process	
 int npCSVtoC (pNPrecordSet recSet, const char* read, int size, void* dataRef)
 {
 	int recordCount = 0;
@@ -2184,11 +2184,13 @@ int npFileOpenAuto (const char* filePath, FILE* file, void* dataRef)
 	threadFile->file = file;
 	threadFile->dataRef = dataRef;
 
+	/* // filePath not necessary to load file, lde
 	if ( threadFile->filePath || !threadFile->file )
 	{
 		printf( "err 5558 - npdbGetMenu failed to allocate npNewStrcpy \n" );
 		return 2;
 	}
+	*/
 
 	//store the filePath for the thread process to retrieve
 	//	strcpy (data->io.file.currentOpenPath, msg);
