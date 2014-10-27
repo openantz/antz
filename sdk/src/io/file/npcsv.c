@@ -769,10 +769,10 @@ void npMapTypeInit (void* dataRef)
 		{ &data->io.mouse.pickMode,	kNPint,			kNPmousePickMode,	0,	"np_mouse",		1,	"pick_mode",		"i",	"Mouse Pick Mode" },
 
 		//zzd
-		{ &data->io.dbs->activeDB[0].hostIP,		kNPcstrPtr, kNPloginHostIP,	0,	"np_db",	1,	"host_ip",			"s",	"Host IP address" },
-		{ &data->io.dbs->activeDB[0].user,			kNPcstrPtr, kNPloginUser,	0,	"np_db",	1,	"user",				"s",	"Username" },
-		{ &data->io.dbs->activeDB[0].password,		kNPcstrPtr, kNPloginPassword, 0, "np_db",	1,	"password",			"s",	"Password" },
-		{ &data->io.dbs->activeDB[0].dbType,		kNPcstrPtr, kNPloginHostType, 0, "np_db",	1,	"db_type",			"s",	"Database Type" },
+//		{ &data->io.db.activeDB->host->ip,		kNPcstrPtr, kNPloginHostIP,	0,	"np_db",	1,	"host_ip",			"s",	"Host IP address" },
+//		{ &data->io.db.activeDB->host->user,			kNPcstrPtr, kNPloginUser,	0,	"np_db",	1,	"user",				"s",	"Username" },
+//		{ &data->io.db.activeDB->host->password,		kNPcstrPtr, kNPloginPassword, 0, "np_db",	1,	"password",			"s",	"Password" },
+//		{ &data->io.db.activeDB->host->type,		kNPcstrPtr, kNPloginHostType, 0, "np_db",	1,	"db_type",			"s",	"Database Type" },
 	
 	//	{ &data->io.mouse.PickMode,	kNPint,			kNPmouseCamMode,	0,	"np_mouse",		1,	"cam_mode",			"i",	"Mouse Camera Mode" },
 	
@@ -1335,8 +1335,8 @@ void npUpdateGlobals( void* dataRef )
 			gl->windowSize.x,
 			gl->windowSize.y );
 
-	//queries current window mode
-	if ( glutGet( GLUT_FULL_SCREEN ) != gl->fullscreen )
+	//queries current window mode //Removed GLUT_FULL_SCREEN replaced with 0x01FF
+	if ( glutGet( 0x01FF ) != gl->fullscreen )
 	{
 	//	gl->fullscreen = 1 - gl->fullscreen;
 		npCtrlCommand( kNPcmdFullscreen, data );

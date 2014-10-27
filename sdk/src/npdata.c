@@ -62,8 +62,11 @@ void* npInitData (int argc, char** argv)
 	gData = data;						//store a copy for retrieval
 
 	// initialize data
+	printf("\nnpInitDataMap");
 	npInitDataMap (data);
+	printf("\nnpInitDataIO");
 	npInitDataIO (argc, argv, data);	//stores the command line arguments
+	printf("\nnpInitDataCtrl");
 	npInitDataCtrl (data);
 
 	return gData;
@@ -694,6 +697,7 @@ pNPdbHost npInitHostDB( void )
 	}
 
 	host->id = 0;
+	host->conn_id = 0;
 	host->hostFuncSet = NULL;
 	host->conn = NULL;
 	host->type[0] = '\0';
@@ -710,7 +714,8 @@ pNPdbHost npInitHostDB( void )
 //zzd
 /// allocate and initialize the core 'db' structure
 //------------------------------------------------------------------------------
-void npInitDataDB (struct databases* dbs, void* dataRef)
+//void npInitDataDB (struct databases* dbs, void* dataRef) // old, lde
+void npInitDataDB (void* dataRef)
 {
 	int i = 0;
 	
@@ -745,18 +750,25 @@ void npInitDataDB (struct databases* dbs, void* dataRef)
 
 	/// Add our default host now, this is needed for antzglobals.csv file.
 	///	'localhost' is same as 127.0.0.1 and mysql default port is 3306.
+	
+	printf("\nnpdbAddHost");
 	npdbAddHost( "mysql", "localhost", 3306, "root", "admin", data );
 
+	
 	/// add access to the antz public database 
 	// npdbAddHost( "mysql", "openantz.com", 3306, "guest", "guest", dataRef);	//zzd
 	
 	db->size = 0;			///< @todo add methods to track memory usage
 
 //------------- //zzd r
+	/* // Not necessary anymore, old, lde
 	data->io.dbs = malloc(sizeof(struct databases));
 	data->io.dbs->numberOfDatabases = 0;
 	data->io.dbs->dbList = NULL;
-	npAddDb( data->io.dbs, "mysql", "localhost", "root", "admin", "", dataRef);	//zzd r
+	*/
+	//data->io.db = malloc(sizeof(NPdbs));
+//	npAddDb( db, "mysql", "localhost", "root", "admin", "", dataRef);	//zzd r   // lde, grab from npdbAddHost parameters
+	
 //	data->io.dbs->activeDB[0].currentlyUsedDatabase[0] = '\0';	//zz hmm
 
 }
@@ -827,7 +839,10 @@ void npInitDataIO(int argc, char** argv, void* dataRef)
 	npInitDataGL (data);
 	npInitDataChannel (data);
 	npInitDataOSC (&io->osc, data);
-	npInitDataDB (io->dbs, data);		///< create core db structure
+//	npInitDataDB (io->db, data);		///< create core db structure // old, lde
+	printf("\nnpInitDataDB");
+	npInitDataDB (data);				///< create core db structure
+	printf("\nnpInitDataFile");
 	npInitDataFile (&io->file, data);	//zz file io to npglobals.csv needs to be last
 
 	io->size = sizeof(NPio);	//memory size of this struct, runtime dynamic

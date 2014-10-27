@@ -27,7 +27,7 @@
 
 #include "../../npdata.h"
 
-#include <my_global.h>
+//#include <my_global.h>
 #include <mysql.h>
 //#include "../../npdata.h
 
@@ -60,17 +60,19 @@ struct dbFunctions {
 
 //Init, Connect, and Query are elemental functions
 struct dbFunction {
-	void* (__stdcall *init)   ();
-	void* (__stdcall *connect)();
-	void* (__stdcall *query)  ();
-	void* (__stdcall *use)    ();
-	void* (__stdcall *select) ();
-	void* (__stdcall *alter)  ();
-	void* (__stdcall *insert) ();
-	void* (__stdcall *db_fetch_row) ();
-	void* (__stdcall *db_fetch_lengths) ();
-	void* (__stdcall *db_num_fields) ();
-	void* (__stdcall *db_num_rows) ();
+	void* (*init)   ();
+	void* (*connect)();
+	void* (*query)  ();
+	void* (*use)    ();
+	void* (*select) ();
+	void* (*alter)  ();
+	void* (*insert) ();
+	void* (*db_fetch_row) ();
+	void* (*db_fetch_lengths) ();
+	void* (*db_num_fields) ();
+	void* (*db_num_rows) ();
+	void* (*db_error) ();
+	void* (*db_errno) ();
 	void* (*StatementInsert)  ();
 	void* (*StatementCreate)  ();
 	void* (*StatementCreateTable) ();
@@ -78,15 +80,16 @@ struct dbFunction {
 	void* (*StatementShow)    ();
 	void* (*StatementDrop)    ();
 	void* (*StatementSelect) ();
-	void* (__stdcall *show)   ();
-	void* (__stdcall *storeResult) ();
-	void* (__stdcall *close)  ();
+	void* (*show)   ();
+	void* (*storeResult) ();
+	void* (*freeResult) ();
+	void* (*close)  ();
 };
 
-// Perhaps a sub-structure inside database which deals with database specific stuff
 struct database {
 	char dbType[kNPurlMax];   // "mysql" "oracle" "postgresql", etc...
-	int id;     // Might be better for this to be void*
+	//int id;     // Might be better for this to be void*
+	void* id;
 	int port;       // Default for MySQL is 3306
 
 	char hostIP[kNPurlMax];   // This could be static
@@ -96,16 +99,17 @@ struct database {
 	int* idMap;
 	//int idMap[kNPnodeMax];
 
-	struct dbFunction *db;
+	struct dbFunction *dbFunc;
 };
 
-
+/*
 struct databases //This should be renamed as struct server ...or not
 {
 	pNPdatabases dbList;	///< @todo make this pNPdatabase* dbList
 	int numberOfDatabases;
 	struct database *activeDB;	///< @todo make this single DB ptr to dbList or dbID index
 };
+*/
 
 /*
 struct query{
@@ -123,18 +127,19 @@ int dbHook(struct dbFunction *db, char* filePath, int dbtype);
 //int npConnectToDatabaseServer(struct dbNewConnect *connect, void* dataRef);
 void main2(void* dataRef);
 
-int npAddDb(struct databases *dbs, char* dbType, char* hostIP, char* user, char* pass, char* dbName, void* dataRef); //zzd r
+//int npAddDb(struct databases *dbs, char* dbType, char* hostIP, char* user, char* pass, char* dbName, void* dataRef); //zzd r  // old, lde
+int npAddDb(pNPdbs dbs, char* dbType, char* hostIP, char* user, char* pass, char* dbName, void* dataRef);
 int npUseDatabase2(void* conn, pNPdbFuncSet func, char* dbName);
 int npSelect(void* conn, pNPdbFuncSet func, char* table); //Add field(s) choice later
 void npNewFreeChunks(struct newChunksObj * chunks, void* dataRef);
 
 int npOpenDb(struct database *db);
-int npAttachDbsToDataRef(struct databases *dbs, void* dataRef);
+// int npAttachDbsToDataRef(struct databases *dbs, void* dataRef); // old, lde
 
 int npdbAddHost(  char* type, char* ip, int port, char* user, char* pass, void* dataRef);	//zzd
 int npdbLoadNodeTbl( pNPdatabase dbItem, void* dataRef );
 
-void npMysqlHook_old (HINSTANCE dbLib, void* dataRef);
+//void npMysqlHook_old (HINSTANCE dbLib, void* dataRef); // lde
 
 struct csvStrObjects* npRevisedNodeValues(void* dataRef);
 struct newChunksObj* npEvenNewerAllChunk(struct csvStrObjects *csvObjects, void* dataRef);

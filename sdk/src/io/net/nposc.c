@@ -30,15 +30,15 @@
 
 #include "nposcpack.h"	  //C++ oscpack library adapter
 
-#include "..\..\npctrl.h"
-#include "..\..\os\npos.h"
+#include "npctrl.h"
+#include "npos.h"
 
-#include "..\npmouse.h"
-#include "..\gl\npcolor.h"
+#include "npmouse.h"
+#include "npcolor.h"
 
 
 /*
-// color functions in 'npcolor.h' alternates provided here for convienance
+// color functions in 'npcolor.h' alternates provided here for convenience 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 float HueToRGB( float v1, float v2, float vH )             //Function Hue_2_RGB

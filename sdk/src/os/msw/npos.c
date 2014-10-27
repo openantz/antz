@@ -257,6 +257,7 @@ enum
 
 //zz debug make this return the fileName (includes path) instead of opening the FILE*
 //------------------------------------------------------------------------------
+/* temp, lde
 FILE* OpenFileDialog (const char* fileName, int kNPfileDialogOpen, void* dataRef)
 {
 	FILE* filePtr = NULL;
@@ -331,7 +332,7 @@ FILE* OpenFileDialog (const char* fileName, int kNPfileDialogOpen, void* dataRef
 
 	return filePtr;
 }
-
+*/
 
 //-----------------------------------------------------------------------------
 // Take file path returned from microsoft createFile, put into fopen and return File Pointer
@@ -390,10 +391,12 @@ int nposSetCursorPos (int x, int y)
 
 
 //-----------------------------------------------------------------------------
+/* // temp lde
 int nposGetKey (void)
 {
 	return _getch();
 }
+*/
 
 //-----------------------------------------------------------------------------
 double nposGetTime (void)

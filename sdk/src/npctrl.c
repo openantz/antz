@@ -450,7 +450,7 @@ void npCtrlFile (int command, void* dataRef)
 				npSaveScene(kNPmapCSV, name, data);
 			else
 				//npLoadScene(kNPmapCSV, name, data);
-				npNewDirTree(data->io.file.appPath, NULL, dataRef);		//zz file tree
+				//npNewDirTree(data->io.file.appPath, NULL, dataRef);		//zz file tree // lde
 			break;
 
 		case kNPcmdFileImport :

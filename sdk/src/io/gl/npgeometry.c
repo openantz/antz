@@ -31,6 +31,9 @@
 #define kTorusScreenSizeCount 4
 #define kTorusThicknessCount 4
 
+//Just temporary lde
+#define TRUE 1
+
 struct NPtorus {
 	NPfloatXYZ*		vArray;
 	GLint			vArraySize;

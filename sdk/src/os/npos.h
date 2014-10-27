@@ -71,7 +71,7 @@ FILE* nposFileDialog (const char* fileName, int dialogType, void* dataRef);
 int nposShowCursor (int hide);
 int nposSetCursorPos (int x, int y);
 
-int nposGetKey (void);
+//int nposGetKey (void);
 
 double nposGetTime (void);
 void nposUpdateTime (void* dataRef);

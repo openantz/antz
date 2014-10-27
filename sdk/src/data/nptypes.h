@@ -866,27 +866,28 @@ struct NPdbFuncSet{
 	//int				funcCount;
 
 	///  abstract our database server type specific methods
-	void* (__stdcall *init)			();
-	void* (__stdcall *connect)		();
-	void* (__stdcall *options)		();
-	void* (__stdcall *ping)			();
-	void* (__stdcall *close)		();
+	void* (*init)			();
+	void* (*connect)		();
+	void* (*options)		();
+	void* (*ping)			();
+	void* (*close)		    ();
 
-	void* (__stdcall *show)			();
-	void* (__stdcall *query)		();
-	void* (__stdcall *store_result)	();
-	void* (__stdcall *free_result)	();
+	void* (*show)			();
+	void* (*query)		    ();
+	void* (*store_result)	();
+	void* (*free_result)	();
 
-	void* (__stdcall *use)			();
-	void* (__stdcall *select)		();
-	void* (__stdcall *alter)		();
-	void* (__stdcall *insert)		();
-	void* (__stdcall *fetch_row)	();
-	void* (__stdcall *fetch_lengths)();
-	void* (__stdcall *num_fields)	();
-	void* (__stdcall *num_rows)		();
-	void* (__stdcall *db_error)		();
-	void* (__stdcall *db_errno)		();
+	void* (*use)			();
+	void* (*select)		    ();
+	void* (*alter)		    ();
+	void* (*insert)		    ();
+	void* (*fetch_row)	    ();
+	void* (*fetch_lengths)  ();
+	void* (*num_fields)	    ();
+	void* (*num_rows)		();
+	void* (*db_error)		();
+	void* (*db_errno)		();
+	void* (*conn_thread_id) ();
 	///< error and errno use 'db_' prefix to prevent name conflict
 
 	int   (*InitConnOptions)		();
@@ -909,11 +910,13 @@ typedef struct NPdbFuncSet *pNPdbFuncSet;
 
 /// Host id unique to the session, ip is generally more permanent.
 /// Note that the list of databases is not stored with the host.
-/// The name of the current databse in USE is stored with the host.
+/// The name of the current database in USE is stored with the host.
 struct NPdbHost{
 	int			id;				///< local host ID unique to this session only
 	void*		conn;			///< host connection handle
-
+	bool		connected;
+	unsigned long conn_id;		///< Host's database thread id, lde
+	
 	char		type[64];		///< server type 'mysql', 'postgresql', etc.
 
 	int			port;					///< port address
@@ -928,7 +931,7 @@ struct NPdbHost{
 	//char		currentTable[];
 		
 	pNPdbFuncSet hostFuncSet;			///< function calls for this host type
-};
+}; //@todo: hosts need an active server, lde
 typedef struct NPdbHost NPdbHost;
 typedef struct NPdbHost * pNPdbHost;
 
@@ -980,7 +983,8 @@ enum NP_DB_CONTENT_TYPES
 };
 
 struct NPdatabase{
-	int			id;						///< this databases ID
+	int			id;						///< this databases ID // Connection structure
+	int*		idMap;
 	int			format;					///< content format, antz or 3rd party
 
 	char		name[kNPdbNameMax +1];	///< database name +1 for '\0'
@@ -1437,7 +1441,7 @@ struct NPio {
 	NPfile		file;
 
 //!<	struct	dbNewConnect *connect;	//!<zzsql							//!<zz debug	//!<zz dbz
-	struct databases *dbs;			//!<zz dbz
+//	struct databases *dbs;			//!<zz dbz
 	NPdbs		db;
 
 //!<	NPoscPackListener oscListener;		//!<JJ-zz

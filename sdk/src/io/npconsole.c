@@ -453,7 +453,8 @@ char* npGetConsoleMenuName( pNPconsole console, char* input, void* dataRef )
 	
 	pData data = (pData) dataRef;
 
-	pNPdatabases dbList = data->io.dbs->dbList;
+//	pNPdatabases dbList = data->io.dbs->dbList; // old, lde
+	pNPdatabase *dbList = data->io.db.dbList;
 	
 	itemCount = console->menu->count;
 
@@ -462,10 +463,16 @@ char* npGetConsoleMenuName( pNPconsole console, char* input, void* dataRef )
 	{
 		//itemName = nbConsoleGetMenuItemFromName( console, input, data );
 		//zz replace dbList with menuList[i]->name
+		/* // old, lde
 		for( item=1; item <= itemCount; item++ )
 			if( strcmp( input, dbList->list[item] ) == 0 )
 				dbName = dbList->list[item];
-
+		*/
+		
+		for( item=1; item <= itemCount; item++ )
+			if( strcmp( input, dbList[item]->name ) == 0 )
+				dbName = dbList[item]->name;
+		 
 		if( !dbName )
 		{
 			sprintf( msg, "%s Not Found: %s",  console->menu->name, input );
@@ -486,6 +493,7 @@ char* npGetConsoleMenuName( pNPconsole console, char* input, void* dataRef )
 			}
 
 		item = npatoi( input );
+		/* old, lde
 		if( item > 0 && item <= itemCount )
 			dbName = dbList->list[item];
 		else
@@ -495,6 +503,18 @@ char* npGetConsoleMenuName( pNPconsole console, char* input, void* dataRef )
 			npPostMsg(msg, kNPmsgView, data );
 			npConsolePromptInputStr( console, data );
 		}
+		*/
+		
+		if( item > 0 && item <= itemCount )
+			dbName = dbList[item]->name;
+		else
+		{
+			sprintf( msg, "item# %d not in range: 1 - %d", item,
+					console->menu->count );
+			npPostMsg(msg, kNPmsgView, data );
+			npConsolePromptInputStr( console, data );
+		}
+		
 	}
 
 	return dbName;
@@ -524,6 +544,8 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 	pNPdatabase activeDB = data->io.db.activeDB;
 	pNPdbHost host = NULL;
 
+	printf("\nnpConsoleMenuText");
+	printf("\nhostCount : %d", data->io.db.hostCount);
 	if( activeDB )
 		host = activeDB->host;
 
@@ -533,7 +555,17 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 
 	//zz clean-up
 	//zz db
-
+//	printf("\nrunning == %d", data->io.db.running);
+//	if( data->io.db.running == false && strncasecmp( input, "exit", 4 ) )
+	if( data->io.db.activeDB->host->connected == false && strncasecmp( input, "exit", 4 ) )
+	{
+		printf("\nHost not connected"); // post this to console, lde
+		//printf("\n%s", data->io.db.activeDB->host->inUseDB);
+		npConsolePromptBlank(console, dataRef);
+		//nposGetKey();
+	}
+	else {
+	
 //	restoreAuto = data->io.db.autoUpdate;
 //	data->io.db.autoUpdate = false;
 
@@ -561,7 +593,7 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 		//same as saveUpate but w/o truncate & needs to reassign node id's
 	}else if( !strncmp(input, "append ", 7) || !strncmp(input, "APPEND ", 7) )
 	{
-		//same as saveUpate but w/o truncate & needs to reassign node id's
+		//same as saveUpdate but w/o truncate & needs to reassign node id's
 	}
 	else if( !strncmp(input, "mv ", 7) || !strncmp(input, "MV ", 7) )
 	{
@@ -795,6 +827,8 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 		}
 	}
 
+	}
+		
 endPoint:
 //	data->io.db.autoUpdate = restoreAuto;	//zz db end
 	return;
@@ -1215,7 +1249,8 @@ void npUpdateConsoleUserText(pNPconsole console, void* dataRef)
 		return;
 
 	//get inputSize and ascert inputIndex is inbounds
-	inputSize = strnlen( console->inputStr, kNPconsoleInputMax - 1 );
+	//inputSize = strnlen( console->inputStr, kNPconsoleInputMax - 1 ); // lde
+	inputSize = strlen(console->inputStr); // lde
 	if ( console->inputIndex >= inputSize )
 		console->inputIndex = inputSize;
 	else if ( console->inputIndex < 0 )

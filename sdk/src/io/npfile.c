@@ -111,7 +111,8 @@ FILE* npFileOpen( const char* fileName, const char* mode, void* dataRef )
 	char* msg = NULL;
 
 	// ascert fileName is valid string
-	length = strnlen( fileName, 261 );
+	//length = strnlen( fileName, 261 );
+	length = strlen(fileName); // lde
 	if(length < 1 || length >= 260 )
 	{
 		npPostMsg( "warn 7249 - invalid fileName", kNPmsgFile, dataRef );
@@ -165,7 +166,8 @@ FILE* npFileDialog (const char* fileName, int dialogType, void* dataRef)
 			file = nposFileDialog (fileName, dialogType, dataRef); break;
 
 		case kNPfileDialogOpen : 
-			file = nposFileDialog (fileName, dialogType, dataRef); break;
+			//file = nposFileDialog (fileName, dialogType, dataRef); break; // temp, lde
+			file = openFileDialog(fileName, dialogType, dataRef); break;
 		case kNPfileDialogClose : 
 			file = nposFileDialog (fileName, dialogType, dataRef); break;
 
@@ -732,7 +734,8 @@ void npPathNameToTag( pNPnode node, char* path )
 
 	//set trim point to the last slash, just before the filename
 	tag->title[0] = '\0';
-	trim = pathSize = strnlen (path, kNPmaxPath);
+	//trim = pathSize = strnlen (path, kNPmaxPath);
+	trim = strlen(path); // lde
 	trim -= 2;
 	while (	trim > 0 
 			&& path[trim] != '/' 
@@ -933,6 +936,7 @@ pNPnode npNewDirNode( pNPnode node, char* path, int type, int view, void* dataRe
 
 //builds a node tree of the file directory structure
 //---------------------------------------------------------------------------
+/* temp lde
 bool npNewDirTree(const char *basePath, pNPnode parent, void* dataRef)
 {
     WIN32_FIND_DATA fdFile;
@@ -1002,6 +1006,7 @@ bool npNewDirTree(const char *basePath, pNPnode parent, void* dataRef)
 
     return true;
 }
+lde */ 
 
 //zz msw unicode sample code below
 /*

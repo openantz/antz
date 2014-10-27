@@ -62,12 +62,17 @@ int main (int argc, char **argv)
 	void* data = NULL;	
 
 	data = npInitData (argc, argv);			/* Model named - map   */
+	printf("\nnpInitData");
 	npInitIO (data);						/* View called - io    */
+	printf("\nnpInitCtrl");
 	npInitCtrl (data);						/* Control is  - ctrl  */
+	printf("\nnpAppLoop");
 
 	err = npAppLoop (data);					/* enter main app loop */
 
+	printf("\n");
 	npCloseCtrl (data);						/* halt all activity   */
+	printf("\n");
 	npCloseIO (data);						/* close connections   */
 	npCloseData (data);						/* data map destructor */
 

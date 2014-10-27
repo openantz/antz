@@ -26,8 +26,57 @@
 
 
 #ifdef __APPLE__
-
+#include <Carbon/Carbon.h>
 #include <sys/time.h>                // for gettimeofday()
+#include <pthread.h>
+#include <dlfcn.h> // For dynamic linking
+
+/* Windows function
+void* nposLoadLibrary( char* filePath )
+{
+	void* library = LoadLibrary( filePath );
+	if( !library )
+	{
+		printf( "err 9933 - failed to load library: %s\n", filePath);
+		return NULL;
+	}
+	
+	return library;
+}
+*/
+void* nposLoadLibrary( char* filePath )
+{
+	void* library = NULL;
+	library = dlopen(filePath, RTLD_NOW);
+	
+	if(!library)
+	{
+		printf( "err 9933 - failed to load library: %s\n", filePath);
+		printf("\nError : %s", dlerror());
+		printf("\nlibrary : %p", library);
+		dlerror(); // library will be NULL at this point
+	}
+
+	return library;	
+}
+
+void* nposGetLibSymbol(void* library, char* symbolName) // New function, lde
+{
+	void* symbol = nposxGetLibSymbol(library, symbolName);
+	printf("\nlibrary : %p", library);
+	printf("\nsymbolName : %s", symbolName);
+	return symbol;
+}
+
+void* nposxGetLibSymbol(void* library, char* symbolName) // New function, lde
+{
+	void* symbol = dlsym(library, symbolName);
+	printf("\ndbLibrary ptr : %p", library);
+	printf("\nsymbol : %p", symbol);
+	printf("\ndlerror : %s", dlerror());
+	dlerror();
+	return symbol;
+}
 
 // current working directory is OS specific
 //-----------------------------------------------------------------------------
@@ -54,6 +103,92 @@ FILE* nposxFileDialog (const char* fileName, int dialogType, void* dataRef)
 	return;																//debug zz
 }
 
+
+//-----------------------------------------------------------------------------
+FILE* openFileDialog (const char* fileName, int dialogType, void* dataRef)
+{																			//zz-osx debug
+	FILE* filePtr = NULL;
+	
+	NavDialogCreationOptions dialogOptions;
+	NavDialogRef dialog;
+	NavReplyRecord replyRecord;
+	CFURLRef fileAsCFURLRef = NULL;
+	FSRef fileAsFSRef;
+	OSStatus status;
+	bool result = false;
+	
+	unsigned char filePath[1024];
+	char msg[4096];
+	
+	// Get the standard set of defaults
+	status = NavGetDefaultDialogCreationOptions (&dialogOptions);
+	require_noerr( status, CantGetNavOptions );
+	
+	// Make the	window app-wide modal
+	dialogOptions.modality = kWindowModalityAppModal;
+	
+	//	dialogOptions.location = fileName;
+	
+	// Create the dialog
+	status = NavCreateGetFileDialog (&dialogOptions, NULL, NULL, NULL, NULL, NULL, &dialog);
+	require_noerr( status, CantCreateDialog );
+	
+	// Show it
+	status = NavDialogRun (dialog);
+	require_noerr( status, CantRunDialog );
+	
+	// Get the reply
+	status = NavDialogGetReply (dialog, &replyRecord);
+	require( ((status == noErr) || (status == userCanceledErr)), CantGetReply );
+	
+	// If the user clicked "Cancel", just bail
+	if ( status == userCanceledErr ) goto UserCanceled;
+	
+	// Get the file
+	status = AEGetNthPtr ( &(replyRecord.selection), 1, typeFSRef, NULL, NULL, &fileAsFSRef, sizeof(FSRef), NULL);
+	require_noerr( status, CantExtractFSRef );
+	
+	// Convert it to a CFURL
+	fileAsCFURLRef = CFURLCreateFromFSRef(NULL, &fileAsFSRef);
+	
+	result = CFURLGetFileSystemRepresentation(fileAsCFURLRef, true, filePath, 1024);
+	
+	if (!result)
+		npPostMsg("err 9824 - cannot convert file dialog path", kNPmsgErr, dataRef);
+	else
+	{
+		// printf ("\nFile Path: %s\n", filePath);
+		
+		sprintf (msg, "%s", filePath);
+		
+		filePtr = fopen (msg, "r");
+		
+		if (filePtr != NULL)
+		{
+			sprintf (msg, "File Open: %s", filePath);
+			npPostMsg (msg, kNPmsgCtrl, dataRef);
+		}
+		else
+			npPostMsg ("err 2995 - File Pointer is NULL", kNPmsgErr, dataRef);
+		
+		return filePtr;
+	}
+	
+	// Cleanup
+CantExtractFSRef:
+UserCanceled:
+	verify_noerr( NavDisposeReply(&replyRecord) );
+CantGetReply:
+CantRunDialog:
+	NavDialogDispose(dialog);
+CantCreateDialog:
+CantGetNavOptions:
+	// return fileAsCFURLRef;	//part of original sample, does not apply here
+	
+	return NULL;
+}
+
+
 //-----------------------------------------------------------------------------
 void nposxTimeStampCSV (char* fileName)
 {
@@ -72,6 +207,28 @@ void nposxShowCursor (int hide)
 	return;																//debug zz
 }
 
+bool nposSupportsAntzThreads (void)
+{
+	return 1;
+}
+
+void nposEndThread (void)
+{
+	pthread_exit(NULL);
+	//_endthread();
+}
+
+void nposBeginThread (voidFnPtr vfp, void *dataRef)
+{
+	pthread_t thread;
+	pthread_create(&thread, NULL, vfp, dataRef);
+}
+
+int nposGetKey (void)
+{
+	//	return getch();																//debug zz
+	return pause();
+}
 
 #endif
 

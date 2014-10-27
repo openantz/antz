@@ -25,7 +25,7 @@
 #ifndef NPAUXDB_H_
 #define NPAUXDB_H_
 
-#include <my_global.h>
+//#include <my_global.h> // Not needed
 #include <mysql.h>
 
 struct fieldvalue

@@ -39,7 +39,7 @@
 int npCreateTable2(struct dbFunction *db, int dbID, char* table, char* fields);
 void* npShowDatabases(int dbID, struct dbFunction *db, void* dataRef );
 void* npdbGetList( struct database *db, void* dataRef );
-int npConnectDB( void* dataRef );
+// int npConnectDB( void* dataRef ); // old, lde
 int npdbUse_old( const char* dbName, void* dataRef );
 
 // This is for a single node
@@ -199,7 +199,8 @@ void updateNodeFromMysqlRow (MYSQL_ROW *row, void* dataRef) // Generalize here
 	id = atoi( (const char*)row[0] );
 
 	/// @todo create node id map for scene to DB that supports merged scenes.
-	node = npGetNodeByID(data->io.dbs->activeDB[0].idMap[id], dataRef);
+	//node = npGetNodeByID(data->io.dbs->activeDB[0].idMap[id], dataRef); // old, lde
+	node = npGetNodeByID(data->io.db.activeDB->idMap[id], dataRef);
 	
 	printf( "db node_id: %4d   scene node id: %4d \n", id, node->id );
 
@@ -209,7 +210,13 @@ void updateNodeFromMysqlRow (MYSQL_ROW *row, void* dataRef) // Generalize here
 void updateNodesFromMysqlResult(MYSQL_RES *result, void* dataRef)
 {
 	MYSQL_ROW row;
-	while( row = mysql_fetch_row( result ))
+	pData data = (pData) dataRef;
+	
+//	struct database *db = &data->io.dbs->activeDB[0]; // old, lde
+	pNPdatabase db = data->io.db.activeDB;
+	
+	// row = (*db->dbFunc->db_fetch_row)( result ) // old, lde
+	while( row = (*db->host->hostFuncSet->fetch_row)( result ) )
 	{
 		updateNodeFromMysqlRow( (MYSQL_ROW*)row, dataRef );
 	}
@@ -238,13 +245,13 @@ void npInitcsvStrObjects(struct csvStrObjects *csvObjects, int numOfObjects, voi
 	csvObjects->csvObj = malloc(sizeof(struct csvStrObj) * numOfObjects);
 //	printf("\nnumOfObjects %d\n", numOfObjects);
 //	getch();
-	_ASSERTE( _CrtCheckMemory( ) );
+	//_ASSERTE( _CrtCheckMemory( ) );
 	if(csvObjects->csvObj == NULL)
 	{
 		printf("\nMalloc Failed");
 	}
 
-	_ASSERTE( _CrtCheckMemory( ) );
+	//_ASSERTE( _CrtCheckMemory( ) );
 //	printf("\nAssign num");
 	csvObjects->numOfcsvStrObjects = numOfObjects;
 
@@ -254,7 +261,7 @@ void npInitcsvStrObjects(struct csvStrObjects *csvObjects, int numOfObjects, voi
 	}
 
 
-	_ASSERTE( _CrtCheckMemory( ) );
+	//_ASSERTE( _CrtCheckMemory( ) );
 }
 
 struct newChunksObj* npGeneralAddObjectsToChunks(struct newChunksObj* chunks, struct csvStrObjects* strObjects, void* dataRef)
@@ -369,7 +376,7 @@ struct newChunksObj* npTestNewInitChunksObj(struct newChunksObj *chunks, int chu
 	//getch();
 //	chunks->chunk = malloc(sizeof(struct newChunkObj) * chunks->numOfChunks);
 	chunks->chunk = malloc(sizeof(struct newChunkObj) * chunks->numOfChunks);
-	printf("\nErrno : %s\n", strerror(errno));
+//	printf("\nErrno : %s\n", strerror(errno));
 	printf("\nchunks->chunk ptr : %p", chunks->chunk);
 	//getch();
 	//	printf("\nafter %p", chunks->chunk);
@@ -602,9 +609,9 @@ struct csvStrObjects* npNodeValues(void *dataRef)
 	}
 */
 
-	_ASSERTE( _CrtCheckMemory( ) );
+	//_ASSERTE( _CrtCheckMemory( ) );
 //	nodes = malloc(sizeof(nodes));
-	_ASSERTE( _CrtCheckMemory( ) );
+	//_ASSERTE( _CrtCheckMemory( ) );
 	printf("\n%p", nodes);
 
 	printf("node att1 : %p", nodes);
@@ -614,10 +621,10 @@ struct csvStrObjects* npNodeValues(void *dataRef)
 	//getch();
 	nodes->totalCsvStrObjectsSize = 0; //Temp
 	nodes->csvObj = NULL;	
-	_ASSERTE( _CrtCheckMemory( ) );
+	//_ASSERTE( _CrtCheckMemory( ) );
 	printf("\ncalloc2 : %p", nodes->csvObj);
 
-	_ASSERTE( _CrtCheckMemory( ) );
+	////_ASSERTE( _CrtCheckMemory( ) );
 	if( (nodes->csvObj = malloc((nodes->numOfcsvStrObjects*2) * sizeof(struct csvStrObj))) == NULL )
 	{
 		printf("\nNULL");
@@ -628,8 +635,8 @@ struct csvStrObjects* npNodeValues(void *dataRef)
 	printf("\nfor 1 : %p", nodes->csvObj);
 	printf("\nSizeof(nodes) : %d", sizeof(nodes));
 //	printf("\nSizeof(struct csvNodes) : %d", sizeof(struct csvNodes));
-	(struct csvStrObjects*)nodes->totalCsvStrObjectsSize = 0;
-	_ASSERTE( _CrtCheckMemory( ) );
+	nodes->totalCsvStrObjectsSize = 0;
+	////_ASSERTE( _CrtCheckMemory( ) );
 	for(nodeIndex = 0; nodeIndex <= (nodes->numOfcsvStrObjects); nodeIndex++) //Removed <=
 	{
 		printf("\nnodeIndex : %d : %p", nodeIndex, nodes->csvObj[nodeIndex]);
@@ -652,7 +659,7 @@ struct csvStrObjects* npNodeValues(void *dataRef)
 		}
 	}
 		
-	_ASSERTE( _CrtCheckMemory( ) );
+	//_ASSERTE( _CrtCheckMemory( ) );
 	x = 0;
 	printf("\nfor 2 : %d", data->map.nodeRootCount);
 	//getch();
@@ -660,7 +667,7 @@ struct csvStrObjects* npNodeValues(void *dataRef)
 	{
 		printf("\nMain Index %d", nodeIndex);
 		node = data->map.node[nodeIndex];
-		_ASSERTE( _CrtCheckMemory( ) );
+		//_ASSERTE( _CrtCheckMemory( ) );
 		
 	//	if (node->type != kNodeHUD)
 
@@ -674,13 +681,13 @@ struct csvStrObjects* npNodeValues(void *dataRef)
 				//getch(); getch(); getch();
 			}
 
-	_ASSERTE( _CrtCheckMemory( ) );
+	//_ASSERTE( _CrtCheckMemory( ) );
 		//	printf("\nnodes->totalCsvStrObjectsSize : %d", nodes->totalCsvStrObjectsSize);
 			nodes->totalCsvStrObjectsSize += nodes->csvObj[x].size;
-	_ASSERTE( _CrtCheckMemory( ) );
+	//_ASSERTE( _CrtCheckMemory( ) );
 		//	printf("\nc");
 			nodes->csvObj[x].csvStr[(nodes->csvObj[x].size)] = '\0'; //Adding -1
-	_ASSERTE( _CrtCheckMemory( ) );
+	//_ASSERTE( _CrtCheckMemory( ) );
 		//	printf("\nd");
 
 			x++;
@@ -688,7 +695,7 @@ struct csvStrObjects* npNodeValues(void *dataRef)
 			if (node->childCount)
 			{
 				npNewerMapTraverseTreeLL(nodes, &x, node, kNPmapNodeCSV, dataRef);
-	_ASSERTE( _CrtCheckMemory( ) );
+	//_ASSERTE( _CrtCheckMemory( ) );
 			}
 		}
 		else {
@@ -705,7 +712,7 @@ struct csvStrObjects* npNodeValues(void *dataRef)
 	nodes->numOfcsvStrObjects = x;
 	printf("\n-----NUMBER OF CSV STRING OBJECTS : %d-----\n", nodes->numOfcsvStrObjects);
 	//getch(); getch();
-	_ASSERTE( _CrtCheckMemory( ) );
+	//_ASSERTE( _CrtCheckMemory( ) );
 
 	return nodes;
 }
@@ -950,12 +957,14 @@ int npCreateDatabase2(int dbID, struct dbFunction *db, char* dbName)
 	return err;
 }
 
-int npDropDatabase(int dbID, struct dbFunction *db, const char* dbName, void* dataRef )
+int npDropDatabase(int dbID, pNPdbFuncSet FuncSet, const char* dbName, void* dataRef )
 {
-	char* statement = (*db->StatementDrop)("DATABASE", dbName);
+	//char* statement = (*db->StatementDrop)("DATABASE", dbName); // old, lde
+	char* statement = (*FuncSet->StatementDrop)("DATABASE", dbName);
 	int success = 0;
 	
-	success = (int)(*db->query)(dbID, statement);
+	//success = (int)(*db->query)(dbID, statement); // old, lde
+	success = (*FuncSet->query)(dbID, statement);
 
 	if( !success )
 		npPostMsg( "warn 5585 - failed to DROP database", kNPmsgDB, dataRef);
@@ -1114,13 +1123,14 @@ void npNewFreeChunks(struct newChunksObj * chunks, void* dataRef)
 	return;
 }
 
-
+/* // old, lde
 int npAttachDbsToDataRef(struct databases *dbs, void* dataRef)
 {
 	pData data = (pData) dataRef;
 	data->io.dbs = dbs;
 	return 0;
 }
+*/
 
 
 
@@ -1146,7 +1156,7 @@ int npOpenDb(struct database *db)
 	db->currentlyUsedDatabase[0] = '\0';	//zzd r
 
 	/// initialize the database connection structure
-	connInit = (MYSQL*)(*db->db->init)(NULL);
+	connInit = (MYSQL*)(*db->dbFunc->init)(NULL);
 	if( !connInit )
 	{
 		printf( "err 5566 - mysql_init() failed, likely out of memory \n" );
@@ -1154,14 +1164,14 @@ int npOpenDb(struct database *db)
 	}
 
 	/// connect to the host using default database by passing in "" for DB
-	conn = (MYSQL*)(*db->db->connect)( connInit, db->hostIP, 
+	conn = (MYSQL*)(*db->dbFunc->connect)( connInit, db->hostIP, 
 									  db->user, db->password,
 									  "", db->port, NULL, 0 );
 
 	if( !conn )
 	{
 		//	printf( "MYSQL error: %u (%s)\n",func->errno(conn), func->error(conn));
-		printf( "MYSQL err: %u - %s\n", mysql_errno (connInit), mysql_error (connInit));
+		printf( "MYSQL err: %u - %s\n", (unsigned int)(*db->dbFunc->db_errno)(connInit), (*db->dbFunc->db_error)(connInit));
 		return 0;
 	}
 	
@@ -1175,33 +1185,57 @@ int npOpenDb(struct database *db)
 
 
 //zzd r
-int npAddDb(struct databases *dbs, char* dbType, char* hostIP, char* user, char* pass, char* dbName, void* dataRef)
+// int npAddDb(struct databases *dbs, char* dbType, char* hostIP, char* user, char* pass, char* dbName, void* dataRef)  // old, lde
+int npAddDb(pNPdbs dbs, char* dbType, char* hostIP, char* user, char* pass, char* dbName, void* dataRef)
 {
 	int i = 0;
 
 	/// initialize structure if this is first database (Server?) to be added.
-	if( dbs->numberOfDatabases == 0 )
+	//if( dbs->numberOfDatabases == 0 ) // old, lde
+	printf("\nhostCount is %d", dbs->hostCount);
+	if(dbs->hostCount == 0)
 	{
-	//begin npInitDB()
-		dbs->activeDB = malloc(sizeof(struct database) * 1);
-		dbs->activeDB[0].db = malloc(sizeof(struct dbFunction));
+	//begin npInitDB() // Bring under npInitDb Func
+		//dbs->activeDB = malloc(sizeof(struct database) * 1); // old, lde
+		dbs->activeDB = malloc(sizeof(NPdatabase) * 1);
+		//dbs->activeDB[0].dbFunc = malloc(sizeof(struct dbFunction)); // old, lde
+		dbs->activeDB->host = malloc(sizeof(NPdbHost));
+		dbs->activeDB->host->hostFuncSet = malloc(sizeof(NPdbFuncSet));
 
 		/// @todo upgrade idMap to map from DB node_id to scene node ptr, fasted updates
 		/// @todo support changes to scene graph structure when updating DB
 		/// @todo add kNPnodeList type for npMalloc
-		dbs->activeDB[0].idMap = malloc( sizeof(int) * kNPnodeMax ); 
-		if( !dbs->activeDB[0].idMap ) return 1010;
+		
+		//dbs->activeDB[0].idMap = malloc( sizeof(int) * kNPnodeMax ); // old, lde
+		dbs->activeDB->idMap = malloc( sizeof(int) * kNPnodeMax );
+		//if( !dbs->activeDB[0].idMap ) return 1010; // old, lde
+		if( !dbs->activeDB->idMap ) return 1010;
 
+		/* // old, lde
 		for(i = 0; i < kNPnodeMax; i++)
 			dbs->activeDB[0].idMap[i] = -1;	/// @todo make idMap = 0 not -1
-
+		*/ 
+		
+		for(i = 0; i < kNPnodeMax; i++)
+			dbs->activeDB->idMap[i] = -1;
+		 
 		/// @todo copy the structures rather then just point to existing mem
+		
+		/* // old, lde
 		strcpy( dbs->activeDB[0].hostIP, hostIP );
 		strcpy( dbs->activeDB[0].user, user );
 		strcpy( dbs->activeDB[0].password, pass );
-		strcpy( dbs->activeDB[0].currentlyUsedDatabase, dbName );
+		strcpy( dbs->activeDB[0].currentlyUsedDatabase, dbName ); // currentlyUsedDatabase now named inUseDB
 		strcpy( dbs->activeDB[0].dbType, dbType );
 		dbs->numberOfDatabases++;
+		*/
+		
+		strcpy(dbs->activeDB->host->ip, hostIP);
+		strcpy(dbs->activeDB->host->user, user);
+		strcpy(dbs->activeDB->host->password, pass);
+		strcpy(dbs->activeDB->host->inUseDB, dbName);
+		dbs->dbCount++;
+		
 	}
 	else
 	{
@@ -1233,18 +1267,24 @@ int npdbPushScene ( void* dbID, const char* dbName, void* dataRef )							//add 
 
 	pData data = (pData) dataRef;
 
-	struct database *myDb = &data->io.dbs->activeDB[0];
-	struct dbFunction *myDbFuncs = data->io.dbs->activeDB[0].db;
-
-	pNPdatabases dbList = ((struct databases*)data->io.dbs)->dbList;
-
+	//struct database *myDb = &data->io.dbs->activeDB[0]; // old, lde
+	pNPdatabase myDb = data->io.db.activeDB;
+//	struct dbFunction *myDbFuncs = data->io.dbs->activeDB[0].dbFunc;
+	pNPdbFuncSet myDbFuncs = data->io.db.activeDB->host->hostFuncSet;
+	
+	
+	//pNPdatabases dbList = ((struct databases*)data->io.dbs)->dbList; // old, lde
+	pNPdatabase *dbList = data->io.db.dbList; // hmm
+	
+	
 	// printf( "Save DB Update: %s  host: %s", dbName, hostName );
 
 //	err = npUseDatabase2(dbID, myDbFuncs, (char*)dbName);
 	if (err) return err;
 
-	strcpy(myDb->currentlyUsedDatabase, dbName);
-
+	//strcpy(myDb->currentlyUsedDatabase, dbName); // Not necessary at present, structure has changed, lde // old, lde
+	strcpy(myDb->name, dbName);
+	
 	// npSelect(dbID, myDbFuncs, "node_tbl");
 
 	//if DB exists then truncate it to delete all rows for update
@@ -1323,26 +1363,23 @@ void* npdbGetList(struct database *db, void* dataRef )
 	pNPdatabases dbList = NULL;				//zzsql
 
 
-	npShowDatabases(db->id, db->db, dataRef);
+	npShowDatabases(db->id, db->dbFunc, dataRef);
 
-//	myResult = (*db->storeResult)(db->dbID);
-//	printf("\nStore Result");
-
-	myResult = (*db->db->storeResult)(db->id);
+	myResult = (*db->dbFunc->storeResult)(db->id);
 	if( !myResult )
 	{
 		npPostMsg("err 5565 - npdbGetList failed to storeResult", kNPmsgErr, dataRef );
 		goto abort;
 	}
 	
-	numFields = (int)(*db->db->db_num_fields)(myResult);
+	numFields = (int)(*db->dbFunc->db_num_fields)(myResult);
 	if( numFields != 1 )
 	{
 		npPostMsg( "err 5566 - npdbGetList numFields != 1", kNPmsgErr, dataRef );
 		goto abort;
 	}//	numRows = (*db->db_num_rows)(myResult);
 
-	numRows = (int)(*db->db->db_num_rows)(myResult);
+	numRows = (int)(*db->dbFunc->db_num_rows)(myResult);
 	if( !numRows )
 	{
 		npPostMsg( "err 5567 - npdbGetList numRows < 1", kNPmsgErr, dataRef );
@@ -1377,10 +1414,10 @@ void* npdbGetList(struct database *db, void* dataRef )
 
 	//zz add proper MySQL error checking for all commands
 	// http://dev.mysql.com/doc/refman/5.0/en/mysql-fetch-row.html
-	while( (row = (*db->db->db_fetch_row)(myResult)) )
+	while( (row = (*db->dbFunc->db_fetch_row)(myResult)) )
 	{
 		//add error checking for malloc, fetch_row and fetch_lengths //zz debug
-		fieldLengths = (*db->db->db_fetch_lengths)(myResult);
+		fieldLengths = (*db->dbFunc->db_fetch_lengths)(myResult);
 		if( !fieldLengths )
 		{
 			npPostMsg("err 5571 - malloc failed to create dbList->list[x]", kNPmsgErr, dataRef);
@@ -1406,12 +1443,12 @@ void* npdbGetList(struct database *db, void* dataRef )
 		i++;
 	}
 
-	mysql_free_result(myResult); //abstract away
+	(*db->dbFunc->freeResult)(myResult);
 	return (void*)dbList;
 
 abort:
 	//zz add check DB for errors
-	mysql_free_result(myResult); //important to do this to maintain connection
+	(*db->dbFunc->freeResult)(myResult); //important to do this to maintain connection
 	return NULL;
 }
 
@@ -1422,28 +1459,35 @@ int npdbUse_old( const char* dbName, void* dataRef )							//add to ctrl loop, d
 	int err = 0;
 	int dbID = 0;
 
-	struct databases *dbs = NULL;
-	struct dbFunction *myDbFuncs = NULL;
+	//struct databases *dbs = NULL; // old, lde
+	pNPdatabase db = NULL;
+	//struct dbFunction *myDbFuncs = NULL; // old, lde
+	pNPdbFuncSet hostFuncSet = NULL;
 
 	pData data = (pData) dataRef;
 
 	/// @todo support checking DB connection and re-connect on command
 
 
-	dbs = data->io.dbs;
-	myDbFuncs = data->io.dbs->activeDB[0].db;
-	dbID = dbs->activeDB[0].id;
-
+	//dbs = data->io.dbs; // old, lde
+	db = data->io.db.activeDB;
+	//myDbFuncs = data->io.dbs->activeDB[0].dbFunc; // old, lde
+	hostFuncSet = data->io.db.activeDB->host->hostFuncSet;
+	//dbID = dbs->activeDB[0].id; // old, lde
+	dbID = db->id;
+	
 //	err = npUseDatabase2( (void*)dbID, &myDbFuncs, (char*)dbName );
 
 	/// copy the DB name string to our currently used database reference
-	strcpy( data->io.dbs->activeDB[0].currentlyUsedDatabase, dbName );
-
+//	strcpy( data->io.dbs->activeDB[0].currentlyUsedDatabase, dbName ); // @todo, change to reflect new structure, lde
+	strcpy( data->io.db.activeDB->name, dbName);
+	
 	return err;
 }
 
  //zzd r
 //------------------------------------------------------------------------------
+/* //lde
 void npMysqlHook_old (HINSTANCE dbLib, void* dataRef)
 {
 	pData data = (pData) dataRef;
@@ -1470,8 +1514,10 @@ void npMysqlHook_old (HINSTANCE dbLib, void* dataRef)
 
 	return;
 }
-
+*/
+ 
 //------------------------------------------------------------------------------
+/* // old, lde
 int npConnectDB (void* dataRef)
 {
 	pData data = (pData) dataRef;
@@ -1480,4 +1526,5 @@ int npConnectDB (void* dataRef)
 
 //zz dbz	npAttachDbsToDataRef(dbs, dataRef);
 }
+*/
 

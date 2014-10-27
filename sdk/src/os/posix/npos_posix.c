@@ -74,6 +74,7 @@ void nposGetAppPath (char* buffer, int* size)
 	//copy the app path to the passed in buffer
 	strcpy (buffer, appPath);
 
+	printf("\n%s\n", buffer);
 	//set the length
 	*size = strlen(buffer); 
 }
@@ -173,10 +174,12 @@ int nposShowCursor (int hide)
 }
 
 //-----------------------------------------------------------------------------
+/* // temp lde
 int nposGetKey (void)
 {
 	return getch();																//debug zz
 }
+*/
 
 #endif
 

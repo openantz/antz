@@ -145,8 +145,9 @@ void npInitGlut (int argc, char **argv, void* dataRef)
 	//! register mouse events with GLUT
 	glutMouseFunc (npMouseEvent);
 	glutMotionFunc (npMouseMotion);
+#ifndef NP_OSX_														//zz-osx debug lde
 	glutMouseWheelFunc (npMouseWheel);
-
+#endif
 	//! register display functions with GLUT
 	glutDisplayFunc (npGlutDrawGLScene);
 	glutIdleFunc (npGlutDrawGLSceneIdle);

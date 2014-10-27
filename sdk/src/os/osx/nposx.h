@@ -27,6 +27,9 @@
 
 #include "../../npdata.h"
 
+void* nposLoadLibrary( char* filePath );
+void* nposGetLibSymbol(void* library, char* symbolName); // New function, lde
+void* nposxGetLibSymbol(void* library, char* symbolName); // New function, lde
 
 void npOSXGetCWD (char* buffer, int* size);
 
@@ -40,6 +43,11 @@ void npOSXTimeStampCSV (char* fileName);
 void npOSXSetCursorPos (int x, int y);
 void npOSXShowCursor (int hide);
 
+bool nposSupportsAntzThreads (void); // lde
+void nposEndThread (void); // lde
+void nposBeginThread (voidFnPtr vfp, void *dataRef); // lde
+
+int nposGetKey (void); // lde
 
 #endif
 

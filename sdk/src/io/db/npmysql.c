@@ -51,13 +51,45 @@ void npInitMySQL (void* dataRef)
 	pNPdbs dbs = &data->io.db;
 	pNPdbFuncSet func = NULL;
 	void* dbLib = NULL;   /// dbLib stores the 'HINSTANCE' handle as a void*
-
+	char appPath[kNPmaxPath];
+	int size = 0;
+	
+	nposGetAppPath(appPath, &size);
+	
+	printf("\nnpInitMySQL : %s\n", appPath);
 	/// post the mysql connector client library version
+	printf("data->io.db : %p", dbs);
 	printf( "\nMySQL Client ver: %d\n", MYSQL_VERSION_ID );
 
 	/// load the mysql client library
+	printf("\nAttempting to load windows dll\n");
 	dbLib = nposLoadLibrary( "libmysql.dll" );
-	if( !dbLib ) return;
+	if( !dbLib )
+	{
+		printf("\nFailed loading dll, trying to load mac dylib (32-bit)\n");
+		
+		dbLib = nposLoadLibrary( "libmysqlclient.18.dylib" );
+		if( !dbLib )
+		{
+			printf("\nFailed loading dll, trying to load mac dylib (64-bit)\n");
+			
+			dbLib = nposLoadLibrary( "libmysqlclient.18.64.dylib" );
+			
+			if( !dbLib )
+			{
+				printf("\nFailed loading dll\n");
+			}
+			
+		}
+		
+	}
+	
+	if( !dbLib )
+	{
+		printf("\nAll dynamic linking failed");
+		return;
+	}
+		
 
 	/// create a new initialized funcSet structure
 	func = npdbNewFuncSet( dbs );
@@ -117,22 +149,23 @@ int npMysqlHook( pNPdbFuncSet func, void* dbLib)
 	func->dbLib = dbLib;
 
 	/// hook our external database library functions
-	func->init			= (void*)GetProcAddress( dbLib, "mysql_init"		  );
-	func->connect		= (void*)GetProcAddress( dbLib, "mysql_real_connect"  );
-	func->options		= (void*)GetProcAddress( dbLib, "mysql_options"	      );
-	func->ping			= (void*)GetProcAddress( dbLib, "mysql_ping"		  );
-	func->close			= (void*)GetProcAddress( dbLib, "mysql_close"		  );
+	func->init			= (void*)nposGetLibSymbol( dbLib, "mysql_init"		    );
+	func->connect		= (void*)nposGetLibSymbol( dbLib, "mysql_real_connect"  );
+	func->options		= (void*)nposGetLibSymbol( dbLib, "mysql_options"	    );
+	func->ping			= (void*)nposGetLibSymbol( dbLib, "mysql_ping"		    );
+	func->close			= (void*)nposGetLibSymbol( dbLib, "mysql_close"		    );
 
-	func->query			= (void*)GetProcAddress( dbLib, "mysql_query"		  );
-	func->store_result	= (void*)GetProcAddress( dbLib, "mysql_store_result"  );
-	func->free_result	= (void*)GetProcAddress( dbLib, "mysql_free_result"	  );
-	func->fetch_row		= (void*)GetProcAddress( dbLib, "mysql_fetch_row"	  );
-	func->fetch_lengths	= (void*)GetProcAddress( dbLib, "mysql_fetch_lengths" );
-	func->num_fields	= (void*)GetProcAddress( dbLib, "mysql_num_fields"	  );
-	func->num_rows		= (void*)GetProcAddress( dbLib, "mysql_num_rows"	  );
-	func->db_error		= (void*)GetProcAddress( dbLib, "mysql_error"		  );
-	func->db_errno		= (void*)GetProcAddress( dbLib, "mysql_errno"	      );
-		
+	func->query			= (void*)nposGetLibSymbol( dbLib, "mysql_query"		    );
+	func->store_result	= (void*)nposGetLibSymbol( dbLib, "mysql_store_result"  );
+	func->free_result	= (void*)nposGetLibSymbol( dbLib, "mysql_free_result"	);
+	func->fetch_row		= (void*)nposGetLibSymbol( dbLib, "mysql_fetch_row"	    );
+	func->fetch_lengths	= (void*)nposGetLibSymbol( dbLib, "mysql_fetch_lengths" );
+	func->num_fields	= (void*)nposGetLibSymbol( dbLib, "mysql_num_fields"	);
+	func->num_rows		= (void*)nposGetLibSymbol( dbLib, "mysql_num_rows"	    );
+	func->db_error		= (void*)nposGetLibSymbol( dbLib, "mysql_error"		    );
+	func->db_errno		= (void*)nposGetLibSymbol( dbLib, "mysql_errno"	        );
+	func->conn_thread_id= (void*)nposGetLibSymbol( dbLib, "mysql_thread_id"		);	
+	
 	func->InitConnOptions		= npMysqlInitConnOptions;
 	func->GetTableFields		= npMysqlGetTableFields;
 
@@ -165,7 +198,10 @@ pNPdbFuncSet npMysqlAddFuncSet( pNPdbs db, pNPdbFuncSet funcSet )
 		hostTypeMatch = func;	///< update existing host funcSet
 	}
 	else /// add function set to list and increment the funcSetCount
-*/		db->funcSetList[db->funcSetCount++] = funcSet;	///< add new funcSet
+*/	
+	printf("\ndb->funcSetCount : %d", db->funcSetCount);
+	db->funcSetList[db->funcSetCount++] = funcSet;	///< add new funcSet
+	printf("\ndb->funcSetCount : %d", db->funcSetCount);
 //	}
 
 	return funcSet;
@@ -178,7 +214,8 @@ pNPdbFuncSet npMysqlAddFuncSet( pNPdbs db, pNPdbFuncSet funcSet )
 
 	@param filePath of the library to load, can be local to app.
 	@return the library handle pointer if success, else return NULL.
-*/
+*/ // Moved nposLoadLibrary from npmysql.c to nposx.c
+/*
 void* nposLoadLibrary( char* filePath )
 {
 	void* library = LoadLibrary( filePath );
@@ -190,6 +227,7 @@ void* nposLoadLibrary( char* filePath )
 
 	return library;
 }
+ */
 
 int npMysqlInitConnOptions( pNPdbFuncSet func, void* connInit )
 {
@@ -231,7 +269,7 @@ char* npMysqlStatementShow(char* showWhat)
 	return statement;
 }
 
-/*
+
 char* npMysqlStatementInsert(char* table)
 {
 	int count = 0;
@@ -240,7 +278,7 @@ char* npMysqlStatementInsert(char* table)
 	
 	return statement;
 }
-*/
+
 
 char* npMysqlStatementCreate(char* dbName)
 {
@@ -316,6 +354,7 @@ char* npMysqlStatementSelect( char* table )
 	return statement;
 }
 
+/*
 char* npMysqlStatementInsert(char* table, struct newChunkObj *value)
 {
 	char* statement = NULL;
@@ -338,6 +377,7 @@ char* npMysqlStatementInsert(char* table, struct newChunkObj *value)
 
 	return statement;
 }
+*/
 
 char* npMysqlStatementTruncate( int dbID, char* tableName )
 {

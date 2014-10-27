@@ -249,7 +249,8 @@ void npUpdateTag (pNPtag tag)
 	float charHeight = 15.0f;
 
 //	if(tag->titleSize == 0)											//zz debug
-	tag->titleSize = strnlen(tag->title, kNPtagTitleMax);
+	//tag->titleSize = strnlen(tag->title, kNPtagTitleMax); // lde
+	(tag->titleSize) = strlen(tag->title); // lde
 
 	//add procedure to count lines and width length
 	//strlen(tag->desc);
@@ -373,7 +374,7 @@ void npSyncTags (void* dataRef)
 	for (i=0; i < j; i++)
 	{	npTagNode(nodes[i], data);
 	node = (pNPnode)nodes[i];
-	//printf("id: %d  tag: %s\n",  node->id, node->tag->title); // Commented out because it was flooding console, lde
+	printf("id: %d  tag: %s\n",  node->id, node->tag->title);
 	}
 	printf("tag count J: %d\n", j);
 	//loop through all nodes and attach tagPtr based on recordID and tableID

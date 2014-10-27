@@ -39,7 +39,7 @@ void npCloseDB( void* dataRef );
 
 void npUpdateDB( void* dataRef );
 
-int npdbConnect( pNPdbHost host );
+int npdbConnect( pNPdbHost host, void* dataRef );
 
 //get list of databases by name
 pNPdatabases npdbGetDatabases( void* dataRef );
@@ -142,7 +142,7 @@ int npdbUpdateAntzStateFromDatabase( void* dataRef );	//zz db
 
 int npdbTruncate(void* dbID, struct dbFunction *db, char* table); //zz db
 int npdbPushScene ( void* dbID, const char* dbName, void* dataRef );
-int npDropDatabase(int dbID, struct dbFunction *db, const char* dbName, void* dataRef );
+int npDropDatabase(int dbID, pNPdbFuncSet FuncSet, const char* dbName, void* dataRef );
 pNPdatabase npdbSaveAs( char* dbName, pNPdbHost host, void* dataRef );
 
 pNPdbFuncSet npdbNewFuncSet( pNPdbs dbs );

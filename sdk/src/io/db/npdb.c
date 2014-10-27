@@ -31,12 +31,14 @@
 #include "nphadoop.h"
 #include "npmongo.h"
 
+//@todo, make antz recognize antz databases from their structure, lde
+//@todo, exclude databases from menu that are not of antz type, lde
 
-void npdbConnectHosts( pNPdbs dbs );
+void npdbConnectHosts( pNPdbs dbs, void* dataRef );
 void npdbStartConnMonitor( pNPdbs dbs );
 int npdbRefreshDatabaseList( pNPdbs dbs );
 int npdbCloseHost( pNPdbHost host );
-void npdbConnMonitorThread( pNPdbs dbs );
+void npdbConnMonitorThread( pNPdbs dbs, void* dataRef );
 pNPdbFuncSet npdbGetHostFuncSet( char* hostType, pNPdbs dbs );
 void npdbRowToNode( pNPnode node, char** row );
 void npdbUpdateNodesFromMysqlResult( MYSQL_RES *result, void* dataRef );
@@ -50,25 +52,34 @@ void npInitDB (void* dataRef)
 
 	pData data = (pData) dataRef;
 	pNPdbs dbs = &data->io.db;
-
+	
 	/// load DB libraries and hook DB specific functions
 	npInitMySQL( data );			///< MySQL client is our default RDBMS
 	npInitPostgreSQL( data );		///< PostgreSQL has useful GIS tools
 	npInitSQLite( data );			///< SQLite is a local file based RDMS
 	npInitMongoDB( data );			///< MongoDB is a realtime NoSQL database
 
-	npdbConnectHosts( dbs );		/// connect to each host in the list
-	npdbStartConnMonitor( dbs );	/// keep hosts connections alive
+	npdbConnectHosts( dbs, data );	///< connect to each host in the list
+	npdbStartConnMonitor( dbs );	///< keep hosts connections alive
 
 	npdbRefreshDatabaseList( dbs );	/// refresh the dbList using hosts list
 
-	dbs->running = true;			/// database system is ready to use
+	if ( dbs->running == true ) {
+		printf("true\n");
+		dbs->activeDB = dbs->dbList[1]; // temp fix, lde
+	}
+	else {
+		printf("false\n");
+	}
+
+	
+	dbs->running = true;			/// database system is ready to use // temp, lde
 
 	printf("\n");
 }
 
 
-int npdbConnect( pNPdbHost host )
+int npdbConnect( pNPdbHost host, void* dataRef )
 {
 	int err = 0;
 
@@ -76,6 +87,7 @@ int npdbConnect( pNPdbHost host )
 	void* conn = NULL;		///< void* to store MYSQL* conn handler 
 
 	pNPdbFuncSet func = NULL;
+	pData data = (pData) dataRef;
 	
 	if( !host )
 	{	
@@ -96,8 +108,9 @@ int npdbConnect( pNPdbHost host )
 		printf("err 5567 - host func->init failed, likely out of memory \n");
 		return 5567;
 	}
+	
 
-	/// set connection options, such as RECCONECT flag
+	/// set connection options, such as RECONNECT flag // esp, lde
 	err = (int)func->InitConnOptions( func, connInit );
 	if( err ) return err;
 
@@ -108,22 +121,37 @@ int npdbConnect( pNPdbHost host )
 	{	
 		printf( "%s err: %u - %s\n", host->type,
 			func->db_errno(connInit), func->db_error(connInit) );
+		
+		host->connected = false; // lde, new
+		printf("\nhost not connected");
 		return 5568;   //err 5568
 	}
-
+	
+	host->connected = true; // lde, new
+	printf("\nhost connected");
+	
+	// Should I use client / server instead of host / db, lde
+	printf("\ndata->io.db : %p", &data->io.db);
+	printf("\ndata->io.db.activeDB : %p", data->io.db.activeDB);
+	printf("\ndata->io.db.activeDB->id : %d", data->io.db.activeDB->id);
+	printf("\nhost->conn : %d", host->conn);
+	data->io.db.activeDB->id = host->conn;
+	
 	return 0;	//success
 }
 /// iterate through list of hosts and attempt to connect to each
-void npdbConnectHosts( pNPdbs dbs )
+void npdbConnectHosts( pNPdbs dbs, void* dataRef )
 {
 	int i = 0;
 	int err = 0;
 
 	pNPdbHost host = NULL;
-
+	pData data = (pData) dataRef;
+		
 	if( !dbs )
 		{ printf("err 5577 - npdbConnectHosts has null dbs \n"); return; }
 	
+	// There needs to be multiple "host" connected variables for connecting to multiple databases, lde
 	/// iterate through the hostList, starts at 1 to skip the first null host
 	for( i=1; i < dbs->hostCount; i++ )
 	{
@@ -132,11 +160,19 @@ void npdbConnectHosts( pNPdbs dbs )
 			printf("err 5578 - null host in db->hosts item: %d \n", i );
 		else
 		{
-			if( err = npdbConnect(host) )
+			data->io.db.activeDB->host = host;
+			if( err = npdbConnect(host, dataRef) )
+			{
 				printf( "err %d - failed to connect %s host: %s\n", 
 						err, host->type, host->ip ); 
+				host->connected = false;
+				printf("\nHost connection lost");
+			}
 			else
-				printf( "connected %s host: %s\n", host->type, host->ip );
+			{
+				printf("\nconnected %s host: %s\n", host->type, host->ip );
+				host->connected = true;
+			}
 		}
 	}
 }
@@ -195,14 +231,15 @@ void npCloseDB (void* dataRef)		//clean-up
 	@param dbs is the core database structure for this global scene context.
 */
 //------------------------------------------------------------------------------
-void npdbConnMonitorThread( pNPdbs dbs )
+void npdbConnMonitorThread( pNPdbs dbs, void* dataRef )
 {
 	int i = 0;
-		
+	unsigned long temp_conn_id = 0;
 	pNPdbHost host = NULL;
 	pNPdbFuncSet func = NULL;
 	void* conn = NULL;
-
+	pData data = (pData) dataRef;
+	
 	printf( "DB host pinging thread started \n" );
 
 	
@@ -215,6 +252,7 @@ void npdbConnMonitorThread( pNPdbs dbs )
 		/// ping hosts list every 10 secs
 		/// zoneshift.net seems to like 10 secs, shorter causes err 2006
 		/// zs times out after about 30 secs w/o ping, not sure why so short
+		/// @possible todo : have system test ping limits and settle, lde
 		nposSleep( 10.0 );
 
 		printf( "ping DB hosts\n" );
@@ -223,26 +261,50 @@ void npdbConnMonitorThread( pNPdbs dbs )
 		{
 			host = dbs->hosts[i];
 			if( !host )
+			{
 				printf("err 5411 - null host id: %i \n", i);
+			}
 			else if( !host->hostFuncSet )
+			{
 				printf("err 5412 - null host function set id: %i \n", i );
+			}
 			else if( !host->conn )
 			{
 				/// @todo attempt to establish a connection
-				npdbConnect( host );
+				npdbConnect( host, dataRef ); //@todo, this should be passed a pNPdatabase / pNPserver / pNPdbServer structure, lde
+				
 			}
 			else
 			{
 				func = host->hostFuncSet;
 				conn = host->conn;
 
-				if( func->ping(conn) )
+				host->conn_id = func->conn_thread_id(host->conn);
+				temp_conn_id = host->conn_id;
+				if( func->ping(conn) ) // If RECONNECT is set then a ping could cause a reconnect, but it isn't guaranteed. One still needs to check, lde
 				{
 					printf( "err 5528 - ping failed host: %s\n", host->ip );
 					printf( "%s err: %u - %s\n", host->type, 
 							func->db_errno(conn),func->db_error(conn));
+					//host->connected = false;
+					host->conn_id = func->conn_thread_id(host->conn);
+					if(host->conn_id == temp_conn_id)
+					{
+						printf("\nConnection Lost, Reconnect failed\n");
+						host->connected = false;
+					}
+					else {
+						printf("\nConnection Lost, Reconnect successful\n");
+						host->connected = true;
+					}
+
+					
+					//printf("\nhost not connected");
 				}
+
+				
 			}
+		//	dbs->running = true;
 		}
 	
 	}
@@ -383,15 +445,18 @@ int npdbDrop( const char* dbName, void* dataRef )							//add to ctrl loop, debu
 
 	pData data = (pData) dataRef;
 
-	struct dbFunction *myDbFuncs = data->io.dbs->activeDB[0].db;
-
-	//if DB exists then drop it
-	dbID = data->io.dbs->activeDB[0].id;
+//	struct dbFunction *myDbFuncs = data->io.dbs->activeDB[0].dbFunc; // lde
+	pNPdbFuncSet FuncSet = data->io.db.activeDB->host->hostFuncSet;
 	
-	err = npDropDatabase( dbID, myDbFuncs, dbName, data );
-
-	strcpy( data->io.dbs->activeDB[0].currentlyUsedDatabase, "\0" );
-
+	//if DB exists then drop it
+	//dbID = data->io.dbs->activeDB[0].id;
+	dbID = data->io.db.activeDB->id;
+	
+	//err = npDropDatabase( dbID, myDbFuncs, dbName, data );
+	err = npDropDatabase(dbID, FuncSet, dbName, data);
+	
+	//strcpy( data->io.dbs->activeDB[0].currentlyUsedDatabase, "\0" ); // temp lde
+	
 	if( err )
 	{
 		sprintf( "Failed to Drop Database: %s", dbName, msg );
@@ -408,7 +473,8 @@ void npdbActiveHost( char* hostName, void* dataRef)
 {
 	pData data = (pData) dataRef;
 
-	strcpy( hostName, data->io.dbs->activeDB[0].hostIP );
+//	strcpy( hostName, data->io.dbs->activeDB[0].hostIP );
+	strcpy( hostName, data->io.db.activeDB->host->ip);
 }
 
 //------------------------------------------------------------------------------
@@ -417,7 +483,8 @@ char* npdbActiveDB( void* dataRef )
 	char* dbName = NULL;
 	pData data = (pData) dataRef;
 
-	dbName = data->io.dbs->activeDB[0].currentlyUsedDatabase;
+	//dbName = data->io.dbs->activeDB[0].currentlyUsedDatabase;
+	dbName = data->io.db.activeDB->name;
 	if( dbName )//strcmp( dbName, "") == 0
 	{
 		if( dbName[0] == '\0')
@@ -437,13 +504,16 @@ void npdbSet( char* dbName, char* tblName, char* setStatement, void* dataRef)
 
 	pData data = (pData) dataRef;
 
-	struct dbFunction *db = data->io.dbs->activeDB[0].db;
-	int dbID = data->io.dbs->activeDB[0].id;
-
+	//struct dbFunction *db = data->io.dbs->activeDB[0].dbFunc; // lde
+	pNPdbFuncSet FuncSet = data->io.db.activeDB->host->hostFuncSet;
+	//int dbID = data->io.dbs->activeDB[0].id;
+	int dbID = data->io.db.activeDB->id;
+	
 	sprintf( statement, "UPDATE %s SET %s", 
 							tblName, setStatement );
 
-	result = (int)(*db->query)(dbID, statement);
+	//result = (int)(*db->query)(dbID, statement);
+	result = (int)(*FuncSet->query)(dbID, statement);
 }
 
 //------------------------------------------------------------------------------
@@ -454,13 +524,24 @@ void npdbSelect( char* dbName, char* tblName, char* selectWhere, void* dataRef)
 
 	pData data = (pData) dataRef;
 
-	struct dbFunction *db = data->io.dbs->activeDB[0].db;
-	int dbID = data->io.dbs->activeDB[0].id;
-
+//	struct dbFunction *dbFunc = data->io.dbs->activeDB[0].dbFunc; // lde
+	pNPdbFuncSet FuncSet = data->io.db.activeDB->host->hostFuncSet;
+	pNPdbHost host = data->io.db.activeDB->host; // hostFuncSet lde
+//	void* dbID = data->io.dbs->activeDB[0].id;
+	int dbID = data->io.db.activeDB->id;
+	
+	
+//	void *conn = data->io.db.activeDB->host->conn;
+	
 	sprintf( statement, "UPDATE %s SET selected=1 WHERE %s", 
 							tblName, selectWhere );
 
-	result = (int)(*db->query)(dbID, statement);
+	// The dbFunc pointer is pointing to the wrong structure, lde
+	printf("\nbefore query : %s : %p %p", statement, host->hostFuncSet, host->hostFuncSet->query);
+	//result = (*dbFunc->query)(dbID, statement); 
+	result = (*host->hostFuncSet->query)(dbID, statement);
+	//	result = (int)(*dbFunc->query)(conn, statement);
+	printf("\nafter query");
 }
 
 
@@ -923,10 +1004,10 @@ int npdbAddHostDatabases( pNPdbHost host, pNPdbs dbs )
 	char dbName[kNPdbNameMax+1];	/// database name max +1 for '\0'
 
 
-	/// ascert our core dbs structure is valid
+	/// assert our core dbs structure is valid
 	if(!dbs){ printf("err 5501 - null core dbs structure \n" ); return 5501; }
 
-	/// ascert host, connection and host function set are valid
+	/// assert host, connection and host function set are valid
 	if( err = npdbHostErr( host ) ) return err;
 
 	/// assign our host server type specific function set
@@ -1010,13 +1091,16 @@ pNPdbFuncSet npdbGetHostFuncSet( char* hostType, pNPdbs dbs )
 {
 	int i = 0;
 	pNPdbFuncSet func = NULL;
-
+	printf("\nnpdbGetHostFuncSet : ");
 	if( !hostType )
 	{
 		printf( "err 5529 - npdbGetHostFuncSet called with null hostType \n");
 		return NULL;
 	}
 
+	printf("\nHMMM");
+	printf("\nhostType : %s\n", hostType); // Segfaulting here
+	printf("\nAFT");
 	/// search function set for matching host type
 	for( i=0; i < dbs->funcSetCount; i++ )
 	{
@@ -1049,14 +1133,52 @@ int npdbAddHost( char* type, char* ip, int port, char* user, char* pass, void* d
 	pNPdbs dbs = &data->io.db;
 	pNPdbHost host = NULL;
 
-	/// @todo add err and defualt handling for all function input parameters
-
+	/// @todo add err and default handling for all function input parameters
 	if( !dbs->hosts )
 	{
 		printf( "err 5577 - db->hosts is NULL \n" );
 		return 0;
 	}
 
+//	printf("\nhostCount : %d", dbs->hostCount);
+	if(dbs->hostCount == 1) // First host is place holder
+	{
+		//begin npInitDB() // Bring under npInitDb Func
+		dbs->activeDB = malloc(sizeof(NPdatabase) * 1);
+		dbs->activeDB->host = malloc(sizeof(NPdbHost));
+		dbs->activeDB->host->hostFuncSet = malloc(sizeof(NPdbFuncSet));
+		
+		/// @todo upgrade idMap to map from DB node_id to scene node ptr, fasted updates
+		/// @todo support changes to scene graph structure when updating DB
+		/// @todo add kNPnodeList type for npMalloc
+		
+		//dbs->activeDB[0].idMap = malloc( sizeof(int) * kNPnodeMax ); // old, lde
+		dbs->activeDB->idMap = malloc( sizeof(int) * kNPnodeMax );
+		//if( !dbs->activeDB[0].idMap ) return 1010; // old, lde
+		if( !dbs->activeDB->idMap ) return 1010;
+		
+		for(i = 0; i < kNPnodeMax; i++)
+			dbs->activeDB->idMap[i] = -1;
+		
+		/// @todo copy the structures rather then just point to existing mem
+		
+		strcpy(dbs->activeDB->host->ip, ip);
+		strcpy(dbs->activeDB->host->user, user);
+		strcpy(dbs->activeDB->host->password, pass);
+		strcpy(dbs->activeDB->host->inUseDB, "none");
+		dbs->activeDB->host->conn_id = 0;
+		dbs->activeDB->host->connected = false;
+		printf("\nhost not connected");
+		dbs->dbCount++; // dbCount should really be server count, lde
+		
+	}
+	else
+	{
+		//! @todo add support for multiple databases
+		// dbs->activeDB = realloc
+		printf("\nerr 9494 - MySQL currently only supports 1 DB\n");
+	}
+	
 	/// if host already in list then set local host pointer to existing item
 	for( i=0; i < dbs->hostCount; i++ )
 	{
@@ -1067,7 +1189,6 @@ int npdbAddHost( char* type, char* ip, int port, char* user, char* pass, void* d
 				break;
 			}
 	}
-
 	/// else create a new host entry, unless kNPdbHostMax hit
 	if( !host )
 	{
@@ -1076,19 +1197,17 @@ int npdbAddHost( char* type, char* ip, int port, char* user, char* pass, void* d
 			printf( "err 5548 - can't add host, kNPdbHostMax hit \n" );
 			return 0;
 		}
-
 		if( dbs->hosts[dbs->hostCount] != NULL )
 		{
 			printf( "err 5549 - corrupted db->hosts list \n" );
 			return 0;
 		}
-	
 		host = dbs->hosts[dbs->hostCount] = npInitHostDB();
-		
 		host->id = dbs->hostCount;
 		host->hostFuncSet = npdbGetHostFuncSet( type, dbs );
 	}
 
+	printf("4");
 	host->id = dbs->hostCount;
 	strcpy( host->type, type );
 	strcpy( host->ip, ip );
@@ -1099,6 +1218,7 @@ int npdbAddHost( char* type, char* ip, int port, char* user, char* pass, void* d
 	/// add our new host to the hosts list and increment hostCount
 	dbs->hosts[dbs->hostCount++] = host;
 
+	printf("5");
 	return host->id;
 	/// @todo upgrade idMap to map from DB node_id to scene node ptr, fasted updates
 	/// @todo support changes to scene graph structure when updating DB
@@ -1378,7 +1498,7 @@ int npdbUpdateAntzStateFromDatabase(void* dataRef)
 
 	pData data = (pData) dataRef;
 
-	dbName = data->io.dbs->activeDB[0].currentlyUsedDatabase;
+	// dbName = data->io.dbs->activeDB[0].currentlyUsedDatabase; // temp lde 
 
 	/// return err 4242 if active DB is NULL or blank string '\0'
 	if( !dbName[0] )
@@ -1389,7 +1509,9 @@ int npdbUpdateAntzStateFromDatabase(void* dataRef)
 
 //	npSelect((void*)data->io.dbs->activeDB[0].id, data->io.dbs->activeDB[0].db, "node_tbl");
 	
-	if( (myResult = (*data->io.dbs->activeDB[0].db->storeResult)(data->io.dbs->activeDB[0].id)) == NULL )
+	// @todo: sort out void* or int id mixup, lde
+	// (myResult = (*data->io.dbs->activeDB[0].dbFunc->storeResult)(data->io.dbs->activeDB[0].id)) // old, lde
+	if( (myResult = (*data->io.db.activeDB->host->hostFuncSet->store_result)(data->io.db.activeDB->host->id)) == NULL )
 	{
 		printf("Error storing DB result\n");
 		sprintf( msg, "err 5589 - failed to load update from DB: %s", dbName );
@@ -1663,7 +1785,8 @@ void npdbUpdateNodeFromRow( char** row, void* dataRef ) // Generalize here
 	id = atoi( (const char*)row[0] );
 
 	/// @todo create node id map for scene to DB that supports merged scenes.
-	node = npGetNodeByID(data->io.dbs->activeDB[0].idMap[id], dataRef);
+	//node = npGetNodeByID(data->io.dbs->activeDB[0].idMap[id], dataRef); // old, lde
+	node = npGetNodeByID(data->io.db.activeDB->idMap[id], dataRef);
 	
 	printf( "db node_id: %4d   scene node id: %4d \n", id, node->id );
 
@@ -1673,9 +1796,15 @@ void npdbUpdateNodeFromRow( char** row, void* dataRef ) // Generalize here
 void npdbUpdateNodesFromMysqlResult(MYSQL_RES *result, void* dataRef)
 {
 	char** row;	//MYSQL_ROW
-	while( row = mysql_fetch_row( result ))
+	pData data = (pData) dataRef;
+	//struct database *db = &data->io.dbs->myDatabase[0];
+	//struct database *db = &data->io.dbs->activeDB[0]; // old, lde
+	pNPdatabase db = data->io.db.activeDB;
+	
+	// row = (*db->dbFunc->db_fetch_row)(result) // old, lde
+	while( row = (*db->host->hostFuncSet->fetch_row)(result) )
 	{
-		npdbUpdateNodeFromRow( row, dataRef );
+		updateNodeFromMysqlRow( (MYSQL_ROW*)row, dataRef );
 	}
 }
 
