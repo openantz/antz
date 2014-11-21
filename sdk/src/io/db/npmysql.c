@@ -167,25 +167,25 @@ int npMysqlHook( pNPdbFuncSet func, void* dbLib)
 	func->conn_thread_id= (void*)nposGetLibSymbol( dbLib, "mysql_thread_id"		);	
 	
 	func->InitConnOptions		= npMysqlInitConnOptions;
-	func->GetTableFields		= npMysqlGetTableFields;
+	func->GetTableFields		= (void*)npMysqlGetTableFields;
 
 	/// hook our local DB utility functions, specific to 'mysql' host type
-	func->StatementCreate		= npMysqlStatementCreate;
-	func->StatementInsert		= npMysqlStatementInsert;	
-	func->StatementSelect		= npMysqlStatementSelect; 
-	func->StatementCreateTable	= npMysqlStatementCreateTable;
-	func->StatementUse			= npMysqlStatementUse;
-	func->StatementShow			= npMysqlStatementShow;
-	func->StatementDrop			= npMysqlStatementDrop;
-	func->StatementTruncate		= npMysqlStatementTruncate;
-	func->StatementUpdate		= npMysqlStatementUpdate;
+	func->StatementCreate		= (void*)npMysqlStatementCreate;
+	func->StatementInsert		= (void*)npMysqlStatementInsert;	
+	func->StatementSelect		= (void*)npMysqlStatementSelect; 
+	func->StatementCreateTable	= (void*)npMysqlStatementCreateTable;
+	func->StatementUse			= (void*)npMysqlStatementUse;
+	func->StatementShow			= (void*)npMysqlStatementShow;
+	func->StatementDrop			= (void*)npMysqlStatementDrop;
+	func->StatementTruncate		= (void*)npMysqlStatementTruncate;
+	func->StatementUpdate		= (void*)npMysqlStatementUpdate;
 
 	return 0;
 }
 
 pNPdbFuncSet npMysqlAddFuncSet( pNPdbs db, pNPdbFuncSet funcSet )
 {
-	pNPdbFuncSet hostTypeMatch = NULL;
+//	pNPdbFuncSet hostTypeMatch = NULL; // Warning, lde
 
 	/// if host type already exist then update it otherwise add it to list
 /*	for(i=0; i< db->funcSetCount; i++)
@@ -199,9 +199,8 @@ pNPdbFuncSet npMysqlAddFuncSet( pNPdbs db, pNPdbFuncSet funcSet )
 	}
 	else /// add function set to list and increment the funcSetCount
 */	
-	printf("\ndb->funcSetCount : %d", db->funcSetCount);
 	db->funcSetList[db->funcSetCount++] = funcSet;	///< add new funcSet
-	printf("\ndb->funcSetCount : %d", db->funcSetCount);
+
 //	}
 
 	return funcSet;
@@ -229,6 +228,7 @@ void* nposLoadLibrary( char* filePath )
 }
  */
 
+// Make generic, @todo lde
 int npMysqlInitConnOptions( pNPdbFuncSet func, void* connInit )
 {
 	int err = 0;
@@ -245,7 +245,7 @@ int npMysqlInitConnOptions( pNPdbFuncSet func, void* connInit )
 	if( err )
 	{
 		printf( "%s err: %u - %s\n", func->hostType,
-				func->db_errno(connInit), func->db_error(connInit) );
+				(unsigned int)func->db_errno(connInit), (char*)func->db_error(connInit) );
 		return 5591;  //err 5591
 	}
 
@@ -270,14 +270,175 @@ char* npMysqlStatementShow(char* showWhat)
 }
 
 
-char* npMysqlStatementInsert(char* table)
+char* npMysqlStatementInsert(char* table, char* values) // perhaps I can pass this a function which will extract all the values from the chunks structure, lde
 {
 	int count = 0;
-	char* statement = malloc(sizeof(char) * (20 + strlen(table))); //Account for all parens, debug db
-	count = sprintf(statement, "INSERT INTO %s VALUES ", table);
+	char* statement = malloc(sizeof(char) * (20 + strlen(table) + 3 + strlen(values))); //Account for all parens, debug db
+	count = sprintf(statement, "INSERT INTO %s VALUES(%s) ", table, values);
 	
 	return statement;
 }
+
+// @todo, lde , change npdbGetList to npdbGetDBlist
+// lde, in progress @todo
+//@lde, make a tblList
+
+/* npdbGetTblList: This is essentially the same function as npdbGetList
+	Pass it a function pointer with either npdbShowTables or npdbShowDatabases, @todo, lde
+ */
+
+//@todo, make error verbosity variable, lde, low priority
+void* npdbGetTblList(pNPdbHost host ,pNPdatabase db, pNPdbFuncSet func, void* dataRef) // Put in header file, lde
+{
+	/* be vigilant against errors */ // lde
+	/* dbList becomes tblList */
+	
+	void* myResult = NULL;
+	int numFields = 0;
+	int numRows = 0;
+//	char* row = NULL;
+	//MYSQL_ROW row;					// Abstract this away, lde
+	char** row = NULL;
+	//int fieldLengths = 0;				// old, lde
+	unsigned long* fieldLengths;
+	int i = 0, j = 0;
+	pNPtables tableList = NULL;
+	
+//	npdbUse(db);
+	npdbShowTables(host);				// Put in header file, lde
+	
+	/* */
+//	myResult = (func->store_result)(db->id); // Reduce lde
+	myResult = (func->store_result)(host->conn); // Reduce lde
+	if( !myResult )
+	{
+		npPostMsg("err 5565 - npdbGetTblList failed to storeResult", kNPmsgErr, dataRef );
+		goto abort;
+	}
+	
+	numFields = (int)(*db->host->hostFuncSet->num_fields)(myResult);
+	if( numFields != 1 )
+	{
+		npPostMsg( "err 5566 - npdbGetTblList numFields != 1", kNPmsgErr, dataRef );
+		goto abort;
+	}
+	
+	numRows = (int)(*db->host->hostFuncSet->num_rows)(myResult);
+	if( !numRows )
+	{
+		npPostMsg( "err 5567 - npdbGetTblList numRows < 1", kNPmsgErr, dataRef );
+		goto abort;
+	}
+	printf( "Databases: %d\n", numRows );
+	
+	tableList = malloc( sizeof(NPtables));
+	if( !tableList )
+	{
+		npPostMsg("err 5568 - malloc failed to create tableList", kNPmsgErr, dataRef);
+		goto abort;
+	}
+	
+	//zz update this to allocate a dbItemList and swap(double buffer) with existing global ptr then free the old
+	tableList->list = malloc( sizeof(char*) * numRows);
+	if( !tableList->list )
+	{
+		npPostMsg("err 5569 - malloc failed to create tableList->list", kNPmsgErr, dataRef);
+		goto abort;
+	}
+	
+	
+	db->tableCount = numRows;
+	
+	printf( "Tables: %d\n", numRows );
+	
+	db->tableCount = -1;
+	//zz add proper MySQL error checking for all commands
+	// http://dev.mysql.com/doc/refman/5.0/en/mysql-fetch-row.html
+	while( (row = (*db->host->hostFuncSet->fetch_row)(myResult)) )
+	{
+		//add error checking for malloc, fetch_row and fetch_lengths //zz debug
+		fieldLengths = (*db->host->hostFuncSet->fetch_lengths)(myResult);
+		if( !fieldLengths )
+		{
+			npPostMsg("err 5571 - malloc failed to create tableList->list[x]", kNPmsgErr, dataRef);
+			goto abort;
+		}
+		
+		db->tableList[db->tableCount++] = malloc(sizeof(NPdbTable)); // ???, lde
+		
+		//zz for loop is not needed because numFields = 1
+		//would not work for multiple fields either, as 
+		for(j = 0; j < numFields; j++)
+		{
+			//dbList->list[i] = malloc(sizeof(char) * (fieldLengths[j]));
+			tableList->list[i] = malloc(sizeof(char) * (fieldLengths[j]));
+			row[j][fieldLengths[j]] = '\0';
+			//row should be copied to new memory then mysql_free...
+			tableList->list[i] = row[j];
+			printf("\nTable Added : %s\n", row[j]);
+			tableList->size = i;
+		}
+		i++;
+	}
+	
+	(*db->host->hostFuncSet->free_result)(myResult);
+	
+	return (void*) tableList;
+	
+abort:
+	//zz add check DB for errors
+	(*db->host->hostFuncSet->free_result)(myResult); //important to do this to maintain connection
+	return NULL;
+}
+
+char* new_npMysqlStatementInsertFromChunk(char* table, struct newChunkObj *theChunk)
+{
+	int count = 0;
+	int i = 0;
+	int statementLength = sizeof(char) * (20 + strlen(table) + 3 + theChunk->chunkSize + 500); // added +500, hotfix, debug lde
+	char* statement = malloc(statementLength);
+	
+	printf("\nstatement length : %d", statementLength);
+	printf("\nchunkSize : %d", theChunk->chunkSize);
+//	printf("\ntotalCsvStrObjectsSize : %d", theChunk->csvObjects->totalCsvStrObjectsSize); // debug, lde
+
+	
+	count = sprintf(statement, "INSERT INTO %s VALUES", table);
+	for(i = 0; i <= theChunk->csvObjects->numOfcsvStrObjects; i++ ) 
+		count += sprintf(statement+count, "(%s),", theChunk->csvObjects->csvObj[i].csvStr);
+	
+	statement[count-1] = '\0';
+	
+	//printf("\nStatement : \n%s\n", statement);
+	
+	return statement;
+}
+
+/*
+ char* npMysqlStatementInsert(char* table, struct newChunkObj *value)
+ {
+ char* statement = NULL;
+ int count = 0;
+ int index = 0;
+ 
+ statement = malloc(sizeof(char) * (21 + strlen(table) + value->chunkSize + (value->csvObjects->numOfcsvStrObjects * 6) ) ); //*6 is too much, reduce, debug db
+ //zz	statement = malloc(sizeof(char) * (64 + strlen(table) + value->chunkSize + (value->csvObjects->numOfcsvStrObjects * 6) ) ); //*6 is too much, reduce, debug db
+ // count = sprintf(statement, "TRUNCATE %s", table);
+ count = sprintf(statement, "INSERT INTO %s VALUES ", table);
+ //	count = sprintf(statement, "UPDATE SET %s VALUES ", table);
+ 
+ for(index = 0; index <=	value->csvObjects->numOfcsvStrObjects; index++) 
+ {
+ count += sprintf(statement+count, "(%s),", value->csvObjects->csvObj[index].csvStr);
+ free(value->csvObjects->csvObj[index].csvStr);
+ }
+ 
+ statement[count-1] = '\0';
+ 
+ return statement;
+ }
+ */
+
 
 
 char* npMysqlStatementCreate(char* dbName)
@@ -305,7 +466,8 @@ char* npMysqlStatementUse( char* dbName )
 	statement = (char*)malloc( sizeof(char) * count );
 	if ( !statement )
 	{
-		printf("err 5622 - malloc failed dbName: %0.24s - %d\n", dbName, count);
+//		printf("err 5622 - malloc failed dbName: %0.24s - %d\n", dbName, count);
+		printf("err 5622 - malloc failed dbName: %s - %d\n", dbName, count);
 		return NULL;
 	}
 
@@ -317,7 +479,7 @@ char* npMysqlStatementUse( char* dbName )
 
 int npMysqlServerCtrl(void (*ctrlFunction)(void*), void* parameters)
 {
-
+	return 0;
 }
 
 
@@ -345,7 +507,8 @@ char* npMysqlStatementSelect( char* table )
 	statement = (char*)malloc( sizeof(char) * count );
 	if ( !statement )
 	{
-		printf("err 5624 - malloc failed table: %0.24s - %d\n", table, count);
+	//	printf("err 5624 - malloc failed table: %0.24s - %d\n", table, count);
+		printf("err 5624 - malloc failed table: %s - %d\n", table, count);
 		return NULL;
 	}
 
@@ -354,30 +517,6 @@ char* npMysqlStatementSelect( char* table )
 	return statement;
 }
 
-/*
-char* npMysqlStatementInsert(char* table, struct newChunkObj *value)
-{
-	char* statement = NULL;
-	int count = 0;
-	int index = 0;
-
-	statement = malloc(sizeof(char) * (21 + strlen(table) + value->chunkSize + (value->csvObjects->numOfcsvStrObjects * 6) ) ); //*6 is too much, reduce, debug db
-//zz	statement = malloc(sizeof(char) * (64 + strlen(table) + value->chunkSize + (value->csvObjects->numOfcsvStrObjects * 6) ) ); //*6 is too much, reduce, debug db
-// count = sprintf(statement, "TRUNCATE %s", table);
-	count = sprintf(statement, "INSERT INTO %s VALUES ", table);
-					//	count = sprintf(statement, "UPDATE SET %s VALUES ", table);
-
-	for(index = 0; index <=	value->csvObjects->numOfcsvStrObjects; index++) 
-	{
-		count += sprintf(statement+count, "(%s),", value->csvObjects->csvObj[index].csvStr);
-		free(value->csvObjects->csvObj[index].csvStr);
-	}
-
-	statement[count-1] = '\0';
-
-	return statement;
-}
-*/
 
 char* npMysqlStatementTruncate( int dbID, char* tableName )
 {
@@ -404,7 +543,7 @@ char* npMysqlStatementUpdate( int dbID, char* tableName )
 	@param dataRef is our global scene context.
 	@return a string formatted as the DB specific table fields descriptor.
 */
-char* npMysqlGetTableFields( int type, void* dataRef )
+char* npMysqlGetTableFields( int type, void* dataRef ) // @todo, lde, make a npdbGetTableFields function
 {
 	int i = 0;
 	int count = 0;			/// buffer char count
@@ -420,6 +559,8 @@ char* npMysqlGetTableFields( int type, void* dataRef )
 		printf("err 5408 - malloc failed npdbGetFieldsDesc \n" );
 		return NULL;
 	}
+	
+	printf("\nFields allocated\n");
 
 	map = data->map.typeMapNode;		//debug, zz
 	
@@ -469,62 +610,63 @@ char* npMysqlGetTableFields( int type, void* dataRef )
 		if (i > 0)
 			count += sprintf ((fields + count), ",");
 		
-		//Change INT(10) to INT(11), debug db
+		// Changed float to float , debug lde
+		//Change int(10) to INT(11), debug db
 		switch (map[i].type)
 		{
 			case kNPvoidPtr :
-				count += sprintf ((fields + count), "%s INT(10)", map[i].name );
+				count += sprintf ((fields + count), "%s int(10)", map[i].name );
 				break;
 
 			case kNPfloat :
-				count += sprintf ((fields + count), "%s FLOAT(10)", map[i].name );		//zz debug, added this to fix ration bug#83
+				count += sprintf ((fields + count), "%s float", map[i].name );		//zz debug, added this to fix ration bug#83
 				break;
 
 			case kNPint :			// same as default
-				count += sprintf ((fields + count), "%s INT(10)", map[i].name );
+				count += sprintf ((fields + count), "%s int(10)", map[i].name );
 				break;
 			
 			case kNPcharArray :
 				count += sprintf ((fields + count), "%s VARCHAR(250)", map[i].name ); // might want to have some sort of setup so that size is variable, debug ll
 				break;
 			case kNPfloatXYZ : 
-				count += sprintf ((fields + count), "%s_x FLOAT(10),%s_y FLOAT(10),%s_z FLOAT(10)",
+				count += sprintf ((fields + count), "%s_x float,%s_y float,%s_z float",
 								  map[i].name, map[i].name, map[i].name );
 				break;
 			case kNPintXYZ : 
-				count += sprintf ((fields + count), "%s_x INT(10),%s_y INT(10),%s_z INT(10)",
+				count += sprintf ((fields + count), "%s_x int(10),%s_y int(10),%s_z int(10)",
 								  map[i].name, map[i].name, map[i].name );
 				break;
 			case kNPboolXYZ : 
-				count += sprintf ((fields + count), "%s_x INT(10),%s_y INT(10),%s_z INT(10)",
-								  map[i].name, map[i].name, map[i].name );	// Don't know what to do with BOOLS in MySQL, just calling it INT(10) for now, debug ll....should be TINYINT(1)
+				count += sprintf ((fields + count), "%s_x int(10),%s_y int(10),%s_z int(10)",
+								  map[i].name, map[i].name, map[i].name );	// Don't know what to do with BOOLS in MySQL, just calling it int(10) for now, debug ll....should be TINYINT(1)
 				break;
 			case kNPfloatXYZA : 
-				count += sprintf ((fields + count), "%s_x FLOAT(10),%s_y FLOAT(10),%s_z FLOAT(10),%s_a FLOAT(10)",
+				count += sprintf ((fields + count), "%s_x float,%s_y float,%s_z float,%s_a float",
 								  map[i].name, map[i].name, map[i].name, map[i].name );
 				break;
 			case kNPfloatXYZS : 
-				count += sprintf ((fields + count), "%s_x FLOAT(10),%s_y FLOAT(10),%s_z FLOAT(10),%s_s FLOAT(10)",
+				count += sprintf ((fields + count), "%s_x float,%s_y float,%s_z float,%s_s float",
 								  map[i].name, map[i].name, map[i].name, map[i].name );
 				break;
 			case kNPboolXYZS : 
-				count += sprintf ((fields + count), "%s_x INT(10),%s_y INT(10),%s_z INT(10),%s_s INT(10)",
+				count += sprintf ((fields + count), "%s_x int(10),%s_y int(10),%s_z int(10),%s_s int(10)",
 								  map[i].name, map[i].name, map[i].name, map[i].name );
 				break;
 			case kNPubyteRGBA : 
-				count += sprintf ((fields + count), "%s_r INT(10),%s_g INT(10),%s_b INT(10),%s_a INT(10)",
+				count += sprintf ((fields + count), "%s_r int(10),%s_g int(10),%s_b int(10),%s_a int(10)",
 								  map[i].name, map[i].name, map[i].name, map[i].name );
 				break;
 			case kNPubyteRGB : 
-				count += sprintf ((fields + count), "%s_r INT(10),%s_g INT(10),%s_b INT(10)",
+				count += sprintf ((fields + count), "%s_r int(10),%s_g int(10),%s_b int(10)",
 								  map[i].name, map[i].name, map[i].name );
 				break;
 			case kNPfloatRGBA : 
-				count += sprintf ((fields + count), "%s_r INT(10),%s_g INT(10),%s_b INT(10),%s_a INT(10)",
+				count += sprintf ((fields + count), "%s_r int(10),%s_g int(10),%s_b int(10),%s_a int(10)",
 								  map[i].name, map[i].name, map[i].name, map[i].name );
 				break;
 			case kNPfloatRGB : 
-				count += sprintf ((fields + count), "%s_r INT(10),%s_g INT(10),%s_b INT(10)", 
+				count += sprintf ((fields + count), "%s_r int(10),%s_g int(10),%s_b int(10)", 
 								  map[i].name, map[i].name, map[i].name );
 				break;
 
@@ -532,16 +674,16 @@ char* npMysqlGetTableFields( int type, void* dataRef )
 			case kNPbool :
 			case kNPuint :
 			case kNPubyte :
-				count += sprintf ((fields + count), "%s INT(10)", map[i].name );
+				count += sprintf ((fields + count), "%s int(10)", map[i].name );
 				break;
 
 			default :				// same as case 0
 				/// @todo sync DB type list to new map types and move to npmap.h
-				/// @param fieldMap specifies the field syntax, ex: ' INT(10),'
+				/// @param fieldMap specifies the field syntax, ex: ' int(10),'
 				/// npMapToStr(nodeList, fieldMap, data) 
 				printf( "warn 7272 - unknown kNPtype: %d\n", map[i].type );	//zz dbz
 			//	npPostMsg( msg, kNPmsgDB, data );
-				count += sprintf ((fields + count), "%s INT(10)", map[i].name );
+				count += sprintf ((fields + count), "%s int(10)", map[i].name );
 				break;
 		}
 	}

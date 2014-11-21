@@ -122,6 +122,7 @@ struct tableParameters {
 	int action; //Create, Insert, Select, Alter, Show, etc...
 };
 
+void updateNodeFromMysqlRow (MYSQL_ROW *row, void* dataRef); // Generalize here
 
 int dbHook(struct dbFunction *db, char* filePath, int dbtype);
 //int npConnectToDatabaseServer(struct dbNewConnect *connect, void* dataRef);

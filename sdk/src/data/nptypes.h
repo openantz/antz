@@ -526,6 +526,7 @@ typedef struct NPqueList NPqueList;
 typedef struct NPqueList* pNPqueList;
 
 
+
 struct NPthreadFile
 {
 	FILE* file;
@@ -833,6 +834,7 @@ typedef struct NPnodeList * pNPnodeList;
 /*
 #define kNPdbHostMax	512		///< max number of DB host servers
 #define kNPdbMax		4096	///< max number of databases
+#define kNPtblMax		128		///< max number of tables, new lde
 #define kNPpwdMax		256		///< max password length
 #define kNPuserNameMax	256		///< max user name length
 #define kNPdbNameMax	64		///< @todo make sure 64 is good for non-MySQL DBs
@@ -841,6 +843,7 @@ typedef struct NPnodeList * pNPnodeList;
 enum NP_DATABASE {
 	kNPdbHostMax	= 512,		///< max number of DB host servers
 	kNPdbMax		= 4096,		///< max number of databases
+	kNPtblMax		= 128,		///< max number of tables, new lde
 	kNPpwdMax		= 256,		///< max password length
 	kNPuserNameMax	= 256,		///< max user name length
 	kNPdbNameMax	= 64,		///< @todo make sure 64 is good for non-MySQL DBs
@@ -938,9 +941,9 @@ typedef struct NPdbHost * pNPdbHost;
 
 struct NPdbFields{
 	char*		name;		///< field name
-	int*		type;		///< field type constant
 	char*		typeStr;	///< field type as DB string format
 	char*		params;		///< any additional field params, limits, etc.
+	int *		type;		///< field type constant
 	int			count;		///< number of field columns
 };
 typedef struct NPdbFields NPdbFields;
@@ -957,20 +960,34 @@ struct NPmapID{
 typedef struct NPmapID NPmapID;
 typedef struct NPmapID * pNPmapID;	
 
+#define kNPmaxFields 4096
 struct NPdbTable{
-	int			id;			///< local table ID for this database
-	int			type;		///< table type: node, tag, chmap, etc.
-
-	int			rows;		///< number of rows in this table
-
-	pNPdbFields	fields;		///< field descriptor
-
-	pNPmapID	mapID;		///< maps the row id to local data ptr
-
-	int			size;		///< size of this table in bytes
+	int			id;							///< local table ID for this database
+	int			type;						///< table type: node, tag, chmap, etc.
+	char*		name;
+	
+	int			rows;						///< number of rows in this table
+	
+	pNPdbFields	fields[100];				///< field descriptor
+	int			fieldCount;					///< number of fields in this table, init to 0 , @todo, lde
+	
+	pNPmapID	mapID;						///< maps the row id to local data ptr
+	
+	void*		owner;						///< Database this table is attached to, lde pNPdatabase
+	
+	int			size;						///< size of this table in bytes
 };
 typedef struct NPdbTable NPdbTable;
 typedef struct NPdbTable * pNPdbTable;
+
+struct NPdbCSVwrite
+{
+	char*	   csvName;
+	pNPdbTable table;
+	void*	   dataRef;
+};
+typedef struct NPdbCSVwrite NPdbCSVwrite;
+typedef struct NPdbCSVwrite *pNPdbCSVwrite;
 
 
 enum NP_DB_CONTENT_TYPES 
@@ -986,14 +1003,16 @@ struct NPdatabase{
 	int			id;						///< this databases ID // Connection structure
 	int*		idMap;
 	int			format;					///< content format, antz or 3rd party
-
+	int*		refCount;				///< memory reference counter, lde
+	
 	char		name[kNPdbNameMax +1];	///< database name +1 for '\0'
 
-	pNPdbTable* tables;					///< contains row count
+//	pNPdbTable* tables;					///< contains row count		// old, lde
+	pNPdbTable	tableList[kNPtblMax];	///< list of tables			// new, lde
 	pNPdbTable	tableInUse;				///< current table in use
 	int			tableCount;				///< total number of tables
 
-	int			nodeCount;				///< if exists, node table row count
+	int			nodeCount;				///< if exists, node table row count // @todo, include nodeCount on dbMenu, lde
 	
 	float		saveUpdateRate;			///< auto save update rate, 0 is off
 	float		loadUpdateRate;			///< auto load update rate, 0 is off
@@ -1003,6 +1022,9 @@ struct NPdatabase{
 };
 typedef struct NPdatabase NPdatabase;
 typedef struct NPdatabase * pNPdatabase;
+
+
+
 
 /// holds list of databases and there hosts
 struct NPdbs {
@@ -1042,6 +1064,14 @@ struct NPdatabases {
 };
 typedef struct NPdatabases NPdatabases;
 typedef struct NPdatabases *pNPdatabases;
+
+/* new struct, lde */
+struct NPtables {
+	char** list;		//!< list of tables by name
+	int size;			//!< number of items in the list
+};
+typedef struct NPtables NPtables;
+typedef struct NPtables *pNPtables;
 
 struct NPmenu {
 	void* coreNode; ///< core nodes tie global structures to the scene graph
@@ -1475,6 +1505,7 @@ struct NPio {
 
 //!<	databases	dbs;
 
+	int			refCount;			// Reference Counter, lde @todo
 	int			size;
 };
 typedef struct NPio NPio;

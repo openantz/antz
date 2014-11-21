@@ -640,6 +640,8 @@ void* npMalloc(int type, int size, void* dataRef)
 	if (!memPtr)
 		printf ("err 1010 - malloc failed at size: %d\n", size);
 
+	data->io.refCount++;
+	printf("\nRefCount : %d", data->io.refCount);
 	return memPtr;
 }
 

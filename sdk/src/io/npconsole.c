@@ -28,7 +28,7 @@
 * -------------------------------------------------------------------------- */
 
 #include "npconsole.h"
-
+#include "npdb.h"
 
 #include "../npdata.h"
 #include "../npio.h"
@@ -87,7 +87,7 @@ void npConsoleCmdText( pNPconsole console, void* dataRef )
 	size = console->inputIndex;
 //	printf("\nstr test: %s\n", str);
 
-	//turn on messages to display command respones for user
+	//turn on messages to display command responses for user
 //	console->mode = kNPconsoleMessage;
 	
 	
@@ -113,6 +113,10 @@ void npConsoleCmdText( pNPconsole console, void* dataRef )
 //		sprintf( msg, "record: %d tag: \"%s\"", node->recordID, node->tag->title );
 //		npPostMsg(msg, kNPmsgCtrl, dataRef);			//send as kNPmsgCtrl
 //		npPostMsg("Keyboard: Game Mode", kNPmsgCtrl, dataRef);
+	}
+	else if( strncmp( "csv ", console->inputStr, 4) == 0)
+	{
+		printf("\n-----CSV-----\n");
 	}
 	else if( strncmp ( "pick ", console->inputStr, 5 ) == 0 )
 	{
@@ -533,17 +537,24 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 	int dbID = 0;
 	int restoreAuto = 0;
 	int err = 0;
+	int strLen = 0;
 	char msg[kNPurlMax];
 	int itemChosen = 0; //menuItem
+	int item = 0;
 	char* input = NULL;
 	char* dbName = NULL;
 
 	pData data = (pData) dataRef;
 	
-	pNPdatabase dbItem = NULL;
-	pNPdatabase activeDB = data->io.db.activeDB;
-	pNPdbHost host = NULL;
+	pNPdatabase dbItem     = NULL;
+	pNPdatabase activeDB   = data->io.db.activeDB;
+	pNPdbTable  node_table = NULL;
+	pNPdbHost   host       = NULL;
+	pNPdbs      dbs        = &data->io.db;
 
+	NPdbCSVwrite threadData;
+	
+	
 	printf("\nnpConsoleMenuText");
 	printf("\nhostCount : %d", data->io.db.hostCount);
 	if( activeDB )
@@ -670,6 +681,90 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 		npdbLoadUpdate( dataRef );
 
 		npConsolePromptBlank( console, data );
+		return;
+	}
+	else if( !strncasecmp(input, "csv ", 4))
+	{
+		input += 4;
+
+		dbItem = npdbGetByName( input, data );
+		
+		if(dbItem == NULL)
+		{
+			//dbItem
+			itemChosen = atoi(input);
+			if ( itemChosen > 0 && itemChosen <= console->menu->count )
+			{
+				dbItem = dbs->dbList[itemChosen];
+				//input = dbItem->name;
+				strcpy(input, dbItem->name);
+				//printf("\nInput is %s \n", input);
+			}
+			else {
+				// npUpdateConsoleMenu(console, data);
+				sprintf(msg,"unknown command or item # (range 1 to %d)", console->menu->count);
+				npPostMsg( msg, kNPmsgView, dataRef );
+				//npConsolePromptInputStr( console, dataRef ); // Sort this out, lde
+				npConsolePromptBlank( console, data );
+				return;
+			}
+
+		}
+		
+		dbItem->refCount = 0;
+		sprintf( msg, "Saving CSV file : %s.csv", input );
+		npPostMsg( msg, kNPmsgView, data );
+		npConsolePromptBlank( console, data );
+		
+		err = npdbUse( dbItem );
+		if(err)
+		{
+			printf("\nUSE query failed");
+			sprintf( msg, "Saving CSV file %s.csv failed", input );
+			npPostMsg( msg, kNPmsgView, data );
+			return;
+		}
+		
+		err = npdbGetTbls(host, dbItem); // Make sure this doesn't fail if npdbUse isn't called before it, lde @todo
+		if(err)
+		{
+			printf("\nnpdbGetTbls failed");
+			return;
+		}
+		
+		node_table = npdbFindNodeTbl(dbItem, &err, dataRef);
+		if(err)
+		{
+			printf("\nnpdbFindNodeTbl failed");
+			return;
+		}
+		/*
+		if((int)node_table == 8371)
+		{	
+			return; // temp, lde , was return -1
+		}
+		*/
+		
+		// Put this into a thread, @todo, lde
+	
+		err = npdbTableToCSV(node_table, input, dataRef); // make node_table into node_data, lde @todo
+		
+		if(err)
+		{
+			printf("\nerr : %d ", err);
+			return;
+		}
+	 
+	/*
+		threadData.csvName = input;
+		threadData.table   = node_table;
+		threadData.dataRef = dataRef;
+		nposBeginThread(npdbTableToCSVthread, &threadData);
+	*/
+		npdbFreeTables(dbItem);
+		
+	//	sprintf( msg, "Done Saving file");
+	//	npPostMsg( msg, kNPmsgView, data );
 		return;
 	}
 	else if( !strncasecmp(input, "use ", 4) )
@@ -1393,6 +1488,7 @@ void npUpdateConsoleMenu (pNPconsole console, void* dataRef)
 	npPostMsg ("|                         Database Command Console                            |", kNPmsgView, dataRef);
 	npPostMsg ("+-----------------------------------------------------------------------------+", kNPmsgView, dataRef);
 	npPostMsg ("| LOAD [name or #] load or sync update from DB    LOAD antz_world             |", kNPmsgView, dataRef);
+	npPostMsg ("| CSV  [name or #] Save a DB node table to CSV    CSV  antz_world             |", kNPmsgView, dataRef);
 	npPostMsg ("| SAVE [name or #] update or create new DB        SAVE my_antz                |", kNPmsgView, dataRef);
 	npPostMsg ("| DROP [name or #] will destroy a DB forever      DROP 42                     |", kNPmsgView, dataRef);
 	npPostMsg ("| SYNC [name or #] update from DB at RATE [secs]  SYNC my_antz RATE 3.5       |", kNPmsgView, dataRef);

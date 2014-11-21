@@ -44,7 +44,7 @@
 void npInitIO( void* dataRef )
 {
 	/// init the local IO devices
-
+	
 	/// launch file services and updates hard-coded global variables from file
 	npInitFile( dataRef );
 

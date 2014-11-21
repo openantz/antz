@@ -31,7 +31,7 @@
 
 //------------------------------------------------------------------------------
 void npInitCSV (void* dataRef);
-void npCloseCSV (void* dataRef);
+void npCloseCSV (FILE* filePtr, void* dataRef);
 
 // these functions wrap the standard C file methods on Linux, MSW and OSX
 // opens or creates the file in the specified mode "rb+" read/write binary..
@@ -42,7 +42,7 @@ FILE* npCSVNew (const char* fileName, const char* mode, void* dataRef);
 FILE* npCSVDialog (const char* fileName, int dialogType, void* dataRef);
 
 // if not saved then opens SaveAs dialog before reseting app
-void npCloseCSV (void* dataRef);
+//void npCloseCSV (void* dataRef);
 
 // wrappers for fread(), fwrite() and rewind()
 //void npReadFile (void* writeBuffer, int wordSize, int size, void* dataRef);

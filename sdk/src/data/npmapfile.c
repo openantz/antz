@@ -1383,7 +1383,7 @@ typedef struct NPbuffer *pNPbuffer;
 
 int npLoadNodesCSV (const char* buffer, int size, int type, void* dataRef);
 //-----------------------------------------------------------------------------
-//zz debug, use a func ptr to npLoadCSV() from genreic parent file IO process	
+//zz debug, use a func ptr to npLoadCSV() from generic parent file IO process	
 int npLoadNodesCSV (const char* buffer, int size, int type, void* dataRef)
 {
 //	printf("npLoadNodesCSV Test!\n");
@@ -1472,7 +1472,7 @@ int npLoadNodesCSV (const char* buffer, int size, int type, void* dataRef)
 
 int npCSVtoC (pNPrecordSet recSet, const char* read, int size, void* dataRef);
 //-----------------------------------------------------------------------------
-//zz debug, use a func ptr to npLoadCSV() from genreic parent file IO process	
+//zz debug, use a func ptr to npLoadCSV() from generic parent file IO process	
 int npCSVtoC (pNPrecordSet recSet, const char* read, int size, void* dataRef)
 {
 	int recordCount = 0;
@@ -1764,7 +1764,7 @@ void npThreadFileOpenMap (void* dataRef)
 }
 
 
-//update to recognize all our file types and binaray data structures			debug zz
+//update to recognize all our file types and binary data structures			debug zz
 //also recognize the apps own code and foreign code...
 char* npGetType(int* type, int* format, const char* str, int size, void* dataRef);
 //-----------------------------------------------------------------------------
@@ -2184,7 +2184,7 @@ int npFileOpenAuto (const char* filePath, FILE* file, void* dataRef)
 	threadFile->file = file;
 	threadFile->dataRef = dataRef;
 
-	/* temp, lde
+	/* temp, lde @todo fix
 	if ( threadFile->filePath || !threadFile->file )
 	{
 		printf( "err 5558 - npdbGetMenu failed to allocate npNewStrcpy \n" );

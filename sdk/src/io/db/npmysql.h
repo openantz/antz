@@ -41,11 +41,12 @@ char* npMysqlStatementShow(char* showWhat);
 char* npMysqlStatementCreate(char* dbName);
 char* npMysqlStatementCreateTable(char* table, char* fields);
 //char* npMysqlStatementInsert(char* table, struct newChunkObj *value);
-char* npMysqlStatementInsert(char* table);
+char* npMysqlStatementInsert(char* table, char* values);
 char* npMysqlStatementSelect(char* table);
 char* npMysqlStatementTruncate( int dbID, char* tableName );
 char* npMysqlStatementUpdate( int dbID, char* tableName );
 char* npMysqlStatementDrop(char* dropType, char* dropName);
+//char* new_npMysqlStatementInsertFromChunk(char* table, struct newChunkObj *theChunk);
 
 char* npMysqlGetTableFields( int type, void* dataRef );
 

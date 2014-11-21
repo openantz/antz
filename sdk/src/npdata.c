@@ -657,6 +657,7 @@ pNPdatabase npdbAddTable( void )
 pNPdatabase npInitDatabase( void )
 {
 	pNPdatabase database = NULL;
+	int i = 0;
 	
 	database = malloc( sizeof(NPdatabase) );
 	if( !database )
@@ -673,7 +674,12 @@ pNPdatabase npInitDatabase( void )
 
 	database->host = NULL;
 
-	database->tables = NULL;
+//	database->tables     = NULL; // old, lde
+	
+	// new, lde
+	for(i = 0; i < kNPtblMax; i++)
+		database->tableList[i] = NULL;
+	
 	database->tableInUse = NULL;
 	database->tableCount = 0;
 

@@ -41,8 +41,10 @@ void npInitCSV (void* dataRef)
 }
 
 //-----------------------------------------------------------------------------
-void npCloseCSV (void* dataRef)
+void npCloseCSV (FILE* filePtr, void* dataRef)
 {
+	fclose(filePtr);
+	
 	return;
 }
 

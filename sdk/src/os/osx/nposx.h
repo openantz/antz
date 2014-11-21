@@ -29,6 +29,7 @@
 
 void* nposLoadLibrary( char* filePath );
 void* nposGetLibSymbol(void* library, char* symbolName); // New function, lde
+
 void* nposxGetLibSymbol(void* library, char* symbolName); // New function, lde
 
 void npOSXGetCWD (char* buffer, int* size);

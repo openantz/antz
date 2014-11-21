@@ -509,6 +509,7 @@ bool npOpenNodeFile( pNPnode node, void* dataRef )
 		//tell the user
 		npPostMsg( buildPath, kNPmsgFile, dataRef );
 
+		// lde, @todo generalize this to be os independent
 		//open with antz or open using system default app for file type
 		if(0) // ".csv" || ".CSV"
 		{}

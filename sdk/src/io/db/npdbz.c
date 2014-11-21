@@ -38,7 +38,7 @@
 
 int npCreateTable2(struct dbFunction *db, int dbID, char* table, char* fields);
 void* npShowDatabases(int dbID, struct dbFunction *db, void* dataRef );
-void* npdbGetList( struct database *db, void* dataRef );
+//void* npdbGetList( struct database *db, void* dataRef ); // not needed, been replaced
 // int npConnectDB( void* dataRef ); // old, lde
 int npdbUse_old( const char* dbName, void* dataRef );
 
@@ -193,9 +193,10 @@ void updateNodeFromMysqlRow (MYSQL_ROW *row, void* dataRef) // Generalize here
 //	MYSQL_ROW row;
 	pData data = (pData) dataRef;
 	pNPnode node = NULL;
-	pNPnode nodeParent = NULL;
-	int id = 0, type = 0, branchLevel = 0, parentID = 0, x = 0, count = 0;
+//	pNPnode nodeParent = NULL; // Warning, lde
+	int id = 0;
 
+	
 	id = atoi( (const char*)row[0] );
 
 	/// @todo create node id map for scene to DB that supports merged scenes.
@@ -272,7 +273,7 @@ struct newChunksObj* npGeneralAddObjectsToChunks(struct newChunksObj* chunks, st
 	int chunkLock =  0; // 1 == Locked, 0 == Unlocked
 	int chunkNum  =  0;
 	int objNum    =  0;
-	int i         =  0;
+//	int i         =  0; // Warning, lde
 
 	int objIndex = 0;
 	int numberOfObjectsInChunk = 0;
@@ -372,7 +373,7 @@ struct newChunksObj* npTestNewInitChunksObj(struct newChunksObj *chunks, int chu
 	chunks->numOfChunks = 5;
 	
 	printf("\nnpInitChunksObj malloc 2 : %d", chunks->numOfChunks);
-	printf("\nWhat is sizeof(struct newChunkObj)?\n%d", sizeof(struct newChunkObj));
+	printf("\nWhat is sizeof(struct newChunkObj)?\n%lu", sizeof(struct newChunkObj));
 	//getch();
 //	chunks->chunk = malloc(sizeof(struct newChunkObj) * chunks->numOfChunks);
 	chunks->chunk = malloc(sizeof(struct newChunkObj) * chunks->numOfChunks);
@@ -444,6 +445,9 @@ struct newChunksObj* npEvenNewerAllChunk(struct csvStrObjects *csvObjects, void*
 	chunks = malloc(sizeof(struct newChunksObj)); // This really should be in the npNewInitChunksObj function
 
 	//Really all these functions should be function pointers within the chunks structure
+	printf("\n-------------------------------------------------------------------------\n");
+	printf("\ntotal csv string objects size : %d\n", csvObjects->totalCsvStrObjectsSize);
+	printf("\n-------------------------------------------------------------------------\n");
 	chunks = npNewInitChunksObj(chunks, csvObjects->totalCsvStrObjectsSize ,65535, dataRef);
 	chunks = npInitAllChunkObjects(chunks, dataRef); 
 	chunks = npGeneralAddObjectsToChunks(chunks, csvObjects, dataRef);
@@ -454,7 +458,7 @@ struct newChunksObj* npEvenNewerAllChunk(struct csvStrObjects *csvObjects, void*
 
 void npNewMapTraverseTreeLL(struct csvStrObjects *nodes, int* index, pNPnode node, int format, void* dataRef)
 {
-	pData data = (pData) dataRef;
+//	pData data = (pData) dataRef; // Warning, lde
 	int i = 0;
 //	int count = 0;
 	
@@ -507,7 +511,7 @@ void npNewMapTraverseTreeLL(struct csvStrObjects *nodes, int* index, pNPnode nod
 
 void npNewerMapTraverseTreeLL(struct csvStrObjects *nodes, int* index, pNPnode node, int format, void* dataRef)
 {
-	pData data = (pData) dataRef;
+//	pData data = (pData) dataRef; // Warning, lde
 	int i = 0;
 
 //	printf("\nn1 : node->branchLevel : %d", node->branchLevel);
@@ -595,13 +599,12 @@ struct csvStrObjects* npNodeValues(void *dataRef)
 	struct csvStrObjects *nodes = malloc(sizeof(struct csvStrObjects));
 	pData data = (pData) dataRef;
 	pNPnode node = NULL;
-	int totalCount = 0;
+//	int totalCount = 0; // Warning, lde
 	int nodeIndex = 0;
 	int x = 0;
 	int y = 0;
 	
 //	nodes = NULL;
-	printf("\ncalloc : %p");
 /*
 	if( (nodes = malloc(sizeof(struct csvStrObjects))) == NULL )
 	{
@@ -629,17 +632,17 @@ struct csvStrObjects* npNodeValues(void *dataRef)
 	{
 		printf("\nNULL");
 	}
-	printf("\nsizeof(int) : %d", sizeof(int));
+	printf("\nsizeof(int) : %lu", sizeof(int));
 //	printf("\nsizeof(struct csvNode *node) : %d", sizeof(struct csvNode*));
 
 	printf("\nfor 1 : %p", nodes->csvObj);
-	printf("\nSizeof(nodes) : %d", sizeof(nodes));
+	printf("\nSizeof(nodes) : %lu", sizeof(nodes));
 //	printf("\nSizeof(struct csvNodes) : %d", sizeof(struct csvNodes));
 	nodes->totalCsvStrObjectsSize = 0;
 	////_ASSERTE( _CrtCheckMemory( ) );
 	for(nodeIndex = 0; nodeIndex <= (nodes->numOfcsvStrObjects); nodeIndex++) //Removed <=
 	{
-		printf("\nnodeIndex : %d : %p", nodeIndex, nodes->csvObj[nodeIndex]);
+		printf("\nnodeIndex : %d : %p", nodeIndex, &nodes->csvObj[nodeIndex]);
 		
 		if((nodes->csvObj[nodeIndex].csvStr = malloc(1000 * sizeof(char))) == NULL)
 		{
@@ -869,13 +872,13 @@ char* npNewGenMysqlFields(int count, int type, void* dataRef)
 void npInsert(void* dbID, pNPdbFuncSet func, char* table, struct newChunkObj *value)
 {
 	int queryReturnValue = 0;
-	char* statement = NULL;
-	statement = func->StatementInsert(table, value);
+	char* statement = NULL; 
+	statement = func->StatementInsert(table, value->csvObjects->csvObj->csvStr);
 	queryReturnValue = (int)func->query(dbID, statement);
 	free(statement);
 }
 
-//zzd r
+//zzd r // This function might be obsolete, lde @todo
 int npSelect(void* conn, pNPdbFuncSet func, char* table) //Add field(s) choice later
 {
 	int err = 0;
@@ -891,7 +894,7 @@ int npSelect(void* conn, pNPdbFuncSet func, char* table) //Add field(s) choice l
 	err = (int)func->query(conn, statement); //Create a function to process mysql error codes
 	if( err )
 		printf( "MYSQL error: %u (%s)\n",
-				func->db_errno(conn), func->db_error(conn) );
+				(unsigned int)func->db_errno(conn), (char*)func->db_error(conn) );
 
 	//printf("\nreturned value : %d\n", queryReturnValue);
 	//printf("\nnpSelect error : %d", error);
@@ -922,7 +925,8 @@ void* npShowDatabases(int dbID, struct dbFunction *db, void* dataRef )
 	return error;
 }
 
-
+// This function might be obsolete, lde @todo
+/*
 int npUseDatabase2(void* conn, pNPdbFuncSet func, char* dbName)
 {
 //	printf("ERRRRRRRR npUseDatabse2 called!!!\n"); return 1;
@@ -940,7 +944,7 @@ int npUseDatabase2(void* conn, pNPdbFuncSet func, char* dbName)
 	free(statement);
 	return err;
 }
-
+*/
 
 //Should queries be renamed to statements
 int npCreateDatabase2(int dbID, struct dbFunction *db, char* dbName)
@@ -957,6 +961,7 @@ int npCreateDatabase2(int dbID, struct dbFunction *db, char* dbName)
 	return err;
 }
 
+// This function might be obsolete, lde @todo
 int npDropDatabase(int dbID, pNPdbFuncSet FuncSet, const char* dbName, void* dataRef )
 {
 	//char* statement = (*db->StatementDrop)("DATABASE", dbName); // old, lde
@@ -964,7 +969,7 @@ int npDropDatabase(int dbID, pNPdbFuncSet FuncSet, const char* dbName, void* dat
 	int success = 0;
 	
 	//success = (int)(*db->query)(dbID, statement); // old, lde
-	success = (*FuncSet->query)(dbID, statement);
+	success = (int)(*FuncSet->query)(dbID, statement);
 
 	if( !success )
 		npPostMsg( "warn 5585 - failed to DROP database", kNPmsgDB, dataRef);
@@ -983,12 +988,13 @@ int npDropTable(int dbID, struct dbFunction *db, char* table)
 	return 0;
 }
 
-
+/*
 int npConnectToDatabaseServer(struct dbNewConnect *connect, void* dataRef)
 {
 	
 	return 0;
 }
+*/
 
 /* DB system test app
 
@@ -1084,12 +1090,27 @@ void npRevisedFreeNodeValues(struct csvStrObjects *nodes, void* dataRef)
 	}
 }
 
+struct newChunkObj* npGetChunk(struct newChunksObj *chunks, int index)
+{
+	return &chunks->chunk[index];
+}
+
+// lde, @todo drop a range of databases
+
 void npInsertAllChunks(struct newChunksObj *chunks, void* dbID, pNPdbFuncSet func, char* table)
 {
 	int index = 0;
+	char* statement = NULL;
+	struct newChunkObj *chunkPtr = NULL;
+	int queryReturnValue = 0;
+	
 	for(; index <= chunks->numOfChunks; index++)
 	{
-		npInsert(dbID, func, table, &chunks->chunk[index]);
+		//npInsert(dbID, func, table, &chunks->chunk[index]);
+		chunkPtr = npGetChunk(chunks, index);
+		statement = new_npMysqlStatementInsertFromChunk("node_tbl", chunkPtr);
+		queryReturnValue = (int)func->query(dbID, statement);
+		
 		//printf("node value%s\n", chunks->chunk[index]);
 	}
 }
@@ -1108,9 +1129,11 @@ int npCreateTable2(struct dbFunction *db, int dbID, char* table, char* fields)
 void npNewFreeChunks(struct newChunksObj * chunks, void* dataRef)
 {
 	int chunkIndex = 0;
-	int nodeIndex = 0;
-	int totalNodes = 0;
-
+	/*
+	int nodeIndex  = 0; // Warning, lde
+	int totalNodes = 0; // Warning, lde
+	*/
+	 
 	for(chunkIndex = 0; chunkIndex <= chunks->numOfChunks; chunkIndex++)
 	{
 		free(chunks->chunk[chunkIndex].csvObjects->csvObj); 
@@ -1133,10 +1156,10 @@ int npAttachDbsToDataRef(struct databases *dbs, void* dataRef)
 */
 
 
-
+// This function might be obsolete, lde @todo
 int npdbOpen( pNPdatabase database, void* dataRef ) 
 {
-	pData data = (pData) dataRef;
+	// pData data = (pData) dataRef; // Warning, lde
 
 //	dbID = npMysqlConnect( host, data );
 
@@ -1148,7 +1171,7 @@ int npdbOpen( pNPdatabase database, void* dataRef )
 //zzd r
 int npOpenDb(struct database *db)
 {
-	int err = 0;
+	int err = 0; // This has use in this function, keep lde
 	MYSQL *connInit = NULL;	/// pointer to connection handler
 	MYSQL *conn = NULL;
 
@@ -1171,7 +1194,7 @@ int npOpenDb(struct database *db)
 	if( !conn )
 	{
 		//	printf( "MYSQL error: %u (%s)\n",func->errno(conn), func->error(conn));
-		printf( "MYSQL err: %u - %s\n", (unsigned int)(*db->dbFunc->db_errno)(connInit), (*db->dbFunc->db_error)(connInit));
+		printf( "MYSQL err: %u - %s\n", (unsigned int)(*db->dbFunc->db_errno)(connInit), (char*)(*db->dbFunc->db_error)(connInit));
 		return 0;
 	}
 	
@@ -1350,7 +1373,9 @@ int npdbLoadNodeTbl(int menuItem, void* dataRef)
 */
 
 //zzd r
-void* npdbGetList(struct database *db, void* dataRef )
+// old void* npdbGetList(struct database *db, void* dataRef ) , lde
+/*
+void* npdbGetList(pNPdatabase db, void* dataRef ) 
 {
 	int i = 0, j= 0;
 
@@ -1402,14 +1427,14 @@ void* npdbGetList(struct database *db, void* dataRef )
 		goto abort;
 	}
 
-/*	row = (*db->db->db_fetch_row)(myResult)) )
-	{
-		if( !row )
-		{
-			npPostMsg("err 5570 - no", kNPmsgErr, dataRef);
-			goto abort;
-		}
-*/	//while 'i' loop with inner for 'j' loop
+//	row = (*db->db->db_fetch_row)(myResult)) )
+//	{
+//		if( !row )
+//		{
+//			npPostMsg("err 5570 - no", kNPmsgErr, dataRef);
+//			goto abort;
+//		}
+//	//while 'i' loop with inner for 'j' loop
 
 
 	//zz add proper MySQL error checking for all commands
@@ -1451,7 +1476,7 @@ abort:
 	(*db->dbFunc->freeResult)(myResult); //important to do this to maintain connection
 	return NULL;
 }
-
+*/
 
 //------------------------------------------------------------------------------
 int npdbUse_old( const char* dbName, void* dataRef )							//add to ctrl loop, debug zz

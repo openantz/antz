@@ -100,7 +100,8 @@ void nposxSleep (double seconds)
 //-----------------------------------------------------------------------------
 FILE* nposxFileDialog (const char* fileName, int dialogType, void* dataRef)
 {
-	return;																//debug zz
+	FILE* filePtr = NULL;
+	return filePtr;																//debug zz
 }
 
 

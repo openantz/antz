@@ -61,6 +61,8 @@ void npSaveMapFile (FILE* file, void* dataRef);
 int npImportMapFile (FILE* file, int type, void* dataRef);
 int npExportMapFile (FILE* file, int type, void* dataRef);
 
+int npWriteMapHeader (char* bufferIndex, int count, int type, void* dataRef); // New, lde
+
 // file and directory management
 int npGetMapFile (char* buffer, int wordSize, int size, void* dataRef);
 

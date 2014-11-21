@@ -146,6 +146,8 @@ void nposUpdateTime (void* dataRef)										//debug zz
 //-----------------------------------------------------------------------------
 void nposSleep (double seconds)
 {
+//	printf("z");
+	sleep((unsigned int)seconds);
 	return;																//debug zz
 }
 

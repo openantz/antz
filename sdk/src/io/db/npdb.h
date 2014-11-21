@@ -40,9 +40,27 @@ void npCloseDB( void* dataRef );
 void npUpdateDB( void* dataRef );
 
 int npdbConnect( pNPdbHost host, void* dataRef );
+void npdbFreeTables(pNPdatabase db);
+void npdbFreeTable(pNPdbTable tbl);
+void npdbFreeFields(pNPdbTable tbl);
+void npdbFreeField(pNPdbFields field);
 
 //get list of databases by name
 pNPdatabases npdbGetDatabases( void* dataRef );
+pNPdbTable npdbFindNodeTbl( pNPdatabase db, int* err, void* dataRef);
+char** npdbFetchRow_safe(void* result, pNPdbFuncSet func, int* err);
+int npdbTableToCSV(pNPdbTable table, char* csvName, void* dataRef);
+int npdbTableToCSVthread(void* threadData);
+
+
+int npdbSetTables( pNPdbHost host, pNPdatabase db );
+int npdbSetTable( pNPdbFuncSet func, void* result, pNPdbTable tbl, pNPdbHost host, void* dataRef );
+int npdbGetTbls( pNPdbHost host, pNPdatabase db );
+void* npdbGetFieldList(pNPdbTable tbl, int* err, void* dataRef);
+
+void* npdbStoreResult_Safe(pNPdbFuncSet func, pNPdbHost host, int* err);
+
+
 
 //format list of DBs as a menu struct
 pNPmenu npdbFormatMenu (pNPdatabases dbList, void* dataRef);
@@ -68,7 +86,7 @@ int npdbLoadRange( int minNodeID, int maxNodeID, void* dataRef );
 int npdbLoadList( int dbID, pNPnodeList nodes, void* dataRef );
 
 /// updates entire scene from ALL datasets
-int npdbLoadUpdate( dataRef );
+int npdbLoadUpdate( void* dataRef ); // added parameter name, lde
 
 	//	data->io.db.update = true;
 int npdbSaveUpdate( pNPdatabase dbItem, void* dataRef );
@@ -79,6 +97,7 @@ void npdbSaveScene(void* dataRef);
 //if DB exists then overwrites all of it
 
 //int npdbSaveScene( int serverID, const char* dbName, dataRef );	//zz debug
+int npdbShowTables( pNPdbHost host);
 
 //appends the scene to pre-existing DB, does NOT delete anything
 int npdbAppendScene( pNPdatabase dbItem, void* dataRef );
@@ -123,6 +142,8 @@ char* npdbActiveDB( void* dataRef );
 void npdbSet( char* dbName, char* tblName, char* setStatement, void* dataRef);
 void npdbSelect( char* dbName, char* tblName, char* selectWhere, void* dataRef);
 
+int npdbSetField (pNPdbFields field, pNPdbHost host, void* result, void* dataRef);
+
 void npdbAttachHostFuncSets( pNPdbs dbs );
 
 pNPdatabase npdbGetByName( char* dbName, void* dataRef);
@@ -132,7 +153,7 @@ int npdbSelectTable( pNPdatabase dbItem, char* table );
 //int npdbSelectTable( pNPtable table );
 int npdbShowDatabases( pNPdbHost host );
 int npdbAddHostDatabases( pNPdbHost host, pNPdbs dbs );
-
+int npdbNumFields_safe(void* result, pNPdbFuncSet func, int rightNum, int* err );
 
 int npdbHostErr( pNPdbHost host );
 int npdbItemErr( pNPdatabase dbItem );
@@ -140,7 +161,7 @@ int npdbItemErr( pNPdatabase dbItem );
 
 int npdbUpdateAntzStateFromDatabase( void* dataRef );	//zz db
 
-int npdbTruncate(void* dbID, struct dbFunction *db, char* table); //zz db
+int npdbTruncate(void* conn, pNPdbFuncSet func, char* table); //zz db // changed a parameter, lde 
 int npdbPushScene ( void* dbID, const char* dbName, void* dataRef );
 int npDropDatabase(int dbID, pNPdbFuncSet FuncSet, const char* dbName, void* dataRef );
 pNPdatabase npdbSaveAs( char* dbName, pNPdbHost host, void* dataRef );
@@ -148,6 +169,8 @@ pNPdatabase npdbSaveAs( char* dbName, pNPdbHost host, void* dataRef );
 pNPdbFuncSet npdbNewFuncSet( pNPdbs dbs );
 
 int npdbClearDatabaseList( pNPdbs dbs );
+int npdbQuery_safe(void* conn, pNPdbFuncSet func, pNPdbHost host ,char* statement); // Organize these new function prototypes, lde @todo
+int npdbNumRows_safe(void* result, pNPdbFuncSet func, int* err);
 
 /// @todo add error handling and cleanp-up the newly added methods
 /// @todo add support for all table types: tag, chmap, tracks, globals, etc...
