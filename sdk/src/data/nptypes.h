@@ -983,6 +983,7 @@ typedef struct NPdbTable * pNPdbTable;
 struct NPdbCSVwrite
 {
 	char*	   csvName;
+	int		   running;
 	pNPdbTable table;
 	void*	   dataRef;
 };

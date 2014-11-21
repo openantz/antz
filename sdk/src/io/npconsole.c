@@ -552,7 +552,7 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 	pNPdbHost   host       = NULL;
 	pNPdbs      dbs        = &data->io.db;
 
-	NPdbCSVwrite threadData;
+	pNPdbCSVwrite threadData = NULL;
 	
 	
 	printf("\nnpConsoleMenuText");
@@ -747,6 +747,7 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 		
 		// Put this into a thread, @todo, lde
 	
+	
 		err = npdbTableToCSV(node_table, input, dataRef); // make node_table into node_data, lde @todo
 		
 		if(err)
@@ -755,12 +756,20 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 			return;
 		}
 	 
-	/*
-		threadData.csvName = input;
-		threadData.table   = node_table;
-		threadData.dataRef = dataRef;
-		nposBeginThread(npdbTableToCSVthread, &threadData);
-	*/
+		/*
+		threadData = malloc(sizeof(NPdbCSVwrite));
+		
+		threadData->csvName = input;
+		threadData->table   = node_table;
+		threadData->dataRef = dataRef;
+		threadData->running  = 1;
+		nposBeginThread(npdbTableToCSVthread, threadData);
+		
+		while(threadData->running == 1);
+		
+		printf("\n--DONE--\n");
+		*/
+		 
 		npdbFreeTables(dbItem);
 		
 	//	sprintf( msg, "Done Saving file");

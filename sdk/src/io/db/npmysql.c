@@ -263,9 +263,9 @@ char* npMysqlStatementDrop(char* dropType, char* dropName)
 
 char* npMysqlStatementShow(char* showWhat)
 {
-	char* statement = malloc(sizeof(char) * ( 6 + strlen(showWhat) ) );
+	char* statement = malloc(sizeof(char) * ( 35 + strlen(showWhat) ) );
 	sprintf(statement, "SHOW %s", showWhat);
-
+	
 	return statement;
 }
 

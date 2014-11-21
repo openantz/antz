@@ -1662,7 +1662,7 @@ int npdbShowFields ( pNPdbHost host, pNPdbTable tbl, void* dataRef)
 	
 	/// create our SHOW FIELDS from [table] statement and query it
 	statement = func->StatementShow( "FIELDS" );
-	sprintf(statement, "%s FROM %s", statement, tbl->name);
+	sprintf(statement, "%s FROM %s", statement, tbl->name); 
 	if( !statement ) return 5575;	//err 5576
 	
 	/// post and execute our query
@@ -1905,31 +1905,31 @@ void npdbFreeField(pNPdbFields field) // This should return void, not int, lde @
 {
 	if(field->name != NULL)
 	{
-		printf(" 1 : %s ", field->name);
+		//printf(" 1 : %s ", field->name);
 		free(field->name); 
 	}
 	
 	if(field->typeStr != NULL)
 	{
-		printf(" 2 : %s", field->typeStr);
+		//printf(" 2 : %s", field->typeStr);
 		free(field->typeStr);
 	}
 	
 	if(field->params != NULL);
 	{
-		printf(" 3 : %s ", field->params);
+		//printf(" 3 : %s ", field->params);
 		free(field->params);
 	}
 		
 	if(field->type != NULL)
 	{
-		printf(" 4 : %d ", field->type);
+		//printf(" 4 : %d ", field->type);
 		free(field->type);
 	}
 	
-	printf(" 5 ");
+	//printf(" 5 ");
 	free(field);
-	printf(" 6 ");
+	//printf(" 6 ");
 	return;
 }
 
@@ -1938,7 +1938,7 @@ void npdbFreeFields(pNPdbTable tbl)
 	int i = 0;
 	for(i = 0; i < tbl->fieldCount; i++)
 	{
-		printf("\nField %d", i);
+		//printf("\nField %d", i);
 		npdbFreeField(tbl->fields[i]);
 	}
 		
@@ -1959,10 +1959,10 @@ void npdbFreeTable(pNPdbTable tbl)
 
 void npdbFreeTables(pNPdatabase db)
 {
-	printf("\nnpdbFreeTables : %d ", db->tableCount);
+	//printf("\nnpdbFreeTables : %d ", db->tableCount);
 	for( int i = 0; i < db->tableCount; i++)
 	{
-		printf("\nTable %d", i);
+		//printf("\nTable %d", i);
 		npdbFreeTable(db->tableList[i]);
 	}
 		
@@ -2199,6 +2199,9 @@ int npdbTableToCSVthread(void* threadData)
 	printf("\ndataRef : %p", dataRef);
 	int err = 0;
 	npdbTableToCSV(table, csvName, dataRef);
+	theThreadData->running = 0;
+//	npdbFreeTables(table->owner);
+	free(threadData);
 	
 	return err;
 }
