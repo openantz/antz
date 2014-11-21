@@ -216,7 +216,7 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>703673471A1FCC35004A5332</string>
+						<string>703673511A1FDE0D004A5332</string>
 						<key>history</key>
 						<array>
 							<string>703672FF1A1FC937004A5332</string>
@@ -374,7 +374,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>703673461A1FCC35004A5332</string>
+										<string>7036734F1A1FDE0D004A5332</string>
 										<key>history</key>
 										<array>
 											<string>70E1CE3C19F4820B00524688</string>
@@ -617,8 +617,8 @@
 		<string>1C78EAAD065D492600B07095</string>
 		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>708F204919F1E1A200208B80</string>
-		<string>/Users/lucaserickson/gitFolder/antz/antz_osx_mysql-lde/antz_osx_mysql-lde.xcodeproj</string>
 		<string>703672D81A1FC5A8004A5332</string>
+		<string>/Users/lucaserickson/gitFolder/antz/antz_osx_mysql-lde/antz_osx_mysql-lde.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
 	<string>0 60 300 718 0 0 1280 778 </string>
