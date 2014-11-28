@@ -1601,6 +1601,11 @@ struct NPctrl {
 typedef struct NPctrl NPctrl;
 typedef struct NPctrl* pNPctrl;
 
+/*! lde @todo
+* Create NPos
+*  - containing structure with function pointers to os functions
+*/
+
 /*!
 *  Global Context reference using MVC architecture
 */

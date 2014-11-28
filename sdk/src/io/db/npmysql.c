@@ -26,6 +26,7 @@
 
 #include "npdbz.h"
 #include "npdb.h"
+#include "npos.h"
 
 #define kNPdbFieldsDescMax 4096
 
@@ -139,6 +140,10 @@ void npUpdateMySQL (void* dataRef)
 */
 int npMysqlHook( pNPdbFuncSet func, void* dbLib)
 {
+	// This scopes the functions so they can't be called outside of the func struct, lde
+	// @todo for more functions, lde
+	char* npMysqlStatementUse(char* dbName); 
+
 	if( !func || !dbLib )
 	{
 		printf( "err 5410 - npMysqlHook called with NULL pointer \n" );
@@ -149,8 +154,8 @@ int npMysqlHook( pNPdbFuncSet func, void* dbLib)
 	func->dbLib = dbLib;
 
 	/// hook our external database library functions
-	func->init			= (void*)nposGetLibSymbol( dbLib, "mysql_init"		    );
-	func->connect		= (void*)nposGetLibSymbol( dbLib, "mysql_real_connect"  );
+	func->init			= (void*)nposGetLibSymbol( dbLib, "mysql_init"		    ); 
+	func->connect		= (void*)nposGetLibSymbol( dbLib, "mysql_real_connect"  ); // Make nposGetLibSymbol into function ptr, lde
 	func->options		= (void*)nposGetLibSymbol( dbLib, "mysql_options"	    );
 	func->ping			= (void*)nposGetLibSymbol( dbLib, "mysql_ping"		    );
 	func->close			= (void*)nposGetLibSymbol( dbLib, "mysql_close"		    );
