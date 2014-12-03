@@ -36,7 +36,7 @@ void npUpdateMySQL (void* dataRef);
 
 int npMysqlServerCtrl(void (*ctrlFunction)(void*), void* parameters);
 
-char* npMysqlStatementUse(char* dbName);
+//char* npMysqlStatementUse(char* dbName);
 char* npMysqlStatementShow(char* showWhat);
 char* npMysqlStatementCreate(char* dbName);
 char* npMysqlStatementCreateTable(char* table, char* fields);
