@@ -647,6 +647,7 @@ void npLoadChTracks (const char* filePath, void* dataRef)
 		ch->trackDataSource.fullFilePath = npNewStrcpy (filePath, data);				//zz-JJ
 		ch->trackDataSource.trackFP = file;
 		ch->trackDataSource.dataSourceType = kDataFromFile;
+		npActivateDataLoadThread( data ); // new, lde
 	}
 	else
 	{
@@ -667,7 +668,7 @@ void npLoadChTracks (const char* filePath, void* dataRef)
 	//  ((readIndex + 1)%circularBufferSize) == writeIndex means there is no
 	//    data available to read
 	//
-	npActivateDataLoadThread( data );
+//	npActivateDataLoadThread( data ); // temp bug fix, lde @todo
 }
 
 

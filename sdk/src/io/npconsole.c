@@ -28,7 +28,7 @@
 * -------------------------------------------------------------------------- */
 
 #include "npconsole.h"
-#include "npdb.h"
+#include "db/npdb.h"
 
 #include "../npdata.h"
 #include "../npio.h"
@@ -562,13 +562,13 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 
 //	pNPdatabases dbList = ((struct databases*)data->io.dbs)->dbList;
 	input = console->inputStr;
-
-
+	input = tolower(input);
+//	printf("\nInput : "%s\"", input);
 	//zz clean-up
 	//zz db
 //	printf("\nrunning == %d", data->io.db.running);
 //	if( data->io.db.running == false && strncasecmp( input, "exit", 4 ) )
-	if( data->io.db.activeDB->host->connected == false && strncasecmp( input, "exit", 4 ) )
+	if( data->io.db.activeDB->host->connected == false && strncmp( input, "exit", 4 ) ) // strncasecmp is os specific, lde
 	{
 		printf("\nHost not connected"); // post this to console, lde
 		//printf("\n%s", data->io.db.activeDB->host->inUseDB);
@@ -586,7 +586,7 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 	//parameters = input+;
 
 	/*! Exit console */
-	if( !strncasecmp( input, "exit", 4 ) )
+	if( !strncmp( input, "exit", 4 ) )
 	{
 		npConsoleExit( console, data );
 		return;
@@ -628,7 +628,7 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 		err = npdbUse_old( dbList->list[itemChosen], dataRef );
 		restoreAuto = data->io.db->autoUpdate = true;
 	}*/ /*! Database SET statement */
-	else if( !strncasecmp( input, "set ", 4 ) )
+	else if( !strncmp( input, "set ", 4 ) )
 	{
 		input += 4;
 
@@ -660,10 +660,10 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 
 		npConsolePromptBlank( console, data );
 	}
-	else if( !strncasecmp( input, "sel ", 4 ) 
-		  || !strncasecmp( input, "select ", 7 ) )
+	else if( !strncmp( input, "sel ", 4 ) 
+		  || !strncmp( input, "select ", 7 ) )
 	{	
-		if( !strncasecmp( input, "sel ", 4) )
+		if( !strncmp( input, "sel ", 4 ) )
 			input += 4;
 		else
 			input += 7;
@@ -683,7 +683,7 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 		npConsolePromptBlank( console, data );
 		return;
 	}
-	else if( !strncasecmp(input, "csv ", 4))
+	else if( !strncmp(input, "csv ", 4) )
 	{
 		input += 4;
 
@@ -709,6 +709,19 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 				return;
 			}
 
+		}
+
+		// I have code duplication here, lde @todo // Also this needs to be abstracted, lde @todo
+		if(    strcmp( "information_schema", input ) == 0
+			|| strcmp( "mysql", input ) == 0
+			|| strcmp( "performance_schema", input ) == 0  
+		   )
+		{
+			sprintf(msg,"Command Blocked : Protected DB", console->menu->count);
+				npPostMsg( msg, kNPmsgView, dataRef );
+				//npConsolePromptInputStr( console, dataRef ); // Sort this out, lde
+				npConsolePromptBlank( console, data );
+			return ;
 		}
 		
 		dbItem->refCount = 0;
@@ -776,7 +789,7 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 	//	npPostMsg( msg, kNPmsgView, data );
 		return;
 	}
-	else if( !strncasecmp(input, "use ", 4) )
+	else if( !strncmp(input, "use ", 4) )
 	{
 		input += 4;
 	//	pNPdatabase npdbGetByName( char* dbName, data);
@@ -801,7 +814,7 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 		npConsolePromptBlank( console, data );
 		return;
 	}
-	else if( !strncasecmp(input, "save", 4) )
+	else if( !strncmp(input, "save", 4) )
 	{
 	/*	
 		if( !dbName || !host )
@@ -856,7 +869,7 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 		npConsolePromptBlank( console, data );
 		return;
 	}
-	else if( !strncasecmp(input, "drop ", 5) )
+	else if( !strncmp(input, "drop ", 5) )
 	{	
 		input+=5;
 

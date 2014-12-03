@@ -52,6 +52,7 @@ extern "C" {
 typedef char my_bool;
 #if (defined(_WIN32) || defined(_WIN64)) && !defined(__WIN__)
 #define __WIN__
+#include <winsock2.h> //lde
 #endif
 #if !defined(__WIN__)
 #define STDCALL

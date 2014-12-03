@@ -234,6 +234,7 @@ int npMysqlInitConnOptions( pNPdbFuncSet func, void* connInit )
 	int err = 0;
 	bool enable = true;		///< enable MYSQL_OPT_RECONNECT
 	
+	printf("\nconnInit : %p\n", connInit);
 	if( !func || !connInit )
 	{
 		printf("err 5590 - npMysqlInitConnOptions called with null element\n");
@@ -241,13 +242,16 @@ int npMysqlInitConnOptions( pNPdbFuncSet func, void* connInit )
 	}	
 
 	/// set the recconect flag to prevent mysql err 2006 - connection lost
-	err = (int)func->options( connInit, MYSQL_OPT_RECONNECT, &enable );
+	err = func->options( connInit, MYSQL_OPT_RECONNECT, &enable ); // changed &enable to 0
+//	err = mysql_options( connInit, MYSQL_OPT_RECONNECT, &enable );
+	printf("\nconnInit : %p\nerr : %d\n", connInit, err);
 	if( err )
 	{
 		printf( "%s err: %u - %s\n", func->hostType,
 				(unsigned int)func->db_errno(connInit), (char*)func->db_error(connInit) );
 		return 5591;  //err 5591
 	}
+	printf("\noptions");
 
 	return 0;  //success
 }

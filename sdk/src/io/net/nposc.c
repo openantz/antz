@@ -30,11 +30,11 @@
 
 #include "nposcpack.h"	  //C++ oscpack library adapter
 
-#include "npctrl.h"
-#include "npos.h"
+#include "../../npctrl.h"       // diff from osx, lde
+#include "../../os/npos.h"
 
-#include "npmouse.h"
-#include "npcolor.h"
+#include "../npmouse.h"
+#include "../gl/npcolor.h"
 
 
 /*

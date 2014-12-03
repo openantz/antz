@@ -23,8 +23,8 @@
 * --------------------------------------------------------------------------- */
 
 #include "npdb.h"
-#include "npcsv.h"
-#include "npmapfile.h"
+#include "../file/npcsv.h" // lde
+#include "../../data/npmapfile.h" // lde
 
 #include "npmysql.h"			/// @todo move these to npdbz	
 #include "npostgresql.h"
@@ -722,7 +722,7 @@ void npdbAttachHostFuncSets( pNPdbs dbs )
 
 		/// search function sets for host type match
 		for( j=0; j < dbs->funcSetCount; j++ )
-			if( strcasecmp( host->type, dbs->funcSetList[j]->hostType ) == 0 )
+			if( strcmp( host->type, dbs->funcSetList[j]->hostType ) == 0 )
 			{
 				host->hostFuncSet = dbs->funcSetList[j];	///< attach host funcSet
 				// printf("%s hooked to host: %s\n", host->type, host->ip );
@@ -1061,8 +1061,8 @@ pNPdatabase npdbAddDatabase( char* dbName, pNPdbHost host, pNPdbs dbs )
 		if( dbItem )
 		{
 			/// if host and database names match then return the item
-			if( strcasecmp( host->ip, dbItem->host->ip ) == 0
-				&& strcasecmp( dbName, dbItem->name ) == 0 )
+			if( strcmp( host->ip, dbItem->host->ip ) == 0
+				&& strcmp( dbName, dbItem->name ) == 0 )
 			{
 				return dbItem;	/// exit nothing to do, return existing item
 			}
@@ -1190,7 +1190,7 @@ pNPdbFuncSet npdbGetHostFuncSet( char* hostType, pNPdbs dbs )
 		func = dbs->funcSetList[i];
 		if( !func )
 			printf( "err 5530 - null function set in list \n" );
-		else if( strcasecmp( func->hostType, hostType ) == 0 )
+		else if( strcmp( func->hostType, hostType ) == 0 )
 			return func;
 	}
 
@@ -1438,6 +1438,8 @@ int npdbItemErr( pNPdatabase dbItem )
 			mapID[i]->node = NULL;
 		}
 */
+
+
 int npdbLoadNodes( pNPdbFuncSet func, void* result, void* dataRef )
 {
 	time_t start = (int)nposGetTime();
@@ -1453,6 +1455,8 @@ int npdbLoadNodes( pNPdbFuncSet func, void* result, void* dataRef )
 	int type = 0;
 	int branchLevel = 0;
 	int parentID = 0;
+	double end  = 0;
+	double diff = 0;
 
 //	pData data = (pData) dataRef; // Warning, lde
 	
@@ -1502,7 +1506,11 @@ int npdbLoadNodes( pNPdbFuncSet func, void* result, void* dataRef )
 	printf("\n");
 	//Process Orphans...
 
-	printf("parse time: %.0f secs\n", difftime((int)nposGetTime(), start));
+//	printf("parse time: %.0f secs\n", difftime((int)nposGetTime(), start)); // This was causing a single node not be loaded back in, lde
+	
+	end = (double)nposGetTime();
+	diff = end - start;
+	printf("parse time: %d secs\n", diff);
 	//	//zzdb printf("\nNumber of nodes added : %d", x);
 
 	return nodeCount;
@@ -1682,6 +1690,7 @@ void* npdbGetFieldList(pNPdbTable tbl, int* err, void* dataRef)
 {
 	char* fields = NULL;
 	int count = 0;
+	int i     = 0;
 	fields = malloc(sizeof(char) * kNPmaxFields);
 	err = (int*)0;
 	
@@ -1691,7 +1700,7 @@ void* npdbGetFieldList(pNPdbTable tbl, int* err, void* dataRef)
 		return fields;
 	}
 	
-	for(int i = 0;i < tbl->fieldCount; i++)
+	for(i = 0;i < tbl->fieldCount; i++)
 	{
 		count += sprintf(fields+count, "%s %s,", tbl->fields[i]->name, tbl->fields[i]->typeStr);
 	}
@@ -1740,7 +1749,7 @@ pNPdbTable npdbFindNodeTbl( pNPdatabase db, int* err, void* dataRef)
 		printf("\nstrlen of test_tbl_fields : %d\n", strlen(test_tbl_fields));
 		*/
 		
-		if(strcasecmp(node_tbl_fields, test_tbl_fields) == 0)
+		if(strcmp(node_tbl_fields, test_tbl_fields) == 0)
 		{
 			printf("\nFound It\n");
 			return db->tableList[i];
@@ -1960,7 +1969,8 @@ void npdbFreeTable(pNPdbTable tbl)
 void npdbFreeTables(pNPdatabase db)
 {
 	//printf("\nnpdbFreeTables : %d ", db->tableCount);
-	for( int i = 0; i < db->tableCount; i++)
+	int i = 0;
+	for( i = 0; i < db->tableCount; i++ )
 	{
 		//printf("\nTable %d", i);
 		npdbFreeTable(db->tableList[i]);
@@ -2188,6 +2198,7 @@ void npdbPRC(pNPdatabase db)
 	printf("\nReference Count : %d", db->refCount);
 }
 
+/*
 int npdbTableToCSVthread(void* threadData)
 {
 	pNPdbCSVwrite theThreadData = threadData;
@@ -2205,12 +2216,13 @@ int npdbTableToCSVthread(void* threadData)
 	
 	return err;
 }
+*/
 
 int npdbTableToCSV(pNPdbTable table, char* csvName, void* dataRef) // Put in header file, lde
 {
 	char*          fieldList    = NULL;
 	char*		   headerBuffer	= NULL;
-	char		   fileName[25] = {'\0'}; // 25 is arbritary use kNPmaxFileSize , lde @todo
+	char		   fileName[150] = {'\0'}; // 150 is arbritary use kNPmaxFileSize , lde @todo
 	char		   csvRow[421]  = {'\0'}; // Revise, lde // changed to 800 from 421, only temp @todo
 	void*          result       = NULL;
 	int            err	        = 0;
@@ -2218,6 +2230,7 @@ int npdbTableToCSV(pNPdbTable table, char* csvName, void* dataRef) // Put in hea
 	int			   rowIndex     = 0;
 	int			   count		= 0;
 	int			   numFields    = 0; // lde, @todo
+	int			   size			= 0;
 	pNPdatabase    database     = table->owner;
 	pNPdbHost      host         = database->host; 
 	pNPdbFuncSet   func         = host->hostFuncSet;
@@ -2262,9 +2275,12 @@ int npdbTableToCSV(pNPdbTable table, char* csvName, void* dataRef) // Put in hea
 	//numFields = (int)func->num_fields(result);
 	
 	//strcpy(fileName, table->name);
-	strcpy(fileName, csvName);
+	nposGetAppPath(fileName, &size); 
+	//strcpy(fileName, csvName);
+	strcat(fileName, csvName); // @todo, rename fileName to filePath, lde
 	strcat(fileName, ".csv");
-	
+	printf("\nFile Path : %s\n", fileName);
+
 	filePtr = npOpenCSV(fileName, "w+", dataRef);
 
 	if( filePtr == NULL )
@@ -2282,12 +2298,9 @@ int npdbTableToCSV(pNPdbTable table, char* csvName, void* dataRef) // Put in hea
 	npMapTypeName( kNPmapNode, dataRef );
 	npWriteMapHeader(headerBuffer, kNPmapFileBufferMax, kNPnode, dataRef);
 	
-	printf("\nCount = %d, headerBuffer : %s\n", count, headerBuffer);
-	printf("\nA ");
+//	printf("\nCount = %d, headerBuffer : %s\n", count, headerBuffer);;
 	count = npWriteCSV(headerBuffer, 1, strlen(headerBuffer), filePtr, dataRef);
-	printf("B ");
 	npFree(headerBuffer, dataRef);
-	printf("C ");
 	
 	fieldList = npdbGetFieldList(table, &err, dataRef);
 	
@@ -2378,9 +2391,14 @@ int npdbCSVtoTable( pNPdbTable tbl, FILE* filePtr, void* dataRef) // add to head
 
 	@return 0 for success, otherwise an err number.
 */
+// new
 int npdbLoadNodeTbl( pNPdatabase dbItem, void* dataRef )
 {
-	
+	pData data = (pData) dataRef;
+	pNPdbHost host = NULL;
+	pNPdbFuncSet func = NULL;
+
+	void* conn = NULL;	
 //	pNPtables tableList   = NULL;				// Warning, lde
 	
 //	pNPdbTable node_data  = NULL;				// Warning, lde
@@ -2401,11 +2419,7 @@ int npdbLoadNodeTbl( pNPdatabase dbItem, void* dataRef )
 	filePtr = npOpenCSV("node_tbl.csv", "r", dataRef);
 	printf("\nfilePtr : %p\n", filePtr);
 	
-	pData data = (pData) dataRef;
-	pNPdbHost host = NULL;
-	pNPdbFuncSet func = NULL;
 
-	void* conn = NULL;
 //	void* result = NULL;	///< using void* to store MYSQL_RES* result handle // Warning, lde
 
 	///ascert valid database item, function set and connection
@@ -2480,6 +2494,7 @@ int npdbLoadNodeTbl( pNPdatabase dbItem, void* dataRef )
 		//return 5594;
 		return err;
 	}
+
 /*
 	if( (rowCount = (int)func->num_rows( result )) == 0 )
 	{
@@ -2593,6 +2608,7 @@ int npdbLoadMenuItem (int item, void* dataRef)
 pNPmenu npdbGetMenu ( pNPmenu menu, void* dataRef)
 {
 	int i = 0;
+	int err = 0; // new, lde
 	int itemCount = 0;
 
 	pData data = (pData) dataRef;
@@ -2607,7 +2623,8 @@ pNPmenu npdbGetMenu ( pNPmenu menu, void* dataRef)
 	}
 
 	/// clear the dbList and re-populate by querying hosts
-	npdbRefreshDatabaseList( dbs );
+	err = npdbRefreshDatabaseList( dbs ); // new, lde
+	if(err) return err;
 
 	itemCount = dbs->dbCount -1;	// -1 to skip the null dbItem in array[0]
 

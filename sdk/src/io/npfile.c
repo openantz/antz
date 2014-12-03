@@ -167,7 +167,7 @@ FILE* npFileDialog (const char* fileName, int dialogType, void* dataRef)
 
 		case kNPfileDialogOpen : 
 			//file = nposFileDialog (fileName, dialogType, dataRef); break; // temp, lde
-			file = openFileDialog(fileName, dialogType, dataRef); break;
+			file = OpenFileDialog(fileName, dialogType, dataRef); break;
 		case kNPfileDialogClose : 
 			file = nposFileDialog (fileName, dialogType, dataRef); break;
 

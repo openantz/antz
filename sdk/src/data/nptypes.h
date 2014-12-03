@@ -869,28 +869,28 @@ struct NPdbFuncSet{
 	//int				funcCount;
 
 	///  abstract our database server type specific methods
-	void* (*init)			();
-	void* (*connect)		();
-	void* (*options)		();
-	void* (*ping)			();
-	void* (*close)		    ();
+	void* (__stdcall *init)			();
+	void* (__stdcall *connect)		();
+	int (__stdcall *options)		();
+	void* (__stdcall *ping)			();
+	void* (__stdcall *close)		    ();
 
-	void* (*show)			();
-	void* (*query)		    ();
-	void* (*store_result)	();
-	void* (*free_result)	();
+	void* (__stdcall *show)			();
+	void* (__stdcall *query)		    ();
+	void* (__stdcall *store_result)	();
+	void* (__stdcall *free_result)	();
 
-	void* (*use)			();
-	void* (*select)		    ();
-	void* (*alter)		    ();
-	void* (*insert)		    ();
-	void* (*fetch_row)	    ();
-	void* (*fetch_lengths)  ();
-	void* (*num_fields)	    ();
-	void* (*num_rows)		();
-	void* (*db_error)		();
-	void* (*db_errno)		();
-	void* (*conn_thread_id) ();
+	void* (__stdcall *use)			();
+	void* (__stdcall *select)		    ();
+	void* (__stdcall *alter)		    ();
+	void* (__stdcall *insert)		    ();
+	void* (__stdcall *fetch_row)	    ();
+	void* (__stdcall *fetch_lengths)  ();
+	void* (__stdcall *num_fields)	    ();
+	void* (__stdcall *num_rows)		();
+	void* (__stdcall *db_error)		();
+	void* (__stdcall *db_errno)		();
+	void* (__stdcall *conn_thread_id) ();
 	///< error and errno use 'db_' prefix to prevent name conflict
 
 	int   (*InitConnOptions)		();

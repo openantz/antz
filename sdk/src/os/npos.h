@@ -85,5 +85,7 @@ void nposEndThread (void);
 bool nposSupportsAntzThreads (void);
 //JJ-end
 
+void* nposGetLibSymbol(void* library, char* symbolName); // New function, lde
+
 #endif
 

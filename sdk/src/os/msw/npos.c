@@ -53,6 +53,34 @@
 //#include "wglext.h"
 //#include "winbase.h"
 
+void* nposLoadLibrary( char* filePath )
+{
+	void* library = LoadLibrary( filePath );
+	if( !library )
+	{
+		printf( "err 9933 - failed to load library: %s\n", filePath);
+		return NULL;
+	}
+	
+	return library;
+}
+
+void* npmswGetLibSymbol(void* library, char* symbolName)
+{
+	void* symbol = NULL;
+	symbol = GetProcAddress(library, symbolName);
+	printf("\nlibrary : %p", library);
+	printf("\nsymbolName : %s", symbolName);
+	return symbol;
+}
+
+void* nposGetLibSymbol(void* library, char* symbolName) // New function, lde
+{
+	void* symbol = npmswGetLibSymbol(library, symbolName);
+	printf("\nlibrary : %p", library);
+	printf("\nsymbolName : %s", symbolName);
+	return symbol;
+}
 
 //-----------------------------------------------------------------------------
 void nposGetAppPath (char* buffer, int* size)
@@ -257,7 +285,7 @@ enum
 
 //zz debug make this return the fileName (includes path) instead of opening the FILE*
 //------------------------------------------------------------------------------
-/* temp, lde
+// temp, lde
 FILE* OpenFileDialog (const char* fileName, int kNPfileDialogOpen, void* dataRef)
 {
 	FILE* filePtr = NULL;
@@ -332,7 +360,7 @@ FILE* OpenFileDialog (const char* fileName, int kNPfileDialogOpen, void* dataRef
 
 	return filePtr;
 }
-*/
+
 
 //-----------------------------------------------------------------------------
 // Take file path returned from microsoft createFile, put into fopen and return File Pointer
@@ -391,12 +419,12 @@ int nposSetCursorPos (int x, int y)
 
 
 //-----------------------------------------------------------------------------
-/* // temp lde
+// // temp lde
 int nposGetKey (void)
 {
 	return _getch();
 }
-*/
+
 
 //-----------------------------------------------------------------------------
 double nposGetTime (void)
