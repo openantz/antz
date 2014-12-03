@@ -26,7 +26,7 @@
 
 #include "npdbz.h"
 #include "npdb.h"
-#include "npos.h"
+#include "../../os/npos.h"
 
 #define kNPdbFieldsDescMax 4096
 
