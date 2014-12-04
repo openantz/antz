@@ -27,6 +27,7 @@
 
 
 #include "stdbool.h"
+#include "npdbTypes.h"
 //#include <stdint.h>
 #include "../io/net/nposcpack.h"  //JJ	//! @todo zz remove this dependency
 
@@ -832,14 +833,14 @@ struct NPnodeList {
 typedef struct NPnodeList NPnodeList;
 typedef struct NPnodeList * pNPnodeList;
 /*
-#define kNPdbHostMax	512		///< max number of DB host servers
-#define kNPdbMax		4096	///< max number of databases
-#define kNPtblMax		128		///< max number of tables, new lde
-#define kNPpwdMax		256		///< max password length
-#define kNPuserNameMax	256		///< max user name length
-#define kNPdbNameMax	64		///< @todo make sure 64 is good for non-MySQL DBs
-#define kNPdbFuncSetMax 64		///< max number DB function sets
-*/
+//#define kNPdbHostMax	512		///< max number of DB host servers
+//#define kNPdbMax		4096	///< max number of databases
+//#define kNPtblMax		128		///< max number of tables, new lde
+//#define kNPpwdMax		256		///< max password length
+//#define kNPuserNameMax	256		///< max user name length
+//#define kNPdbNameMax	64		///< @todo make sure 64 is good for non-MySQL DBs
+//#define kNPdbFuncSetMax 64		///< max number DB function sets
+
 enum NP_DATABASE {
 	kNPdbHostMax	= 512,		///< max number of DB host servers
 	kNPdbMax		= 4096,		///< max number of databases
@@ -871,7 +872,7 @@ struct NPdbFuncSet{
 	///  abstract our database server type specific methods
 	void* (__stdcall *init)			();
 	void* (__stdcall *connect)		();
-	int (__stdcall *options)		();
+	int   (__stdcall *options)		();
 	void* (__stdcall *ping)			();
 	void* (__stdcall *close)		    ();
 
@@ -1066,14 +1067,15 @@ struct NPdatabases {
 typedef struct NPdatabases NPdatabases;
 typedef struct NPdatabases *pNPdatabases;
 
-/* new struct, lde */
+// new struct, lde 
 struct NPtables {
 	char** list;		//!< list of tables by name
 	int size;			//!< number of items in the list
 };
 typedef struct NPtables NPtables;
 typedef struct NPtables *pNPtables;
-
+*/
+ 
 struct NPmenu {
 	void* coreNode; ///< core nodes tie global structures to the scene graph
 						//!< each global struct has a corresponding base node.

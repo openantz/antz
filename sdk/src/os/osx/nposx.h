@@ -48,6 +48,8 @@ bool nposSupportsAntzThreads (void); // lde
 void nposEndThread (void); // lde
 void nposBeginThread (voidFnPtr vfp, void *dataRef); // lde
 
+FILE* openFileDialog (const char* fileName, int dialogType, void* dataRef);
+
 int nposGetKey (void); // lde
 
 #endif

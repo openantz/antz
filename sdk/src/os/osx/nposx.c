@@ -44,6 +44,48 @@ void* nposLoadLibrary( char* filePath )
 	return library;
 }
 */
+
+//-----------------------------------------------------------------------------
+// Take file path returned from microsoft createFile, put into fopen and return File Pointer
+FILE* nposFileDialog (const char* fileName, int dialogType, void* dataRef)
+{	
+	FILE *filePtr;
+	
+	switch (dialogType)
+	{
+		case kNPfileDialogNew :
+			nposFileDialog (fileName, kNPfileDialogOpen, dataRef);
+			break;
+			
+		case kNPfileDialogOpen : 
+			filePtr = openFileDialog (fileName, kNPfileDialogOpen, dataRef); 
+			break;
+			
+		case kNPfileDialogClose : 
+			nposFileDialog (fileName, kNPfileDialogSaveAs, dataRef);
+			break;
+			
+		case kNPfileDialogSave : 
+			nposFileDialog (fileName, kNPfileDialogSaveAs, dataRef); 
+			break;
+			
+		case kNPfileDialogSaveAs : 
+			//filePtr = SaveFileDialog(fileName);  // @todo lde fix
+			break;
+			
+		case kNPfileDialogImport : 
+			nposFileDialog (fileName, kNPfileDialogOpen, dataRef);
+			break;
+		case kNPfileDialogExport : 
+			nposFileDialog (fileName, kNPfileDialogSaveAs, dataRef); 
+			break;
+			
+		default : break;
+	}
+	
+	return filePtr;
+}
+
 void* nposLoadLibrary( char* filePath )
 {
 	void* library = NULL;

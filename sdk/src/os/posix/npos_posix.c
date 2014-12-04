@@ -152,10 +152,12 @@ void nposSleep (double seconds)
 }
 
 //-----------------------------------------------------------------------------
+/* // lde, temp
 FILE* nposFileDialog (const char* fileName, int dialogType, void* dataRef)
 {
 	return;																//debug zz
 }
+*/
 
 //-----------------------------------------------------------------------------
 void nposTimeStampName (char* fileName)

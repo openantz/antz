@@ -94,6 +94,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		708A87FB1A2FE0DD00B7B625 /* npdbTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = npdbTypes.h; sourceTree = "<group>"; };
 		708F145819F1E19B00208B80 /* antz.exe */ = {isa = PBXFileReference; lastKnownFileType = file; name = antz.exe; path = ../antz.exe; sourceTree = SOURCE_ROOT; };
 		708F145919F1E19B00208B80 /* freeglut.dll */ = {isa = PBXFileReference; lastKnownFileType = file; name = freeglut.dll; path = ../freeglut.dll; sourceTree = SOURCE_ROOT; };
 		708F145A19F1E19B00208B80 /* glut32.dll */ = {isa = PBXFileReference; lastKnownFileType = file; name = glut32.dll; path = ../glut32.dll; sourceTree = SOURCE_ROOT; };
@@ -1019,6 +1020,7 @@
 				708F1C8919F1E19C00208B80 /* npwrangler.c */,
 				708F1C8A19F1E19C00208B80 /* npwrangler.h */,
 				708F1C8B19F1E19C00208B80 /* stdbool.h */,
+				708A87FB1A2FE0DD00B7B625 /* npdbTypes.h */,
 			);
 			path = data;
 			sourceTree = "<group>";
