@@ -552,14 +552,18 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 	pNPdbHost   host       = NULL;
 	pNPdbs      dbs        = &data->io.db;
 
-	pNPdbCSVwrite threadData = NULL;
+//	pNPdbCSVwrite threadData = NULL;
 	
 	
 	printf("\nnpConsoleMenuText");
 	printf("\nhostCount : %d", data->io.db.hostCount);
 	if( activeDB )
-		host = activeDB->host;
-
+	{
+	//	host = activeDB->host;  //active->host is frequently null here, this is cause of console crash, lde
+		host = npdbGetConnectedHost(dbs);
+		activeDB->host = host;
+	}
+		
 //	pNPdatabases dbList = ((struct databases*)data->io.dbs)->dbList;
 	input = console->inputStr;
 	input = tolower(input);
@@ -760,7 +764,6 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 		
 		// Put this into a thread, @todo, lde
 	
-	
 		err = npdbTableToCSV(node_table, input, dataRef); // make node_table into node_data, lde @todo
 		
 		if(err)
@@ -932,6 +935,7 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 
 			///call the menu item event processing function to load selected item
 			console->pMenuCallback( itemChosen, dataRef );
+			npConsolePromptBlank(console, dataRef);
 			npPostMsg( "Exit Console - Keyboard: Game Mode", kNPmsgCtrl, dataRef );
 		}
 		else
@@ -1498,10 +1502,18 @@ void npUpdateConsoleMenu (pNPconsole console, void* dataRef)
 	//create string to display active DB if an
 
 	if( !activeDB )
+	{
 		sprintf( msg, "No Active DB - load, save or use to make ACTIVE" );
+	}
 	else
-		sprintf( msg, "Active DB: %s", activeDB->name);//, hostName );
-
+	{
+		if(activeDB->name)
+		{
+		//	sprintf( msg, "Active DB: %s", activeDB->name);//, hostName );
+			sprintf( msg, "Active DB: %s", "lolcatz");
+		}
+	}
+		
 	//build this out for mouse and cursor to highlight specific item...    zz debug
 	//arrows as page up/down, alternate method is press 'Spacebar' for next
 	//npPostMsg("| INFO [name or #] display DB details             INFO 42                     |", kNPmsgView, dataRef);

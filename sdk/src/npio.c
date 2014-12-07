@@ -43,6 +43,7 @@
 //-----------------------------------------------------------------------------
 void npInitIO( void* dataRef )
 {
+	npInitOS( dataRef );
 	/// init the local IO devices
 	
 	/// launch file services and updates hard-coded global variables from file
@@ -73,6 +74,64 @@ void npInitIO( void* dataRef )
 	npInitDB( dataRef );
 
 }
+
+// This is a temporary location for this, lde @todo
+// This could be extended and generalized, lde @todo
+pNPosFuncSet nposNewFuncSet(pNPos os, int *err)
+{
+	pNPosFuncSet funcSet = NULL;
+	funcSet = (pNPosFuncSet)calloc( 1, sizeof(NPosFuncSet) );
+	if( !funcSet )
+	{
+		printf("err 5525 - malloc failed NPdbFuncSet"); // Add error code, lde @todo
+		err = (int*)5525;
+		return NULL;
+	}
+	
+	return funcSet;
+}
+
+void nposHook(pNPosFuncSet funcSet, int *err)
+{
+	funcSet->getAppPath = nposGetAppPath;
+	funcSet->getCWD = nposGetCWD;
+	funcSet->setCWD = nposSetCWD;
+	funcSet->getOpenFilePath = nposGetOpenFilePath;
+	funcSet->fileDialog = nposFileDialog;
+	funcSet->showCursor = nposShowCursor;
+	funcSet->setCursorPos = nposSetCursorPos;
+	funcSet->getTime = nposGetTime;
+	funcSet->updateTime = nposUpdateTime;
+	funcSet->sleep = nposSleep;
+//	funcSet->getKey = nposGetKey;
+	funcSet->timeStampName = nposTimeStampName;
+	funcSet->beginThread = nposBeginThread;
+	funcSet->endThread = nposEndThread;
+	funcSet->supportsAntzThreads = nposSupportsAntzThreads;
+	funcSet->loadLibrary = nposLoadLibrary;
+	funcSet->getLibSymbol = nposGetLibSymbol;
+	
+	return 0;
+}
+
+// This is a temporary location for this, lde @todo
+void npInitOS( void* dataRef)
+{
+	int err = 0;
+	pData data = (pData) dataRef;
+	pNPos os   = &(data->os);
+	pNPosFuncSet funcSet = NULL;
+	os->newFuncSet = nposNewFuncSet;
+	os->hook       = nposHook;
+	
+	funcSet = os->newFuncSet(os, &err);
+	os->funcSet = funcSet;
+	
+	os->hook(funcSet, &err);
+	
+}
+
+
 
 
 //-----------------------------------------------------------------------------

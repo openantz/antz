@@ -430,9 +430,9 @@ void npNodeDelete (pNPnode node, void* dataRef)
 
 	data->io.mouse.linkA = NULL;	//in case of delete while using link tool
 
-	npNodeRemove (true, node, dataRef);	//set 
+//	npNodeRemove (true, node, dataRef);	//set 
 
-	if (node->type != kNodeLink && node->parent != NULL)
+	if (node->type != kNodeLink && node->parent != NULL) // This is attempting to access memory that was just freed, lde
 	{
 		parent = node->parent;
 
@@ -448,6 +448,8 @@ void npNodeDelete (pNPnode node, void* dataRef)
 		else
 			npPostMsg("err 9423 - npNodeRemove parent is NULL", kNPmsgErr, data);
 	}
+	npNodeRemove (true, node, dataRef);	//set // moved , lde
+
 }
 
 // removes node from tree and recursively traverses tree to free memory

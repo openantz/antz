@@ -1608,6 +1608,38 @@ typedef struct NPctrl* pNPctrl;
 *  - containing structure with function pointers to os functions
 */
 
+struct NPosFuncSet
+{
+	void   (*getAppPath)();
+	void   (*getCWD)();
+	void   (*setCWD)();
+	void   (*getOpenFilePath)();
+	FILE*  (*fileDialog)();
+	int    (*showCursor)();
+	int    (*setCursorPos)();
+	double (*getTime)();
+	void   (*updateTime)();
+	void   (*sleep)();
+	int    (*getKey)();
+	void   (*timeStampName)();
+	void   (*beginThread)();
+	void   (*endThread)();
+	bool   (*supportsAntzThreads)();
+	void*  (*loadLibrary)(char* filePath);
+	void*  (*getLibSymbol)();
+};
+typedef struct NPosFuncSet NPosFuncSet;
+typedef struct NPosFuncSet* pNPosFuncSet;
+
+struct NPos {
+	pNPosFuncSet (*newFuncSet)();
+	void (*hook)();
+	int (*deleteFuncSet)(); // Specify later, lde @todo
+	pNPosFuncSet funcSet;
+};
+typedef struct NPos NPos;
+typedef struct NPos* pNPos;
+
 /*!
 *  Global Context reference using MVC architecture
 */
@@ -1616,6 +1648,7 @@ struct Data {
 						//!<  each global struct has a corresponding base node.
 	NPmap	map;		//!< Model   - map
 	NPio	io;			//!< View    - io
+	NPos    os;         //!< OS      - Operating System functions
 	NPctrl	ctrl;		//!< Control - ctrl
 
 	int		size;

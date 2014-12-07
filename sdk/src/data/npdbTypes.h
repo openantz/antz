@@ -6,6 +6,23 @@
  *  Copyright 2014 __MyCompanyName__. All rights reserved.
  *
  */
+#ifndef NPDBTYPES_H_
+#define NPDBTYPES_H_
+
+//#define NPDB_CALLCONV __stdcall
+
+
+#ifdef WIN32
+	#define NPDB_CALLCONV __stdcall
+#else
+	#define NPDB_CALLCONV
+#endif
+
+/*
+#ifdef NP_OSX_
+#define NPDB_CALLCONV
+#endif
+*/
 
 /*
  #define kNPdbHostMax	512		///< max number of DB host servers
@@ -72,28 +89,29 @@ struct NPdbFuncSet{
 	void* (__stdcall *conn_thread_id) ();
 	*/
 	
-	void* (*init)			();
-	void* (*connect)		();
-	int   (*options)		();
-	void* (*ping)			();
-	void* (*close)		    ();
+	
+	void* (NPDB_CALLCONV *init)			();
+	void* (NPDB_CALLCONV *connect)		();
+	int   (NPDB_CALLCONV *options)		();
+	void* (NPDB_CALLCONV *ping)			();
+	void* (NPDB_CALLCONV *close)		    ();
 	
 	void* (*show)			();
-	void* (*query)		    ();
-	void* (*store_result)	();
-	void* (*free_result)	();
+	void* (NPDB_CALLCONV *query)		    ();
+	void* (NPDB_CALLCONV *store_result)	();
+	void* (NPDB_CALLCONV *free_result)	();
 	
 	void* (*use)			();
-	void* (*select)		    ();
-	void* (*alter)		    ();
-	void* (*insert)		    ();
-	void* (*fetch_row)	    ();
-	void* (*fetch_lengths)  ();
-	void* (*num_fields)	    ();
-	void* (*num_rows)		();
-	void* (*db_error)		();
-	void* (*db_errno)		();
-	void* (*conn_thread_id) ();
+	void* (NPDB_CALLCONV *select)		    ();
+	void* (NPDB_CALLCONV *alter)		    ();
+	void* (NPDB_CALLCONV *insert)		    ();
+	void* (NPDB_CALLCONV *fetch_row)	    ();
+	void* (NPDB_CALLCONV *fetch_lengths)  ();
+	void* (NPDB_CALLCONV *num_fields)	    ();
+	void* (NPDB_CALLCONV *num_rows)		();
+	void* (NPDB_CALLCONV *db_error)		();
+	void* (NPDB_CALLCONV *db_errno)		();
+	void* (NPDB_CALLCONV *conn_thread_id) ();
 	
 	///< error and errno use 'db_' prefix to prevent name conflict
 	
@@ -109,6 +127,11 @@ struct NPdbFuncSet{
 	void* (*StatementSelect)		();
 	void* (*StatementTruncate)		();
 	void* (*StatementUpdate)		();
+	void* (*StatementDBshow)		();
+	void* (*StatementDatabases)     ();
+	
+	int   (*showDatabases)          (); // I might pass this a fcn ptr and change it to (*show), lde @todo
+	char* (*getTableFields)			();
 	
 	int size;
 };
@@ -136,7 +159,7 @@ struct NPdbHost{
 	int			dbCount;				///< number of databases for this host
 	
 	//char		currentTable[];
-	
+	int			(*connect)();
 	pNPdbFuncSet hostFuncSet;			///< function calls for this host type
 }; //@todo: hosts need an active server, lde
 typedef struct NPdbHost NPdbHost;
@@ -222,6 +245,7 @@ struct NPdatabase{
 	float		saveUpdateRate;			///< auto save update rate, 0 is off
 	float		loadUpdateRate;			///< auto load update rate, 0 is off
 	
+	int			(*loadNodeTbl)();
 	pNPdbHost	host;		///< references this databases host
 	
 };
@@ -236,7 +260,7 @@ struct NPdbs {
 	void* coreNode; ///< core nodes tie global structures to the scene graph
 	
 	bool			running;				///< true if hosts are connected
-	
+	void			(*connectHosts)(); // new, lde
 	pNPdbHost		hosts[kNPdbHostMax];	///< list of database hosts
 	int				hostCount;				///< number of DB host servers
 	
@@ -277,3 +301,5 @@ struct NPtables {
 };
 typedef struct NPtables NPtables;
 typedef struct NPtables *pNPtables;
+
+#endif

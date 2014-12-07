@@ -560,7 +560,11 @@ void npglFullscreen (void* dataRef)
 void npGlutKeyDown (unsigned char key, int x, int y) 
 {
 	// printf("1 key: %d \n", key);
-	npKeyGlut (key, x, y, kGlutKeyDown, 0);		// glutGetModifiers()); //zz debug, not a problem here, just no longer needed
+	int special = 0;
+	special = glutGetModifiers();
+	
+//	npKeyGlut (key, x, y, kGlutKeyDown, 0);		// glutGetModifiers()); //zz debug, not a problem here, just no longer needed
+	npKeyGlut (key, x, y, kGlutKeyDown, special);		// glutGetModifiers()); //zz debug, not a problem here, just no longer needed
 }
 
 //------------------------------------------------------------------------------

@@ -59,7 +59,10 @@ void npInitDB (void* dataRef)
 	npInitSQLite( data );			///< SQLite is a local file based RDMS
 	npInitMongoDB( data );			///< MongoDB is a realtime NoSQL database
 
-	npdbConnectHosts( dbs, data );	///< connect to each host in the list
+	dbs->connectHosts = npdbConnectHosts; // This should be moved, lde @todo
+	dbs->connectHosts( dbs, data );		///< connect to each host in the list
+	//npdbConnectHosts( dbs, data );	///< connect to each host in the list
+	
 	npdbStartConnMonitor( dbs );	///< keep hosts connections alive
 
 	npdbRefreshDatabaseList( dbs );	/// refresh the dbList using hosts list
@@ -161,7 +164,8 @@ void npdbConnectHosts( pNPdbs dbs, void* dataRef )
 		else
 		{
 			data->io.db.activeDB->host = host;
-			if( err = npdbConnect(host, dataRef) )
+			//if( err = npdbConnect(host, dataRef) ) // Experimental, lde
+			if( err = host->connect(host, dataRef) )
 			{
 				printf( "err %d - failed to connect %s host: %s\n", 
 						err, host->type, host->ip ); 
@@ -276,7 +280,8 @@ void npdbConnMonitorThread( pNPdbs dbs, void* dataRef )
 			else if( !host->conn )
 			{
 				/// @todo attempt to establish a connection
-				npdbConnect( host, dataRef ); //@todo, this should be passed a pNPdatabase / pNPserver / pNPdbServer structure, lde
+				//npdbConnect( host, dataRef ); //@todo, this should be passed a pNPdatabase / pNPserver / pNPdbServer structure, lde
+				host->connect( host, dataRef ); // experimental, lde @todo
 				
 			}
 			else
@@ -554,9 +559,21 @@ pNPdbHost npdbGetConnectedHost( pNPdbs dbs )
 	pNPdbHost host = NULL;
 
 	/// if activeDB exists and has a connected host, then return the host
+/*
 	if( dbs->activeDB && dbs->activeDB->host && dbs->activeDB->host->conn )
 		return dbs->activeDB->host;
-
+*/
+	if( dbs->activeDB )
+	{
+		if(dbs->activeDB->host)
+		{
+			if(dbs->activeDB->host->conn)
+			{
+				return dbs->activeDB->host;
+			}
+		}
+	}
+	
 	/// else we search for first connected host
 	for( i=1; i < dbs->hostCount; i++ )
 	{
@@ -627,22 +644,28 @@ int npdbLoadScene( pNPdatabase dbItem, void* dataRef )
 	char msg[256];
 //	char* hostIP = NULL; // Warning, lde
 
-	pData data = (pData) dataRef;		
+	pData data = (pData) dataRef;
+	pNPdatabase activeDB = NULL;
 
-
+	dbItem->loadNodeTbl = npdbLoadNodeTbl; // move elsewhere, lde @todo
 	if( err = npdbItemErr(dbItem)) return err;	///ascert database connection is valid
 
 	sprintf( msg, "Loading DB: %s  host: %s", dbItem->name, dbItem->host->ip );
 	npPostMsg( msg, kNPmsgView, data );
 
 	/// load the node table into the scene
-	err = npdbLoadNodeTbl( dbItem, data );
+	//err = npdbLoadNodeTbl( dbItem, data );
+	dbItem->loadNodeTbl( dbItem, data ); // new, lde
 	if( err )
 		sprintf( msg, "Failed to Load DB: %s  code: %d", dbItem->name, err );
 	else
 	{
 		data->io.db.activeDB = dbItem;
+		//activeDB = dbItem;
+		//activeDB->host = dbItem->host;
+		//data->io.db.activeDB->host = dbItem->host;
 		sprintf( msg,"Done Loading DB: %s", dbItem->name );
+//		sprintf( msg,"Done Loading DB: %s", activeDB->name);
 	}
 
 	npPostMsg( msg, kNPmsgDB, dataRef );
@@ -719,7 +742,7 @@ void npdbAttachHostFuncSets( pNPdbs dbs )
 	for( i=0; i < dbs->hostCount; i++ )
 	{
 		host = dbs->hosts[i];
-
+		host->connect = npdbConnect; // Expand on later, @todo
 		/// search function sets for host type match
 		for( j=0; j < dbs->funcSetCount; j++ )
 			if( strcmp( host->type, dbs->funcSetList[j]->hostType ) == 0 )
@@ -834,7 +857,7 @@ int npdbUse( pNPdatabase dbItem )
 	return err;
 }
 
-// I suspect the seg fault originates here, lde @todo
+// I suspect the seg fault originates here, lde @todo // fixed
 int new_npdbSelectTable( pNPdbTable table )
 {
 	pNPdatabase  database	= table->owner;
@@ -848,7 +871,10 @@ int new_npdbSelectTable( pNPdbTable table )
 	
 	
 	if( strcmp(database->name, host->inUseDB) != 0 )
-		npdbUse(database);
+	{
+	//	npdbUse(database);
+		func->use(database);  // should be database->use, lde @todo
+	}
 	
 	statement = func->StatementSelect(table->name);
 	if( !statement ) return 2;
@@ -1106,7 +1132,8 @@ int npdbAddHostDatabases( pNPdbHost host, pNPdbs dbs )
 	conn = host->conn;
 
 	/// query host with SHOW DATABASES statement
-	err = npdbShowDatabases( host );
+	//err = npdbShowDatabases( host );
+	err = func->showDatabases( host ); // new, lde
 	if( err ) return err;
 
 	/// store the result
@@ -1439,11 +1466,38 @@ int npdbItemErr( pNPdatabase dbItem )
 		}
 */
 
+ // lde @todo
+/*
+double npGetTime(pNPos os, void* (*function)(), ...)
+{
+	double diff  = 0;
+	double start = 0;
+	double end   = 0;
+	pNPosFuncSet func = os->funcSet;
+	
+	start = (double)func->getTime();
+//  function();
+	end   = (double)func->getTime();
+	
+	diff = end - start;
+	
+	return diff;
+}
+ */
+
+
+double npGetTime(double start, void* function, double end)
+{
+	double diff = 0;
+	diff = end - start;
+	return diff;
+}
 
 int npdbLoadNodes( pNPdbFuncSet func, void* result, void* dataRef )
 {
 	time_t start = (int)nposGetTime();
-
+//	double start = nposGetTime();
+	
 	int nodeCount = 0;
 	char** row = NULL;		///< char** to store MYSQL_ROW handle;
 	int x = 0;
@@ -1508,9 +1562,10 @@ int npdbLoadNodes( pNPdbFuncSet func, void* result, void* dataRef )
 
 //	printf("parse time: %.0f secs\n", difftime((int)nposGetTime(), start)); // This was causing a single node not be loaded back in, lde
 	
+	//The timing for this function should be done from outside, lde @ todo
 	end = (double)nposGetTime();
 	diff = end - start;
-	printf("parse time: %d secs\n", diff);
+//	printf("parse time: %d secs\n", diff);
 	//	//zzdb printf("\nNumber of nodes added : %d", x);
 
 	return nodeCount;
@@ -1719,7 +1774,8 @@ pNPdbTable npdbFindNodeTbl( pNPdatabase db, int* err, void* dataRef)
 	err = (int*)0;
 	
 	printf("\nnpdbFindNodeTbl\n");
-	node_tbl_fields = npMysqlGetTableFields(kNPnode, dataRef); // Make this npdbGetTableFields
+	//node_tbl_fields = npMysqlGetTableFields(kNPnode, dataRef); // Make this npdbGetTableFields
+	node_tbl_fields = db->host->hostFuncSet->getTableFields(kNPnode, dataRef); // shorten, lde @todo
 	printf("\nnode_tbl_fields : %s\n", node_tbl_fields);
 	
 	if(node_tbl_fields == NULL)
@@ -1910,7 +1966,7 @@ int npdbNumRows_safe(void* result, pNPdbFuncSet func, int* err)
 	return numRows;
 }
 
-void npdbFreeField(pNPdbFields field) // This should return void, not int, lde @todo
+void npdbFreeField(pNPdbFields field) // This should return void, not int, lde @todo // DONE
 {
 	if(field->name != NULL)
 	{
@@ -2238,6 +2294,11 @@ int npdbTableToCSV(pNPdbTable table, char* csvName, void* dataRef) // Put in hea
 	double		   start	    = (int)nposGetTime();
 	FILE*		   filePtr		= NULL;
 	
+	/*
+	printf("\nbefore new_npdbShowDatabases");
+	new_npdbShowDatabases(func, host, dataRef);
+	printf("\nafter new_npdbShowDatabases");
+	*/
 	err = new_npdbSelectTable(table);
 	if( err )
 	{
@@ -2408,17 +2469,19 @@ int npdbLoadNodeTbl( pNPdatabase dbItem, void* dataRef )
 	int rowCount          = 0;					// Warning, lde
 	int nodeCount         = 0;					// Warning, lde
 //	int i                 = 0;					// Warning, lde
+	int diff = 0;
 	
 	void* result = NULL;
 	pNPdbTable node_table = NULL;
 	int err = 0;
 
-	FILE* filePtr = NULL; // doesn't belong here , lde @todo
+//	FILE* filePtr = NULL; // doesn't belong here , lde @todo
 	
 	//Temp, lde
+/*  Remove, lde @todo
 	filePtr = npOpenCSV("node_tbl.csv", "r", dataRef);
 	printf("\nfilePtr : %p\n", filePtr);
-	
+*/	
 
 //	void* result = NULL;	///< using void* to store MYSQL_RES* result handle // Warning, lde
 
@@ -2506,8 +2569,12 @@ int npdbLoadNodeTbl( pNPdatabase dbItem, void* dataRef )
 	printf( "store result time: %.0f sec \n", (nposGetTime() - start) );
 
 	/// parse the result and load the items into the scene
+
+//	diff = npGetTime(nposGetTime(), (npdbLoadNodes( func, result, data ) ), nposGetTime());
+	
+//	printf("\nNew Parse Time : %d\n", diff);
 	nodeCount = npdbLoadNodes( func, result, data ); // This should be a function pointer, lde
-	printf( "total time: %.0f sec \n", (nposGetTime() - start) );
+	printf( "total time: %.0f sec \n", (nposGetTime() - start) ); // lde @todo
 
 	/// free our result structure, important to maintain connection
 	func->free_result( result );
@@ -2577,6 +2644,7 @@ int npdbLoadMenuItem (int item, void* dataRef)
 	pData data = (pData) dataRef;
 	pNPdbs dbs = &data->io.db;
 	pNPdatabase dbItem = NULL;
+	pNPdatabase activeDB = data->io.db.activeDB;
 
 	/// check bounds, note that dbCount is +1 for null array slot[0], hence >=
 	if( item >= dbs->dbCount )
@@ -2595,6 +2663,12 @@ int npdbLoadMenuItem (int item, void* dataRef)
 
 	/// load the database
 	printf("\ndbItem: %p", dbItem);
+	//printf("\ndbItem name : %s", dbItem->name);
+//	data->io.db.activeDB = dbItem;
+	activeDB = dbItem;
+	printf("\nactiveDB->name : %s", activeDB->name);
+	//	strcpy(data->io.db.activeDB->name, dbItem->name); // new, lde @todo
+//	data->io.db.activeDB->host = dbItem->host; // new, lde @todo
 	
 	if( err = npdbLoadScene( dbItem, data ) )
 		printf( "err 5588 - menu item function fail code: %d", err);
