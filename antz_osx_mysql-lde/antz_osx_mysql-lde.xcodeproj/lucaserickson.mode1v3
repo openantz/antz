@@ -216,10 +216,10 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>70FA22661A33D9EF006D589A</string>
+						<string>708A9F141A3CD81700094F0C</string>
 						<key>history</key>
 						<array>
-							<string>70F68EDF1A3382F6008158B8</string>
+							<string>70FA22661A33D9EF006D589A</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -256,10 +256,10 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>70FA22691A33D9EF006D589A</string>
+						<string>708A9F151A3CD81700094F0C</string>
 						<key>history</key>
 						<array>
-							<string>70FA225B1A33D5B6006D589A</string>
+							<string>70FA22691A33D9EF006D589A</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -282,7 +282,7 @@
 	<key>PerspectiveWidths</key>
 	<array>
 		<integer>1280</integer>
-		<integer>300</integer>
+		<integer>298</integer>
 	</array>
 	<key>Perspectives</key>
 	<array>
@@ -361,7 +361,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>34</integer>
+									<integer>35</integer>
 									<integer>31</integer>
 									<integer>30</integer>
 									<integer>11</integer>
@@ -484,9 +484,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>70FA22551A33D545006D589A</string>
+				<string>708A9F0E1A3CD5E200094F0C</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>70FA22561A33D545006D589A</string>
+				<string>708A9F0F1A3CD5E200094F0C</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -540,7 +540,7 @@
 						<dict>
 							<key>PBXSmartGroupTreeModuleColumnWidthsKey</key>
 							<array>
-								<real>281</real>
+								<real>296</real>
 							</array>
 							<key>PBXSmartGroupTreeModuleColumnsKey_v4</key>
 							<array>
@@ -578,7 +578,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 477}, {281, 659}}</string>
+							<string>{{0, 477}, {296, 659}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -594,7 +594,7 @@
 						<key>GroupTreeTableConfiguration</key>
 						<array>
 							<string>MainColumn</string>
-							<real>281</real>
+							<real>296</real>
 						</array>
 						<key>RubberWindowFrame</key>
 						<string>-357 1158 298 718 -377 800 1920 1200 </string>
@@ -616,7 +616,7 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>70FA22571A33D545006D589A</string>
+				<string>708A9F101A3CD5E200094F0C</string>
 				<string>11E0B1FE06471DED0097A5F4</string>
 			</array>
 			<key>ToolbarConfigUserDefaultsMinorVersion</key>
@@ -651,11 +651,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>70FA226A1A33D9EF006D589A</string>
-		<string>70FA226B1A33D9EF006D589A</string>
-		<string>1C78EAAD065D492600B07095</string>
-		<string>1C530D57069F1CE1000CFCEE</string>
-		<string>1CD10A99069EF8BA00B06720</string>
 		<string>708F204919F1E1A200208B80</string>
 		<string>/Users/lucaserickson/gitFolder/antz/antz_osx_mysql-lde/antz_osx_mysql-lde.xcodeproj</string>
 		<string>70FA22671A33D9EF006D589A</string>
@@ -700,8 +695,6 @@
 							<string>377pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -741,7 +734,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>708F204919F1E1A200208B80</string>
-				<string>70FA22491A33D538006D589A</string>
+				<string>708A9F131A3CD5E200094F0C</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
