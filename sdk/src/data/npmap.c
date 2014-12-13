@@ -1008,6 +1008,7 @@ void* npMapNodeAdd (int id, int type, int branchLevel, int parentID,
 		node = npNodeNew (type, nodeParent, dataRef);
 	}
 
+
 	// add to parent lookup table for sorting orphan child nodes at end
 	npMapSortAdd (id, parentID, node, dataRef);
 

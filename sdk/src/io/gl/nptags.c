@@ -66,9 +66,11 @@ void npImportTagsFromCSV (char* buffer, int size, int wordSize, void* dataRef)
 
 
 //allocates buffer and fills with CSV formatted tags, includes header
-//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------ lde @todo
 void npExportTagsToCSV (char* buffer, int* size, int* wordSize, void* dataRef)
 {
+//	pNPtags tags = &dataRef->io.gl.hud.tags;
+	
 	return;
 }
 

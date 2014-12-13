@@ -117,10 +117,12 @@ struct NPdbFuncSet{
 	
 	int   (*InitConnOptions)		();
 	void* (*GetTableFields)			();	///creates the table fields descrisptor
+	void* (*getNodeTableFields)  ();
 	
 	void* (*StatementInsert)		();
 	void* (*StatementCreate)		();
 	void* (*StatementCreateTable)	();
+	void* (*StatementCreateNodeTable) ();
 	void* (*StatementUse)			();
 	void* (*StatementShow)			();
 	void* (*StatementDrop)			();
@@ -129,6 +131,7 @@ struct NPdbFuncSet{
 	void* (*StatementUpdate)		();
 	void* (*StatementDBshow)		();
 	void* (*StatementDatabases)     ();
+	void* (*getFuncsFromHost)    ();
 	
 	int   (*showDatabases)          (); // I might pass this a fcn ptr and change it to (*show), lde @todo
 	char* (*getTableFields)			();
@@ -137,6 +140,35 @@ struct NPdbFuncSet{
 };
 typedef struct NPdbFuncSet NPdbFuncSet;
 typedef struct NPdbFuncSet *pNPdbFuncSet;
+
+struct NPdbLiteral {
+	int type;
+	void* literal;
+};
+typedef struct NPdbLiteral NPdbLiteral;
+typedef struct NPdbLiteral *pNPdbLiteral;
+
+struct NPdbStringLiteral {
+	char* npString; // 'abcd' or "abcd"
+};
+typedef struct NPdbStringLiteral NPdbStringLiteral;
+typedef struct NPdbStringLiteral *pNPdbStringLiteral;
+
+// Experimental, lde @todo
+struct NPdbReservedWord {
+	char word[20];
+	int  type; // Function, Data Type, Logical Operator, Etc...., lde
+//	void** (*thing)();
+//	int  numThings;
+};
+typedef struct NPdbReservedWord NPdbReservedWord;
+typedef struct NPdbReservedWord *pNPdbReservedWord;
+
+struct NPdbQuery {
+	int placeholder;
+};
+typedef struct NPdbQuery NPdbQuery;
+typedef struct NPdbQuery *pNPdbQuery;
 
 /// Host id unique to the session, ip is generally more permanent.
 /// Note that the list of databases is not stored with the host.

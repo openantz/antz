@@ -58,9 +58,11 @@ int npdbSetTable( pNPdbFuncSet func, void* result, pNPdbTable tbl, pNPdbHost hos
 int npdbGetTbls( pNPdbHost host, pNPdatabase db );
 void* npdbGetFieldList(pNPdbTable tbl, int* err, void* dataRef);
 
+char* npdbStatementCreateNodeTable(pNPdbFuncSet func, char* (*fields)(void* dataRef), void* dataRef);
 void* npdbStoreResult_Safe(pNPdbFuncSet func, pNPdbHost host, int* err);
 
-
+char* npdbGetNodeTableFields(void* dataRef); // lde @todo
+pNPdbFuncSet npdbGetFuncsFromHost(pNPdbHost host, void* dataRef); // lde, @todo add to header file
 
 //format list of DBs as a menu struct
 pNPmenu npdbFormatMenu (pNPdatabases dbList, void* dataRef);

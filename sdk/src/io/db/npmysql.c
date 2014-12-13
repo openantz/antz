@@ -263,6 +263,10 @@ int npMysqlHook( pNPdbFuncSet func, void* dbLib)
 	func->StatementInsert		= (void*)npMysqlStatementInsert;	
 	func->StatementSelect		= (void*)npMysqlStatementSelect; 
 	func->StatementCreateTable	= (void*)npMysqlStatementCreateTable;
+	func->StatementCreateNodeTable = (void*)npdbStatementCreateNodeTable;
+	func->getNodeTableFields    =  (void*)npdbGetNodeTableFields;
+	func->getFuncsFromHost		= (void*)npdbGetFuncsFromHost;
+	
 	func->StatementUse			= (void*)npMysqlStatementUse;
 	func->StatementShow			= (void*)npMysqlStatementShow;
 	func->StatementDrop			= (void*)npMysqlStatementDrop;
