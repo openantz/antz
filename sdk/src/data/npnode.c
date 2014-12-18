@@ -382,7 +382,7 @@ bool npNodeAttach (pNPnode node, pNPnode parent, void* dataRef)
 	if (parent->childCount >= kNPnodeChildMax)
 	{
 		npPostMsg ("err 2828 - Could not attach node, kNPnodeChildMax limit",
-				kNPmsgErr, dataRef);
+			kNPmsgErr, dataRef);
 		return false;
 	}
 
@@ -572,7 +572,7 @@ void npNodeRemove (bool freeNode, pNPnode node, void* dataRef)
 			{
 				parent = node->child[0];	//link B is a child[0] of the link
 			
-				//methods are desinged to work with recursive delete branches
+				//methods are designed to work with recursive delete branches
 
 				//find the childIndex to this node									//zz-s
 				for (i = 0; i < parent->childCount; i++)

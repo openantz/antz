@@ -126,7 +126,7 @@ void npSetNodeTag (pNPnode node, void* dataRef)
 	pNPrecordTag recordTag = NULL;
 	pNPtags tags = &data->io.gl.hud.tags;
 
-
+	//printf("\n----npSetNodeTag----"); // temp, lde
 	//using a simple loop for now, replace with HASH method or presort,		//zz debug, was i=0
 	//starts searching at the last location accessed, rolls over if not found
 	//this procedure is fast when nodes processed in order of record_id

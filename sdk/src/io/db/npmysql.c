@@ -503,8 +503,8 @@ char* new_npMysqlStatementInsertFromChunk(char* table, struct newChunkObj *theCh
 	int statementLength = sizeof(char) * (20 + strlen(table) + 3 + theChunk->chunkSize + 500); // added +500, hotfix, debug lde
 	char* statement = malloc(statementLength);
 	
-	printf("\nstatement length : %d", statementLength);
-	printf("\nchunkSize : %d", theChunk->chunkSize);
+//	printf("\nstatement length : %d", statementLength);
+//	printf("\nchunkSize : %d", theChunk->chunkSize);
 //	printf("\ntotalCsvStrObjectsSize : %d", theChunk->csvObjects->totalCsvStrObjectsSize); // debug, lde
 
 	

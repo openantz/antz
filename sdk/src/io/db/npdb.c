@@ -657,32 +657,39 @@ int npdbLoadScene( pNPdatabase dbItem, void* dataRef )
 
 	dbItem->loadNodeTbl = npdbLoadNodeTbl; // move elsewhere, lde @todo // loadNodeTbl should be loadTbl, lde @todo
 	if( err = npdbItemErr(dbItem)) return err;	///ascert database connection is valid
-
+	
+	
 	sprintf( msg, "Loading DB: %s  host: %s", dbItem->name, dbItem->host->ip );
 	npPostMsg( msg, kNPmsgView, data );
 
 	/// load the node table into the scene
 	//err = npdbLoadNodeTbl( dbItem, data );
+	npMapSortInit (data->map.sortID, data);
 	dbItem->loadNodeTbl( dbItem, data ); // new, lde
 	if( err )
 		sprintf( msg, "Failed to Load DB: %s  code: %d", dbItem->name, err );
 	else
 	{
+		/*
 		data->io.db.activeDB = dbItem;
+		printf("\nnew activeDB : %p", data->io.db.activeDB);
+		*/
 		//activeDB = dbItem;
 		//activeDB->host = dbItem->host;
 		//data->io.db.activeDB->host = dbItem->host;
 		sprintf( msg,"Done Loading DB: %s", dbItem->name );
 //		sprintf( msg,"Done Loading DB: %s", activeDB->name);
 	}
-
-	npdbLoadTagTbl( dbItem, data );
+	npMapSort(dataRef);
+	
+	err = npdbLoadTagTbl( dbItem, data );
+	if(err) return err;
 	
 	npPostMsg( msg, kNPmsgDB, dataRef );
 
 	/// @todo add support for all tables, especially tags
 	//err += npdbLoadTags( dbItem );
-
+	
 	return err;
 }
 
@@ -952,7 +959,7 @@ int npdbSelectTable( pNPdatabase dbItem, char* table ) //Add field(s) choice lat
 int npdbQuery_safe(void* conn, pNPdbFuncSet func, pNPdbHost host ,char* statement)
 {
 	int err = 0;
-	printf("\nnpdbQuery_safe");
+//	printf("\nnpdbQuery_safe");
 	
 	if( err = (int)func->query( conn, statement ) )
 	{
@@ -1520,19 +1527,28 @@ int new_npdbLoadTags ( pNPdbFuncSet func, void* result, void* dataRef )
 	pNPrecordSet recordSet = NULL;			// list of records as native C data
 	char** row = NULL;						///< char** to store MYSQL_ROW handle;
 	int totalCount = 0;
+	int rowCount = 0;
 	int count = 0;
 	int err = 0;
 	
 	int format = 0;
 	int type = 0;
+	int rowNum = 0;
 	
-	char* buffer = malloc( sizeof(char) * 4096 ); // kNPmaxFile 4096
-	char* read   = buffer;
+	char* buffer = NULL;
 	
-	buffer[0] = '\0';
+	rowCount = npdbNumRows_safe(result, func, &err);
+	if(err) return err;
+	
+	buffer = malloc( sizeof(char) * (rowCount * 150) ); // kNPmaxFile 4096 // arbritary, lde @todo // make this dynamic, lde @todo
+	if(buffer == NULL) return 1237; // add error code, lde @todo
+	
+	char* read = buffer;
+	
+	buffer[0]  = '\0';
 	
 	recordSet = npMalloc(0, sizeof(NPrecordSet), data);
-	if(!recordSet) return err; // set err , lde @todo
+	if(!recordSet) return 2345; // set err , lde @todo
 	
 	count = sprintf(read+count, "%s\n", "np_tag_id,record_id,table_id,title,description");
 	read += count;
@@ -1540,14 +1556,15 @@ int new_npdbLoadTags ( pNPdbFuncSet func, void* result, void* dataRef )
 	totalCount += count;
 	while( row = func->fetch_row(result) ) // enfp, lde @todo // make into npdbReadTag, lde @todo
 	{
-		printf("\n%s", row[0]);
-		printf("\n%s", row[1]);
-		printf("\n%s", row[2]);
-		printf("\n%s", row[3]);
-		printf("\n%s", row[4]);
-		
-		count = sprintf(read, "%s,%s,%s,%s,%s\r\n", row[0], row[1], row[2], row[3], row[4]);
-		printf("\nread : %s\n", read);
+		rowNum++;
+		if( row == NULL && rowNum < rowCount )
+		{
+			printf("\nrow is NULL\n");
+			return 8372; // add error code, lde @todo
+		}
+		 
+		count = sprintf(read, "%s,%s,%s,\"%s\",\"%s\"\r\n", row[0], row[1], row[2], row[3], row[4]);
+//		printf("\nread : %s\n", read);
 		read += count;
 		totalCount += count;
 		//	npAddTa
@@ -1560,15 +1577,11 @@ int new_npdbLoadTags ( pNPdbFuncSet func, void* result, void* dataRef )
 	
 	npPreLoadInit(recordSet, data);
 //	buffer = npNextLine(buffer);
-	printf("\nBuffer : %s\n", buffer);
+//	printf("\nBuffer : %s\n", buffer);
 	
 	totalCount = strlen(buffer);
 	npCSVtoC(recordSet, buffer, totalCount, data);
-	npPostMap(recordSet, data);
-//	npMapSort(data);
-	npSyncTags(dataRef);
-	npSyncChMap(dataRef);
-//	npSyncRecords(recordSet, dataRef);
+	free( recordSet );
 	
 	return 0;
 }
@@ -1632,7 +1645,7 @@ int npdbLoadTags ( pNPdbFuncSet func, void* result, void* dataRef )
 		printf("\n%s", row[3]);
 		printf("\n%s", row[4]);
 		
-		count = sprintf(read, "%s,%s,%s,%s,%s\r\n", row[0], row[1], row[2], row[3], row[4]);
+		count = sprintf(read, "%s,%s,%s,\"%s\",\"%s\"\r\n", row[0], row[1], row[2], row[3], row[4]);
 		printf("\nbuffer : %s\n", read);
 		read += count;
 		totalCount += count;
@@ -1647,7 +1660,7 @@ int npdbLoadTags ( pNPdbFuncSet func, void* result, void* dataRef )
 	
 	free(buffer);
 //	npSyncChMap (data);
-	npSyncTags(dataRef);
+//	npSyncTags(dataRef);
 
 	
 	return err;
@@ -1923,6 +1936,7 @@ void* npdbGetFieldList(pNPdbTable tbl, int* err, void* dataRef)
 	int i     = 0;
 	fields = malloc(sizeof(char) * kNPmaxFields);
 	err = (int*)0;
+//	printf("\nerr : %d", (int*)err);
 	
 	if(fields == NULL)
 	{
@@ -1948,7 +1962,7 @@ pNPdbTable npdbFindTagTbl( pNPdatabase db, int* err, void* dataRef)
 	char* test_tbl_fields = NULL;
 	int i = 0;
 	err = (int*)0;
-	
+		
 	printf("\nnpdbFindTagTbl\n");
 	//node_tbl_fields = npMysqlGetTableFields(kNPnode, dataRef); // Make this npdbGetTableFields
 	tag_tbl_fields = db->host->hostFuncSet->getTableFields(kNPtag, dataRef); // shorten, lde @todo
@@ -1972,14 +1986,15 @@ pNPdbTable npdbFindTagTbl( pNPdatabase db, int* err, void* dataRef)
 		}
 		
 	//	 Clean up and encompass This into a "toggled" function pointer, lde
-		 printf("\n--------------------------------------------------------\n");
+/*
+		printf("\n--------------------------------------------------------\n");
 		 printf("\ntest_tbl_fields : %s\n", test_tbl_fields);
 		 printf("\ntag_tbl_fields : %s\n", tag_tbl_fields);
 		 printf("\n--------------------------------------------------------\n");
 		 printf("\nstrlen of node_tbl_fields : %d\n", strlen(tag_tbl_fields));
 		 printf("\nRESULT : %d\n", strcasecmp(tag_tbl_fields, test_tbl_fields));
 		 printf("\nstrlen of test_tbl_fields : %d\n", strlen(tag_tbl_fields));
-		 
+*/		 
 		
 		if(strcasecmp(tag_tbl_fields, test_tbl_fields) == 0)
 		{
@@ -1991,6 +2006,7 @@ pNPdbTable npdbFindTagTbl( pNPdatabase db, int* err, void* dataRef)
 	// npdbGetFieldList(
 	
 	//printf("\nFields are : %s\n", fields);
+	err = (int*)8372; // add error code, lde @todo
 	return 0;
 }
 
@@ -2765,11 +2781,15 @@ int npdbLoadTagTbl( pNPdatabase dbItem, void* dataRef )
 	npdbGetTbls(host, dbItem);
 	
 	tag_table = npdbFindTagTbl(dbItem, &err, dataRef);
-	if(err)
+	if(err || tag_table == NULL)
 	{
 		printf("\nnpdbFindTagTbl failed");
 		return err;
 	}
+	
+	printf("\ntag_table owner ptr : %p", tag_table->owner);
+	printf("\ntag_table owner name : %s", ((pNPdatabase)tag_table->owner)->name);
+//	printf("\ntag_table owner : %p %s", tag_table->owner, ((pNPdatabase)tag_table->owner)->name);
 	
 	if(err != 0)
 		printf("Err : %d", err);
@@ -2779,7 +2799,6 @@ int npdbLoadTagTbl( pNPdatabase dbItem, void* dataRef )
 	
 	
 	err = new_npdbSelectTable(tag_table); // new, lde
-	
 	if( err ) return err;
 	
 	/// get the result records (all rows) // @todo, replace with safe function, lde
@@ -2798,24 +2817,16 @@ int npdbLoadTagTbl( pNPdatabase dbItem, void* dataRef )
 		return err;
 	}
 	
-//	printf( "node_tbl row count: %d \n", rowCount );
-//	printf( "store result time: %.0f sec \n", (nposGetTime() - start) );
+	printf("\nrowCount : %d\n", rowCount);
+	if(!rowCount) return 5595;
 	
-	/// parse the result and load the items into the scene
-	
-	//	diff = npGetTime(nposGetTime(), (npdbLoadNodes( func, result, data ) ), nposGetTime());
-	
-	//	printf("\nNew Parse Time : %d\n", diff);
-	
-//	nodeCount = npdbLoadNodes( func, result, data ); // This should be a function pointer, lde // replace lde @todo
-
-	//npdbLoadTags(func, result, dataRef);
 	new_npdbLoadTags(func, result, dataRef);
 	
 	//	printf( "total time: %.0f sec \n", (nposGetTime() - start) ); // lde @todo
 	
 	/// free our result structure, important to maintain connection
 	func->free_result( result ); // I need to make sure result isn't null before freeing this, lde @todo
+	npSyncTags(dataRef);
 	
 	return err;
 }
@@ -2859,7 +2870,8 @@ int npdbLoadNodeTbl( pNPdatabase dbItem, void* dataRef )
 */	
 
 //	void* result = NULL;	///< using void* to store MYSQL_RES* result handle // Warning, lde
-
+	printf("\nkNodeLink : %d", kNodeLink);
+	
 	///ascert valid database item, function set and connection
 	if( err = npdbItemErr(dbItem)) return err;
 
@@ -2950,7 +2962,8 @@ int npdbLoadNodeTbl( pNPdatabase dbItem, void* dataRef )
 //	printf("\nNew Parse Time : %d\n", diff);
 	nodeCount = npdbLoadNodes( func, result, data ); // This should be a function pointer, lde
 	printf( "total time: %.0f sec \n", (nposGetTime() - start) ); // lde @todo
-
+	
+	
 	/// free our result structure, important to maintain connection
 	func->free_result( result );
 	
@@ -3137,8 +3150,11 @@ void npdbRowToNode( pNPnode node, char** row )
 		printf("\nnode type is kNodeLink : %d\n", kNodeLink);
 		node->childIndex = npatoi(row[6]);
 	}
-	
-	node->childIndex = npatoi(row[7]);
+	else {
+		node->childIndex = npatoi(row[7]);
+	}
+
+//	node->childIndex = npatoi(row[7]);
 	
 	node->chInputID		= npatoi(row[9]);
 	node->chOutputID	= npatoi(row[10]);
@@ -3699,37 +3715,7 @@ int npdbCreateTagTable( pNPdatabase dbItem, void* dataRef)
 	return err;
 }
 
-char* newer_npdbStatementCreateTable( char* table, 
-									  char* (*GetTableFields)(void* dataRef), 
-									  void* dataRef )
-{
-	char* statement = NULL;
-	char* fields    = NULL;
-	fields = GetTableFields(dataRef);
-	
-	
-}
 
-char* newer_npdbStatementCreateNodeTable( 
-	char* (*StatementCreateTable)( char* table, char* (*GetTableFields)(void* dataRef), void* dataRef )
-  , char* (*GetTableFields)(void* dataRef), char* table, void* dataRef )
-{
-	char* statement = NULL;
-	statement = StatementCreateTable( "node_tbl", GetTableFields, dataRef );
-	
-	return statement;
-}
-
-int new_npdbCreateNodeTable( 
-	char* (*StatementCreateNodeTable)( char* (*StatementCreateTable)( char* table, char* (*GetTableFields)(void* dataRef) ), char* (*getTableFields)(), void* dataRef )
-   ,char* (*StatementCreateTable)(), 
-	char* (*getTableFields)(), void* dataRef )
-{
-	char* statement = NULL;
-	statement = StatementCreateNodeTable( StatementCreateTable, getTableFields, dataRef);
-	
-	return 0;
-}
 
 pNPdatabase new_npdbSaveAs( char* dbName, pNPdbHost host, void* dataRef )
 {
@@ -3815,6 +3801,147 @@ pNPdatabase new_npdbSaveAs( char* dbName, pNPdbHost host, void* dataRef )
 	return dbItem;	
 }
 
+pNPtag npGetTagFromNode(pNPnode node, void* dataRef)
+{	
+	if(node->tag == NULL) // This isn't even needed, lde @todo
+		return NULL;
+	
+	return node->tag;
+}
+
+void npGetTags(void* dataRef)
+{
+	pData data = (pData) dataRef;
+	pNPnode node = NULL;
+	pNPtag  tag  = NULL;
+	int i = 0;
+	
+	for(i = 0; i < data->map.nodeRootCount; i++)
+	{
+		node = data->map.node[i];
+		if( ( tag = npGetTagFromNode(node, dataRef) ) != NULL )
+		{
+			printf("\ntitle : %s\n", tag->title);
+			printf("desc  : %s\n", tag->desc );
+		}
+		
+	}
+	
+}
+
+
+void npGetCSVtagFromNode(char** buffer, int *index ,pNPnode node, void* dataRef)
+{	 
+	pNPtag tag = NULL;
+	tag = npGetTagFromNode(node, dataRef); 
+
+	if( tag )
+	{
+		if( strncmp(tag->title, "id: ", 4) )
+		{
+			buffer[*index] = malloc(sizeof(char) * 4096); // 4096 is arbritary, lde @todo
+			if(buffer[*index] == NULL)
+			{
+				return;
+			}
+			
+			sprintf(buffer[*index], "%i,%i,%i,\"%s\",\"%s\"", (*index)+1, node->recordID, tag->tableID, tag->title, tag->desc );
+			//printf("\nbuffer[%d] : %s\n", (*index), buffer[*index] );
+			(*index)++;
+		}
+		else if ( (*index) != 0 )
+		{
+			(*index)--;
+		}
+	}
+	
+	return;
+}
+
+void npGetCSVtagsFromNodeTree(char** buffer, int* index, pNPnode node, void* dataRef)
+{
+	int  i;
+	
+	npGetCSVtagFromNode(buffer, index, node, dataRef);
+	for( i = 0; i < node->childCount; i++ )
+	{
+		npGetCSVtagFromNode(buffer, index, node->child[i], dataRef);
+		
+		//printf("\nchildCount : %d\n", node->child[i]->childCount);
+		if( node->child[i]->childCount )
+		{
+			
+			npGetCSVtagsFromNodeTree( buffer, index, node->child[i], dataRef );
+		}
+		
+	}
+	
+	return;
+}
+
+void npGetCSVtagsFromAllNodes(char** buffer, int* index, void* dataRef)
+{
+	pData data = (pData) dataRef;
+	pNPnode node = NULL;
+	int  x;
+	for( x = kNPnodeRootPin; x < data->map.nodeRootCount; x++ )
+	{
+		npGetCSVtagsFromNodeTree(buffer, index, data->map.node[x], dataRef);
+	}
+}
+
+void new_npGetTags(char** buffer, int *index ,pNPnode node, void* dataRef)
+{
+	pNPtag tag = node->tag;
+	int i = 0;
+	
+	printf("\nIndex is %d", *index);
+	if(tag != NULL)
+	{
+		if(strncmp(tag->title, "id: ", 4) != 0)
+		{
+			buffer[*index] = malloc(sizeof(char) * 4096); // 4096 is arbritary, lde @todo
+			sprintf(buffer[*index], "%i,%i,%i,\"%s\",\"%s\"", (*index)+1, node->recordID, tag->tableID, tag->title, tag->desc );
+			printf("\nbuffer[%d] : %s\n", (*index), buffer[*index] );
+			(*index)++;
+		}
+		else
+		{
+			if( (*index) != 0 )
+			{
+				(*index)--;
+			}
+		}
+	}
+	
+	printf("\nchildCount : %d", node->childCount);
+	
+	// data->map.nodeRootCount // lde, @todo
+	/*
+	 int x = 0;
+	 for( x = kNPnodeRootPin; x < data->map.nodeRootCount; x++ )
+	 {
+		node = data->map.node[x];
+		for(i = 0; i < node->childCount; i++)
+		{
+			new_npGetTags(buffer, index, node->child[i], dataRef);
+		}
+	 
+	 }
+	 
+	 */
+	
+	for( i = 0; i < node->childCount; i++ )
+	{
+	//	(*index)++;
+		new_npGetTags(buffer, index, node->child[i], dataRef);
+	}
+	
+	return;
+}
+
+
+
 int npdbSaveTags(pNPdatabase dbItem, pNPdbFuncSet func, char* table, void* dataRef) // lde @todo
 { 
 	pData data = (pData) dataRef;
@@ -3823,13 +3950,29 @@ int npdbSaveTags(pNPdatabase dbItem, pNPdbFuncSet func, char* table, void* dataR
 	int i = 0;
 	char line[421] = {'\0'}; // 421 is arbritrary, lde @todo
 	char* statement = NULL;
+	char** buffer = malloc(sizeof(char*) * data->map.nodeCount);
+	int index = 0;
 	
-	// Encapsulate in this in npdbSaveTag , lde @todo
+	// put in this in npdbSaveTag , lde @todo
 	printf("\ntags->recordCount : %d\n", tags->recordCount);
 	printf("\ntags->count : %d\n", tags->count);
 	printf("\ntags->sortCount : %d\n", tags->sortCount);
 	printf("\ntags->size : %d\n", tags->size);
 	
+	//npGetTags(dataRef);
+	
+//	new_npGetTags(buffer, &index, data->map.node[kNPnodeRootPin], dataRef); // Pass this a buffer, lde @todo
+	npGetCSVtagsFromAllNodes(buffer, &index, dataRef); // If this fails and returns it needs to set an err var, lde @todo
+	for(i = 0; i < index; i++)
+	{
+		statement = func->StatementInsert("tag_tbl", buffer[i]);
+		//printf("\nstatement : %s\n", statement);
+		npdbQuery_safe(dbItem->host->conn, func, dbItem->host, statement);
+		free(statement);
+		free(buffer[i]);
+	}
+	
+	/*
 	for( i = 0; i < kNPtagMax; i++ )
 	{
 		recordTag = tags->recordList[i];
@@ -3845,9 +3988,10 @@ int npdbSaveTags(pNPdatabase dbItem, pNPdbFuncSet func, char* table, void* dataR
 		else {
 			//printf("\nNULL");
 		}
-
+	 
 		
 	}
+	*/
 /*
 	for(i = 0; i < tags->recordCount; i++)
 	{
@@ -3934,8 +4078,8 @@ pNPdatabase npdbSaveAs( char* dbName, pNPdbHost host, void* dataRef )
 	
 	npdbCreateTagTable(dbItem, dataRef);
 	// Check to see if tags exist
-	npSyncTags(dataRef);
-	npdbSaveTags(dbItem, func, "node_tbl", dataRef);
+//	npSyncTags(dataRef);
+	npdbSaveTags(dbItem, func, "tag_tbl", dataRef);
 
 	if(tags->recordCount > 0)
 	{

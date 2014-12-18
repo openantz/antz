@@ -643,8 +643,8 @@ struct NPnode
 	int			colorFade;					//!<cycles to fade color alpha, 0=off
 	int			textureID;					//!<GL texture ID
 
-	bool		hide;						//!<hide the node, data stays active
-	bool		freeze;						//!<freezes data and physics updates
+	bool			hide;						//!<hide the node, data stays active
+	bool			freeze;						//!<freezes data and physics updates
 
 	int			topo;						//!<topography, cube, sphere, torus
 	int			facet;						//!<topo face number
@@ -674,7 +674,7 @@ struct NPnode
 	NPfloatXYZ	world;						//!<child node world coordinates
 	float		distFromCamera;				//!<MB-Transp					//!<zz debug
 	int			hudType;					//!<removethis, use existing param //!<zz debug
-	bool		linkFlag;					//!<for establishing link nodes
+	bool			linkFlag;					//!<for establishing link nodes
 };
 
 /// pairs an id directly to a scene node pointer, used for mapping datasets, etc.
@@ -1265,8 +1265,8 @@ struct NPmap {
 	void**		nodeID;					//!<maps nodeID to pNPnode, kNPnodeMax
 	void**		sortID;					//!<maps nodeID for sorting nodes
 
-	int*		parentID;				//!<maps node ID to parentID
-	int*		orphanList;				//!<list of orphans by node ID
+	int*			parentID;				//!<maps node ID to parentID
+	int*			orphanList;				//!<list of orphans by node ID
 	int			orphanCount;
 	int			sortCount;														//!<zzhp
 	int			sortCountA;

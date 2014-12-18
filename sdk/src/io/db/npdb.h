@@ -169,6 +169,7 @@ int npDropDatabase(int dbID, pNPdbFuncSet FuncSet, const char* dbName, void* dat
 pNPdatabase npdbSaveAs( char* dbName, pNPdbHost host, void* dataRef );
 
 pNPdbFuncSet npdbNewFuncSet( pNPdbs dbs );
+pNPdbTable npdbFindTagTbl( pNPdatabase db, int* err, void* dataRef);
 
 int npdbClearDatabaseList( pNPdbs dbs );
 int npdbQuery_safe(void* conn, pNPdbFuncSet func, pNPdbHost host ,char* statement); // Organize these new function prototypes, lde @todo
@@ -178,6 +179,7 @@ int npdbNumRows_safe(void* result, pNPdbFuncSet func, int* err);
 /// @todo add support for all table types: tag, chmap, tracks, globals, etc...
 
 int npdbLoadNodes( pNPdbFuncSet func, void* result, void* dataRef);
+pNPtag npGetTagFromNode(pNPnode node, void* dataRef);
 
 pNPmenu npdbGetMenu ( pNPmenu menu, void* dataRef);
 int npdbLoadMenuItem (int item, void* dataRef);

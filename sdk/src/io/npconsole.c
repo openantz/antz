@@ -557,13 +557,16 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 	
 	printf("\nnpConsoleMenuText");
 	printf("\nhostCount : %d", data->io.db.hostCount);
+ // temp, lde @todo
+	printf("\nactiveDB : %p", activeDB);
 	if( activeDB )
 	{
 	//	host = activeDB->host;  //active->host is frequently null here, this is cause of console crash, lde
 		host = npdbGetConnectedHost(dbs);
 		activeDB->host = host;
 	}
-		
+
+ 
 //	pNPdatabases dbList = ((struct databases*)data->io.dbs)->dbList;
 	input = console->inputStr;
 	input = tolower(input);
@@ -1385,7 +1388,9 @@ void npUpdateConsoleUserText(pNPconsole console, void* dataRef)
 			npPostMsg( "err 7894 - no tag", kNPmsgErr, data );
 		else
 		{
+			printf("\nTag was %s", tag->title); // temp, lde
 			tag->title[0] = '\0';
+			printf("\nAssigning console->inputStr : %s to tag->title", console->inputStr); // temp, lde
 			strncat( tag->title, console->inputStr, kNPtagTitleMax );
 			npUpdateTag( tag );
 		}
