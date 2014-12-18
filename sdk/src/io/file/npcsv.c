@@ -1352,7 +1352,7 @@ void npUpdateGlobals( void* dataRef )
 	if ( glutGet( 0x01FF ) != gl->fullscreen )
 	{
 	//	gl->fullscreen = 1 - gl->fullscreen;
-//		npCtrlCommand( kNPcmdFullscreen, data ); // temp, lde
+		npCtrlCommand( kNPcmdFullscreen, data ); // temp, lde
 	}
 	
 	if ( glutGet( GLUT_WINDOW_X ) != gl->position.x 
