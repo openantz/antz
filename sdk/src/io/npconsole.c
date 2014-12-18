@@ -1515,7 +1515,7 @@ void npUpdateConsoleMenu (pNPconsole console, void* dataRef)
 		if(activeDB->name)
 		{
 		//	sprintf( msg, "Active DB: %s", activeDB->name);//, hostName );
-			sprintf( msg, "Active DB: %s", "lolcatz");
+			sprintf( msg, "Active DB: %s", " ");
 		}
 	}
 		
