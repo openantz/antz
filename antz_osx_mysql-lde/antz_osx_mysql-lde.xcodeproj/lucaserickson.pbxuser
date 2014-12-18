@@ -149,6 +149,26 @@
 		vrLen = 1103;
 		vrLoc = 0;
 	};
+	7068A3941A3CDD1B00EEC7D2 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 708F1C9019F1E19C00208B80 /* npdb.c */;
+		name = "npdb.c: 583";
+		rLen = 0;
+		rLoc = 16877;
+		rType = 0;
+		vrLen = 1913;
+		vrLoc = 16340;
+	};
+	7068A3A81A3CE5F400EEC7D2 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 708F1C9019F1E19C00208B80 /* npdb.c */;
+		name = "npdb.c: 583";
+		rLen = 0;
+		rLoc = 16877;
+		rType = 0;
+		vrLen = 1913;
+		vrLoc = 16340;
+	};
 	708A87FB1A2FE0DD00B7B625 /* npdbTypes.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1219, 4925}}";
