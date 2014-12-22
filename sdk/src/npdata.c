@@ -758,8 +758,8 @@ void npInitDataDB (void* dataRef)
 	///	'localhost' is same as 127.0.0.1 and mysql default port is 3306.
 	
 	printf("\nnpdbAddHost");
-	npdbAddHost( "mysql", "localhost", 3306, "root", "admin", data );
-
+//	npdbAddHost( "mysql", "localhost", 3306, "root", "admin", data );
+	npdbAddHost("mysql", "127.0.0.1", 3306, "root", "admin", data);
 	
 	/// add access to the antz public database 
 	// npdbAddHost( "mysql", "openantz.com", 3306, "guest", "guest", dataRef);	//zzd

@@ -1536,14 +1536,15 @@ int new_npdbLoadTags ( pNPdbFuncSet func, void* result, void* dataRef )
 	int rowNum = 0;
 	
 	char* buffer = NULL;
-	
+	char* read   = NULL;
+
 	rowCount = npdbNumRows_safe(result, func, &err);
 	if(err) return err;
 	
 	buffer = malloc( sizeof(char) * (rowCount * 150) ); // kNPmaxFile 4096 // arbritary, lde @todo // make this dynamic, lde @todo
 	if(buffer == NULL) return 1237; // add error code, lde @todo
 	
-	char* read = buffer;
+	read = buffer;
 	
 	buffer[0]  = '\0';
 	
@@ -1614,13 +1615,14 @@ int npdbLoadTags ( pNPdbFuncSet func, void* result, void* dataRef )
 	double end  = 0;
 	double diff = 0;
 	int err = 0;
+	pNPnode node = NULL;
 	char* buffer = malloc( sizeof(char) * 4096); // kNPmaxFile 4096
 	char* read = buffer;
 	
 	buffer[0] = '\0';
 	//	pData data = (pData) dataRef; // Warning, lde
 	
-	pNPnode node = NULL;
+	
 	//	pNPtable table = NULL;
 	//	pNPmapID map = NULL; // Warning, lde
 	
@@ -1961,11 +1963,18 @@ pNPdbTable npdbFindTagTbl( pNPdatabase db, int* err, void* dataRef)
 	char* tag_tbl_fields = NULL;
 	char* test_tbl_fields = NULL;
 	int i = 0;
+	int x = 0;
 	err = (int*)0;
 		
 	printf("\nnpdbFindTagTbl\n");
 	//node_tbl_fields = npMysqlGetTableFields(kNPnode, dataRef); // Make this npdbGetTableFields
 	tag_tbl_fields = db->host->hostFuncSet->getTableFields(kNPtag, dataRef); // shorten, lde @todo
+	//tag_tbl_fields = tolower(tag_tbl_fields);
+	for( i = 0; i < strlen(tag_tbl_fields); i++ )
+	{
+		tag_tbl_fields[i] = tolower(tag_tbl_fields[i]);
+	}
+
 	printf("\ntag_tbl_fields : %s\n", tag_tbl_fields);
 	
 	if(tag_tbl_fields == NULL)
@@ -1979,6 +1988,12 @@ pNPdbTable npdbFindTagTbl( pNPdatabase db, int* err, void* dataRef)
 	for(i = 0; i < db->tableCount; i++)
 	{
 		test_tbl_fields = npdbGetFieldList(db->tableList[i], err ,dataRef);
+	//	test_tbl_fields = tolower(test_tbl_fields);
+		for( x = 0; x < strlen(test_tbl_fields); x++ )
+		{
+			test_tbl_fields[x] = tolower(test_tbl_fields[x]);
+		}
+
 		if(err)
 		{
 			printf("\nnpdbGetFieldList failed");
@@ -1986,17 +2001,28 @@ pNPdbTable npdbFindTagTbl( pNPdatabase db, int* err, void* dataRef)
 		}
 		
 	//	 Clean up and encompass This into a "toggled" function pointer, lde
-/*
+
 		printf("\n--------------------------------------------------------\n");
 		 printf("\ntest_tbl_fields : %s\n", test_tbl_fields);
+		 printf("\nstrlen of tag_tbl_fields : %d\n", strlen(tag_tbl_fields));
+
 		 printf("\ntag_tbl_fields : %s\n", tag_tbl_fields);
+		 printf("\nstrlen of test_tbl_fields : %d\n", strlen(test_tbl_fields));
+
+		 printf("\nstrcmp result : %d\n", strcmp(tag_tbl_fields, test_tbl_fields));
 		 printf("\n--------------------------------------------------------\n");
-		 printf("\nstrlen of node_tbl_fields : %d\n", strlen(tag_tbl_fields));
-		 printf("\nRESULT : %d\n", strcasecmp(tag_tbl_fields, test_tbl_fields));
-		 printf("\nstrlen of test_tbl_fields : %d\n", strlen(tag_tbl_fields));
-*/		 
 		
+		 
+		 
+		 
+		/*
 		if(strcasecmp(tag_tbl_fields, test_tbl_fields) == 0)
+		{
+			printf("\nFound It\n");
+			return db->tableList[i];
+		}
+		*/
+		if(strcmp(tag_tbl_fields, test_tbl_fields) == 0)
 		{
 			printf("\nFound It\n");
 			return db->tableList[i];
