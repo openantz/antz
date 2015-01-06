@@ -46,11 +46,18 @@ int npdbUse_old( const char* dbName, void* dataRef );
 void assignNodePropertiesFromArray(char** row, pNPnode node)
 {
 	pNPnode nodeParent;
+	printf("\nbefore if");
+	if(node == NULL) // temp, lde @todo
+		return;
+
 	if(node->type == 1)
 	{
+		printf("\nnode->type is 1, returning");
 		return;
 	}
-
+	printf("\nafter if");
+	printf("\n");
+	printf("1");
 	node->selected = npatoi(row[3]);		/// @todo convert from atio to npatoi
 	node->childIndex = npatoi(row[7]);
 	
@@ -67,7 +74,7 @@ void assignNodePropertiesFromArray(char** row, pNPnode node)
 	node->auxB.x		= npatoi(row[17]);
 	node->auxB.y		= npatoi(row[18]);
 	node->auxB.z		= npatoi(row[19]);
-		
+	printf("2");
 	node->colorShift	= npatof(row[20]);
 		
 	node->rotateVec.x		= npatof(row[21]);		//was rotate
@@ -82,7 +89,7 @@ void assignNodePropertiesFromArray(char** row, pNPnode node)
 	node->translate.x	= npatof(row[28]);
 	node->translate.y	= npatof(row[29]);
 	node->translate.z	= npatof(row[30]);
-		
+	printf("3");
 	node->tagOffset.x	= npatof(row[31]);
 	node->tagOffset.y	= npatof(row[32]);
 	node->tagOffset.z	= npatof(row[33]);
@@ -98,7 +105,7 @@ void assignNodePropertiesFromArray(char** row, pNPnode node)
 	node->scaleRate.x	= npatof(row[40]);
 	node->scaleRate.y	= npatof(row[41]);
 	node->scaleRate.z	= npatof(row[42]);
-		
+	printf("4");
 	node->translateRate.x = npatof(row[43]);
 	node->translateRate.y = npatof(row[44]);
 	node->translateRate.z = npatof(row[45]);
@@ -126,7 +133,7 @@ void assignNodePropertiesFromArray(char** row, pNPnode node)
 		
 	node->hide			= npatoi(row[61]);
 	node->freeze		= npatoi(row[62]);
-		
+	printf("5");
 	//	node->center		= center;		//removed	
 		
 	node->topo			= npatoi(row[63]);			//moved topo
@@ -145,7 +152,7 @@ void assignNodePropertiesFromArray(char** row, pNPnode node)
 	node->triggerLo.x	= npatoi(row[71]);
 	node->triggerLo.y	= npatoi(row[72]);
 	node->triggerLo.z	= npatoi(row[73]);
-		
+	printf("6");
 	node->setHi.x		= npatof(row[74]);
 	node->setHi.y		= npatof(row[75]);
 	node->setHi.z		= npatof(row[76]);
@@ -170,7 +177,7 @@ void assignNodePropertiesFromArray(char** row, pNPnode node)
 	node->formatID		= npatoi(row[90]);
 	node->tableID		= npatoi(row[91]);
 	node->recordID		= npatoi(row[92]);
-
+	printf("7");
 	if (node->topo == 0 && node->type == kNodePin)
 	{
 		////zzdb printf ("topo = 0   id: %d\n", node->id);
@@ -186,6 +193,8 @@ void assignNodePropertiesFromArray(char** row, pNPnode node)
 				node->topo = kNPtopoPin;
 		}	
 	}
+	printf("8");
+	printf("\n");
 }
 
 void updateNodeFromMysqlRow (MYSQL_ROW *row, void* dataRef) // Generalize here
@@ -201,11 +210,17 @@ void updateNodeFromMysqlRow (MYSQL_ROW *row, void* dataRef) // Generalize here
 
 	/// @todo create node id map for scene to DB that supports merged scenes.
 	//node = npGetNodeByID(data->io.dbs->activeDB[0].idMap[id], dataRef); // old, lde
+	printf( "\nBefore npGetNodeByID" );
+	printf( "\ndata->io.db.activeDB->idMap[%d] = %d", id, data->io.db.activeDB->idMap[id] );
+	printf( "\nactiveDB :: %p", data->io.db.activeDB);
 	node = npGetNodeByID(data->io.db.activeDB->idMap[id], dataRef);
-	
-	printf( "db node_id: %4d   scene node id: %4d \n", id, node->id );
+	printf("\nAfter npGetNodeByID : node ptr %p", node); 
 
+//	printf( "db node_id: %4d   scene node id: %4d \n", id, node->id ); // temp, lde , fix
+
+	printf("\nBefore assignNodePropertiesFromArray");
 	assignNodePropertiesFromArray( (char**)row, node );
+	printf("\nAfter assignNodePropertiesFromArray");
 }
 
 void updateNodesFromMysqlResult(MYSQL_RES *result, void* dataRef)
@@ -960,7 +975,7 @@ int npCreateDatabase2(int dbID, struct dbFunction *db, char* dbName)
 	free(statement);
 	return err;
 }
-
+/*
 // This function might be obsolete, lde @todo
 int npDropDatabase(int dbID, pNPdbFuncSet FuncSet, const char* dbName, void* dataRef )
 {
@@ -978,6 +993,7 @@ int npDropDatabase(int dbID, pNPdbFuncSet FuncSet, const char* dbName, void* dat
 
 	return 0;
 }
+*/
 
 int npDropTable(int dbID, struct dbFunction *db, char* table)
 {
@@ -1224,6 +1240,7 @@ int npAddDb(pNPdbs dbs, char* dbType, char* hostIP, char* user, char* pass, char
 		//dbs->activeDB[0].dbFunc = malloc(sizeof(struct dbFunction)); // old, lde
 		dbs->activeDB->host = malloc(sizeof(NPdbHost));
 		dbs->activeDB->host->hostFuncSet = malloc(sizeof(NPdbFuncSet));
+		dbs->inUseDB2[0] = '\0';
 
 		/// @todo upgrade idMap to map from DB node_id to scene node ptr, fasted updates
 		/// @todo support changes to scene graph structure when updating DB
@@ -1311,10 +1328,12 @@ int npdbPushScene ( void* dbID, const char* dbName, void* dataRef )							//add 
 	// npSelect(dbID, myDbFuncs, "node_tbl");
 
 	//if DB exists then truncate it to delete all rows for update
-	err = npdbTruncate( dbID, myDbFuncs, "node_tbl" );
+//	err = npdbTruncate( dbID, myDbFuncs, "node_tbl" );
+	err = npdbTruncate( myDb->host->conn, myDbFuncs, "node_tbl");
+
 	if( err ) return err;
 
-	printf("DB: TRUNCATE node_tbl\n");
+	printf("DB: TRUNCATE node_tbl FROM %s\n", myDb->name);
 
 
 	//insert the current scene nodes into the empty DB
@@ -1322,6 +1341,7 @@ int npdbPushScene ( void* dbID, const char* dbName, void* dataRef )							//add 
 	chunks = npEvenNewerAllChunk( nodes, dataRef ); 
 	
 //	npInsertAllChunks( chunks, dbID, &data->io.dbs->activeDB[0], "node_tbl");
+	npInsertAllChunks( chunks, myDb->host->conn, myDbFuncs, "node_tbl" );
 
 	// printf( "Done Saving DB Update: %s  host: %s", dbName, hostName );
 

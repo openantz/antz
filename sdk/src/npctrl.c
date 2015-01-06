@@ -407,7 +407,11 @@ void npCtrlFile (int command, void* dataRef)
 			else if (data->io.key.modShift)
 				npdbSaveScene( dataRef );		///< save scene to new DB
 			else
+			{
+				//printf("\n4 activeDB->name : %s : %p", data->io.db.activeDB->name, data->io.db.activeDB->name);
 				npViewer( dataRef );			///< enter DB command console
+				//printf("\n5 activeDB->name : %s", data->io.db.activeDB->name);
+			}
 			break;
 
 		case kNPcmdFileOpen :

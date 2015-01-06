@@ -48,6 +48,7 @@ void npdbFreeField(pNPdbFields field);
 //get list of databases by name
 pNPdatabases npdbGetDatabases( void* dataRef );
 pNPdbTable npdbFindNodeTbl( pNPdatabase db, int* err, void* dataRef);
+char* npdbGetChMapTableFields(void* dataRef);
 char** npdbFetchRow_safe(void* result, pNPdbFuncSet func, int* err);
 int npdbTableToCSV(pNPdbTable table, char* csvName, void* dataRef);
 int npdbTableToCSVthread(void* threadData);
@@ -73,7 +74,7 @@ void* npMigrateTable(void* tablePtr, int size, int formatID, void* dataRef);
 //prompt user for migration source dataset and to select format mapping prefs	//zz debug
 void npMigrate(int tableMap, void* dataRef);
 
-
+int npdbCreateChMapTable(pNPdatabase dbItem, void* dataRef);
 //-------------------------------------------------------------------------- //zz db
 //manual database Load, Save and Update methods
 //auto update logic is done at a higher level, shared with DB, file, OSC...
@@ -150,7 +151,7 @@ void npdbAttachHostFuncSets( pNPdbs dbs );
 
 pNPdatabase npdbGetByName( char* dbName, void* dataRef);
 
-int npdbUse( pNPdatabase dbItem );
+int npdbUse( pNPdatabase dbItem, void* dataRef );
 int npdbSelectTable( pNPdatabase dbItem, char* table );
 //int npdbSelectTable( pNPtable table );
 int npdbShowDatabases( pNPdbHost host );

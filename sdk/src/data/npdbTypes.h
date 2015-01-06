@@ -303,6 +303,7 @@ struct NPdbs {
 	int				dbCount;			///< number of databases
 	
 	pNPdatabase		activeDB;			///< points to active DB in list
+	char				inUseDB2[64];        ///< Name of currently in use database, lde
 	
 	float			saveUpdateRate;		///< auto save update rate, 0 is off
 	float			loadUpdateRate;		///< auto load update rate, 0 is off

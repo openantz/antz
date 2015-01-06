@@ -1,0 +1,284 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+AntzChMap	npauxdb.h	/^	AntzChMap = 1,$/;"	e	enum:__anon1
+AntzNodeState	npauxdb.h	/^	AntzNodeState,$/;"	e	enum:__anon1
+AntzTags	npauxdb.h	/^	AntzTags$/;"	e	enum:__anon1
+DEF	npauxdb.h	/^	DEF = 0,$/;"	e	enum:__anon2
+NPAUXDB_H_	npauxdb.h	26;"	d
+NPDBZ_H_	npdbz.h	26;"	d
+NPDB_H_	npdb.h	26;"	d
+NPHADOOP_H_	nphadoop.h	26;"	d
+NPMONGO_H_	npmongo.h	26;"	d
+NPMYSQL_H_	npmysql.h	26;"	d
+NPOSTGRES_H_	npostgresql.h	26;"	d
+NPSQLITE_H_	npsqlite.h	26;"	d
+NPdatabase	npauxdb.h	/^struct NPdatabase {$/;"	s
+StatementCreate	npdbz.h	/^	void* (*StatementCreate)  ();$/;"	m	struct:dbFunction
+StatementCreateTable	npdbz.h	/^	void* (*StatementCreateTable) ();$/;"	m	struct:dbFunction
+StatementDrop	npdbz.h	/^	void* (*StatementDrop)    ();$/;"	m	struct:dbFunction
+StatementInsert	npdbz.h	/^	void* (*StatementInsert)  ();$/;"	m	struct:dbFunction
+StatementSelect	npdbz.h	/^	void* (*StatementSelect) ();$/;"	m	struct:dbFunction
+StatementShow	npdbz.h	/^	void* (*StatementShow)    ();$/;"	m	struct:dbFunction
+StatementUse	npdbz.h	/^	void* (*StatementUse)     ();$/;"	m	struct:dbFunction
+action	npdbz.h	/^	int action; \/\/Create, Insert, Select, Alter, Show, etc...$/;"	m	struct:tableParameters
+alter	npdbz.h	/^	void* (*alter)  ();$/;"	m	struct:dbFunction
+assignNodePropertiesFromArray	npdbz.c	/^void assignNodePropertiesFromArray(char** row, pNPnode node)$/;"	f
+chunk	npdbz.h	/^	struct newChunkObj *chunk;$/;"	m	struct:newChunksObj	typeref:struct:newChunksObj::newChunkObj
+chunkSize	npdbz.h	/^	int chunkSize;$/;"	m	struct:newChunkObj
+client_flag	npauxdb.h	/^	unsigned long client_flag;$/;"	m	struct:NPdatabase
+close	npdbz.h	/^	void* (*close)  ();$/;"	m	struct:dbFunction
+conn	npauxdb.h	/^	MYSQL *conn;$/;"	m	struct:NPdatabase
+conn	npdbz.h	/^	void* conn;	$/;"	m	struct:tableParameters
+connect	npdbz.h	/^	void* (*connect)();$/;"	m	struct:dbFunction
+connect	npdbz.h	/^	void* (*connect)(void*);$/;"	m	struct:dbFunctions
+csvObj	npdbz.h	/^	struct csvStrObj *csvObj;$/;"	m	struct:csvStrObjects	typeref:struct:csvStrObjects::csvStrObj
+csvObjects	npdbz.h	/^	struct csvStrObjects *csvObjects;$/;"	m	struct:newChunkObj	typeref:struct:newChunkObj::csvStrObjects
+csvStr	npdbz.h	/^	char *csvStr;$/;"	m	struct:csvStrObj
+csvStrObj	npdbz.h	/^struct csvStrObj$/;"	s
+csvStrObjects	npdbz.h	/^struct csvStrObjects$/;"	s
+current	npauxdb.h	/^	struct queue_node *current;$/;"	m	struct:queue	typeref:struct:queue::queue_node
+currentlyUsedDatabase	npdbz.h	/^	char currentlyUsedDatabase[kNPurlMax];$/;"	m	struct:database
+database	npdbz.h	/^struct database {$/;"	s
+db	npauxdb.h	/^	char*	db;$/;"	m	struct:NPdatabase
+dbFunc	npdbz.h	/^	struct dbFunction *dbFunc;$/;"	m	struct:database	typeref:struct:database::dbFunction
+dbFunction	npdbz.h	/^struct dbFunction {$/;"	s
+dbFunctions	npdbz.h	/^struct dbFunctions {$/;"	s
+dbType	npdbz.h	/^	char dbType[kNPurlMax];   \/\/ "mysql" "oracle" "postgresql", etc...$/;"	m	struct:database
+db_errno	npdbz.h	/^	void* (*db_errno) ();$/;"	m	struct:dbFunction
+db_error	npdbz.h	/^	void* (*db_error) ();$/;"	m	struct:dbFunction
+db_fetch_lengths	npdbz.h	/^	void* (*db_fetch_lengths) ();$/;"	m	struct:dbFunction
+db_fetch_row	npdbz.h	/^	void* (*db_fetch_row) ();$/;"	m	struct:dbFunction
+db_num_fields	npdbz.h	/^	void* (*db_num_fields) ();$/;"	m	struct:dbFunction
+db_num_rows	npdbz.h	/^	void* (*db_num_rows) ();$/;"	m	struct:dbFunction
+fieldName	npauxdb.h	/^	char* fieldName;$/;"	m	struct:fieldvalue
+fieldSize	npauxdb.h	/^	int fieldSize;$/;"	m	struct:fieldvalue
+fieldType	npauxdb.h	/^	int fieldType;$/;"	m	struct:fieldvalue
+fieldvalue	npauxdb.h	/^struct fieldvalue$/;"	s
+first	npauxdb.h	/^	struct queue_node *first;$/;"	m	struct:queue	typeref:struct:queue::queue_node
+freeResult	npdbz.h	/^	void* (*freeResult) ();$/;"	m	struct:dbFunction
+host	npauxdb.h	/^	char*	host;$/;"	m	struct:NPdatabase
+hostIP	npdbz.h	/^	char hostIP[kNPurlMax];   \/\/ This could be static$/;"	m	struct:database
+id	npdbz.h	/^	void* id;$/;"	m	struct:database
+idMap	npdbz.h	/^	int* idMap;$/;"	m	struct:database
+init	npdbz.h	/^	void* (*init)   ();$/;"	m	struct:dbFunction
+insert	npdbz.h	/^	void* (*insert) ();$/;"	m	struct:dbFunction
+kNPdbFieldsDescMax	npmysql.c	31;"	d	file:
+kNPdbNodeBlock	npdb.c	3549;"	d	file:
+kNPmysql	npauxdb.h	/^	kNPmysql$/;"	e	enum:__anon2
+last	npauxdb.h	/^	struct queue_node *last;$/;"	m	struct:queue	typeref:struct:queue::queue_node
+newChunkObj	npdbz.h	/^struct newChunkObj {$/;"	s
+newChunksObj	npdbz.h	/^struct newChunksObj {$/;"	s
+new_npGetTags	npdb.c	/^void new_npGetTags(char** buffer, int *index ,pNPnode node, void* dataRef)$/;"	f
+new_npMysqlStatementInsertFromChunk	npmysql.c	/^char* new_npMysqlStatementInsertFromChunk(char* table, struct newChunkObj *theChunk)$/;"	f
+new_npdbLoadTags	npdb.c	/^int new_npdbLoadTags ( pNPdbFuncSet func, void* result, void* dataRef )$/;"	f
+new_npdbQuery_safe	npdb.c	/^char* new_npdbQuery_safe(void* (*getConn)(pNPdbHost host, void* dataRef), void* (*getFuncs)(pNPdbHost host, void* dataRef), void* (*getHost)(pNPdatabase dbItem), pNPdatabase dbItem, char* statement, void* dataRef)$/;"	f
+new_npdbSaveAs	npdb.c	/^pNPdatabase new_npdbSaveAs( char* dbName, pNPdbHost host, void* dataRef )$/;"	f
+new_npdbSelectTable	npdb.c	/^int new_npdbSelectTable( pNPdbTable table )$/;"	f
+new_npdbShowDatabases	npmysql.c	/^void new_npdbShowDatabases(pNPdbFuncSet func, pNPdbHost host, void* dataRef)$/;"	f
+new_npdbStatementCreateNodeTable	npdb.c	/^char* new_npdbStatementCreateNodeTable(pNPdbFuncSet func, void* dataRef)$/;"	f
+new_npdbStatementCreateTable	npdb.c	/^char* new_npdbStatementCreateTable(char* table, char* (*GetTableFields)(void* dataRef), void* dataRef)$/;"	f
+newest_npdbSaveAs	npdb.c	/^char* newest_npdbSaveAs()$/;"	f
+next	npauxdb.h	/^	struct fieldvalue *next;$/;"	m	struct:fieldvalue	typeref:struct:fieldvalue::fieldvalue
+next	npauxdb.h	/^	struct queue_node *next;$/;"	m	struct:queue_node	typeref:struct:queue_node::queue_node
+npAddDb	npdbz.c	/^int npAddDb(pNPdbs dbs, char* dbType, char* hostIP, char* user, char* pass, char* dbName, void* dataRef)$/;"	f
+npCloseAuxDB	npauxdb.c	/^void npCloseAuxDB (void* dataRef)		\/\/clean-up$/;"	f
+npCloseDB	npdb.c	/^void npCloseDB (void* dataRef)		\/\/clean-up$/;"	f
+npCloseHadoop	nphadoop.c	/^void npCloseHadoop (void* dataRef)$/;"	f
+npCloseMongoDB	npmongo.c	/^void npCloseMongoDB (void* dataRef)$/;"	f
+npCloseMySQL	npmysql.c	/^void npCloseMySQL (void* dataRef)$/;"	f
+npClosePostgreSQL	npostgresql.c	/^void npClosePostgreSQL (void* dataRef)$/;"	f
+npCloseSQLite	npsqlite.c	/^void npCloseSQLite (void* dataRef)$/;"	f
+npConCat	npmysql.c	/^char* npConCat( char* (*first)(), char* (*second)(), int* err )$/;"	f
+npCreateDatabase2	npdbz.c	/^int npCreateDatabase2(int dbID, struct dbFunction *db, char* dbName)$/;"	f
+npCreateTable2	npdbz.c	/^int npCreateTable2(struct dbFunction *db, int dbID, char* table, char* fields)$/;"	f
+npDropDatabase	npdbz.c	/^int npDropDatabase(int dbID, pNPdbFuncSet FuncSet, const char* dbName, void* dataRef )$/;"	f
+npDropTable	npdbz.c	/^int npDropTable(int dbID, struct dbFunction *db, char* table)$/;"	f
+npEvenNewerAllChunk	npdbz.c	/^struct newChunksObj* npEvenNewerAllChunk(struct csvStrObjects *csvObjects, void* dataRef)$/;"	f
+npGeneralAddObjectsToChunks	npdbz.c	/^struct newChunksObj* npGeneralAddObjectsToChunks(struct newChunksObj* chunks, struct csvStrObjects* strObjects, void* dataRef)$/;"	f
+npGetCSVtagFromNode	npdb.c	/^void npGetCSVtagFromNode(char** buffer, int *index ,pNPnode node, void* dataRef)$/;"	f
+npGetCSVtagsFromAllNodes	npdb.c	/^void npGetCSVtagsFromAllNodes(char** buffer, int* index, void* dataRef)$/;"	f
+npGetCSVtagsFromNodeTree	npdb.c	/^void npGetCSVtagsFromNodeTree(char** buffer, int* index, pNPnode node, void* dataRef)$/;"	f
+npGetChunk	npdbz.c	/^struct newChunkObj* npGetChunk(struct newChunksObj *chunks, int index)$/;"	f
+npGetTagFromNode	npdb.c	/^pNPtag npGetTagFromNode(pNPnode node, void* dataRef)$/;"	f
+npGetTags	npdb.c	/^void npGetTags(void* dataRef)$/;"	f
+npGetTime	npdb.c	/^double npGetTime(double start, void* function, double end)$/;"	f
+npInitAllChunkObjects	npdbz.c	/^struct newChunksObj* npInitAllChunkObjects(struct newChunksObj *chunks, void* dataRef)$/;"	f
+npInitAuxDB	npauxdb.c	/^void npInitAuxDB (void* dataRef)$/;"	f
+npInitDB	npdb.c	/^void npInitDB (void* dataRef)$/;"	f
+npInitHadoop	nphadoop.c	/^void npInitHadoop (void* dataRef)$/;"	f
+npInitMongoDB	npmongo.c	/^void npInitMongoDB (void* dataRef)$/;"	f
+npInitMySQL	npmysql.c	/^void npInitMySQL (void* dataRef)$/;"	f
+npInitPostgreSQL	npostgresql.c	/^void npInitPostgreSQL (void* dataRef)$/;"	f
+npInitSQLite	npsqlite.c	/^void npInitSQLite (void* dataRef)$/;"	f
+npInitcsvStrObjects	npdbz.c	/^void npInitcsvStrObjects(struct csvStrObjects *csvObjects, int numOfObjects, void* dataRef)$/;"	f
+npInsert	npdbz.c	/^void npInsert(void* dbID, pNPdbFuncSet func, char* table, struct newChunkObj *value)$/;"	f
+npInsertAllChunks	npdbz.c	/^void npInsertAllChunks(struct newChunksObj *chunks, void* dbID, pNPdbFuncSet func, char* table)$/;"	f
+npMysqlAddFuncSet	npmysql.c	/^pNPdbFuncSet npMysqlAddFuncSet( pNPdbs db, pNPdbFuncSet funcSet )$/;"	f
+npMysqlGetTableFields	npmysql.c	/^char* npMysqlGetTableFields( int type, void* dataRef ) \/\/ @todo, lde, make a npdbGetTableFields function$/;"	f
+npMysqlHook	npmysql.c	/^int npMysqlHook( pNPdbFuncSet func, void* dbLib)$/;"	f
+npMysqlInitConnOptions	npmysql.c	/^int npMysqlInitConnOptions( pNPdbFuncSet func, void* connInit )$/;"	f
+npMysqlServerCtrl	npmysql.c	/^int npMysqlServerCtrl(void (*ctrlFunction)(void*), void* parameters)$/;"	f
+npMysqlStatementCreate	npmysql.c	/^char* npMysqlStatementCreate(char* dbName)$/;"	f
+npMysqlStatementCreateTable	npmysql.c	/^char* npMysqlStatementCreateTable(char* table, char* fields)$/;"	f
+npMysqlStatementDrop	npmysql.c	/^char* npMysqlStatementDrop(char* dropType, char* dropName)$/;"	f
+npMysqlStatementInsert	npmysql.c	/^char* npMysqlStatementInsert(char* table, char* values) \/\/ perhaps I can pass this a function which will extract all the values from the chunks structure, lde$/;"	f
+npMysqlStatementSelect	npmysql.c	/^char* npMysqlStatementSelect( char* table )$/;"	f
+npMysqlStatementShow	npmysql.c	/^char* npMysqlStatementShow(char* showWhat)$/;"	f
+npMysqlStatementTruncate	npmysql.c	/^char* npMysqlStatementTruncate( int dbID, char* tableName )$/;"	f
+npMysqlStatementUpdate	npmysql.c	/^char* npMysqlStatementUpdate( int dbID, char* tableName )$/;"	f
+npMysqlStatementUse	npmysql.c	/^char* npMysqlStatementUse( char* dbName )$/;"	f
+npNewFreeChunks	npdbz.c	/^void npNewFreeChunks(struct newChunksObj * chunks, void* dataRef)$/;"	f
+npNewGenMysqlFields	npdbz.c	/^char* npNewGenMysqlFields(int count, int type, void* dataRef)$/;"	f
+npNewInitChunksObj	npdbz.c	/^struct newChunksObj* npNewInitChunksObj(struct newChunksObj *chunks, int totalObjsSize, int chunkSize, void* dataRef)$/;"	f
+npNewMapTraverseTreeLL	npdbz.c	/^void npNewMapTraverseTreeLL(struct csvStrObjects *nodes, int* index, pNPnode node, int format, void* dataRef)$/;"	f
+npNewerMapTraverseTreeLL	npdbz.c	/^void npNewerMapTraverseTreeLL(struct csvStrObjects *nodes, int* index, pNPnode node, int format, void* dataRef)$/;"	f
+npNodeValues	npdbz.c	/^struct csvStrObjects* npNodeValues(void *dataRef)$/;"	f
+npOpenDb	npdbz.c	/^int npOpenDb(struct database *db)$/;"	f
+npRevisedFreeNodeValues	npdbz.c	/^void npRevisedFreeNodeValues(struct csvStrObjects *nodes, void* dataRef)$/;"	f
+npRevisedNodeValues	npdbz.c	/^struct csvStrObjects* npRevisedNodeValues(void* dataRef)$/;"	f
+npSelect	npdbz.c	/^int npSelect(void* conn, pNPdbFuncSet func, char* table) \/\/Add field(s) choice later$/;"	f
+npShowDatabases	npdbz.c	/^void* npShowDatabases(int dbID, struct dbFunction *db, void* dataRef )$/;"	f
+npTagToCSV	npdb.c	/^int npTagToCSV(pNPtag tag, void* buffer) \/\/ lde @todo$/;"	f
+npTestEvenNewerAllChunk	npdbz.c	/^struct newChunksObj* npTestEvenNewerAllChunk(void* dataRef)$/;"	f
+npTestNewInitChunksObj	npdbz.c	/^struct newChunksObj* npTestNewInitChunksObj(struct newChunksObj *chunks, int chunkSize, void* dataRef)$/;"	f
+npUpdateAuxDB	npauxdb.c	/^void npUpdateAuxDB (void* dataRef)							\/\/add to ctrl loop, debug zz$/;"	f
+npUpdateDB	npdb.c	/^void npUpdateDB (void* dataRef)							\/\/add to ctrl loop, debug zz$/;"	f
+npUpdateHadoop	nphadoop.c	/^void npUpdateHadoop (void* dataRef)$/;"	f
+npUpdateMongoDB	npmongo.c	/^void npUpdateMongoDB (void* dataRef)$/;"	f
+npUpdateMySQL	npmysql.c	/^void npUpdateMySQL (void* dataRef)$/;"	f
+npUpdatePostgreSQL	npostgresql.c	/^void npUpdatePostgreSQL (void* dataRef)$/;"	f
+npUpdateSQLite	npsqlite.c	/^void npUpdateSQLite (void* dataRef)$/;"	f
+npdbActiveDB	npdb.c	/^char* npdbActiveDB( void* dataRef )$/;"	f
+npdbActiveHost	npdb.c	/^void npdbActiveHost( char* hostName, void* dataRef)$/;"	f
+npdbAddDatabase	npdb.c	/^pNPdatabase npdbAddDatabase( char* dbName, pNPdbHost host, pNPdbs dbs )$/;"	f
+npdbAddField	npdb.c	/^int npdbAddField(pNPdbTable tbl, char* name, char* typeStr)$/;"	f
+npdbAddHost	npdb.c	/^int npdbAddHost( char* type, char* ip, int port, char* user, char* pass, void* dataRef)	\/\/zzd$/;"	f
+npdbAddHostDatabases	npdb.c	/^int npdbAddHostDatabases( pNPdbHost host, pNPdbs dbs )$/;"	f
+npdbAddReservedWord	npdb.c	/^pNPdbReservedWord npdbAddReservedWord(char* word, int type)$/;"	f
+npdbAttachHostFuncSets	npdb.c	/^void npdbAttachHostFuncSets( pNPdbs dbs )$/;"	f
+npdbBuildCreateQuery	npdb.c	/^void npdbBuildCreateQuery(char* type) \/\/ type being database or table or etc..., lde @todo$/;"	f
+npdbBuildQuery	npdb.c	/^char** npdbBuildQuery(char* item, int* num)$/;"	f
+npdbCSVtoTable	npdb.c	/^int npdbCSVtoTable( pNPdbTable tbl, FILE* filePtr, void* dataRef) \/\/ add to header, lde @todo$/;"	f
+npdbClearDatabaseList	npdb.c	/^int npdbClearDatabaseList( pNPdbs dbs )$/;"	f
+npdbConnMonitorThread	npdb.c	/^void npdbConnMonitorThread( pNPdbs dbs, void* dataRef )$/;"	f
+npdbConnect	npdb.c	/^int npdbConnect( pNPdbHost host, void* dataRef )$/;"	f
+npdbConnectHosts	npdb.c	/^void npdbConnectHosts( pNPdbs dbs, void* dataRef )$/;"	f
+npdbCreateChMapTable	npdb.c	/^int npdbCreateChMapTable(pNPdatabase dbItem, void* dataRef)$/;"	f
+npdbCreateDatabase	npdb.c	/^pNPdatabase npdbCreateDatabase( char* dbName, pNPdbHost host, pNPdbs dbs )$/;"	f
+npdbCreateNodeTable	npdb.c	/^void npdbCreateNodeTable( pNPdatabase dbItem, pNPdbFuncSet func , int* err, void* dataRef )$/;"	f
+npdbCreateTable	npdb.c	/^int npdbCreateTable( pNPdatabase dbItem, char* table, char* fields )$/;"	f
+npdbCreateTagTable	npdb.c	/^int npdbCreateTagTable( pNPdatabase dbItem, void* dataRef)$/;"	f
+npdbDatabasesStatement	npmysql.c	/^char* npdbDatabasesStatement()$/;"	f
+npdbDeleteKeyword	npdb.c	/^void npdbDeleteKeyword(pNPdbReservedWord reservedWord)$/;"	f
+npdbDrop	npdb.c	/^int npdbDrop( const char* dbName, void* dataRef )							\/\/add to ctrl loop, debug zz$/;"	f
+npdbErrMysqlToAntz	npdb.c	/^int npdbErrMysqlToAntz(int err) \/\/ @todo lde, add to header file when finished$/;"	f
+npdbFetchRow	npdb.c	/^int npdbFetchRow( pNPdbFuncSet func, pNPdbTable tbl )$/;"	f
+npdbFetchRow_safe	npdb.c	/^char** npdbFetchRow_safe(void* result, pNPdbFuncSet func, int* err)$/;"	f
+npdbFetchTableName	npdb.c	/^void* npdbFetchTableName( pNPdbFuncSet func, void* result, pNPdbTable tbl)$/;"	f
+npdbFindNodeTbl	npdb.c	/^pNPdbTable npdbFindNodeTbl( pNPdatabase db, int* err, void* dataRef)$/;"	f
+npdbFindTagTbl	npdb.c	/^pNPdbTable npdbFindTagTbl( pNPdatabase db, int* err, void* dataRef)$/;"	f
+npdbFree	npdb.c	/^void npdbFree(void* memory, pNPdatabase db, void* dataRef)$/;"	f
+npdbFreeField	npdb.c	/^void npdbFreeField(pNPdbFields field) \/\/ This should return void, not int, lde @todo \/\/ DONE$/;"	f
+npdbFreeFieldList	npdb.c	/^void npdbFreeFieldList(char* fieldList) \/\/ lde, @todo add to header file$/;"	f
+npdbFreeFields	npdb.c	/^void npdbFreeFields(pNPdbTable tbl)$/;"	f
+npdbFreeTable	npdb.c	/^void npdbFreeTable(pNPdbTable tbl)$/;"	f
+npdbFreeTables	npdb.c	/^void npdbFreeTables(pNPdatabase db)$/;"	f
+npdbGetByName	npdb.c	/^pNPdatabase npdbGetByName( char* dbName, void* dataRef)$/;"	f
+npdbGetByNameAndHost	npdb.c	/^pNPdatabase npdbGetByNameAndHost( char* dbName, pNPdbHost host, pNPdbs dbs )$/;"	f
+npdbGetCSVrowFromDB	npdb.c	/^int npdbGetCSVrowFromDB(pNPdbFuncSet func, void* result, int numFields, char* csvRow) \/\/ new, lde$/;"	f
+npdbGetCSVrowsFromDB	npdb.c	/^int npdbGetCSVrowsFromDB(pNPdbFuncSet func, void* result, int numFields, char* csvRow) \/\/ add to header, lde$/;"	f
+npdbGetConnFromHost	npdb.c	/^void* npdbGetConnFromHost(pNPdbHost host) \/\/ lde, @todo add to header file$/;"	f
+npdbGetConnectedHost	npdb.c	/^pNPdbHost npdbGetConnectedHost( pNPdbs dbs )$/;"	f
+npdbGetFieldList	npdb.c	/^void* npdbGetFieldList(pNPdbTable tbl, int* err, void* dataRef)$/;"	f
+npdbGetFields	npdb.c	/^int npdbGetFields ( pNPdbTable tbl, void* dataRef)$/;"	f
+npdbGetFuncsFromHost	npdb.c	/^pNPdbFuncSet npdbGetFuncsFromHost(pNPdbHost host, void* dataRef) \/\/ lde, @todo add to header file$/;"	f
+npdbGetHostFromDB	npdb.c	/^pNPdbHost npdbGetHostFromDB(pNPdatabase dbItem) \/\/ lde, @todo add to header file$/;"	f
+npdbGetHostFuncSet	npdb.c	/^pNPdbFuncSet npdbGetHostFuncSet( char* hostType, pNPdbs dbs )$/;"	f
+npdbGetMenu	npdb.c	/^pNPmenu npdbGetMenu ( pNPmenu menu, void* dataRef)$/;"	f
+npdbGetNodeByMapID	npdb.c	/^pNPnode npdbGetNodeByMapID( int id, pNPmapID map, void* dataRef )$/;"	f
+npdbGetNodeTableFields	npdb.c	/^char* npdbGetNodeTableFields(void* dataRef) \/\/ lde @todo$/;"	f
+npdbGetTagTableFields	npdb.c	/^char* npdbGetTagTableFields(pNPdbFuncSet func, void* dataRef)$/;"	f
+npdbGetTblList	npmysql.c	/^void* npdbGetTblList(pNPdbHost host ,pNPdatabase db, pNPdbFuncSet func, void* dataRef) \/\/ Put in header file, lde$/;"	f
+npdbGetTbls	npdb.c	/^int npdbGetTbls(pNPdbHost host, pNPdatabase db)$/;"	f
+npdbHostErr	npdb.c	/^int npdbHostErr( pNPdbHost host )$/;"	f
+npdbInitMapID	npdb.c	/^int npdbInitMapID( pNPmapID map, int count, void* dataRef )$/;"	f
+npdbItemErr	npdb.c	/^int npdbItemErr( pNPdatabase dbItem )$/;"	f
+npdbLoadMenuItem	npdb.c	/^int npdbLoadMenuItem (int item, void* dataRef)$/;"	f
+npdbLoadNodeTbl	npdb.c	/^int npdbLoadNodeTbl( pNPdatabase dbItem, void* dataRef )$/;"	f
+npdbLoadNodes	npdb.c	/^int npdbLoadNodes( pNPdbFuncSet func, void* result, void* dataRef ) \/\/ npdbLoadNodesFromTable , lde @todo$/;"	f
+npdbLoadScene	npdb.c	/^int npdbLoadScene( pNPdatabase dbItem, void* dataRef )$/;"	f
+npdbLoadTagTable	npdb.c	/^int npdbLoadTagTable( pNPdatabase dbItem, void* dataRef )$/;"	f
+npdbLoadTagTbl	npdb.c	/^int npdbLoadTagTbl( pNPdatabase dbItem, void* dataRef )$/;"	f
+npdbLoadTags	npdb.c	/^int npdbLoadTags ( pNPdbFuncSet func, void* result, void* dataRef )$/;"	f
+npdbLoadUpdate	npdb.c	/^int npdbLoadUpdate( void* dataRef )							\/\/add to ctrl loop, debug zz$/;"	f
+npdbMalloc	npdb.c	/^void* npdbMalloc(void* memory, pNPdatabase db, void* dataRef)$/;"	f
+npdbNewDatabase	npdb.c	/^pNPdatabase npdbNewDatabase( char* name, pNPdbHost host, pNPdbs db )$/;"	f
+npdbNewFuncSet	npdb.c	/^pNPdbFuncSet npdbNewFuncSet( pNPdbs db )$/;"	f
+npdbNumFields_safe	npdb.c	/^int npdbNumFields_safe(void* result, pNPdbFuncSet func, int rightNum, int* err )$/;"	f
+npdbNumRows_safe	npdb.c	/^int npdbNumRows_safe(void* result, pNPdbFuncSet func, int* err)$/;"	f
+npdbOpen	npdbz.c	/^int npdbOpen( pNPdatabase database, void* dataRef ) $/;"	f
+npdbPRC	npdb.c	/^void npdbPRC(pNPdatabase db)$/;"	f
+npdbPushScene	npdbz.c	/^int npdbPushScene ( void* dbID, const char* dbName, void* dataRef )							\/\/add to ctrl loop, debug zz$/;"	f
+npdbQuery_safe	npdb.c	/^int npdbQuery_safe(void* conn, pNPdbFuncSet func, pNPdbHost host ,char* statement)$/;"	f
+npdbRefreshDatabaseList	npdb.c	/^int npdbRefreshDatabaseList( pNPdbs dbs )$/;"	f
+npdbRowToNode	npdb.c	/^void npdbRowToNode( pNPnode node, char** row )$/;"	f
+npdbSaveAs	npdb.c	/^pNPdatabase npdbSaveAs( char* dbName, pNPdbHost host, void* dataRef )$/;"	f
+npdbSaveScene	npdb.c	/^void npdbSaveScene( void* dataRef )$/;"	f
+npdbSaveTags	npdb.c	/^int npdbSaveTags(pNPdatabase dbItem, pNPdbFuncSet func, char* table, void* dataRef) \/\/ lde @todo$/;"	f
+npdbSaveUpdate	npdb.c	/^int npdbSaveUpdate ( pNPdatabase dbItem, void* dataRef )$/;"	f
+npdbSelect	npdb.c	/^void npdbSelect( char* dbName, char* tblName, char* selectWhere, void* dataRef)$/;"	f
+npdbSelectQuery	npdb.c	/^int npdbSelectQuery( void* conn, pNPdbFuncSet func, pNPdbHost host, char* (*selectStatement)(), char* table ) \/\/ new, lde @todo$/;"	f
+npdbSelectTable	npdb.c	/^int npdbSelectTable( pNPdatabase dbItem, char* table ) \/\/Add field(s) choice later, @todo, lde$/;"	f
+npdbSet	npdb.c	/^void npdbSet( char* dbName, char* tblName, char* setStatement, void* dataRef)$/;"	f
+npdbSetField	npdb.c	/^int npdbSetField (pNPdbFields field, pNPdbHost host, void* result, void* dataRef)$/;"	f
+npdbSetFields	npdb.c	/^int npdbSetFields ( pNPdbTable tbl, pNPdbHost host, void* dataRef) \/\/ fieldLength validation should be variable, lde$/;"	f
+npdbSetTable	npdb.c	/^int npdbSetTable( pNPdbFuncSet func, void* result, pNPdbTable tbl, pNPdbHost host, void* dataRef )$/;"	f
+npdbSetTables	npdb.c	/^int npdbSetTables(pNPdbHost host, pNPdatabase db)$/;"	f
+npdbShowDatabases	npdb.c	/^int npdbShowDatabases( pNPdbHost host ) \/\/ Make this more generic, lde @todo$/;"	f
+npdbShowDatabasesStatement	npmysql.c	/^char* npdbShowDatabasesStatement( char* (*showStatement)(), char* (*dbStatement)(), int* err )$/;"	f
+npdbShowFields	npdb.c	/^int npdbShowFields ( pNPdbHost host, pNPdbTable tbl, void* dataRef)$/;"	f
+npdbShowStatement	npmysql.c	/^char* npdbShowStatement()$/;"	f
+npdbShowTables	npdb.c	/^int npdbShowTables( pNPdbHost host)$/;"	f
+npdbStartConnMonitor	npdb.c	/^void npdbStartConnMonitor( pNPdbs dbs )							\/\/add to ctrl loop, debug zz$/;"	f
+npdbStartMapID	npdb.c	/^void npdbStartMapID( pNPmapID map, void* dataRef )$/;"	f
+npdbStatementCreateNodeTable	npdb.c	/^char* npdbStatementCreateNodeTable(pNPdbFuncSet func, char* (*fields)(void* dataRef), void* dataRef)$/;"	f
+npdbStatementCreateTagTable	npdb.c	/^char* npdbStatementCreateTagTable(pNPdbFuncSet func, void* dataRef)$/;"	f
+npdbStopMapID	npdb.c	/^void npdbStopMapID( pNPmapID map, void* dataRef )$/;"	f
+npdbStoreResult_Safe	npdb.c	/^void* npdbStoreResult_Safe(pNPdbFuncSet func, pNPdbHost host, int* err) $/;"	f
+npdbTableRowsToNodes	npdb.c	/^int npdbTableRowsToNodes() \/\/ lde @todo$/;"	f
+npdbTableToCSV	npdb.c	/^int npdbTableToCSV(pNPdbTable table, char* csvName, void* dataRef) \/\/ Put in header file, lde$/;"	f
+npdbTruncate	npdb.c	/^int npdbTruncate(void* conn, pNPdbFuncSet func, char* table)$/;"	f
+npdbUpdateAntzStateFromDatabase	npdb.c	/^int npdbUpdateAntzStateFromDatabase(void* dataRef)$/;"	f
+npdbUpdateMapID	npdb.c	/^int npdbUpdateMapID(pNPmapID map, void* dataRef)$/;"	f
+npdbUpdateNodeFromRow	npdb.c	/^void npdbUpdateNodeFromRow( char** row, void* dataRef ) \/\/ Generalize here$/;"	f
+npdbUpdateNodesFromMysqlResult	npdb.c	/^void npdbUpdateNodesFromMysqlResult(MYSQL_RES *result, void* dataRef)$/;"	f
+npdbUse	npdb.c	/^int npdbUse( pNPdatabase dbItem )$/;"	f
+npdbUse_old	npdbz.c	/^int npdbUse_old( const char* dbName, void* dataRef )							\/\/add to ctrl loop, debug zz$/;"	f
+numOfChunks	npdbz.h	/^	int numOfChunks;$/;"	m	struct:newChunksObj
+numOfcsvStrObjects	npdbz.h	/^	int numOfcsvStrObjects;$/;"	m	struct:csvStrObjects
+pass	npauxdb.h	/^	char*	pass;$/;"	m	struct:NPdatabase
+password	npdbz.h	/^	char password[kNPurlMax]; \/\/ admin $/;"	m	struct:database
+port	npauxdb.h	/^	unsigned int port;$/;"	m	struct:NPdatabase
+port	npdbz.h	/^	int port;       \/\/ Default for MySQL is 3306$/;"	m	struct:database
+q	npauxdb.h	/^	struct query *q;$/;"	m	struct:NPdatabase	typeref:struct:NPdatabase::query
+q	npauxdb.h	/^	struct query *q;$/;"	m	struct:queue_node	typeref:struct:queue_node::query
+query	npdbz.h	/^	void* (*query)  ();$/;"	m	struct:dbFunction
+queue	npauxdb.h	/^struct queue {$/;"	s
+queue_node	npauxdb.h	/^struct queue_node {$/;"	s
+select	npdbz.h	/^	void* (*select) ();$/;"	m	struct:dbFunction
+show	npdbz.h	/^	void* (*show)   ();$/;"	m	struct:dbFunction
+size	npdbz.h	/^	int size;$/;"	m	struct:csvStrObj
+storeResult	npdbz.h	/^	void* (*storeResult) ();$/;"	m	struct:dbFunction
+tableParameters	npdbz.h	/^struct tableParameters {$/;"	s
+totalCsvStrObjectsSize	npdbz.h	/^	int totalCsvStrObjectsSize;$/;"	m	struct:csvStrObjects
+unix_socket	npauxdb.h	/^	char*	unix_socket;$/;"	m	struct:NPdatabase
+updateNodeFromMysqlRow	npdbz.c	/^void updateNodeFromMysqlRow (MYSQL_ROW *row, void* dataRef) \/\/ Generalize here$/;"	f
+updateNodesFromMysqlResult	npdbz.c	/^void updateNodesFromMysqlResult(MYSQL_RES *result, void* dataRef)$/;"	f
+use	npdbz.h	/^	void* (*use)    ();$/;"	m	struct:dbFunction
+user	npauxdb.h	/^	char*	user;$/;"	m	struct:NPdatabase
+user	npdbz.h	/^	char user[kNPurlMax];     \/\/ root$/;"	m	struct:database
+value	npauxdb.h	/^	char* value;$/;"	m	struct:fieldvalue

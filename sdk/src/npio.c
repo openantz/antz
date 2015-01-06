@@ -190,15 +190,21 @@ void npViewDatabases (void* dataRef)
 
 	console->menu = &console->menuStruct;
 
+	printf("\nbefore npdbGetMenu");
 	console->menu = npdbGetMenu(console->menu, dataRef); //get the list
-
+	printf("\nafter npdbGetMenu");
+	
 	if (console->menu == NULL)
 	{
 		printf( "err 5517 - null console->menu \n" );
 		return;					//failed to get menu
 	}
 	//call menu function, pass list ptr and callback function ptr
+	printf("\n7 activeDB ptr : %p", data->io.db.activeDB);
+//	strcpy(data->io.db.activeDB->name, "things");
+//	printf("\n6 activeDB->Name : %s\n", data->io.db.activeDB->name); // temp, lde @todo
 	npConsoleMenu (npdbLoadMenuItem, console, dataRef);
+	//printf("\n3 activeDB->Name : %s\n", data->io.db.activeDB->name);
 }
 
 //hybrid ASCII text based console(s) with 3D objects, xtree vr
