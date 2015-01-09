@@ -403,6 +403,8 @@ int npdbLoadUpdate( void* dataRef )							//add to ctrl loop, debug zz
 		return 4244;
 	}
 
+	npdbUpdateAntzStateFromDatabase(dataRef);
+	
 	sprintf( msg, "Update Scene from DB: %s  host: %s", dbName, host );
 	npPostMsg( msg, kNPmsgDB, data );
 
@@ -4438,7 +4440,7 @@ void npGetCSVtagFromNode(char** buffer, int *index ,pNPnode node, void* dataRef)
 			}
 			
 			sprintf(buffer[*index], "%i,%i,%i,\"%s\",\"%s\"", (*index)+1, node->recordID, tag->tableID, tag->title, tag->desc );
-			//printf("\nbuffer[%d] : %s\n", (*index), buffer[*index] );
+			printf("\nbuffer[%d] : %s\n", (*index), buffer[*index] );
 			(*index)++;
 		}
 		else if ( (*index) != 0 )
@@ -4457,16 +4459,17 @@ void npGetCSVtagsFromNodeTree(char** buffer, int* index, pNPnode node, void* dat
 	npGetCSVtagFromNode(buffer, index, node, dataRef);
 	for( i = 0; i < node->childCount; i++ )
 	{
-		npGetCSVtagFromNode(buffer, index, node->child[i], dataRef);
-		
-		//printf("\nchildCount : %d\n", node->child[i]->childCount);
+		printf("\nchildCount : %d\n", node->child[i]->childCount);
 		if( node->child[i]->childCount )
 		{
-			
+			//			npGetCSVtagFromNode(buffer, index, node->child[i], dataRef); // temp, lde @todo
 			npGetCSVtagsFromNodeTree( buffer, index, node->child[i], dataRef );
 		}
 		
+		npGetCSVtagFromNode(buffer, index, node->child[i], dataRef); // temp, lde @todo		
 	}
+	
+
 	
 	return;
 }
