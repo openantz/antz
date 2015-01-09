@@ -227,7 +227,8 @@ struct NPdbTable{
 	
 	int			rows;						///< number of rows in this table
 	
-	pNPdbFields	fields[100];				///< field descriptor
+	pNPdbFields	fields[100];					///< field descriptor
+	char*		fieldsStr;
 	int			fieldCount;					///< number of fields in this table, init to 0 , @todo, lde
 	
 	pNPmapID	mapID;						///< maps the row id to local data ptr
@@ -272,6 +273,8 @@ struct NPdatabase{
 	pNPdbTable	tableInUse;				///< current table in use
 	int			tableCount;				///< total number of tables
 	
+	//char*       queries[1024];			///< Query history, lde @todo
+	
 	int			nodeCount;				///< if exists, node table row count // @todo, include nodeCount on dbMenu, lde
 	
 	float		saveUpdateRate;			///< auto save update rate, 0 is off
@@ -288,7 +291,7 @@ typedef struct NPdatabase * pNPdatabase;
 
 
 /// holds list of databases and there hosts
-struct NPdbs {
+struct NPdbs { // Should this be renamed to NPdbServer, lde @todo
 	void* coreNode; ///< core nodes tie global structures to the scene graph
 	
 	bool			running;				///< true if hosts are connected

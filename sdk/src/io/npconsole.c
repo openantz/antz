@@ -907,7 +907,11 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 		else
 		{
 			sprintf( msg,"DROP %s", dbName );
-			err = npdbDrop( dbName, data ); // create npdbDropDatabase and npdbDropTable, lde @todo
+			//err = npdbDrop( dbName, data ); // create npdbDropDatabase and npdbDropTable, lde @todo
+			dbItem = npdbGetByName(dbName, dataRef);
+			//npdbDropDatabase( dbName, &err, dataRef);
+			npdbDropDatabase(dbItem, &err, dataRef);
+			
 			if( err )
 			{
 				npPostMsg( "err 5547 - DROP command failed", kNPmsgView, data );
@@ -1540,7 +1544,8 @@ void npUpdateConsoleMenu (pNPconsole console, void* dataRef)
 			printf("\nQQQ");
 			//strncpy( data->io.db.activeDB->name, "things", 6); // temp, lde @todo
 			printf("\nRRR");
-			sprintf( msg, "Active DB: %s", data->io.db.activeDB->name);//, hostName );
+		//	sprintf( msg, "Active DB: %s", data->io.db.activeDB->name);//, hostName ); // temp, lde @todo
+			sprintf( msg, "Active DB: %s", data->io.db.inUseDB2);
 		//	sprintf( msg, "Active DB: %s", " ");
 		}
 	}

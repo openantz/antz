@@ -74,7 +74,7 @@ void* npMigrateTable(void* tablePtr, int size, int formatID, void* dataRef);
 //prompt user for migration source dataset and to select format mapping prefs	//zz debug
 void npMigrate(int tableMap, void* dataRef);
 
-int npdbCreateChMapTable(pNPdatabase dbItem, void* dataRef);
+pNPdbTable npdbCreateChMapTable(pNPdatabase dbItem, int* err, void* dataRef);
 //-------------------------------------------------------------------------- //zz db
 //manual database Load, Save and Update methods
 //auto update logic is done at a higher level, shared with DB, file, OSC...
@@ -96,6 +96,7 @@ int npdbSaveUpdate( pNPdatabase dbItem, void* dataRef );
 
 void npdbSaveScene(void* dataRef);
 
+pNPdbTable npdbAddTable( pNPdatabase database, pNPdbTable table, int* err );
 //save entire scene to specified database
 //if DB exists then overwrites all of it
 
@@ -161,7 +162,7 @@ int npdbNumFields_safe(void* result, pNPdbFuncSet func, int rightNum, int* err )
 int npdbHostErr( pNPdbHost host );
 int npdbItemErr( pNPdatabase dbItem );
 
-
+void npdbDropDatabase( pNPdatabase database, int* err, void* dataRef );
 int npdbUpdateAntzStateFromDatabase( void* dataRef );	//zz db
 
 int npdbTruncate(void* conn, pNPdbFuncSet func, char* table); //zz db // changed a parameter, lde 
@@ -171,6 +172,9 @@ pNPdatabase npdbSaveAs( char* dbName, pNPdbHost host, void* dataRef );
 
 pNPdbFuncSet npdbNewFuncSet( pNPdbs dbs );
 pNPdbTable npdbFindTagTbl( pNPdatabase db, int* err, void* dataRef);
+pNPdbTable new_npdbCreateNodeTable( pNPdatabase dbItem, int* err, void* dataRef);
+pNPdbTable npdbCreateTable( pNPdatabase dbItem, char* table, char* fields, int* err );
+
 
 int npdbClearDatabaseList( pNPdbs dbs );
 int npdbQuery_safe(void* conn, pNPdbFuncSet func, pNPdbHost host ,char* statement); // Organize these new function prototypes, lde @todo

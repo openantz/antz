@@ -43,7 +43,7 @@ void npdbConnMonitorThread( pNPdbs dbs, void* dataRef );
 pNPdbFuncSet npdbGetHostFuncSet( char* hostType, pNPdbs dbs );
 void npdbRowToNode( pNPnode node, char** row );
 void npdbUpdateNodesFromMysqlResult( MYSQL_RES *result, void* dataRef );
-int npdbCreateTable( pNPdatabase dbItem, char* table, char* fields );
+//int npdbCreateTable( pNPdatabase dbItem, char* table, char* fields ); // obsolete, lde @todo
 pNPdatabase npdbCreateDatabase( char* dbName, pNPdbHost host, pNPdbs dbs );
 
 //------------------------------------------------------------------------------
@@ -463,10 +463,13 @@ int new_npDropDatabase(pNPdatabase database, void* dataRef)
 	success = (int)(*funcSet->query)(host->conn, statement);
 	free(statement);
 
+	
+	
 	return err;
 }
 
 // This function might be obsolete, lde @todo
+/*
 int npDropDatabase(int dbID, pNPdbFuncSet FuncSet, const char* dbName, void* dataRef )
 {
 	//char* statement = (*db->StatementDrop)("DATABASE", dbName); // old, lde
@@ -491,10 +494,104 @@ int npDropDatabase(int dbID, pNPdbFuncSet FuncSet, const char* dbName, void* dat
 
 	return 0;
 }
+*/
+ 
+// add to header, lde @todo // test, lde @todo
+void npdbDropAllDatabases( pNPdbs dbs, int* err, void* dataRef)
+{
+	int dbCount = dbs->dbCount;
+	pNPdatabase database = NULL;
+	int i = 0;
+	
+	for( i = 0; i < dbCount; i++ )
+	{
+		database = dbs->dbList[i];
+		if( database != NULL )
+		{
+			// Before using add protections against deleting mysql's notekeeping databases, lde @todo
+			npdbDropDatabase(database, err, dataRef);
+		}
+	}
+	
+}
+
+// add to header, lde @todo
+void npdbDropDatabase( pNPdatabase database, int* err, void* dataRef )
+{
+	pData data = (pData) dataRef;
+	char* statement = NULL;
+	pNPdbHost host = NULL;
+	pNPdbs dbs = NULL;
+	pNPdbFuncSet funcSet = NULL;
+	int success = 0;
+	int dbID = 0;
+	dbs = &data->io.db;
+	host = database->host;
+	funcSet = host->hostFuncSet;
+
+	
+	dbID = database->id;
+	statement = (*funcSet->StatementDrop)("DATABASE", database->name);
+	success = (int)(*funcSet->query)(host->conn, statement); // Success variable makes no sense here, lde @todo
+	free(statement);
+	
+	// add error handling, lde @todo
+	
+	if( database == data->io.db.activeDB)
+	{
+		printf("\nDropping active database");
+		data->io.db.inUseDB2[0] = '\0';
+	}
+	
+	// drop it internally, lde @todo
+	free(dbs->dbList[database->id]); // create function: npdbFreeDatabaseList @todo
+	dbs->dbList[dbID] = NULL;
+	
+	// create function: npdbFreeTableList lde @todo
+	
+	return;
+}
+
+// add to header, lde @todo
+void npdbDropTable( pNPdbTable table, int* err, void* dataRef)
+{
+	//pData data = (pData) dataRef;
+	char* statement       = NULL;
+	pNPdbHost host       = NULL;
+	pNPdbFuncSet funcSet = NULL;
+	pNPdatabase database = NULL;
+	int tableId = 0;
+	
+	if(table == NULL)
+	{
+		err = (int*)2378; // add error code, lde @todo
+		return;
+	}
+	
+	tableId = table->id;
+	
+	database = table->owner;
+	host = ((pNPdatabase)table->owner)->host;
+	funcSet = host->hostFuncSet;
+	
+	statement = (*funcSet->StatementDrop)("TABLE", table->name);
+	err = (int*)(*funcSet->query)(host->conn, statement);
+	
+	// if the table has no owner database then it's already been dropped in the database, lde @todo
+	// Add tableIndex, lde @todo
+	free(database->tableList[table->id]);
+	database->tableList[tableId] = NULL;
+	printf("\nDone");
+	// decrement the tableCount??? lde @todo
+	// And NULL data->tableList[table->id], lde @todo
+}
+
+
 
 //------------------------------------------------------------------------------
 // Create npdbDropByName, lde @todo
 // npdbDrop should take a pNPdatabase, lde @todo
+/*
 int npdbDrop( const char* dbName, void* dataRef )							//add to ctrl loop, debug zz
 {
 	int err = 0;
@@ -529,9 +626,11 @@ int npdbDrop( const char* dbName, void* dataRef )							//add to ctrl loop, debu
 
 	return err;
 }
+*/
 
 //------------------------------------------------------------------------------
-void npdbActiveHost( char* hostName, void* dataRef)
+// create npdbGetActiveHost, lde @todo
+void npdbActiveHost( char* hostName, void* dataRef) // change this to npdbSetActiveHost, lde @todo
 {
 	pData data = (pData) dataRef;
 
@@ -737,11 +836,11 @@ int npdbLoadScene( pNPdatabase dbItem, void* dataRef )
 	}
 	npMapSort(dataRef);
 
-/* @todo temp, lde
+// @todo temp, lde
 	err = npdbLoadTagTbl( dbItem, data );
 	if(err) return err;
-*/
-	
+
+
 	npPostMsg( msg, kNPmsgDB, dataRef );
 
 	printf("\n2 dbItem->name : %s", dbItem->name);
@@ -901,7 +1000,7 @@ pNPdatabase npdbGetByName( char* dbName, void* dataRef)
 	@param dbItem is the database reference to USE.
 	@return 0 for success otherwise an err number.
 */
-// This needs to set the activeDB, lde @todo
+// This needs to set the activeDB and have an int *err parameter, lde @todo
 int npdbUse( pNPdatabase dbItem, void* dataRef )
 {
 	pData data = (pData) dataRef;
@@ -946,6 +1045,8 @@ int npdbUse( pNPdatabase dbItem, void* dataRef )
 	return err;
 }
 
+// Replace all instances of npdbQuery_safe with new_npdbQuery_safe, lde @todo
+
 // I suspect the seg fault originates here, lde @todo // fixed
 int new_npdbSelectTable( pNPdbTable table , void* dataRef)
 {
@@ -989,6 +1090,7 @@ int new_npdbSelectTable( pNPdbTable table , void* dataRef)
 	
 }
 
+/*
 int npdbSelectQuery( void* conn, pNPdbFuncSet func, pNPdbHost host, char* (*selectStatement)(), char* table ) // new, lde @todo
 {
 	char* statement = NULL;
@@ -998,7 +1100,9 @@ int npdbSelectQuery( void* conn, pNPdbFuncSet func, pNPdbHost host, char* (*sele
 	
 	return 0;
 }
+*/
 
+/*
 int npdbSelectTable( pNPdatabase dbItem, char* table ) //Add field(s) choice later, @todo, lde
 {
 	int err = 0;
@@ -1027,8 +1131,10 @@ int npdbSelectTable( pNPdatabase dbItem, char* table ) //Add field(s) choice lat
 	free(statement);
 	return err; //Zero for success, nonzero if error occurred
 }
+*/
+
 //  new_npdbQuery_safe(void* conn, pNPdbFuncSet func, pNPdbHost host, char* (*statement)()) // new, lde @todo
-int npdbQuery_safe(void* conn, pNPdbFuncSet func, pNPdbHost host ,char* statement)
+int npdbQuery_safe(void* conn, pNPdbFuncSet func, pNPdbHost host ,char* statement) // Comment function out later, lde @todo
 {
 	int err = 0;
 //	printf("\nnpdbQuery_safe");
@@ -1077,6 +1183,8 @@ int npdbShowTables( pNPdbHost host)
 	
 }
 
+
+// Create npdbShowQuery function, lde @todo
 
 /*! SHOW DATABASES is used to get our DB list for the host.
 	After, you must call fetch_result and free the result.
@@ -1134,8 +1242,11 @@ int npdbClearDatabaseList( pNPdbs dbs )
 	{
 		/// only free the items that are within the count
 	//	if( i < dbs->dbCount && dbs->dbList[i] )
-			free( dbs->dbList[i] );
-
+			if( dbs->dbList[i] != NULL)
+			{
+				free( dbs->dbList[i] );
+			}
+		
 		dbs->dbList[i] = NULL;	/// set entire list of pointers to NULL
 	}
 
@@ -1145,7 +1256,7 @@ int npdbClearDatabaseList( pNPdbs dbs )
 	return 0;		//success
 }
 
-/// @returns a new initialized database item 
+/// @returns a new initialized database item  // rewrite this, lde @todo
 pNPdatabase npdbNewDatabase( char* name, pNPdbHost host, pNPdbs db )
 {
 	pNPdatabase database = NULL;
@@ -1192,7 +1303,7 @@ pNPdatabase npdbAddDatabase( char* dbName, pNPdbHost host, pNPdbs dbs )
 				&& strcmp( dbName, dbItem->name ) == 0 )
 			{
 				printf("\ndbs->inUSEDB2 : %s", dbs->inUseDB2);
-				
+				dbItem->host = host; // temp, lde
 				return dbItem;	/// exit nothing to do, return existing item
 			}
 		}
@@ -1260,7 +1371,7 @@ int npdbAddHostDatabases( pNPdbHost host, pNPdbs dbs )
 	host->dbCount = numRows;
 	printf( "host: %.32s  databases: %d\n", host->ip, numRows );
 	
-	/// iterate through each row and add it to the database list
+	/// iterate through each row and add it to the database list // create function, npdbAddRowToDatabaseList lde @todo
 	/// http://dev.mysql.com/doc/refman/5.0/en/mysql-fetch-row.html
 	while( row = func->fetch_row(result) )
 	{
@@ -1275,7 +1386,7 @@ int npdbAddHostDatabases( pNPdbHost host, pNPdbs dbs )
 		/// copy our database cell to our local dbName cstr
 		dbName[0] = '\0'; /// starting with '\0' is important for strncat
 		
-			strncat( dbName, row[0], fieldLengths[0] );  //strncat adds '\0'
+			strncat( dbName, row[0], fieldLengths[0] );  //strncat adds '\0' 
 		
 			/// post first couple rows
 			if ( i++ < 3 )
@@ -1765,7 +1876,7 @@ int npdbLoadTags ( pNPdbFuncSet func, void* result, void* dataRef )
 int npdbTableRowsToNodes() // lde @todo
 {
 
-	
+
 }
 
 int npdbLoadNodes( pNPdbFuncSet func, void* result, void* dataRef ) // npdbLoadNodesFromTable , lde @todo
@@ -2083,10 +2194,18 @@ void* npdbGetFieldList(pNPdbTable tbl, int* err, void* dataRef)
 	err = (int*)0;
 //	printf("\nerr : %d", (int*)err);
 	
-	if(fields == NULL)
+	if( fields == NULL )
 	{
+		printf("Fields are NULL");
 		err = (int*)1234; // find proper error code, lde @todo
 		return fields;
+	}
+	
+	if( tbl == NULL )
+	{
+		printf("\nTable is NULL");
+		err = (int*)2345; // add error code, lde @todo
+		return NULL;
 	}
 	
 	for(i = 0;i < tbl->fieldCount; i++)
@@ -2198,7 +2317,15 @@ pNPdbTable npdbFindTableByFields( pNPdatabase db, char* fields, int* err, void* 
 	for(i = 0; i < tableCount; i++)
 	{
 		table = db->tableList[i];
-		test_tbl_fields = npdbGetFieldList(table, err, dataRef);
+		if(table->fieldsStr == NULL)
+		{
+			test_tbl_fields = npdbGetFieldList(table, err, dataRef);
+		}
+		else {
+			test_tbl_fields = table->fieldsStr;
+		}
+
+		
 		if( strcmp(test_tbl_fields, fields) == 0 )
 		{
 			printf("\nFound It");
@@ -3350,6 +3477,7 @@ int npdbLoadMenuItem (int item, void* dataRef)
 	if( err = npdbLoadScene( dbItem, data ) )
 		printf( "err 5588 - menu item function fail code: %d", err);
 	
+	
 	printf("\n3 activeDB->name : %s", activeDB->name);
 	return err;	//success
 }
@@ -3775,42 +3903,168 @@ pNPdatabase npdbCreateDatabase( char* dbName, pNPdbHost host, pNPdbs dbs )
 
 // lde @todo
 //int npdbCreateTableQuery(void* conn, pNPdbFuncSet func, pNPdbHost host, 
+void npdbCreateTableQuery( pNPdatabase database, char* name, char* fields, int* err, void* dataRef )
+{
+	char* statement = NULL;
+	
+	npdbUse(database, dataRef);
+	statement = npMysqlStatementCreateTable(name, fields); // Replace with npdbStatementCreateTable, lde @todo
+	err = (int*)new_npdbQuery_safe(database, statement);
+	
+	free(statement);
+	
+	return;
+}
+
+void npdbCreateDatabaseQuery( char* name, int* err, void* dataRef )
+{
+	char* statement = NULL;
+	pData data = (pData) dataRef;
+	
+	statement = npMysqlStatementCreate( name );
+	// Check to make sure this is all right, lde @todo
+	npdbQuery_safe(data->io.db.activeDB->host->conn, data->io.db.activeDB->host->hostFuncSet, data->io.db.activeDB->host, statement);
+	
+	free(statement);
+	return;
+}
+
+// add to header, lde @todo
+pNPdbTable npdbNewTable( pNPdatabase database ,char* name, char* fields, int* err )
+{
+	pNPdbTable table = NULL;
+	
+	table = malloc(sizeof(NPdbTable));
+	if(table == NULL)
+	{
+		err = (int*)1279; // add error code, lde @todo
+		return table;
+	}
+		
+	table->owner = database;
+	
+	table->name = malloc( sizeof(char) * strlen(name) ); // Add error handling, lde @todo
+	strcpy(table->name, name);
+	
+	table->fieldsStr = malloc( sizeof(char) * strlen(fields) ); // Add error handling, lde @todo
+	strcpy(table->fieldsStr, fields);
+	
+	return table;
+}
 
 /// @todo make npCreateTable2 part of the function set and move to mysql
-int npdbCreateTable( pNPdatabase dbItem, char* table, char* fields )
+pNPdbTable npdbCreateTable( pNPdatabase dbItem, char* tableName, char* fields, int* err )
 {
-	int err = 0;
+	//int err = 0;
 	char* statement = NULL;
 	pNPdbFuncSet func = NULL;
 	pNPdbHost host = NULL;
+	pNPdbTable table = NULL;
 	void* conn = NULL;
 
-	if( err = npdbItemErr(dbItem) ) return err;
+//	if( err = npdbItemErr(dbItem) ) return err;
+	if( err = (int*)npdbItemErr(dbItem) ) return NULL;
 
+	
 	host = dbItem->host;
-	if( err = npdbHostErr(host) ) return err;
-
+//	if( err = npdbHostErr(host) ) return err;
+	if( err = (int*)npdbHostErr(host) ) return NULL;
+	
 	func = host->hostFuncSet;
 	conn = host->conn;
 
 	// Make func->StatementCreate("table") return func->StatementCreateTable , lde @todo
 	// Make func->StatementCreateTable(char* name, char* (*fields)() ) // lde @todo lets not calculate fields until we absolutely need it.
-	statement = func->StatementCreateTable( table, fields );
-	if( !statement ) return 5504;   //err 5506
-
+	statement = func->StatementCreateTable( tableName, fields );
+	if( !statement )
+	{
+		err = (int*)5504;
+		return NULL;   //err 5506
+	}
+		
 	//printf( "query: %0.64s...\n", statement ); // ??, lde
-	err = npdbQuery_safe(conn, func, host, statement);
+	err = (int*)npdbQuery_safe(conn, func, host, statement);
 	if( err )
 	{
 		printf("\nFailed to create table");
-		return err;
+		err = (int*)8372; // add error code, lde @todo
+		return NULL;
 	}
 	
-	dbItem->tableCount++; // This doesn't belong here, lde @todo
+//	dbItem->tableCount++; // This doesn't belong here, lde @todo
 //	dbItem->tableList[
-	
+	/*
+	// Now add a table to the tableList, lde @todo
+	printf("\nBefore Table Count : %d", dbItem->tableCount); // Create npdbAddTable, lde @todo
+	dbItem->tableList[dbItem->tableCount++] = malloc(sizeof(NPdbTable)); // Check if failed, lde @todo
+	printf("\nAfter Table Count : %d", dbItem->tableCount);
+	//strcpy(dbItem->tableList[dbItem->tableCount]->name, table);
+	dbItem->tableList[dbItem->tableCount-1]->id = dbItem->tableCount-1;
+	printf("\nTable ID : %d", dbItem->tableList[dbItem->tableCount-1]->id);
+	dbItem->tableList[dbItem->tableCount-1]->name = strdup(table); // strdup is potentially unsafe, lde @todo
+	dbItem->tableList[dbItem->tableCount-1]->fieldsStr = strdup(fields);
+	dbItem->tableList[dbItem->tableCount-1]->owner = dbItem;
+	// Implement deconstruction in npdbDropDatabase, lde @todo
+	*/
+	table = npdbNewTable(dbItem, tableName, fields, err);
+	npdbAddTable(dbItem, table, err);
+	 
 	free(statement);
-	return err;
+	return dbItem->tableList[dbItem->tableCount-1];
+}
+
+
+
+pNPdbTable npdbAddTable( pNPdatabase database, pNPdbTable table, int* err ) // Clean this up, lde @todo 8888
+{	
+	int i = 0;
+	pNPdbTable tableItem = NULL;
+	
+	if( table == NULL )
+	{
+		printf("\nTable is NULL");
+		return NULL;
+	}
+	
+	// Search tableList for existing entry matching name 
+	
+	for( i = 0; i < database->tableCount; i++ )
+	{
+		tableItem = database->tableList[i];
+		if(tableItem == NULL)
+			break;
+		
+		if( strcmp(tableItem->name, table->name) == 0 )
+		{
+			printf("\nTable already exists");
+			return tableItem;
+		}
+		
+	}
+	
+	database->tableList[database->tableCount] = table;
+	table->id = i;
+	database->tableCount++;
+
+	return database->tableList[database->tableCount-1];
+}
+
+void npdbDeleteTable( pNPdatabase database, pNPdbTable table, int* err )
+{
+	
+	if( table == NULL || database == NULL )
+	{
+		err = (int*)1287; // add error code, lde @todo
+		return;
+	}
+	
+	if( database->tableList[table->id] != NULL )
+	{
+		free( database->tableList[table->id] );
+		database->tableList[table->id] = NULL;
+		database->tableCount--;
+	}
+	
 }
 
 
@@ -3830,9 +4084,10 @@ char* npdbGetNodeTableFields(void* dataRef) // lde @todo
 	char* fields = NULL;
 	pNPdbFuncSet func = NULL;
 	pNPdbHost    host = NULL; // fix this, lde, @todo
-	func = host->hostFuncSet;
+//	func = host->hostFuncSet;
 	
-	fields = func->GetTableFields( kNPnode, dataRef );
+//	fields = func->GetTableFields( kNPnode, dataRef );
+	fields = npMysqlGetTableFields( kNPnode, dataRef);
 	
 	return fields;
 }
@@ -3986,6 +4241,42 @@ void npdbCreateNodeTable( pNPdatabase dbItem, pNPdbFuncSet func , int* err, void
 	
 	free(statement);
 	return ;
+}
+
+pNPdbTable new_npdbCreateNodeTable( pNPdatabase dbItem, int* err, void* dataRef)
+{
+	pNPdbTable nodeTable = NULL;
+	char* fields = NULL;
+	
+	fields = npdbGetNodeTableFields(dataRef);
+	if(!fields)
+	{
+		err = (int*)6352; // add error code, lde @todo
+		return NULL;
+	}
+		
+	nodeTable = npdbCreateTable(dbItem, "node_tbl", fields, err);
+	// I might need to free the fields now, lde @todo
+	
+	return nodeTable;
+}
+
+pNPdbTable new_npdbCreateTagTable( pNPdatabase dbItem, int* err, void* dataRef )
+{
+	pNPdbTable tagTable = NULL;
+	char* fields = NULL;
+	
+	fields = npdbGetTagTableFields(dbItem->host->hostFuncSet, dataRef);
+	if(!fields)
+	{
+		err = (int*)6352; // add error code, lde @todo
+		return NULL;
+	}
+	
+	tagTable = npdbCreateTable(dbItem, "tag_tbl", fields, err);
+	// I might need to free the fields now, lde @todo
+	
+	return tagTable;
 }
 
 int npdbCreateTagTable( pNPdatabase dbItem, void* dataRef)
@@ -4291,6 +4582,8 @@ void npdbSaveChMap (pNPdbTable table, void* dataRef)
 	pData data = (pData) dataRef;
 	char values[1024] = {'\0'};
 	int i = 0;
+	printf("\nnpdbSaveChMap");
+	printf("\ndata->io.ch.xrefIndex : %d", data->io.ch.xrefIndex);
 	
 	if(table == NULL)
 	{
@@ -4301,21 +4594,81 @@ void npdbSaveChMap (pNPdbTable table, void* dataRef)
 	
 	for( i = 0; i < data->io.ch.xrefIndex; i++ )
 	{
-		sprintf(values, "%d,%d,%d,%s,%d,%d,%d\n", i+1, data->io.ch.xref[i].channelNumber, 
+		sprintf(values, "%d,%d,%d,\"%s\",%d,%d,%d\n", i+1, data->io.ch.xref[i].channelNumber, 
 				data->io.ch.xref[i].trackOffset, data->io.ch.xref[i].attributeName, 0, 0, i+1);
+		printf("\nvalues : %s", values);
 		npdbInsertQuery(table, values, dataRef);
 		values[0] = '\0';
 	}
 	
 }
 
-// lde, @todo
-pNPdbTable new_npdbCreateTable(pNPdatabase database, char* table_name, char* fields, int* err)
+
+
+// add to header , lde @todo
+pNPdbTable new_npdbCreateTable(pNPdatabase database, char* table_name, char* fields, int* err, void* dataRef)
 {
 	pNPdbTable table = NULL;
 	
+	npdbCreateTableQuery(database, table_name, fields, err, dataRef);
+	
+	table = npdbNewTable(database, table_name, fields, err);
+	npdbAddTable(database, table, err);
 	
 	return table;
+}
+
+// add to header, lde @todo
+pNPdbTable TheNew_npdbCreateNodeTable( pNPdatabase database, int* err, void* dataRef )
+{
+	pNPdbTable nodeTable = NULL;
+	char* fields = NULL;
+	
+	//fields = npdbNodeTableFields(dataRef);
+	fields = npdbGetNodeTableFields(dataRef);
+	nodeTable = new_npdbCreateTable(database, "node_tbl", fields, err, dataRef);
+	
+	free(fields);
+	return nodeTable;
+}
+
+// add to header, lde @todo
+pNPdbTable TheNew_npdbCreateTagTable( pNPdatabase database, int* err, void* dataRef )
+{
+	pNPdbTable tagTable = NULL;
+	char* fields = NULL; // make this more specific, lde @todo
+	
+	//fields = npdbNodeTableFields(dataRef);
+	fields = npdbGetTagTableFields(database->host->hostFuncSet, dataRef); // This function doesn't need the funcSet, lde @todo
+	tagTable = new_npdbCreateTable(database, "tag_tbl", fields, err, dataRef);
+	
+	free(fields);
+	return tagTable;
+}
+
+pNPdbTable TheNew_npdbCreateChMapTable( pNPdatabase database, int* err, void* dataRef )
+{
+	pNPdbTable chMapTable = NULL;
+	char* fields = NULL;
+	
+	fields = npdbGetChMapTableFields(dataRef);
+	chMapTable = new_npdbCreateTable(database, "chMap_tbl", fields, err, dataRef);
+	
+	free(fields);
+	return chMapTable;
+	
+}
+
+// add to header , lde @todo
+pNPdatabase new_npdbCreateDatabase( char* dbName, pNPdbHost host, pNPdbs dbs, int* err, void* dataRef ) //for now we'll pass pNPdbs dbs, lde @todo
+{
+	pNPdatabase database = NULL;
+	
+	npdbCreateDatabaseQuery(dbName, err, dataRef);
+	database = npdbNewDatabase(dbName, host, dbs);
+	npdbAddDatabase(dbName, host, dbs);
+	
+	return database;
 }
 
 /*
@@ -4360,27 +4713,36 @@ char* npdbGetChMapTableFields(void* dataRef)
 }
 
  
-int npdbCreateChMapTable(pNPdatabase dbItem, void* dataRef)
+pNPdbTable npdbCreateChMapTable(pNPdatabase dbItem, int* err, void* dataRef)
 {
+  pNPdbTable chMapTable = NULL;
   char* chMapTableFields = NULL;
-  int err = 0;
+//  int err = 0;
 
  // chMapTableFields = npdbGetFields(kNPchMap, dataRef); 
 //	chMapTableFields = npdbGetTableFields(kNPchMap, dataRef);
 //	chMapTableFields = npMysqlGetTableFields(kNPchMap, dataRef);
 	chMapTableFields = npdbGetChMapTableFields(dataRef);
-  if(chMapTableFields == NULL) return 7445; // Add error code, lde @todo  
-
-  err = npdbCreateTable(dbItem, "chmap_tbl", chMapTableFields); 
-  if(err) return err;
-
-  return err;
+  if(chMapTableFields == NULL)
+  {
+	  err = (int*)7445; // Add error code, lde @todo
+	  return chMapTable; 
+  }
+	  
+  chMapTable = npdbCreateTable(dbItem, "chmap_tbl", chMapTableFields, err); 
+  if(err) 
+  {
+	  err = (int*)3762; // add error code, lde @todo
+	  return chMapTable;
+  }
+	  
+  return chMapTable;
 }
 
 int new_npdbQuery_safe(pNPdatabase dbItem, char* statement)
 {
 	int err = 0;
-	pNPdatabase database = dbItem; // npdbGetOwnerFromTable,   lde @todo
+	pNPdatabase database = dbItem; // npdbGetOwnerFromTable,   lde @todo // change owner to database, lde @todo
 	pNPdbHost host = database->host;     // npdbGetHostFromDatabase, lde @todo
 	pNPdbFuncSet func = host->hostFuncSet;		 // npdbGetFuncSetFromHost,  lde @todo
 	
@@ -4417,7 +4779,8 @@ int npdbInsertQuery(pNPdbTable table, char* values, void* dataRef)
 	pNPdbHost host = npdbGetHostFromDatabase(database);
 	pNPdbFuncSet func = npdbGetFuncSetFromHost(host);
 	
-	statement = func->StatementInsert(table->name, values);
+	//statement = func->StatementInsert(table->name, values);
+	statement = npMysqlStatementInsert(table->name, values); // lde @todo
 	// It isn't necessary for npdbQuery to have more than two parameters
 	new_npdbQuery_safe(database, statement); // Create this function, lde @todo
 	return err;
@@ -4531,6 +4894,7 @@ int npdbStatementInsertQuery(char* row, char* table)
 }
 */
 
+// This should have int* err as a parameter, lde @todo
 pNPdatabase npdbSaveAs( char* dbName, pNPdbHost host, void* dataRef )
 {
 	int err = 0;
@@ -4543,9 +4907,11 @@ pNPdatabase npdbSaveAs( char* dbName, pNPdbHost host, void* dataRef )
 	pData data = (pData) dataRef;
 	pNPtags tags = &data->io.gl.hud.tags;
 	pNPdbs dbs = &data->io.db;
-	pNPdatabase dbItem = NULL;
-	pNPdbFuncSet func = NULL;
+	pNPdatabase dbItem    = NULL;
+	pNPdbFuncSet func     = NULL;
 	pNPdbTable chMapTable = NULL;
+	pNPdbTable nodeTable  = NULL;
+	pNPdbTable tagTable   = NULL;
 	
 	if( npdbHostErr(host) ) return NULL;
 	
@@ -4568,29 +4934,23 @@ pNPdatabase npdbSaveAs( char* dbName, pNPdbHost host, void* dataRef )
 	}
 
 	/// create new DB on specified host
-	dbItem = npdbCreateDatabase( dbName, host, dbs );
+	//dbItem = npdbCreateDatabase( dbName, host, dbs );
+	dbItem = new_npdbCreateDatabase( dbName, host, dbs, &err, dataRef);
 	if( !dbItem ) return NULL; 
 
 	/// now use the database so we may operate on it
 	err = npdbUse( dbItem, dataRef );
 	if( err ) return NULL;
-
-	/// add tables to the database, first get the fields descriptor
-	fields = func->GetTableFields( kNPnode, data ); // create npdbNodeTableFields, lde @todo
-//	fields = npMysqlGetTableFields( kNPnode, data );
-	if( !fields ) return NULL;
-
-	/// create the new table using fieldDesc
-	if( err = npdbCreateTable( dbItem, "node_tbl", fields ) )
-	{
-		free( fields ); 
-		return NULL; 
-	}
+	
+//	nodeTable = new_npdbCreateNodeTable(dbItem, &err, dataRef);
+	nodeTable = TheNew_npdbCreateNodeTable(dbItem, &err, dataRef);
+	if(err || nodeTable == NULL) return NULL; // lde @todo this might have edge cases I haven't thought of
 	
 	// We're going to go ahead and create a tag table and a ChMap table even if they'll be empty, lde
-	npdbCreateTagTable(dbItem, dataRef);
+	//npdbCreateTagTable(dbItem, dataRef);
+//	tagTable = new_npdbCreateTagTable(dbItem, &err, dataRef);
+	tagTable = TheNew_npdbCreateTagTable(dbItem, &err, dataRef);
 	// Check to see if tags exist
-//	npSyncTags(dataRef);
 	npdbSaveTags(dbItem, func, "tag_tbl", dataRef);
 
 	if(tags->recordCount > 0)
@@ -4600,11 +4960,6 @@ pNPdatabase npdbSaveAs( char* dbName, pNPdbHost host, void* dataRef )
 	else {
 		
 	}
-
-
-
-//	err = npdbSaveChMap
-	//
 
 /// @todo implement new DB save procedure for writing nodes in 4k blocks
 	nodes = npRevisedNodeValues( dataRef ); 
@@ -4622,14 +4977,31 @@ pNPdatabase npdbSaveAs( char* dbName, pNPdbHost host, void* dataRef )
 	}
 */
 	npNewFreeChunks( chunks, dataRef );
-/*  // Finished later, lde @todo
-	err = npdbCreateChMapTable(dbItem, dataRef); // Make npdbCreateTable return a pNPdbTable, lde @todo
-	chMapTable = npdbFindChMapTable(dbItem, &err, dataRef);
+
+	// Finished later, lde @todo
+//	chMapTable = npdbCreateChMapTable(dbItem, &err, dataRef); // Make npdbCreateTable return a pNPdbTable, lde @todo
+	chMapTable = TheNew_npdbCreateChMapTable(dbItem, &err, dataRef);
+//	chMapTable = npdbFindChMapTable(dbItem, &err, dataRef);
 	npdbSaveChMap(chMapTable, dataRef);
-*/
-     printf("\nnpdbCreateChMapTable err : %d", err);
-	if(err) return err;	// This should set err code, not return it, lde @todo
+
+	/* // testing, lde
+	npdbDropTable(tagTable, &err, dataRef);
+	npdbDropTable(nodeTable, &err, dataRef);
+	npdbDropTable(chMapTable, &err, dataRef);
+	tagTable = NULL; nodeTable = NULL; chMapTable = NULL;
 	
+	npdbDropTable(tagTable, &err, dataRef);
+	npdbDropTable(nodeTable, &err, dataRef);
+	npdbDropTable(chMapTable, &err, dataRef);
+	*/
+	
+     printf("\nnpdbCreateChMapTable err : %d", err);
+	if(err)
+	{
+		err = (int*)1729; // add error code, lde @todo
+		return NULL;	// This should set err code, not return it, lde @todo
+	}
+		
 	free( fields );
 
 	if( err )
@@ -4637,3 +5009,4 @@ pNPdatabase npdbSaveAs( char* dbName, pNPdbHost host, void* dataRef )
 
 	return dbItem;
 }
+

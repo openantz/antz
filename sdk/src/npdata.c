@@ -638,6 +638,7 @@ data->io.connectCount = 0;
 	osc->size = sizeof(NPosc) + size;
 }
 
+/*
 pNPdatabase npdbAddTable( void );
 pNPdatabase npdbAddTable( void )
 {
@@ -653,7 +654,8 @@ pNPdatabase npdbAddTable( void )
 
 	return database;
 }
-
+*/
+ 
 pNPdatabase npInitDatabase( void )
 {
 	pNPdatabase database = NULL;
