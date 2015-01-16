@@ -157,6 +157,7 @@ int npdbSelectTable( pNPdatabase dbItem, char* table );
 //int npdbSelectTable( pNPtable table );
 int npdbShowDatabases( pNPdbHost host );
 int npdbAddHostDatabases( pNPdbHost host, pNPdbs dbs );
+void npdbAddHost( char* type, char* ip, int port, char* user, char* pass, int* err, void* dataRef);
 int npdbNumFields_safe(void* result, pNPdbFuncSet func, int rightNum, int* err );
 
 int npdbHostErr( pNPdbHost host );
@@ -168,22 +169,34 @@ int npdbUpdateAntzStateFromDatabase( void* dataRef );	//zz db
 int npdbTruncate(void* conn, pNPdbFuncSet func, char* table); //zz db // changed a parameter, lde 
 int npdbPushScene ( void* dbID, const char* dbName, void* dataRef );
 int npDropDatabase(int dbID, pNPdbFuncSet FuncSet, const char* dbName, void* dataRef );
-pNPdatabase npdbSaveAs( char* dbName, pNPdbHost host, void* dataRef );
+pNPdatabase npdbSaveAs( char* dbName, pNPdbHost host, int* err, void* dataRef );
 
 pNPdbFuncSet npdbNewFuncSet( pNPdbs dbs );
 pNPdbTable npdbFindTagTbl( pNPdatabase db, int* err, void* dataRef);
 pNPdbTable new_npdbCreateNodeTable( pNPdatabase dbItem, int* err, void* dataRef);
 pNPdbTable npdbCreateTable( pNPdatabase dbItem, char* table, char* fields, int* err );
+void npdbDropDatabase( pNPdatabase database, int* err, void* dataRef );
+void npdbCreateTableQuery( pNPdatabase database, char* name, char* fields, int* err, void* dataRef );
+void npdbSaveChMap (pNPdbTable table, int* err, void* dataRef);
+void npdbInsertQuery(pNPdbTable table, char* values, int* err, void* dataRef);
 
 
 int npdbClearDatabaseList( pNPdbs dbs );
 int npdbQuery_safe(void* conn, pNPdbFuncSet func, pNPdbHost host ,char* statement); // Organize these new function prototypes, lde @todo
 int npdbNumRows_safe(void* result, pNPdbFuncSet func, int* err);
+pNPdbTable npdbNewTable( pNPdatabase database ,char* name, char* fields, int* err );
+void npdbDropTable( pNPdbTable table, int* err, void* dataRef );
+
+pNPdatabase new_npdbCreateDatabase( char* dbName, pNPdbHost host, pNPdbs dbs, int* err, void* dataRef ); //for now we'll pass pNPdbs dbs, lde @todo
+pNPdbFuncSet npdbGetFuncSetFromHost(pNPdbHost host);
+pNPdbHost npdbGetHostFromDatabase( pNPdatabase database );
+int npdbLoadTagTbl( pNPdatabase dbItem, void* dataRef );
+int new_npdbQuery_safe( pNPdatabase dbItem, char* statement );
 
 /// @todo add error handling and cleanp-up the newly added methods
 /// @todo add support for all table types: tag, chmap, tracks, globals, etc...
 
-int npdbLoadNodes( pNPdbFuncSet func, void* result, void* dataRef);
+int npdbLoadNodes( pNPdbFuncSet func, void* result, int* err, void* dataRef);
 pNPtag npGetTagFromNode(pNPnode node, void* dataRef);
 
 pNPmenu npdbGetMenu ( pNPmenu menu, void* dataRef);

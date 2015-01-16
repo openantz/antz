@@ -35,7 +35,7 @@ void* nposLoadLibrary( char* filePath );	/// @todo move load library to npos.h
 int npMysqlHook( pNPdbFuncSet func, void* dbLib);
 pNPdbFuncSet npMysqlAddFuncSet( pNPdbs db, pNPdbFuncSet funcSet );
 int npMysqlInitConnOptions( pNPdbFuncSet func , void* connInit );
-
+char* new_npMysqlStatementInsertFromChunk(char* table, struct newChunkObj *theChunk);
 
 /*! Loads the MySQL Connector client library.
 	- Creates a new function set and hooks the MySQL specific methods.
@@ -199,7 +199,7 @@ char* npdbShowDatabasesStatement( char* (*showStatement)(), char* (*dbStatement)
 }
 
 
-
+/* // delete, lde @todo
 void new_npdbShowDatabases(pNPdbFuncSet func, pNPdbHost host, void* dataRef)
 {
 	char* statement = NULL;
@@ -215,6 +215,7 @@ void new_npdbShowDatabases(pNPdbFuncSet func, pNPdbHost host, void* dataRef)
 	
 	free(statement);
 }
+*/
 
 /*! Hook MySQL specific external library methods and local utility functions.
 	@param func is an initialized funcSet structure to be hooked up.
@@ -672,7 +673,7 @@ char* npMysqlGetTableFields( int type, void* dataRef ) // @todo, lde, make a npd
 		return NULL;
 	}
 	
-	printf("\nFields allocated\n");
+//	printf("\nFields allocated\n");
 
 	map = data->map.typeMapNode;		//debug, zz
 	

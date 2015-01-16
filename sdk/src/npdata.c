@@ -726,6 +726,7 @@ pNPdbHost npInitHostDB( void )
 void npInitDataDB (void* dataRef)
 {
 	int i = 0;
+	int err = 0;
 	
 	pData data = (pData) dataRef;
 	pNPdbs db = &data->io.db;
@@ -761,7 +762,7 @@ void npInitDataDB (void* dataRef)
 	
 	printf("\nnpdbAddHost");
 //	npdbAddHost( "mysql", "localhost", 3306, "root", "admin", data );
-	npdbAddHost("mysql", "127.0.0.1", 3306, "root", "admin", data);
+	npdbAddHost("mysql", "127.0.0.1", 3306, "root", "admin", &err, data);
 //	npdbAddHost("mysql", "192.168.1.130", 3306, "root", "admin", data);
 
 	

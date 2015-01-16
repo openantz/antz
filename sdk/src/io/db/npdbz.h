@@ -137,7 +137,7 @@ void npNewFreeChunks(struct newChunksObj * chunks, void* dataRef);
 int npOpenDb(struct database *db);
 // int npAttachDbsToDataRef(struct databases *dbs, void* dataRef); // old, lde
 
-int npdbAddHost(  char* type, char* ip, int port, char* user, char* pass, void* dataRef);	//zzd
+
 int npdbLoadNodeTbl( pNPdatabase dbItem, void* dataRef );
 
 //void npMysqlHook_old (HINSTANCE dbLib, void* dataRef); // lde

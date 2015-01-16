@@ -2173,6 +2173,7 @@ enum kNP_COMMAND_TRIGGER {
 
 	kNPcmdConsole,
 	kNPcmdViewer,
+	kNPcmdViewer2, //lde @todo
 
 	//!<global graph commands
 	kNPcmdMenu = 4242,

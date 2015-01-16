@@ -166,7 +166,7 @@ void npInitKey (void* dataRef)
 
 
 	//Fire Commands only respond to key down event
-	key->map[kKeyDown][kKeyCodeM]				= kNPcmdMenu;
+	key->map[kKeyDown][kKeyCodeM]				= kNPcmdViewer2; //kNPcmdMenu; // moved, lde @todo
 
 	key->map[kKeyDown][kKeyCodeBackSlash]		= kNPcmdSubsample;			//zzhp
 

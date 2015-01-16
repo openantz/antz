@@ -555,10 +555,10 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 //	pNPdbCSVwrite threadData = NULL;
 	
 	
-	printf("\nnpConsoleMenuText");
-	printf("\nhostCount : %d", data->io.db.hostCount);
+//	printf("\nnpConsoleMenuText");
+//	printf("\nhostCount : %d", data->io.db.hostCount);
  // temp, lde @todo
-	printf("\nactiveDB : %p", activeDB);
+//	printf("\nactiveDB : %p", activeDB);
 	if( activeDB )
 	{
 	//	host = activeDB->host;  //active->host is frequently null here, this is cause of console crash, lde
@@ -871,7 +871,7 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 					npPostMsg(msg, kNPmsgView, dataRef);
 					
 					//zzd fix
-					if( npdbSaveAs( input, host, dataRef ) == NULL )
+					if( npdbSaveAs( input, host, &err, dataRef ) == NULL )
 						sprintf( msg, "err 5402 - failed to Save DB: %s", input);
 					else
 						strcpy( msg, "Done Saving!" );
@@ -937,8 +937,8 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 	}
 	else
 	{
-		printf("\nInput : %s", input);
-		printf("\nconsole->inputStr : %s", console->inputStr);
+	//	printf("\nInput : %s", input);
+	//	printf("\nconsole->inputStr : %s", console->inputStr);
 		itemChosen = npatoi( console->inputStr);
 
 		if ( itemChosen > 0 && itemChosen <= console->menu->count )
@@ -1527,7 +1527,7 @@ void npUpdateConsoleMenu (pNPconsole console, void* dataRef)
 	//printf("\ndata->io.db.activeDB->host->inUseDB :: %s", data->io.db.activeDB->host->inUseDB); // temp, lde @todo
 	
 //	strcpy(activeDB->name, data->io.db.activeDB->host->inUseDB);
-	printf("\n111 data->io.db.activeDB->name ptr : %p", data->io.db.activeDB->name);
+//	printf("\n111 data->io.db.activeDB->name ptr : %p", data->io.db.activeDB->name);
 	
 	//data->io.db.activeDB->name[0] = 'A';
 	
@@ -1541,9 +1541,9 @@ void npUpdateConsoleMenu (pNPconsole console, void* dataRef)
 		{
 	//		strcpy(activeDB->name, "things");
 //			strncpy(activeDB->name, "things", 6);
-			printf("\nQQQ");
+			//printf("\nQQQ");
 			//strncpy( data->io.db.activeDB->name, "things", 6); // temp, lde @todo
-			printf("\nRRR");
+			//printf("\nRRR");
 		//	sprintf( msg, "Active DB: %s", data->io.db.activeDB->name);//, hostName ); // temp, lde @todo
 			sprintf( msg, "Active DB: %s", data->io.db.inUseDB2);
 		//	sprintf( msg, "Active DB: %s", " ");

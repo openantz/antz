@@ -190,9 +190,9 @@ void npViewDatabases (void* dataRef)
 
 	console->menu = &console->menuStruct;
 
-	printf("\nbefore npdbGetMenu");
+	//printf("\nbefore npdbGetMenu");
 	console->menu = npdbGetMenu(console->menu, dataRef); //get the list
-	printf("\nafter npdbGetMenu");
+	//printf("\nafter npdbGetMenu");
 	
 	if (console->menu == NULL)
 	{
@@ -200,7 +200,7 @@ void npViewDatabases (void* dataRef)
 		return;					//failed to get menu
 	}
 	//call menu function, pass list ptr and callback function ptr
-	printf("\n7 activeDB ptr : %p", data->io.db.activeDB);
+//	printf("\n7 activeDB ptr : %p", data->io.db.activeDB);
 //	strcpy(data->io.db.activeDB->name, "things");
 //	printf("\n6 activeDB->Name : %s\n", data->io.db.activeDB->name); // temp, lde @todo
 	npConsoleMenu (npdbLoadMenuItem, console, dataRef);

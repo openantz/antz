@@ -200,6 +200,7 @@ void npCtrlCommand (int command, void* dataRef)
 		case kNPcmdOpenAntz : npCtrlFile (command, dataRef); break;
 
 		case kNPcmdViewer : npCtrlFile (command, dataRef); break;
+		case kNPcmdViewer2 : npCtrlFile (command, dataRef); break;
 		case kNPcmdConsole : npCtrlGlobal (command, dataRef); break;
 
 		case kNPcmdMenu : npCtrlGlobal (command, dataRef); break;
@@ -414,6 +415,13 @@ void npCtrlFile (int command, void* dataRef)
 			}
 			break;
 
+		case kNPcmdViewer2 :
+				if (data->io.key.modShift)
+					npdbSaveUpdate( data->io.db.activeDB, dataRef );	///< save scene to active DB
+				else
+					npdbLoadUpdate( dataRef );	///< load scene update from DB
+			break;
+			
 		case kNPcmdFileOpen :
 			npFileBrowser (dataRef);
 			break;

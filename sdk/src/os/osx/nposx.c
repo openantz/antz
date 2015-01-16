@@ -105,17 +105,17 @@ void* nposLoadLibrary( char* filePath )
 void* nposGetLibSymbol(void* library, char* symbolName) // New function, lde
 {
 	void* symbol = nposxGetLibSymbol(library, symbolName);
-	printf("\nlibrary : %p", library);
-	printf("\nsymbolName : %s", symbolName);
+//	printf("\nlibrary : %p", library);
+//	printf("\nsymbolName : %s", symbolName);
 	return symbol;
 }
 
 void* nposxGetLibSymbol(void* library, char* symbolName) // New function, lde
 {
 	void* symbol = dlsym(library, symbolName);
-	printf("\ndbLibrary ptr : %p", library);
-	printf("\nsymbol : %p", symbol);
-	printf("\ndlerror : %s", dlerror());
+//	printf("\ndbLibrary ptr : %p", library);
+//	printf("\nsymbol : %p", symbol);
+//	printf("\ndlerror : %s", dlerror());
 	dlerror();
 	return symbol;
 }
