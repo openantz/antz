@@ -152,6 +152,8 @@ void npdbAttachHostFuncSets( pNPdbs dbs );
 
 pNPdatabase npdbGetByName( char* dbName, void* dataRef);
 
+void* npdbMalloc(int size, void* dataRef);
+void npdbFree( void* ptr, void* dataRef);
 int npdbUse( pNPdatabase dbItem, void* dataRef );
 int npdbSelectTable( pNPdatabase dbItem, char* table );
 //int npdbSelectTable( pNPtable table );

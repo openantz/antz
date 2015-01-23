@@ -294,8 +294,10 @@ typedef struct NPdatabase * pNPdatabase;
 struct NPdbs { // Should this be renamed to NPdbServer, lde @todo
 	void* coreNode; ///< core nodes tie global structures to the scene graph
 	
+	void*		ptrList[100];			// new, lde @todo // 100, arbritary
+	int			ptrCount;
 	bool			running;				///< true if hosts are connected
-	void			(*connectHosts)(); // new, lde
+	void			(*connectHosts)();		// new, lde
 	pNPdbHost		hosts[kNPdbHostMax];	///< list of database hosts
 	int				hostCount;				///< number of DB host servers
 	

@@ -731,6 +731,7 @@ void npInitDataDB (void* dataRef)
 	pData data = (pData) dataRef;
 	pNPdbs db = &data->io.db;
 
+	npdbInitPtrList(&data->io.db, &err, dataRef);
 	db->coreNode = NULL;	///< core nodes are created after all data map inits.
 							///< npAddCoreNode( kNPcoreDB, db, dataRef );
 							///< init the core node, creates one if does not exist

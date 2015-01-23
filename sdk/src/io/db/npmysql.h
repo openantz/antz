@@ -45,7 +45,7 @@ char* npMysqlStatementInsert(char* table, char* values);
 char* npMysqlStatementSelect(char* table);
 char* npMysqlStatementTruncate( int dbID, char* tableName );
 char* npMysqlStatementUpdate( int dbID, char* tableName );
-char* npMysqlStatementDrop(char* dropType, char* dropName);
+char* npMysqlStatementDrop(char* dropType, char* dropName, void* dataRef);
 
 //char* new_npMysqlStatementInsertFromChunk(char* table, struct newChunkObj *theChunk);
 

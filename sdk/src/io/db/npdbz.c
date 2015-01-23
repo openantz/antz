@@ -51,7 +51,7 @@ void assignNodePropertiesFromArray(char** row, pNPnode node)
 	{
 		return;
 	}
-		
+	
 	if(node->type == 1)
 	{
 		printf("\nnode->type is 1, returning");
@@ -206,7 +206,6 @@ void updateNodeFromMysqlRow (MYSQL_ROW *row, void* dataRef) // Generalize here
 	pNPnode node = NULL;
 //	pNPnode nodeParent = NULL; // Warning, lde
 	int id = 0;
-
 	
 	id = atoi( (const char*)row[0] );
 
@@ -214,8 +213,8 @@ void updateNodeFromMysqlRow (MYSQL_ROW *row, void* dataRef) // Generalize here
 	//node = npGetNodeByID(data->io.dbs->activeDB[0].idMap[id], dataRef); // old, lde
 	//printf( "\nBefore npGetNodeByID" );
 //	printf( "\ndata->io.db.activeDB->idMap[%d] = %d", id, data->io.db.activeDB->idMap[id] );
-	//printf( "\ndata->io.db.activeDB->idMap[%d]", id);
-	//printf( " = %d", data->io.db.activeDB->idMap[id] );
+	printf( "\ndata->io.db.activeDB->idMap[%d]", id);
+	printf( " = %d", data->io.db.activeDB->idMap[id] ); // If one saves off a database then does an update, it doesn't create an idMap, lde @todo
 	//printf( "\nactiveDB :: %p", data->io.db.activeDB);
 	node = npGetNodeByID(data->io.db.activeDB->idMap[id], dataRef);
 	//printf("\nAfter npGetNodeByID : node ptr %p", node); 

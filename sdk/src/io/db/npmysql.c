@@ -358,9 +358,11 @@ int npMysqlInitConnOptions( pNPdbFuncSet func, void* connInit )
 	return 0;  //success
 }
 
-char* npMysqlStatementDrop(char* dropType, char* dropName)
+char* npMysqlStatementDrop(char* dropType, char* dropName, void* dataRef)
 {
-	char* statement = malloc(sizeof(char) * (7 + strlen(dropType) + strlen(dropName)));
+	//char* statement = malloc(sizeof(char) * (7 + strlen(dropType) + strlen(dropName)));
+	pData data = (pData) dataRef;
+	char* statement = npdbMalloc( ( sizeof(char) * (7 + strlen(dropType) + strlen(dropName)) ) , dataRef);
 	if( statement )
 		sprintf(statement, "DROP %s %s", dropType, dropName);
 
