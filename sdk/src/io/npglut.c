@@ -560,7 +560,12 @@ void npglFullscreen (void* dataRef)
 void npGlutKeyDown (unsigned char key, int x, int y) 
 {
 	// printf("1 key: %d \n", key);
-	npKeyGlut (key, x, y, kGlutKeyDown, 0);		// glutGetModifiers()); //zz debug, not a problem here, just no longer needed
+	int special = 0;
+	special = glutGetModifiers();
+	//printf("\nSpecial : %d", special);
+	//printf("\nKey : %c", key);
+//	npKeyGlut (key, x, y, kGlutKeyDown, 0);		// glutGetModifiers()); //zz debug, not a problem here, just no longer needed
+	npKeyGlut (key, x, y, kGlutKeyDown, special);		// glutGetModifiers()); //zz debug, not a problem here, just no longer needed
 }
 
 //------------------------------------------------------------------------------
@@ -573,8 +578,10 @@ void npGlutKeyUp (unsigned char key, int x, int y)
 //------------------------------------------------------------------------------
 void npGlutKeyDownSpecial (int key, int x, int y) 
 {
-	// printf("3 key: %d \n", key);
-	npKeyGlut (key, x, y, kGlutKeyDownSpecial, 0);	// glutGetModifiers());	
+	int special = 0;
+	special = glutGetModifiers();  // temp, lde @todo
+	 printf("3 key: %d \n", key);
+	npKeyGlut (key, x, y, kGlutKeyDownSpecial, special);	// glutGetModifiers());	
 	
 	//zz debug, if glutGetModifiers() called from a ...Special callback 
 	//then err - "freeglut glutGetModifiers() called outside an input callback"

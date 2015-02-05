@@ -1494,7 +1494,7 @@ int npCSVtoC (pNPrecordSet recSet, const char* read, int size, void* dataRef)
 }
 
 //-----------------------------------------------------------------------------
-//zz debug, use a func ptr to npLoadCSV() from genreic parent file IO process	
+//zz debug, use a func ptr to npLoadCSV() from generic parent file IO process	
 int npLoadTags (const char* buffer, int size, void* dataRef)
 {
 	int ver = 0;				//zz debug, replace with table specific func ptr

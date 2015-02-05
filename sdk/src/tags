@@ -46,9 +46,9 @@ DumpChannel	io/npch.c	/^void DumpChannel(char* str, pNPch ch)$/;"	f
 EchoFloat	io/net/nposcpack.cpp	/^	void EchoFloat( int registrationOffset, const char* outgoingMessage, int portNumber )$/;"	f	class:OscTrackPacketListener
 GetOutgoingFloatAddress	io/net/nposcpack.cpp	/^   float* GetOutgoingFloatAddress( const char* floatTargetOscAddress )$/;"	f	class:OscTrackPacketListener
 GetOutgoingFloatValue	io/net/nposcpack.cpp	/^	float GetOutgoingFloatValue(int offset)$/;"	f	class:OscTrackPacketListener
-GetTableFields	data/nptypes.h	/^	void* (*GetTableFields)			();	\/\/\/creates the table fields descrisptor$/;"	m	struct:NPdbFuncSet
+GetTableFields	data/npdbTypes.h	/^	void* (*GetTableFields)			();	\/\/\/creates the table fields descrisptor$/;"	m	struct:NPdbFuncSet
 GetTrackOffset	io/npch.c	/^int GetTrackOffset(char** trackScanner, char* propertyName)$/;"	f
-InitConnOptions	data/nptypes.h	/^	int   (*InitConnOptions)		();$/;"	m	struct:NPdbFuncSet
+InitConnOptions	data/npdbTypes.h	/^	int   (*InitConnOptions)		();$/;"	m	struct:NPdbFuncSet
 InitNodeGrid	data/npnode.c	/^void InitNodeGrid (pNPnode node)$/;"	f
 InitNodePin	data/npnode.c	/^int InitNodePin (pNPnode node)$/;"	f
 InitNodePoints	data/npnode.c	/^void InitNodePoints (pNPnode node)$/;"	f
@@ -73,7 +73,10 @@ NPCONSOLE_H_	io/npconsole.h	26;"	d
 NPCSV_H_	io/file/npcsv.h	26;"	d
 NPCURL_H_	io/net/npcurl.h	26;"	d
 NPDATA_H_	npdata.h	26;"	d
+NPDBTYPES_H_	data/npdbTypes.h	10;"	d
 NPDBZ_H_	io/db/npdbz.h	26;"	d
+NPDB_CALLCONV	data/npdbTypes.h	16;"	d
+NPDB_CALLCONV	data/npdbTypes.h	18;"	d
 NPDB_H_	io/db/npdb.h	26;"	d
 NPDOT_H_	io/file/npdot.h	26;"	d
 NPFILE_H_	io/npfile.h	26;"	d
@@ -109,16 +112,16 @@ NPTYPES_H_	data/nptypes.h	26;"	d
 NPVIDEO_H_	io/video/npvideo.h	26;"	d
 NPWRANGLER_H_	data/npwrangler.h	26;"	d
 NPXML_H_	io/file/npxml.h	26;"	d
-NP_APP_FREEGLUT	data/nptypes.h	45;"	d
-NP_DATABASE	data/nptypes.h	/^enum NP_DATABASE {$/;"	g
-NP_DB_CONTENT_TYPES	data/nptypes.h	/^enum NP_DB_CONTENT_TYPES $/;"	g
+NP_APP_FREEGLUT	data/nptypes.h	46;"	d
+NP_DATABASE	data/npdbTypes.h	/^enum NP_DATABASE {$/;"	g
+NP_DB_CONTENT_TYPES	data/npdbTypes.h	/^enum NP_DB_CONTENT_TYPES $/;"	g
 NP_LINUX_	npdata.h	40;"	d
 NP_MSW_	npdata.h	33;"	d
 NP_OFXANTZ_H_	ofxantz.h	26;"	d
 NP_OSX_	npdata.h	38;"	d
-NP_PLUGIN_MYSQL	data/nptypes.h	58;"	d
-NP_PLUGIN_OSCPACK	data/nptypes.h	59;"	d
-NP_PLUGIN_SOIL	data/nptypes.h	61;"	d
+NP_PLUGIN_MYSQL	data/nptypes.h	59;"	d
+NP_PLUGIN_OSCPACK	data/nptypes.h	60;"	d
+NP_PLUGIN_SOIL	data/nptypes.h	62;"	d
 NP_POSIX_	npdata.h	35;"	d
 NPboolXYZ	data/nptypes.h	/^struct NPboolXYZ {$/;"	s
 NPboolXYZ	data/nptypes.h	/^typedef struct NPboolXYZ NPboolXYZ;$/;"	t	typeref:struct:NPboolXYZ
@@ -145,23 +148,33 @@ NPctrl	data/nptypes.h	/^typedef struct NPctrl NPctrl;$/;"	t	typeref:struct:NPctr
 NPdataItem	data/nptypes.h	/^struct NPdataItem$/;"	s
 NPdataItem	data/nptypes.h	/^typedef struct NPdataItem NPdataItem;$/;"	t	typeref:struct:NPdataItem
 NPdataItemPtr	data/nptypes.h	/^typedef struct NPdataItem * NPdataItemPtr;$/;"	t	typeref:struct:NPdataItem
-NPdatabase	data/nptypes.h	/^struct NPdatabase{$/;"	s
-NPdatabase	data/nptypes.h	/^typedef struct NPdatabase NPdatabase;$/;"	t	typeref:struct:NPdatabase
+NPdatabase	data/npdbTypes.h	/^struct NPdatabase{$/;"	s
+NPdatabase	data/npdbTypes.h	/^typedef struct NPdatabase NPdatabase;$/;"	t	typeref:struct:NPdatabase
 NPdatabase	io/db/npauxdb.h	/^struct NPdatabase {$/;"	s
-NPdatabases	data/nptypes.h	/^struct NPdatabases {$/;"	s
-NPdatabases	data/nptypes.h	/^typedef struct NPdatabases NPdatabases;$/;"	t	typeref:struct:NPdatabases
-NPdbFields	data/nptypes.h	/^struct NPdbFields{$/;"	s
-NPdbFields	data/nptypes.h	/^typedef struct NPdbFields NPdbFields;$/;"	t	typeref:struct:NPdbFields
-NPdbFuncSet	data/nptypes.h	/^struct NPdbFuncSet{$/;"	s
-NPdbFuncSet	data/nptypes.h	/^typedef struct NPdbFuncSet NPdbFuncSet;$/;"	t	typeref:struct:NPdbFuncSet
-NPdbFunction	data/nptypes.h	/^struct NPdbFunction{$/;"	s
-NPdbFunction	data/nptypes.h	/^typedef struct NPdbFunction NPdbFunction;$/;"	t	typeref:struct:NPdbFunction
-NPdbHost	data/nptypes.h	/^struct NPdbHost{$/;"	s
-NPdbHost	data/nptypes.h	/^typedef struct NPdbHost NPdbHost;$/;"	t	typeref:struct:NPdbHost
-NPdbTable	data/nptypes.h	/^struct NPdbTable{$/;"	s
-NPdbTable	data/nptypes.h	/^typedef struct NPdbTable NPdbTable;$/;"	t	typeref:struct:NPdbTable
-NPdbs	data/nptypes.h	/^struct NPdbs {$/;"	s
-NPdbs	data/nptypes.h	/^typedef struct NPdbs NPdbs;$/;"	t	typeref:struct:NPdbs
+NPdatabases	data/npdbTypes.h	/^struct NPdatabases {$/;"	s
+NPdatabases	data/npdbTypes.h	/^typedef struct NPdatabases NPdatabases;$/;"	t	typeref:struct:NPdatabases
+NPdbCSVwrite	data/npdbTypes.h	/^struct NPdbCSVwrite$/;"	s
+NPdbCSVwrite	data/npdbTypes.h	/^typedef struct NPdbCSVwrite NPdbCSVwrite;$/;"	t	typeref:struct:NPdbCSVwrite
+NPdbFields	data/npdbTypes.h	/^struct NPdbFields{$/;"	s
+NPdbFields	data/npdbTypes.h	/^typedef struct NPdbFields NPdbFields;$/;"	t	typeref:struct:NPdbFields
+NPdbFuncSet	data/npdbTypes.h	/^struct NPdbFuncSet{$/;"	s
+NPdbFuncSet	data/npdbTypes.h	/^typedef struct NPdbFuncSet NPdbFuncSet;$/;"	t	typeref:struct:NPdbFuncSet
+NPdbFunction	data/npdbTypes.h	/^struct NPdbFunction{$/;"	s
+NPdbFunction	data/npdbTypes.h	/^typedef struct NPdbFunction NPdbFunction;$/;"	t	typeref:struct:NPdbFunction
+NPdbHost	data/npdbTypes.h	/^struct NPdbHost{$/;"	s
+NPdbHost	data/npdbTypes.h	/^typedef struct NPdbHost NPdbHost;$/;"	t	typeref:struct:NPdbHost
+NPdbLiteral	data/npdbTypes.h	/^struct NPdbLiteral {$/;"	s
+NPdbLiteral	data/npdbTypes.h	/^typedef struct NPdbLiteral NPdbLiteral;$/;"	t	typeref:struct:NPdbLiteral
+NPdbQuery	data/npdbTypes.h	/^struct NPdbQuery {$/;"	s
+NPdbQuery	data/npdbTypes.h	/^typedef struct NPdbQuery NPdbQuery;$/;"	t	typeref:struct:NPdbQuery
+NPdbReservedWord	data/npdbTypes.h	/^struct NPdbReservedWord {$/;"	s
+NPdbReservedWord	data/npdbTypes.h	/^typedef struct NPdbReservedWord NPdbReservedWord;$/;"	t	typeref:struct:NPdbReservedWord
+NPdbStringLiteral	data/npdbTypes.h	/^struct NPdbStringLiteral {$/;"	s
+NPdbStringLiteral	data/npdbTypes.h	/^typedef struct NPdbStringLiteral NPdbStringLiteral;$/;"	t	typeref:struct:NPdbStringLiteral
+NPdbTable	data/npdbTypes.h	/^struct NPdbTable{$/;"	s
+NPdbTable	data/npdbTypes.h	/^typedef struct NPdbTable NPdbTable;$/;"	t	typeref:struct:NPdbTable
+NPdbs	data/npdbTypes.h	/^struct NPdbs {$/;"	s
+NPdbs	data/npdbTypes.h	/^typedef struct NPdbs NPdbs;$/;"	t	typeref:struct:NPdbs
 NPfile	data/nptypes.h	/^struct NPfile$/;"	s
 NPfile	data/nptypes.h	/^typedef struct NPfile NPfile;$/;"	t	typeref:struct:NPfile
 NPfloatRGB	data/nptypes.h	/^struct NPfloatRGB {$/;"	s
@@ -209,8 +222,8 @@ NPmap	data/nptypes.h	/^struct NPmap {$/;"	s
 NPmap	data/nptypes.h	/^typedef struct NPmap NPmap;$/;"	t	typeref:struct:NPmap
 NPmapColor	data/nptypes.h	/^struct NPmapColor {$/;"	s
 NPmapColor	data/nptypes.h	/^typedef struct NPmapColor NPmapColor;$/;"	t	typeref:struct:NPmapColor
-NPmapID	data/nptypes.h	/^struct NPmapID{$/;"	s
-NPmapID	data/nptypes.h	/^typedef struct NPmapID NPmapID;$/;"	t	typeref:struct:NPmapID
+NPmapID	data/npdbTypes.h	/^struct NPmapID{$/;"	s
+NPmapID	data/npdbTypes.h	/^typedef struct NPmapID NPmapID;$/;"	t	typeref:struct:NPmapID
 NPmapItemNodeID	data/nptypes.h	/^struct NPmapItemNodeID {$/;"	s
 NPmapItemNodeID	data/nptypes.h	/^typedef struct NPmapItemNodeID NPmapItemNodeID;$/;"	t	typeref:struct:NPmapItemNodeID
 NPmapLink	data/nptypes.h	/^struct NPmapLink$/;"	s
@@ -237,6 +250,10 @@ NPnodeList	data/nptypes.h	/^struct NPnodeList {$/;"	s
 NPnodeList	data/nptypes.h	/^typedef struct NPnodeList NPnodeList;$/;"	t	typeref:struct:NPnodeList
 NPnodePropertyTracks	data/nptypes.h	/^struct NPnodePropertyTracks {$/;"	s
 NPnodePropertyTracks	data/nptypes.h	/^typedef struct NPnodePropertyTracks NPnodePropertyTracks;$/;"	t	typeref:struct:NPnodePropertyTracks
+NPos	data/nptypes.h	/^struct NPos {$/;"	s
+NPos	data/nptypes.h	/^typedef struct NPos NPos;$/;"	t	typeref:struct:NPos
+NPosFuncSet	data/nptypes.h	/^struct NPosFuncSet$/;"	s
+NPosFuncSet	data/nptypes.h	/^typedef struct NPosFuncSet NPosFuncSet;$/;"	t	typeref:struct:NPosFuncSet
 NPosc	data/nptypes.h	/^struct NPosc {$/;"	s
 NPosc	data/nptypes.h	/^typedef struct NPosc NPosc;$/;"	t	typeref:struct:NPosc
 NPoscItem	data/nptypes.h	/^struct NPoscItem {$/;"	s
@@ -267,6 +284,8 @@ NPrecordTag	data/nptypes.h	/^typedef struct NPrecordTag NPrecordTag;$/;"	t	typer
 NPsurface	data/nptypes.h	/^struct NPsurface$/;"	s
 NPsurface	data/nptypes.h	/^typedef struct NPsurface NPsurface;$/;"	t	typeref:struct:NPsurface
 NPsurfacePtr	data/nptypes.h	/^typedef struct NPsurface *NPsurfacePtr;$/;"	t	typeref:struct:NPsurface
+NPtables	data/npdbTypes.h	/^struct NPtables {$/;"	s
+NPtables	data/npdbTypes.h	/^typedef struct NPtables NPtables;$/;"	t	typeref:struct:NPtables
 NPtag	data/nptypes.h	/^struct NPtag$/;"	s
 NPtag	data/nptypes.h	/^typedef struct NPtag NPtag;$/;"	t	typeref:struct:NPtag
 NPtags	data/nptypes.h	/^struct NPtags {$/;"	s
@@ -315,21 +334,24 @@ SaveFileDialog	os/msw/npos.c	/^FILE* SaveFileDialog()$/;"	f
 SaveHeader	io/npch.c	/^void SaveHeader(int offset, char* header, void *dataRef)$/;"	f
 SaveHeaders	io/npch.c	/^int SaveHeaders(char** headers, void *dataRef)$/;"	f
 SetIncomingFloatValue	io/net/nposcpack.cpp	/^	void SetIncomingFloatValue( int offset, float value) \/\/ used just for testing$/;"	f	class:OscTrackPacketListener
-StatementCreate	data/nptypes.h	/^	void* (*StatementCreate)		();$/;"	m	struct:NPdbFuncSet
+StatementCreate	data/npdbTypes.h	/^	void* (*StatementCreate)		();$/;"	m	struct:NPdbFuncSet
 StatementCreate	io/db/npdbz.h	/^	void* (*StatementCreate)  ();$/;"	m	struct:dbFunction
-StatementCreateTable	data/nptypes.h	/^	void* (*StatementCreateTable)	();$/;"	m	struct:NPdbFuncSet
+StatementCreateNodeTable	data/npdbTypes.h	/^	void* (*StatementCreateNodeTable) ();$/;"	m	struct:NPdbFuncSet
+StatementCreateTable	data/npdbTypes.h	/^	void* (*StatementCreateTable)	();$/;"	m	struct:NPdbFuncSet
 StatementCreateTable	io/db/npdbz.h	/^	void* (*StatementCreateTable) ();$/;"	m	struct:dbFunction
-StatementDrop	data/nptypes.h	/^	void* (*StatementDrop)			();$/;"	m	struct:NPdbFuncSet
+StatementDBshow	data/npdbTypes.h	/^	void* (*StatementDBshow)		();$/;"	m	struct:NPdbFuncSet
+StatementDatabases	data/npdbTypes.h	/^	void* (*StatementDatabases)     ();$/;"	m	struct:NPdbFuncSet
+StatementDrop	data/npdbTypes.h	/^	void* (*StatementDrop)			();$/;"	m	struct:NPdbFuncSet
 StatementDrop	io/db/npdbz.h	/^	void* (*StatementDrop)    ();$/;"	m	struct:dbFunction
-StatementInsert	data/nptypes.h	/^	void* (*StatementInsert)		();$/;"	m	struct:NPdbFuncSet
+StatementInsert	data/npdbTypes.h	/^	void* (*StatementInsert)		();$/;"	m	struct:NPdbFuncSet
 StatementInsert	io/db/npdbz.h	/^	void* (*StatementInsert)  ();$/;"	m	struct:dbFunction
-StatementSelect	data/nptypes.h	/^	void* (*StatementSelect)		();$/;"	m	struct:NPdbFuncSet
+StatementSelect	data/npdbTypes.h	/^	void* (*StatementSelect)		();$/;"	m	struct:NPdbFuncSet
 StatementSelect	io/db/npdbz.h	/^	void* (*StatementSelect) ();$/;"	m	struct:dbFunction
-StatementShow	data/nptypes.h	/^	void* (*StatementShow)			();$/;"	m	struct:NPdbFuncSet
+StatementShow	data/npdbTypes.h	/^	void* (*StatementShow)			();$/;"	m	struct:NPdbFuncSet
 StatementShow	io/db/npdbz.h	/^	void* (*StatementShow)    ();$/;"	m	struct:dbFunction
-StatementTruncate	data/nptypes.h	/^	void* (*StatementTruncate)		();$/;"	m	struct:NPdbFuncSet
-StatementUpdate	data/nptypes.h	/^	void* (*StatementUpdate)		();$/;"	m	struct:NPdbFuncSet
-StatementUse	data/nptypes.h	/^	void* (*StatementUse)			();$/;"	m	struct:NPdbFuncSet
+StatementTruncate	data/npdbTypes.h	/^	void* (*StatementTruncate)		();$/;"	m	struct:NPdbFuncSet
+StatementUpdate	data/npdbTypes.h	/^	void* (*StatementUpdate)		();$/;"	m	struct:NPdbFuncSet
+StatementUse	data/npdbTypes.h	/^	void* (*StatementUse)			();$/;"	m	struct:NPdbFuncSet
 StatementUse	io/db/npdbz.h	/^	void* (*StatementUse)     ();$/;"	m	struct:dbFunction
 TRUE	io/gl/npgeometry.c	35;"	d	file:
 TestIt	io/net/nposcpack.cpp	/^extern "C" void TestIt()$/;"	f
@@ -388,14 +410,13 @@ a	data/nptypes.h	/^	void*		a;			\/\/!<points to an array of data pointers$/;"	m	
 action	io/db/npdbz.h	/^	int action; \/\/Create, Insert, Select, Alter, Show, etc...$/;"	m	struct:tableParameters
 active	data/nptypes.h	/^	int active;					\/\/!<targeting, dragging, actively using$/;"	m	struct:NPtool
 activeContext	data/nptypes.h	/^	int activeContext;$/;"	m	struct:NPuserEnvironment
-activeDB	data/nptypes.h	/^	pNPdatabase		activeDB;			\/\/\/< points to active DB in list$/;"	m	struct:NPdbs
-activeDB	io/db/npdbz.h	/^	struct database *activeDB;	\/\/\/< @todo make this single DB ptr to dbList or dbID index$/;"	m	struct:databases	typeref:struct:databases::database
+activeDB	data/npdbTypes.h	/^	pNPdatabase		activeDB;			\/\/\/< points to active DB in list$/;"	m	struct:NPdbs
 activeNode	data/nptypes.h	/^	int activeNode;$/;"	m	struct:NPuserEnvironment
 activeWindow	data/nptypes.h	/^	int activeWindow;$/;"	m	struct:NPuserEnvironment
 adapterInitialized	io/net/nposcpack.cpp	/^static bool adapterInitialized = false;$/;"	v	file:
 alphaMode	data/nptypes.h	/^	int			alphaMode;$/;"	m	struct:NPgl
 altIndex	data/nptypes.h	/^	int				altIndex;		\/\/!<alternate color (ie: black\/white)$/;"	m	struct:NPmapColor
-alter	data/nptypes.h	/^	void* (*alter)		    ();$/;"	m	struct:NPdbFuncSet
+alter	data/npdbTypes.h	/^	void* (NPDB_CALLCONV *alter)		    ();$/;"	m	struct:NPdbFuncSet
 alter	io/db/npdbz.h	/^	void* (*alter)  ();$/;"	m	struct:dbFunction
 angle	data/nptypes.h	/^	float x,y,z,angle;$/;"	m	struct:NPfloatXYZA
 antzFloatTargetOscAddress	io/net/nposcpack.cpp	/^	const char* antzFloatTargetOscAddress[10];       \/\/ where we put the result$/;"	m	class:OscTrackPacketListener	file:
@@ -421,6 +442,7 @@ b	data/nptypes.h	/^	float r,g,b,a;$/;"	m	struct:NPfloatRGBA
 b	data/nptypes.h	/^	float r,g,b;$/;"	m	struct:NPfloatRGB
 b	data/nptypes.h	/^	unsigned char r,g,b,a;$/;"	m	struct:NPubyteRGBA
 baseFloatValue	io/net/nposcpack.cpp	/^	float baseFloatValue[10];      \/\/ some floats are relative to existing value, so this is the starting value$/;"	m	class:OscTrackPacketListener	file:
+beginThread	data/nptypes.h	/^	void   (*beginThread)();$/;"	m	struct:NPosFuncSet
 bias	data/nptypes.h	/^	NPfloatRGBA	bias;						\/\/!<color shift$/;"	m	struct:NPvideo
 blackLevel	data/nptypes.h	/^	float		blackLevel;$/;"	m	struct:NPvideo
 blinkState	data/nptypes.h	/^	bool		blinkState;			\/\/!<blinking cursor state$/;"	m	struct:NPio
@@ -467,7 +489,7 @@ clearIndex	data/nptypes.h	/^	int			clearIndex;			\/\/!<background color index, b
 client_flag	io/db/npauxdb.h	/^	unsigned long client_flag;$/;"	m	struct:NPdatabase
 clipFar	data/nptypes.h	/^	float		clipFar;$/;"	m	struct:NPcamera
 clipNear	data/nptypes.h	/^	float		clipNear;$/;"	m	struct:NPcamera
-close	data/nptypes.h	/^	void* (*close)		    ();$/;"	m	struct:NPdbFuncSet
+close	data/npdbTypes.h	/^	void* (NPDB_CALLCONV *close)		    ();$/;"	m	struct:NPdbFuncSet
 close	io/db/npdbz.h	/^	void* (*close)  ();$/;"	m	struct:dbFunction
 cmDX	data/nptypes.h	/^	float		cmDX;$/;"	m	struct:NPmouse
 cmDY	data/nptypes.h	/^	float		cmDY;$/;"	m	struct:NPmouse
@@ -488,25 +510,30 @@ colorSpace	data/nptypes.h	/^	int			colorSpace;					\/\/!<8, 12bit, YUV, RGBA, XY
 colorSpace	data/nptypes.h	/^	int			colorSpace;					\/\/!<8, 12bit, YUV, RGBA, XYZ, CMYK...$/;"	m	struct:NPvideo
 commandIdx	io/net/nposcpack.cpp	/^	int commandIdx;$/;"	m	class:OscTrackPacketListener	file:
 comparePinsDistanceFromCamera	io/gl/npgldraw.c	/^int comparePinsDistanceFromCamera (const void* a, const void* b)$/;"	f
-conn	data/nptypes.h	/^	void*		conn;			\/\/\/< host connection handle$/;"	m	struct:NPdbHost
+conn	data/npdbTypes.h	/^	void*		conn;			\/\/\/< host connection handle$/;"	m	struct:NPdbHost
 conn	io/db/npauxdb.h	/^	MYSQL *conn;$/;"	m	struct:NPdatabase
 conn	io/db/npdbz.h	/^	void* conn;	$/;"	m	struct:tableParameters
+conn_id	data/npdbTypes.h	/^	unsigned long conn_id;		\/\/\/< Host's database thread id, lde$/;"	m	struct:NPdbHost
+conn_thread_id	data/npdbTypes.h	/^	void* (NPDB_CALLCONV *conn_thread_id) ();$/;"	m	struct:NPdbFuncSet
+connect	data/npdbTypes.h	/^	int			(*connect)();$/;"	m	struct:NPdbHost
+connect	data/npdbTypes.h	/^	void* (NPDB_CALLCONV *connect)		();$/;"	m	struct:NPdbFuncSet
 connect	data/nptypes.h	/^	pNPconnect	connect[kNPmaxConnect];	\/\/!<zz osc$/;"	m	struct:NPio
-connect	data/nptypes.h	/^	void* (*connect)		();$/;"	m	struct:NPdbFuncSet
 connect	io/db/npdbz.h	/^	void* (*connect)();$/;"	m	struct:dbFunction
 connect	io/db/npdbz.h	/^	void* (*connect)(void*);$/;"	m	struct:dbFunctions
 connectCount	data/nptypes.h	/^	int			connectCount;$/;"	m	struct:NPio
+connectHosts	data/npdbTypes.h	/^	void			(*connectHosts)(); \/\/ new, lde$/;"	m	struct:NPdbs
+connected	data/npdbTypes.h	/^	bool		connected;$/;"	m	struct:NPdbHost
 console	data/nptypes.h	/^	NPconsole	console;$/;"	m	struct:NPhud
 contrast	data/nptypes.h	/^	float		contrast;$/;"	m	struct:NPvideo
 coordA	data/nptypes.h	/^	NPfloatXYZ	coordA;			\/\/!<start point, mouse down$/;"	m	struct:NPtool
 coordB	data/nptypes.h	/^	NPfloatXYZ	coordB;			\/\/!<second point to define region$/;"	m	struct:NPtool
+coreNode	data/npdbTypes.h	/^	void* coreNode; \/\/\/< core nodes tie global structures to the scene graph$/;"	m	struct:NPdatabases
+coreNode	data/npdbTypes.h	/^	void* coreNode; \/\/\/< core nodes tie global structures to the scene graph$/;"	m	struct:NPdbs
 coreNode	data/nptypes.h	/^	void* coreNode; \/\/\/< core nodes tie global structures to the scene graph$/;"	m	struct:Data
 coreNode	data/nptypes.h	/^	void* coreNode; \/\/\/< core nodes tie global structures to the scene graph$/;"	m	struct:NPch
 coreNode	data/nptypes.h	/^	void* coreNode; \/\/\/< core nodes tie global structures to the scene graph$/;"	m	struct:NPconsole
 coreNode	data/nptypes.h	/^	void* coreNode; \/\/\/< core nodes tie global structures to the scene graph$/;"	m	struct:NPcpu
 coreNode	data/nptypes.h	/^	void* coreNode; \/\/\/< core nodes tie global structures to the scene graph$/;"	m	struct:NPctrl
-coreNode	data/nptypes.h	/^	void* coreNode; \/\/\/< core nodes tie global structures to the scene graph$/;"	m	struct:NPdatabases
-coreNode	data/nptypes.h	/^	void* coreNode; \/\/\/< core nodes tie global structures to the scene graph$/;"	m	struct:NPdbs
 coreNode	data/nptypes.h	/^	void* coreNode; \/\/\/< core nodes tie global structures to the scene graph$/;"	m	struct:NPfile
 coreNode	data/nptypes.h	/^	void* coreNode; \/\/\/< core nodes tie global structures to the scene graph$/;"	m	struct:NPgl
 coreNode	data/nptypes.h	/^	void* coreNode; \/\/\/< core nodes tie global structures to the scene graph$/;"	m	struct:NPhud
@@ -524,13 +551,13 @@ coreNode	data/nptypes.h	/^	void* coreNode; \/\/\/< core nodes tie global structu
 coreNode	data/nptypes.h	/^	void* coreNode; \/\/\/< core nodes tie global structures to the scene graph$/;"	m	struct:NPuserEnvironment
 cores	data/nptypes.h	/^	int cores;				\/\/!<NUMA systems have up to 2048+ cores per partition$/;"	m	struct:NPcpu
 coresPerCPU	data/nptypes.h	/^	int coresPerCPU;		\/\/!<1,2,4,6,8,12,16...$/;"	m	struct:NPcpu
+count	data/npdbTypes.h	/^	int			count;		\/\/\/< number of field columns$/;"	m	struct:NPdbFields
+count	data/npdbTypes.h	/^	int		count;		\/\/\/< number of item pairs in the lists$/;"	m	struct:NPmapID
 count	data/nptypes.h	/^	int					count;	\/\/\/< number of items in the list$/;"	m	struct:NPmapNodeID
 count	data/nptypes.h	/^	int				count;			\/\/!<number of items in list$/;"	m	struct:NPmapColor
 count	data/nptypes.h	/^	int			count;			\/\/!<number of items in list$/;"	m	struct:NPosc
 count	data/nptypes.h	/^	int			count;			\/\/!<number of items in list$/;"	m	struct:NPqueList
-count	data/nptypes.h	/^	int			count;		\/\/\/< number of field columns$/;"	m	struct:NPdbFields
 count	data/nptypes.h	/^	int			count;	\/\/!<zz debug, change to listCount$/;"	m	struct:NPtags
-count	data/nptypes.h	/^	int		count;		\/\/\/< number of item pairs in the lists$/;"	m	struct:NPmapID
 count	data/nptypes.h	/^	int		count;$/;"	m	struct:NPnodeList
 count	data/nptypes.h	/^	int		count;$/;"	m	struct:NPrecordSet
 count	data/nptypes.h	/^	int count;			\/\/!<number of items in the list$/;"	m	struct:NPmenu
@@ -538,6 +565,7 @@ counter	io/net/nposcpack.cpp	/^	int counter;$/;"	m	class:LineList	file:
 counter	io/npch.c	/^int counter = 0;$/;"	v
 cpu	data/nptypes.h	/^	NPcpu	cpu;$/;"	m	struct:NPctrl
 createEvent	data/nptypes.h	/^	bool		createEvent;			\/\/!<used to create click, but not drag so cam works$/;"	m	struct:NPmouse
+csvName	data/npdbTypes.h	/^	char*	   csvName;$/;"	m	struct:NPdbCSVwrite
 csvObj	io/db/npdbz.h	/^	struct csvStrObj *csvObj;$/;"	m	struct:csvStrObjects	typeref:struct:csvStrObjects::csvStrObj
 csvObjects	io/db/npdbz.h	/^	struct csvStrObjects *csvObjects;$/;"	m	struct:newChunkObj	typeref:struct:newChunkObj::csvStrObjects
 csvPath	data/nptypes.h	/^	char		csvPath[kNPmaxPath];$/;"	m	struct:NPfile
@@ -564,6 +592,7 @@ data	data/nptypes.h	/^	void*			data;		\/\/\/< node data specific to node type$/;
 data	data/nptypes.h	/^	void*		data;						\/\/!<node type specific data$/;"	m	struct:NPnode
 data	data/nptypes.h	/^	void*	data;$/;"	m	struct:NPqueCmd
 data	data/nptypes.h	/^	void*	data;$/;"	m	struct:NPqueItem
+dataRef	data/npdbTypes.h	/^	void*	   dataRef;$/;"	m	struct:NPdbCSVwrite
 dataRef	data/nptypes.h	/^	void* dataRef;$/;"	m	struct:NPthreadFile
 dataRef	io/net/nposcpack.cpp	/^	void* dataRef;$/;"	m	class:CsvTrackPacketListener	file:
 dataRef_	io/net/nposcpack.cpp	/^	void* dataRef_;$/;"	m	class:OscAntzPacketListener	file:
@@ -571,37 +600,35 @@ dataRef_	io/net/nposcpack.cpp	/^	void* dataRef_;$/;"	m	class:OscTrackPacketListe
 dataSourceType	data/nptypes.h	/^	int			dataSourceType;$/;"	m	struct:NPtrackDataSource
 dataType	data/nptypes.h	/^	int*		dataType;		\/\/!<points to an int of the data type,$/;"	m	struct:NPnodeData
 database	io/db/npdbz.h	/^struct database {$/;"	s
-databases	io/db/npdbz.h	/^struct databases \/\/This should be renamed as struct server ...or not$/;"	s
 datasetName	data/nptypes.h	/^	char		datasetName[kNPmaxPath];	\/\/!<used by screenGrab$/;"	m	struct:NPgl
 db	data/nptypes.h	/^	NPdbs		db;$/;"	m	struct:NPio
 db	io/db/npauxdb.h	/^	char*	db;$/;"	m	struct:NPdatabase
-dbCount	data/nptypes.h	/^	int				dbCount;			\/\/\/< number of databases$/;"	m	struct:NPdbs
-dbCount	data/nptypes.h	/^	int			dbCount;				\/\/\/< number of databases for this host$/;"	m	struct:NPdbHost
+dbCount	data/npdbTypes.h	/^	int				dbCount;			\/\/\/< number of databases$/;"	m	struct:NPdbs
+dbCount	data/npdbTypes.h	/^	int			dbCount;				\/\/\/< number of databases for this host$/;"	m	struct:NPdbHost
 dbFunc	io/db/npdbz.h	/^	struct dbFunction *dbFunc;$/;"	m	struct:database	typeref:struct:database::dbFunction
 dbFunction	io/db/npdbz.h	/^struct dbFunction {$/;"	s
 dbFunctions	io/db/npdbz.h	/^struct dbFunctions {$/;"	s
-dbLib	data/nptypes.h	/^	void*		dbLib;					\/\/\/< library handle$/;"	m	struct:NPdbFuncSet
-dbList	data/nptypes.h	/^	pNPdatabase		dbList[kNPdbMax];	\/\/\/< list of databases$/;"	m	struct:NPdbs
-dbList	io/db/npdbz.h	/^	pNPdatabases dbList;	\/\/\/< @todo make this pNPdatabase* dbList$/;"	m	struct:databases
+dbLib	data/npdbTypes.h	/^	void*		dbLib;					\/\/\/< library handle$/;"	m	struct:NPdbFuncSet
+dbList	data/npdbTypes.h	/^	pNPdatabase		dbList[kNPdbMax];	\/\/\/< list of databases$/;"	m	struct:NPdbs
 dbType	io/db/npdbz.h	/^	char dbType[kNPurlMax];   \/\/ "mysql" "oracle" "postgresql", etc...$/;"	m	struct:database
-db_errno	data/nptypes.h	/^	void* (*db_errno)		();$/;"	m	struct:NPdbFuncSet
+db_errno	data/npdbTypes.h	/^	void* (NPDB_CALLCONV *db_errno)		();$/;"	m	struct:NPdbFuncSet
 db_errno	io/db/npdbz.h	/^	void* (*db_errno) ();$/;"	m	struct:dbFunction
-db_error	data/nptypes.h	/^	void* (*db_error)		();$/;"	m	struct:NPdbFuncSet
+db_error	data/npdbTypes.h	/^	void* (NPDB_CALLCONV *db_error)		();$/;"	m	struct:NPdbFuncSet
 db_error	io/db/npdbz.h	/^	void* (*db_error) ();$/;"	m	struct:dbFunction
 db_fetch_lengths	io/db/npdbz.h	/^	void* (*db_fetch_lengths) ();$/;"	m	struct:dbFunction
 db_fetch_row	io/db/npdbz.h	/^	void* (*db_fetch_row) ();$/;"	m	struct:dbFunction
 db_num_fields	io/db/npdbz.h	/^	void* (*db_num_fields) ();$/;"	m	struct:dbFunction
 db_num_rows	io/db/npdbz.h	/^	void* (*db_num_rows) ();$/;"	m	struct:dbFunction
-dbs	data/nptypes.h	/^	struct databases *dbs;			\/\/!<zz dbz$/;"	m	struct:NPio	typeref:struct:NPio::databases
+deleteFuncSet	data/nptypes.h	/^	int (*deleteFuncSet)(); \/\/ Specify later, lde @todo$/;"	m	struct:NPos
 delta	data/nptypes.h	/^	NPfloatXYZ	delta;					\/\/!<mouse vector$/;"	m	struct:NPmouse
 deltaR	data/nptypes.h	/^	NPfloatXYZA deltaR;$/;"	m	struct:NPtool
 deltaSum	data/nptypes.h	/^	NPfloatXYZ	deltaSum;				\/\/!<sum of deltas, clears each NPE period$/;"	m	struct:NPmouse
 deltaT	data/nptypes.h	/^	NPfloatXYZ  deltaT;			\/\/!<current - previous$/;"	m	struct:NPtool
 deque	data/nptypes.h	/^	int			deque;			\/\/!<front deque read index chases enque$/;"	m	struct:NPque
+desc	data/npdbTypes.h	/^	char*		desc;					\/\/\/< function description$/;"	m	struct:NPdbFunction
 desc	data/nptypes.h	/^	char		desc[kNPtagDescMax + 1];	\/\/!<allows for newline in desc$/;"	m	struct:NPtag
 desc	data/nptypes.h	/^	char		desc[kNPtagDescMax + 3];	\/\/!<allows for newline in desc$/;"	m	struct:NPrecordTag
 desc	data/nptypes.h	/^	char	desc[kNPnameMax];$/;"	m	struct:NPmapLink
-desc	data/nptypes.h	/^	char*		desc;					\/\/\/< function description$/;"	m	struct:NPdbFunction
 desc	data/nptypes.h	/^	char*	desc;$/;"	m	struct:NPmapType
 descSize	data/nptypes.h	/^	int			descSize;			\/\/!<number of characters in description$/;"	m	struct:NPrecordTag
 descSize	data/nptypes.h	/^	int			descSize;		\/\/!<number of characters in description$/;"	m	struct:NPtag
@@ -627,6 +654,7 @@ elementA	data/nptypes.h	/^	char	elementA[kNPelementMax];	\/\/!<element and type 
 elementB	data/nptypes.h	/^	char	elementB[kNPelementMax];	\/\/!<OSC address, URL, table field name$/;"	m	struct:NPmapLink
 elementB	data/nptypes.h	/^	char	elementB[kNPelementMax];	\/\/!<name of the sub-member object \/\/!<OSC address, URL, table field name$/;"	m	struct:NPmapPair
 elementID	data/nptypes.h	/^	int		elementID;	\/\/!<typeA		\/\/!<mapPtr = npGetMapID(mapID); \/\/!<and vice versa$/;"	m	struct:NPmapLink
+endThread	data/nptypes.h	/^	void   (*endThread)();$/;"	m	struct:NPosFuncSet
 enque	data/nptypes.h	/^	int			enque;			\/\/!<back enque write index cannot pass deque$/;"	m	struct:NPque
 environment	data/nptypes.h	/^	pNPuserEnvironment environment;		\/\/!<zz perhaps move to map->user[] question is public or private$/;"	m	struct:NPuser
 exposure	data/nptypes.h	/^	float		exposure;					\/\/!<in seconds$/;"	m	struct:NPcamera
@@ -634,16 +662,18 @@ facet	data/nptypes.h	/^	int			facet;						\/\/!<topo face number$/;"	m	struct:NP
 factor	data/nptypes.h	/^	NPfloatXYZS	factor;				\/\/!<multiplies the value for scaling range$/;"	m	struct:NPlabel
 false	data/stdbool.h	30;"	d
 fast	data/nptypes.h	/^	float	fast;						\/\/!< fast velocity, shift key pressed $/;"	m	struct:NPctrl
-fetch_lengths	data/nptypes.h	/^	void* (*fetch_lengths)  ();$/;"	m	struct:NPdbFuncSet
-fetch_row	data/nptypes.h	/^	void* (*fetch_row)	    ();$/;"	m	struct:NPdbFuncSet
+fetch_lengths	data/npdbTypes.h	/^	void* (NPDB_CALLCONV *fetch_lengths)  ();$/;"	m	struct:NPdbFuncSet
+fetch_row	data/npdbTypes.h	/^	void* (NPDB_CALLCONV *fetch_row)	    ();$/;"	m	struct:NPdbFuncSet
+fieldCount	data/npdbTypes.h	/^	int			fieldCount;					\/\/\/< number of fields in this table, init to 0 , @todo, lde$/;"	m	struct:NPdbTable
 fieldName	io/db/npauxdb.h	/^	char* fieldName;$/;"	m	struct:fieldvalue
 fieldSize	io/db/npauxdb.h	/^	int fieldSize;$/;"	m	struct:fieldvalue
 fieldType	io/db/npauxdb.h	/^	int fieldType;$/;"	m	struct:fieldvalue
-fields	data/nptypes.h	/^	pNPdbFields	fields;		\/\/\/< field descriptor$/;"	m	struct:NPdbTable
+fields	data/npdbTypes.h	/^	pNPdbFields	fields[100];				\/\/\/< field descriptor$/;"	m	struct:NPdbTable
 fieldvalue	io/db/npauxdb.h	/^struct fieldvalue$/;"	s
 fifo	data/nptypes.h	/^	NPqueList	fifo;				\/\/!<io buffering for data and command sync$/;"	m	struct:NPio
 file	data/nptypes.h	/^	FILE* file;$/;"	m	struct:NPthreadFile
 file	data/nptypes.h	/^	NPfile		file;$/;"	m	struct:NPio
+fileDialog	data/nptypes.h	/^	FILE*  (*fileDialog)();$/;"	m	struct:NPosFuncSet
 filePath	data/nptypes.h	/^	char* filePath;$/;"	m	struct:NPthreadFile
 first	io/db/npauxdb.h	/^	struct queue_node *first;$/;"	m	struct:queue	typeref:struct:queue::queue_node
 floatTargetMaximumValue	io/net/nposcpack.cpp	/^	float floatTargetMaximumValue[10];$/;"	m	class:OscTrackPacketListener	file:
@@ -651,24 +681,25 @@ floatTargetMinimumValue	io/net/nposcpack.cpp	/^	float floatTargetMinimumValue[10
 floatTracks	data/nptypes.h	/^	NPnodePropertyTracks	floatTracks;\/\/!< tracks associated with "float" Node properties$/;"	m	struct:NPch
 font	data/nptypes.h	/^	void*		font;$/;"	m	struct:NPconsole
 font	data/nptypes.h	/^	void*		font;$/;"	m	struct:NPtag
+format	data/npdbTypes.h	/^	int			format;					\/\/\/< content format, antz or 3rd party$/;"	m	struct:NPdatabase
 format	data/nptypes.h	/^	int			format;						\/\/!<320p, 480i, 720p, 4K full app$/;"	m	struct:NPcamera
 format	data/nptypes.h	/^	int			format;						\/\/!<320p, 480i, 720p, 4K full app$/;"	m	struct:NPvideo
-format	data/nptypes.h	/^	int			format;					\/\/\/< content format, antz or 3rd party$/;"	m	struct:NPdatabase
 formatID	data/nptypes.h	/^	int			formatID;					\/\/!<DB translation to antz field, label$/;"	m	struct:NPnode
 fov	data/nptypes.h	/^	float		fov;						\/\/!<FOV 35mm, 70mm...$/;"	m	struct:NPcamera
 fps	data/nptypes.h	/^	NPtag		fps;$/;"	m	struct:NPhud
 fps	data/nptypes.h	/^	float		fps;						\/\/!< 15, 24, 29.97, 30, 59.94, 120...$/;"	m	struct:NPcamera
 fps	data/nptypes.h	/^	float		fps;						\/\/!< 15, 24, 29.97, 30, 59.94, 120...$/;"	m	struct:NPvideo
 freeResult	io/db/npdbz.h	/^	void* (*freeResult) ();$/;"	m	struct:dbFunction
-free_result	data/nptypes.h	/^	void* (*free_result)	();$/;"	m	struct:NPdbFuncSet
+free_result	data/npdbTypes.h	/^	void* (NPDB_CALLCONV *free_result)	();$/;"	m	struct:NPdbFuncSet
+freeze	data/nptypes.h	/^	bool			freeze;						\/\/!<freezes data and physics updates$/;"	m	struct:NPnode
 freeze	data/nptypes.h	/^	bool		freeze;						\/\/!<freezes data and physics updates$/;"	m	struct:NPconsole
-freeze	data/nptypes.h	/^	bool		freeze;						\/\/!<freezes data and physics updates$/;"	m	struct:NPnode
 fullFilePath	data/nptypes.h	/^	char*		fullFilePath;$/;"	m	struct:NPtrackDataSource
 fullscreen	data/nptypes.h	/^	int			fullscreen;$/;"	m	struct:NPgl
-funcPtr	data/nptypes.h	/^	void*		funcPtr;				\/\/\/< pointer to the function$/;"	m	struct:NPdbFunction
+funcPtr	data/npdbTypes.h	/^	void*		funcPtr;				\/\/\/< pointer to the function$/;"	m	struct:NPdbFunction
 funcPtr	data/nptypes.h	/^	void*	funcPtr;$/;"	m	struct:NPqueCmd
-funcSetCount	data/nptypes.h	/^	int				funcSetCount;				  \/\/\/< function set count$/;"	m	struct:NPdbs
-funcSetList	data/nptypes.h	/^	pNPdbFuncSet	funcSetList[kNPdbFuncSetMax]; \/\/\/< host type specific$/;"	m	struct:NPdbs
+funcSet	data/nptypes.h	/^	pNPosFuncSet funcSet;$/;"	m	struct:NPos
+funcSetCount	data/npdbTypes.h	/^	int				funcSetCount;				  \/\/\/< function set count$/;"	m	struct:NPdbs
+funcSetList	data/npdbTypes.h	/^	pNPdbFuncSet	funcSetList[kNPdbFuncSetMax]; \/\/\/< host type specific$/;"	m	struct:NPdbs
 g	data/nptypes.h	/^	float r,g,b,a;$/;"	m	struct:NPfloatRGBA
 g	data/nptypes.h	/^	float r,g,b;$/;"	m	struct:NPfloatRGB
 g	data/nptypes.h	/^	unsigned char r,g,b,a;$/;"	m	struct:NPubyteRGBA
@@ -677,25 +708,39 @@ gThreadFilePath	data/npmapfile.c	/^const char* gThreadFilePath;$/;"	v
 gThreadTagFileLock	data/npmapfile.c	/^bool gThreadTagFileLock;$/;"	v
 gain	data/nptypes.h	/^	NPfloatRGBA	gain;						\/\/!<color multiplier$/;"	m	struct:NPvideo
 geometry	data/nptypes.h	/^	int			geometry;					\/\/!<cube, sphere, pin, FFT mesh...$/;"	m	struct:NPnode
+getAppPath	data/nptypes.h	/^	void   (*getAppPath)();$/;"	m	struct:NPosFuncSet
+getCWD	data/nptypes.h	/^	void   (*getCWD)();$/;"	m	struct:NPosFuncSet
+getFuncsFromHost	data/npdbTypes.h	/^	void* (*getFuncsFromHost)    ();$/;"	m	struct:NPdbFuncSet
+getKey	data/nptypes.h	/^	int    (*getKey)();$/;"	m	struct:NPosFuncSet
+getLibSymbol	data/nptypes.h	/^	void*  (*getLibSymbol)();$/;"	m	struct:NPosFuncSet
+getNodeTableFields	data/npdbTypes.h	/^	void* (*getNodeTableFields)  ();$/;"	m	struct:NPdbFuncSet
+getOpenFilePath	data/nptypes.h	/^	void   (*getOpenFilePath)();$/;"	m	struct:NPosFuncSet
+getTableFields	data/npdbTypes.h	/^	char* (*getTableFields)			();$/;"	m	struct:NPdbFuncSet
+getTime	data/nptypes.h	/^	double (*getTime)();$/;"	m	struct:NPosFuncSet
 gl	data/nptypes.h	/^	NPgl		gl;$/;"	m	struct:NPio
 glContext	data/nptypes.h	/^	int			glContext;		\/\/!<multiple windows can share a GL context$/;"	m	struct:NPgl
 globalsCount	data/nptypes.h	/^	int			globalsCount;$/;"	m	struct:NPmap
 height	data/nptypes.h	/^	int			height;			\/\/!<do not set this, is set by actual dimensions$/;"	m	struct:NPgl
 height	data/nptypes.h	/^	int			height;$/;"	m	struct:NPcamera
 height	data/nptypes.h	/^	int			height;$/;"	m	struct:NPvideo
+hide	data/nptypes.h	/^	bool			hide;						\/\/!<hide the node, data stays active$/;"	m	struct:NPnode
 hide	data/nptypes.h	/^	bool		hide;						\/\/!<hide the node, data stays active$/;"	m	struct:NPconsole
-hide	data/nptypes.h	/^	bool		hide;						\/\/!<hide the node, data stays active$/;"	m	struct:NPnode
 historyMax	data/nptypes.h	/^	int			historyMax;					\/\/!<max number of lines stored$/;"	m	struct:NPconsole
-host	data/nptypes.h	/^	pNPdbHost	host;		\/\/\/< references this databases host$/;"	m	struct:NPdatabase
+hook	data/nptypes.h	/^	void (*hook)();$/;"	m	struct:NPos
+host	data/npdbTypes.h	/^	pNPdbHost	host;		\/\/\/< references this databases host$/;"	m	struct:NPdatabase
 host	io/db/npauxdb.h	/^	char*	host;$/;"	m	struct:NPdatabase
-hostCount	data/nptypes.h	/^	int				hostCount;				\/\/\/< number of DB host servers$/;"	m	struct:NPdbs
-hostFuncSet	data/nptypes.h	/^	pNPdbFuncSet hostFuncSet;			\/\/\/< function calls for this host type$/;"	m	struct:NPdbHost
+hostCount	data/npdbTypes.h	/^	int				hostCount;				\/\/\/< number of DB host servers$/;"	m	struct:NPdbs
+hostFuncSet	data/npdbTypes.h	/^	pNPdbFuncSet hostFuncSet;			\/\/\/< function calls for this host type$/;"	m	struct:NPdbHost
 hostIP	io/db/npdbz.h	/^	char hostIP[kNPurlMax];   \/\/ This could be static$/;"	m	struct:database
-hostType	data/nptypes.h	/^	char		hostType[kNPdbNameMax];	\/\/\/< content type, antz or 3rd party$/;"	m	struct:NPdbFuncSet
-hosts	data/nptypes.h	/^	pNPdbHost		hosts[kNPdbHostMax];	\/\/\/< list of database hosts$/;"	m	struct:NPdbs
+hostType	data/npdbTypes.h	/^	char		hostType[kNPdbNameMax];	\/\/\/< content type, antz or 3rd party$/;"	m	struct:NPdbFuncSet
+hosts	data/npdbTypes.h	/^	pNPdbHost		hosts[kNPdbHostMax];	\/\/\/< list of database hosts$/;"	m	struct:NPdbs
 hud	data/nptypes.h	/^	NPhud		hud;			\/\/!<one HUD per window$/;"	m	struct:NPgl
 hudType	data/nptypes.h	/^	int			hudType;					\/\/!<removethis, use existing param \/\/!<zz debug$/;"	m	struct:NPnode
 hue	data/nptypes.h	/^	float		hue;$/;"	m	struct:NPvideo
+id	data/npdbTypes.h	/^	int			id;							\/\/\/< local table ID for this database$/;"	m	struct:NPdbTable
+id	data/npdbTypes.h	/^	int			id;						\/\/\/< the function set ID$/;"	m	struct:NPdbFuncSet
+id	data/npdbTypes.h	/^	int			id;						\/\/\/< this databases ID \/\/ Connection structure$/;"	m	struct:NPdatabase
+id	data/npdbTypes.h	/^	int			id;				\/\/\/< local host ID unique to this session only$/;"	m	struct:NPdbHost
 id	data/nptypes.h	/^	int				id;$/;"	m	struct:NPmapColor
 id	data/nptypes.h	/^	int			id;							\/\/!<local node ID $/;"	m	struct:NPnode
 id	data/nptypes.h	/^	int			id;							\/\/!<node ID$/;"	m	struct:NPcamera
@@ -706,12 +751,8 @@ id	data/nptypes.h	/^	int			id;							\/\/!<node ID$/;"	m	struct:NPpin
 id	data/nptypes.h	/^	int			id;							\/\/!<node ID$/;"	m	struct:NPpoints
 id	data/nptypes.h	/^	int			id;							\/\/!<node ID$/;"	m	struct:NPsurface
 id	data/nptypes.h	/^	int			id;							\/\/!<node ID$/;"	m	struct:NPvideo
-id	data/nptypes.h	/^	int			id;						\/\/\/< the function set ID$/;"	m	struct:NPdbFuncSet
-id	data/nptypes.h	/^	int			id;						\/\/\/< this databases ID$/;"	m	struct:NPdatabase
 id	data/nptypes.h	/^	int			id;					\/\/!<the first column is table id key$/;"	m	struct:NPrecordTag
 id	data/nptypes.h	/^	int			id;				\/\/!<the node ID used to store this GL item $/;"	m	struct:NPgl
-id	data/nptypes.h	/^	int			id;				\/\/\/< local host ID unique to this session only$/;"	m	struct:NPdbHost
-id	data/nptypes.h	/^	int			id;			\/\/\/< local table ID for this database$/;"	m	struct:NPdbTable
 id	data/nptypes.h	/^	int			id;$/;"	m	struct:NPosc
 id	data/nptypes.h	/^	int			id;$/;"	m	struct:NPque
 id	data/nptypes.h	/^	int			id;$/;"	m	struct:NPqueList
@@ -723,8 +764,9 @@ id	data/nptypes.h	/^	long long int	id;		\/\/\/< either scene node id or other (D
 id	io/db/npdbz.h	/^	void* id;$/;"	m	struct:database
 id	io/net/nposcpack.h	/^	int id;$/;"	m	struct:NPoscPackListener
 id	io/npkey.c	/^	int		id;$/;"	m	struct:NPkeyMap	file:
+idMap	data/npdbTypes.h	/^	int*		idMap;$/;"	m	struct:NPdatabase
 idMap	io/db/npdbz.h	/^	int* idMap;$/;"	m	struct:database
-inUseDB	data/nptypes.h	/^	char		inUseDB[kNPdbNameMax];	\/\/\/< name of DB currently in USE$/;"	m	struct:NPdbHost
+inUseDB	data/npdbTypes.h	/^	char		inUseDB[kNPdbNameMax];	\/\/\/< name of DB currently in USE$/;"	m	struct:NPdbHost
 incomingCommands	io/net/nposcpack.cpp	/^	const char* incomingCommands[kNPmaxCommands];$/;"	m	class:OscTrackPacketListener	file:
 incomingDataTypeSpecifications	io/net/nposcpack.cpp	/^	const char* incomingDataTypeSpecifications[10];  \/\/ what data type we expect it to be$/;"	m	class:OscTrackPacketListener	file:
 incomingFloatValue	io/net/nposcpack.cpp	/^	float incomingFloatValue[10];  \/\/ the value we extracted from Osc message$/;"	m	class:OscTrackPacketListener	file:
@@ -733,13 +775,13 @@ incomingParameterOffsets	io/net/nposcpack.cpp	/^	int incomingParameterOffsets[10
 index	data/nptypes.h	/^	int				index;			\/\/!<current color$/;"	m	struct:NPmapColor
 index	data/nptypes.h	/^	int			index;$/;"	m	struct:NPnodeData
 index	data/nptypes.h	/^	int index;			\/\/!<default or currently selected menu item$/;"	m	struct:NPmenu
-init	data/nptypes.h	/^	void* (*init)			();$/;"	m	struct:NPdbFuncSet
+init	data/npdbTypes.h	/^	void* (NPDB_CALLCONV *init)			();$/;"	m	struct:NPdbFuncSet
 init	io/db/npdbz.h	/^	void* (*init)   ();$/;"	m	struct:dbFunction
 initAdapter	io/net/nposcpack.cpp	/^void initAdapter()$/;"	f
 innerRadius	data/nptypes.h	/^	float		innerRadius;				\/\/!<inner radius of the toroid$/;"	m	struct:NPpin
 inputIndex	data/nptypes.h	/^	int			inputIndex;$/;"	m	struct:NPconsole
 inputStr	data/nptypes.h	/^	char		inputStr[kNPinputStrMax + 1];	\/\/!<user input, +1 for null '\\0'$/;"	m	struct:NPconsole
-insert	data/nptypes.h	/^	void* (*insert)		    ();$/;"	m	struct:NPdbFuncSet
+insert	data/npdbTypes.h	/^	void* (NPDB_CALLCONV *insert)		    ();$/;"	m	struct:NPdbFuncSet
 insert	io/db/npdbz.h	/^	void* (*insert) ();$/;"	m	struct:dbFunction
 insertText	data/nptypes.h	/^	int			insertText;	\/\/!<\/\/!<selectText$/;"	m	struct:NPconsole
 intTracks	data/nptypes.h	/^	NPnodePropertyTracks	intTracks;	\/\/!< tracks associated with "int" Node properties$/;"	m	struct:NPch
@@ -748,7 +790,7 @@ interlaced	data/nptypes.h	/^	int			interlaced;					\/\/!<interlaced field order$
 interval	data/nptypes.h	/^	int			interval;					\/\/!<the interval to be averaged$/;"	m	struct:NPnode
 inverseMatrix	data/nptypes.h	/^	float		inverseMatrix[16];			\/\/!<for local to world coord convert$/;"	m	struct:NPcamera
 io	data/nptypes.h	/^	NPio	io;			\/\/!< View    - io$/;"	m	struct:Data
-ip	data/nptypes.h	/^	char		ip[kNPurlMax];			\/\/\/< IP address or URL$/;"	m	struct:NPdbHost
+ip	data/npdbTypes.h	/^	char		ip[kNPurlMax];			\/\/\/< IP address or URL$/;"	m	struct:NPdbHost
 item	data/nptypes.h	/^	void*		item;$/;"	m	struct:NPdataItem
 itemA	data/nptypes.h	/^	int		itemA;						\/\/!<item ID = np_map_row_id = array[item]$/;"	m	struct:NPmapPair
 itemA	data/nptypes.h	/^	int		itemA;						\/\/!<itemID = np_map_row_id = array[item]$/;"	m	struct:NPmapLink
@@ -912,7 +954,7 @@ kKeyRepeat	data/nptypes.h	/^	kKeyRepeat,$/;"	e	enum:kNP_KEY_EVENT_TYPE
 kKeyUp	data/nptypes.h	/^	kKeyUp,$/;"	e	enum:kNP_KEY_EVENT_TYPE
 kKeyUpASCII	data/nptypes.h	/^	kKeyUpASCII,$/;"	e	enum:kNP_KEY_EVENT_TYPE
 kKeyUpSpecial	data/nptypes.h	/^	kKeyUpSpecial$/;"	e	enum:kNP_KEY_EVENT_TYPE
-kNPChMapItemCount	data/nptypes.h	129;"	d
+kNPChMapItemCount	data/nptypes.h	130;"	d
 kNPGLboolean	data/nptypes.h	/^	kNPGLboolean,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPGLfloat	data/nptypes.h	/^	kNPGLfloat,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPGLint	data/nptypes.h	/^	kNPGLint,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
@@ -936,7 +978,7 @@ kNP_FONT_JUSTIFY	data/nptypes.h	/^enum kNP_FONT_JUSTIFY$/;"	g
 kNP_FONT_SIZE	data/nptypes.h	/^enum kNP_FONT_SIZE$/;"	g
 kNP_GEOMETRY_TYPES	data/nptypes.h	/^enum kNP_GEOMETRY_TYPES$/;"	g
 kNP_GLUT_BITMAP_8_BY_13	data/nptypes.h	/^	kNP_GLUT_BITMAP_8_BY_13,$/;"	e	enum:kNP_GLUT_FONT_TYPE
-kNP_GLUT_BITMAP_9_BY_15	data/nptypes.h	2897;"	d
+kNP_GLUT_BITMAP_9_BY_15	data/nptypes.h	2973;"	d
 kNP_GLUT_BITMAP_HELVETICA_10	data/nptypes.h	/^	kNP_GLUT_BITMAP_HELVETICA_10,$/;"	e	enum:kNP_GLUT_FONT_TYPE
 kNP_GLUT_BITMAP_HELVETICA_12	data/nptypes.h	/^	kNP_GLUT_BITMAP_HELVETICA_12,$/;"	e	enum:kNP_GLUT_FONT_TYPE
 kNP_GLUT_BITMAP_HELVETICA_18	data/nptypes.h	/^	kNP_GLUT_BITMAP_HELVETICA_18,$/;"	e	enum:kNP_GLUT_FONT_TYPE
@@ -975,26 +1017,26 @@ kNPalphaModeDark	data/nptypes.h	/^	kNPalphaModeDark,$/;"	e	enum:kNP_TRANSPARENCY
 kNPalphaModeNull	data/nptypes.h	/^	kNPalphaModeNull = 0,$/;"	e	enum:kNP_TRANSPARENCY_ALPHA_MODE
 kNPalphaModeSubtractive	data/nptypes.h	/^	kNPalphaModeSubtractive,	\/\/!<default alphaMode$/;"	e	enum:kNP_TRANSPARENCY_ALPHA_MODE
 kNPaperture	data/nptypes.h	/^	kNPaperture,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPappVer	io/npconsole.c	1595;"	d	file:
+kNPappVer	io/npconsole.c	1764;"	d	file:
 kNPaspectRatio	data/nptypes.h	/^	kNPaspectRatio,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPattribute	data/nptypes.h	/^	kNPattribute,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPattributeNameOffset	data/nptypes.h	154;"	d
+kNPattributeNameOffset	data/nptypes.h	155;"	d
 kNPautoZoom	data/nptypes.h	/^	kNPautoZoom,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPauxA	data/nptypes.h	/^	kNPauxA,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPauxB	data/nptypes.h	/^	kNPauxB,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPaverage	data/nptypes.h	/^	kNPaverage,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPavgCount	io/npmouse.c	36;"	d	file:
 kNPbase	data/nptypes.h	/^	kNPbase,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPbaseItemCount	data/nptypes.h	122;"	d
+kNPbaseItemCount	data/nptypes.h	123;"	d
 kNPbool	data/nptypes.h	/^	kNPbool,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPboolXYZ	data/nptypes.h	/^	kNPboolXYZ,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPboolXYZS	data/nptypes.h	/^	kNPboolXYZS,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPbranchLevel	data/nptypes.h	/^	kNPbranchLevel,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPbranchLevelMax	data/nptypes.h	82;"	d
+kNPbranchLevelMax	data/nptypes.h	83;"	d
 kNPbyte	data/nptypes.h	/^	kNPbyte,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPcamera	data/nptypes.h	/^	kNPcamera,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPcameraCount	data/nptypes.h	85;"	d
-kNPcameraItemCount	data/nptypes.h	124;"	d
+kNPcameraCount	data/nptypes.h	86;"	d
+kNPcameraItemCount	data/nptypes.h	125;"	d
 kNPcenterNull	data/nptypes.h	/^	kNPcenterNull = 0,$/;"	e	enum:kNP_CENTER_PLOT
 kNPcenterPerCycle	data/nptypes.h	/^	kNPcenterPerCycle,		\/\/!<center on the current data point$/;"	e	enum:kNP_CENTER_PLOT
 kNPcenterPerGrid	data/nptypes.h	/^	kNPcenterPerGrid		\/\/!<center when current point exceeds 1 grid space$/;"	e	enum:kNP_CENTER_PLOT
@@ -1004,9 +1046,9 @@ kNPchMap	data/nptypes.h	/^	kNPchMap,		\/\/!<remove this, should not be here \/\/
 kNPchMapTableID	data/nptypes.h	/^	kNPchMapTableID,	$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPchOutputID	data/nptypes.h	/^	kNPchOutputID,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPchannelID	data/nptypes.h	/^	kNPchannelID,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPchannelMapHeader	data/nptypes.h	1307;"	d
-kNPchannelMax	data/nptypes.h	158;"	d
-kNPchannelOffset	data/nptypes.h	155;"	d
+kNPchannelMapHeader	data/nptypes.h	1344;"	d
+kNPchannelMax	data/nptypes.h	159;"	d
+kNPchannelOffset	data/nptypes.h	156;"	d
 kNPcharArray	data/nptypes.h	/^	kNPcharArray, \/\/!<zzsql ok here$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPchild	data/nptypes.h	/^	kNPchild,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPchildCount	data/nptypes.h	/^	kNPchildCount,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
@@ -1166,17 +1208,17 @@ kNPcompassCount	data/nptypes.h	/^	kNPcompassCount$/;"	e	enum:kNP_COMPASS_ELEMENT
 kNPcompassHeading	data/nptypes.h	/^	kNPcompassHeading = 0,$/;"	e	enum:kNP_COMPASS_ELEMENT
 kNPcompassRoll	data/nptypes.h	/^	kNPcompassRoll,$/;"	e	enum:kNP_COMPASS_ELEMENT
 kNPcompassTilt	data/nptypes.h	/^	kNPcompassTilt,$/;"	e	enum:kNP_COMPASS_ELEMENT
-kNPconsoleCharPerLine	data/nptypes.h	133;"	d
+kNPconsoleCharPerLine	data/nptypes.h	134;"	d
 kNPconsoleCmd	data/nptypes.h	/^	kNPconsoleCmd,$/;"	e	enum:kNP_CONSOLE_MODE
 kNPconsoleEdit	data/nptypes.h	/^	kNPconsoleEdit,				\/\/!<code editor$/;"	e	enum:kNP_CONSOLE_MODE
-kNPconsoleHistoryMax	data/nptypes.h	134;"	d
-kNPconsoleInputMax	data/nptypes.h	135;"	d
+kNPconsoleHistoryMax	data/nptypes.h	135;"	d
+kNPconsoleInputMax	data/nptypes.h	136;"	d
 kNPconsoleLevelCount	data/nptypes.h	/^	kNPconsoleLevelCount$/;"	e	enum:kNP_CONSOLE_LEVEL
 kNPconsoleLevelMax	data/nptypes.h	/^	kNPconsoleLevelMax,			\/\/!<display maximum number of lines possible$/;"	e	enum:kNP_CONSOLE_LEVEL
 kNPconsoleLevelNull	data/nptypes.h	/^	kNPconsoleLevelNull = 0,	\/\/!<hide console$/;"	e	enum:kNP_CONSOLE_LEVEL
 kNPconsoleLevelOne	data/nptypes.h	/^	kNPconsoleLevelOne,			\/\/!<display 1 line$/;"	e	enum:kNP_CONSOLE_LEVEL
 kNPconsoleLevelThree	data/nptypes.h	/^	kNPconsoleLevelThree,		\/\/!<display 3 lines$/;"	e	enum:kNP_CONSOLE_LEVEL
-kNPconsoleLineMax	data/nptypes.h	132;"	d
+kNPconsoleLineMax	data/nptypes.h	133;"	d
 kNPconsoleMenu	data/nptypes.h	/^	kNPconsoleMenu,				\/\/!<generic menu list	$/;"	e	enum:kNP_CONSOLE_MODE
 kNPconsoleMessage	data/nptypes.h	/^	kNPconsoleMessage = 0,		\/\/!<default message mode$/;"	e	enum:kNP_CONSOLE_MODE
 kNPconsoleMySQL	data/nptypes.h	/^	kNPconsoleMySQL				\/\/!<DB Browser$/;"	e	enum:kNP_CONSOLE_MODE
@@ -1186,30 +1228,30 @@ kNPcoordCount	data/nptypes.h	/^	kNPcoordCount$/;"	e	enum:kNP_COORD_TYPE
 kNPcoordLatLongX	data/nptypes.h	/^	kNPcoordLatLongX,$/;"	e	enum:kNP_COORD_TYPE
 kNPcoordScale	data/nptypes.h	/^	kNPcoordScale,$/;"	e	enum:kNP_COORD_TYPE
 kNPcstrPtr	data/nptypes.h	/^	kNPcstrPtr,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPcubeLength	data/nptypes.h	89;"	d
-kNPcylinderRadius	data/nptypes.h	91;"	d
+kNPcubeLength	data/nptypes.h	90;"	d
+kNPcylinderRadius	data/nptypes.h	92;"	d
 kNPdata	data/nptypes.h	/^	kNPdata,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPdataRef	data/nptypes.h	/^	kNPdataRef, \/\/!<kNPdata,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPdataTypeMax	data/nptypes.h	121;"	d
-kNPdbFieldsDescMax	io/db/npmysql.c	30;"	d	file:
-kNPdbFuncSetMax	data/nptypes.h	/^	kNPdbFuncSetMax	= 64		\/\/\/< max number DB function sets$/;"	e	enum:NP_DATABASE
-kNPdbHostMax	data/nptypes.h	/^	kNPdbHostMax	= 512,		\/\/\/< max number of DB host servers$/;"	e	enum:NP_DATABASE
-kNPdbMax	data/nptypes.h	/^	kNPdbMax		= 4096,		\/\/\/< max number of databases$/;"	e	enum:NP_DATABASE
-kNPdbNameMax	data/nptypes.h	/^	kNPdbNameMax	= 64,		\/\/\/< @todo make sure 64 is good for non-MySQL DBs$/;"	e	enum:NP_DATABASE
-kNPdbNodeBlock	io/db/npdb.c	1863;"	d	file:
-kNPdbTypeCount	data/nptypes.h	/^	kNPdbTypeCount$/;"	e	enum:NP_DB_CONTENT_TYPES
-kNPdbTypeNative	data/nptypes.h	/^	kNPdbTypeNative,		\/\/\/< native dataset with nodes, tags, etc.$/;"	e	enum:NP_DB_CONTENT_TYPES
-kNPdbTypeNull	data/nptypes.h	/^	kNPdbTypeNull = 0,$/;"	e	enum:NP_DB_CONTENT_TYPES
-kNPdbTypePlugin	data/nptypes.h	/^	kNPdbTypePlugin,		\/\/\/< DB plugin type for 3rd party support$/;"	e	enum:NP_DB_CONTENT_TYPES
-kNPdbTypeUnknown	data/nptypes.h	/^	kNPdbTypeUnknown,		\/\/\/< unknown DB content structure$/;"	e	enum:NP_DB_CONTENT_TYPES
-kNPdefaultRatio	data/nptypes.h	93;"	d
+kNPdataTypeMax	data/nptypes.h	122;"	d
+kNPdbFieldsDescMax	io/db/npmysql.c	31;"	d	file:
+kNPdbFuncSetMax	data/npdbTypes.h	/^	kNPdbFuncSetMax	= 64		\/\/\/< max number DB function sets$/;"	e	enum:NP_DATABASE
+kNPdbHostMax	data/npdbTypes.h	/^	kNPdbHostMax	= 512,		\/\/\/< max number of DB host servers$/;"	e	enum:NP_DATABASE
+kNPdbMax	data/npdbTypes.h	/^	kNPdbMax		= 4096,		\/\/\/< max number of databases$/;"	e	enum:NP_DATABASE
+kNPdbNameMax	data/npdbTypes.h	/^	kNPdbNameMax	= 64,		\/\/\/< @todo make sure 64 is good for non-MySQL DBs$/;"	e	enum:NP_DATABASE
+kNPdbNodeBlock	io/db/npdb.c	3549;"	d	file:
+kNPdbTypeCount	data/npdbTypes.h	/^	kNPdbTypeCount$/;"	e	enum:NP_DB_CONTENT_TYPES
+kNPdbTypeNative	data/npdbTypes.h	/^	kNPdbTypeNative,		\/\/\/< native dataset with nodes, tags, etc.$/;"	e	enum:NP_DB_CONTENT_TYPES
+kNPdbTypeNull	data/npdbTypes.h	/^	kNPdbTypeNull = 0,$/;"	e	enum:NP_DB_CONTENT_TYPES
+kNPdbTypePlugin	data/npdbTypes.h	/^	kNPdbTypePlugin,		\/\/\/< DB plugin type for 3rd party support$/;"	e	enum:NP_DB_CONTENT_TYPES
+kNPdbTypeUnknown	data/npdbTypes.h	/^	kNPdbTypeUnknown,		\/\/\/< unknown DB content structure$/;"	e	enum:NP_DB_CONTENT_TYPES
+kNPdefaultRatio	data/nptypes.h	94;"	d
 kNPdesc	data/nptypes.h	/^	kNPdesc,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPdoubleClickTime	data/nptypes.h	149;"	d
+kNPdoubleClickTime	data/nptypes.h	150;"	d
 kNPdragModeSize	data/nptypes.h	/^	kNPdragModeSize$/;"	e	enum:kNP_MOUSE_MODE
-kNPelementMax	data/nptypes.h	305;"	d
+kNPelementMax	data/nptypes.h	306;"	d
 kNPexposure	data/nptypes.h	/^	kNPexposure,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPfacet	data/nptypes.h	/^	kNPfacet,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPfacetCube	data/nptypes.h	87;"	d
+kNPfacetCube	data/nptypes.h	88;"	d
 kNPfifoCmd	data/nptypes.h	/^	kNPfifoCmd,			\/\/!<for command buffers that contain NPqueCmd(s)$/;"	e	enum:kNP_FIFO_BUFFER_TYPE
 kNPfifoCount	data/nptypes.h	/^	kNPfifoCount$/;"	e	enum:kNP_FIFO_BUFFER_TYPE
 kNPfifoMapItem	data/nptypes.h	/^	kNPfifoMapItem,		\/\/!<designates buffer has NPqueItem(s)$/;"	e	enum:kNP_FIFO_BUFFER_TYPE
@@ -1217,7 +1259,7 @@ kNPfifoNull	data/nptypes.h	/^	kNPfifoNull = 0,$/;"	e	enum:kNP_FIFO_BUFFER_TYPE
 kNPfileAIFF	data/nptypes.h	/^	kNPfileAIFF,	\/\/!<audio$/;"	e	enum:kNP_FILE_TYPE
 kNPfileAVI	data/nptypes.h	/^	kNPfileAVI,$/;"	e	enum:kNP_FILE_TYPE
 kNPfileBlock	data/nptypes.h	/^	kNPfileBlock,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPfileBlockSize	data/nptypes.h	74;"	d
+kNPfileBlockSize	data/nptypes.h	75;"	d
 kNPfileCSV	data/nptypes.h	/^	kNPfileCSV,		\/\/!<data table formats$/;"	e	enum:kNP_FILE_TYPE
 kNPfileCollada	data/nptypes.h	/^	kNPfileCollada,	\/\/!<3D model inter-change$/;"	e	enum:kNP_FILE_TYPE
 kNPfileDCP	data/nptypes.h	/^	kNPfileDCP,		\/\/!<Digital Cinema Package$/;"	e	enum:kNP_FILE_TYPE
@@ -1338,10 +1380,10 @@ kNPglShadeSize	data/nptypes.h	/^	kNPglShadeSize$/;"	e	enum:kNP_GL_SHADER_MODE
 kNPglShadeSmooth	data/nptypes.h	/^	kNPglShadeSmooth,$/;"	e	enum:kNP_GL_SHADER_MODE
 kNPglobal	data/nptypes.h	/^	kNPglobal,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPgrid	data/nptypes.h	/^	kNPgrid,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPgridItemCount	data/nptypes.h	125;"	d
-kNPgridSegmentsX	data/nptypes.h	112;"	d
-kNPgridSegmentsY	data/nptypes.h	113;"	d
-kNPgridSpacing	data/nptypes.h	111;"	d
+kNPgridItemCount	data/nptypes.h	126;"	d
+kNPgridSegmentsX	data/nptypes.h	113;"	d
+kNPgridSegmentsY	data/nptypes.h	114;"	d
+kNPgridSpacing	data/nptypes.h	112;"	d
 kNPheight	data/nptypes.h	/^	kNPheight,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPhide	data/nptypes.h	/^	kNPhide,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPhudAngle	data/nptypes.h	/^		kNPhudAngle,$/;"	e	enum:kNP_HUD_ELEMENT
@@ -1374,7 +1416,7 @@ kNPhudTool	data/nptypes.h	/^	kNPhudTool,$/;"	e	enum:kNP_HUD_ELEMENT
 kNPhudTopo	data/nptypes.h	/^	kNPhudTopo,$/;"	e	enum:kNP_HUD_ELEMENT
 kNPid	data/nptypes.h	/^	kNPid,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPinnerRadius	data/nptypes.h	/^	kNPinnerRadius,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPinputStrMax	data/nptypes.h	151;"	d
+kNPinputStrMax	data/nptypes.h	152;"	d
 kNPint	data/nptypes.h	/^	kNPint,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPintXY	data/nptypes.h	/^	kNPintXY,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPintXYZ	data/nptypes.h	/^	kNPintXYZ,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
@@ -1395,12 +1437,12 @@ kNPkeyCodeHID	io/npkey.c	/^	kNPkeyCodeHID$/;"	e	enum:__anon5	file:
 kNPkeyCodeLinux	io/npkey.c	/^	kNPkeyCodeLinux,$/;"	e	enum:__anon5	file:
 kNPkeyCodeMSW	io/npkey.c	/^	kNPkeyCodeMSW,$/;"	e	enum:__anon5	file:
 kNPkeyCodeOSX	io/npkey.c	/^	kNPkeyCodeOSX,$/;"	e	enum:__anon5	file:
-kNPkeyEventTypeSize	data/nptypes.h	71;"	d
-kNPkeyMapSize	data/nptypes.h	70;"	d
+kNPkeyEventTypeSize	data/nptypes.h	72;"	d
+kNPkeyMapSize	data/nptypes.h	71;"	d
 kNPkeyModeASCII	io/npkey.c	/^	kNPkeyModeASCII$/;"	e	enum:__anon7	file:
 kNPkeyModeRAW	io/npkey.c	/^	kNPkeyModeRAW = 0,$/;"	e	enum:__anon7	file:
 kNPlineWidth	data/nptypes.h	/^	kNPlineWidth,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPlinkQueMax	data/nptypes.h	146;"	d
+kNPlinkQueMax	data/nptypes.h	147;"	d
 kNPlist	data/nptypes.h	/^	kNPlist,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPloginHostIP	data/nptypes.h	/^	kNPloginHostIP,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPloginHostType	data/nptypes.h	/^	kNPloginHostType,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
@@ -1418,7 +1460,7 @@ kNPmapCount	data/nptypes.h	/^	kNPmapCount$/;"	e	enum:kNP_MAP_TYPE
 kNPmapDB	data/nptypes.h	/^	kNPmapDB,			\/\/!<native DB format is MySQL$/;"	e	enum:kNP_MAP_TYPE
 kNPmapDraw	data/nptypes.h	/^	kNPmapDraw,				\/\/!<a list of objects to draw in a GL context $/;"	e	enum:kNP_MAP_TYPE
 kNPmapDrive	data/nptypes.h	/^	kNPmapDrive,$/;"	e	enum:kNP_MAP_TYPE
-kNPmapFileBufferMax	data/nptypes.h	73;"	d
+kNPmapFileBufferMax	data/nptypes.h	74;"	d
 kNPmapGL	data/nptypes.h	/^	kNPmapGL,$/;"	e	enum:kNP_MAP_TYPE
 kNPmapGPU	data/nptypes.h	/^	kNPmapGPU,$/;"	e	enum:kNP_MAP_TYPE
 kNPmapGalaxy	data/nptypes.h	/^	kNPmapGalaxy,$/;"	e	enum:kNP_MAP_TYPE
@@ -1464,20 +1506,21 @@ kNPmapWorld	data/nptypes.h	/^	kNPmapWorld,			\/\/!< Earth is 100ms typical, 10ms
 kNPmapXML	data/nptypes.h	/^	kNPmapXML,			\/\/!<for 3rd party data support$/;"	e	enum:kNP_MAP_TYPE
 kNPmapZsort	data/nptypes.h	/^	kNPmapZsort,				\/\/!<GL draw order, for correct alpha rendering$/;"	e	enum:kNP_MAP_TYPE
 kNPmaxCommands	io/net/nposcpack.cpp	176;"	d	file:
-kNPmaxConnect	data/nptypes.h	1423;"	d
-kNPmaxFloatProperties	data/nptypes.h	162;"	d
-kNPmaxFolderDepth	io/npfile.c	459;"	d	file:
-kNPmaxLineLength	data/nptypes.h	164;"	d
-kNPmaxName	data/nptypes.h	117;"	d
-kNPmaxPath	data/nptypes.h	118;"	d
-kNPmaxPropertiesMapped	data/nptypes.h	166;"	d
-kNPmaxTokens	data/nptypes.h	165;"	d
-kNPmaxTrackToAttributeMappings	data/nptypes.h	153;"	d
-kNPmaxTracks	data/nptypes.h	161;"	d
-kNPmaxUcharProperties	data/nptypes.h	163;"	d
-kNPmenuPerPageMax	data/nptypes.h	131;"	d
-kNPmessageLengthMax	data/nptypes.h	137;"	d
-kNPmessageQueMax	data/nptypes.h	136;"	d
+kNPmaxConnect	data/nptypes.h	1460;"	d
+kNPmaxFields	data/npdbTypes.h	222;"	d
+kNPmaxFloatProperties	data/nptypes.h	163;"	d
+kNPmaxFolderDepth	io/npfile.c	460;"	d	file:
+kNPmaxLineLength	data/nptypes.h	165;"	d
+kNPmaxName	data/nptypes.h	118;"	d
+kNPmaxPath	data/nptypes.h	119;"	d
+kNPmaxPropertiesMapped	data/nptypes.h	167;"	d
+kNPmaxTokens	data/nptypes.h	166;"	d
+kNPmaxTrackToAttributeMappings	data/nptypes.h	154;"	d
+kNPmaxTracks	data/nptypes.h	162;"	d
+kNPmaxUcharProperties	data/nptypes.h	164;"	d
+kNPmenuPerPageMax	data/nptypes.h	132;"	d
+kNPmessageLengthMax	data/nptypes.h	138;"	d
+kNPmessageQueMax	data/nptypes.h	137;"	d
 kNPmodeCamera	data/nptypes.h	/^	kNPmodeCamera,				\/\/!< pick cameras$/;"	e	enum:kNP_SELECT_FILTER
 kNPmodeCount	data/nptypes.h	/^	kNPmodeCount$/;"	e	enum:kNP_SELECT_FILTER
 kNPmodeGrid	data/nptypes.h	/^	kNPmodeGrid,				\/\/!< pick grids$/;"	e	enum:kNP_SELECT_FILTER
@@ -1508,33 +1551,33 @@ kNPmsgOSC	data/nptypes.h	/^	kNPmsgOSC,$/;"	e	enum:kNP_MESSAGE_TYPE
 kNPmsgView	data/nptypes.h	/^	kNPmsgView,$/;"	e	enum:kNP_MESSAGE_TYPE
 kNPmsgWarn	data/nptypes.h	/^	kNPmsgWarn,$/;"	e	enum:kNP_MESSAGE_TYPE
 kNPmysql	io/db/npauxdb.h	/^	kNPmysql$/;"	e	enum:__anon3
-kNPnameMax	data/nptypes.h	304;"	d
+kNPnameMax	data/nptypes.h	305;"	d
 kNPnode	data/nptypes.h	/^	kNPnode,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPnodeChildMax	data/nptypes.h	78;"	d
+kNPnodeChildMax	data/nptypes.h	79;"	d
 kNPnodeData	data/nptypes.h	/^	kNPnodeData,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPnodeItemCount	data/nptypes.h	123;"	d
-kNPnodeMax	data/nptypes.h	76;"	d
+kNPnodeItemCount	data/nptypes.h	124;"	d
+kNPnodeMax	data/nptypes.h	77;"	d
 kNPnodeRootCamera	data/nptypes.h	/^	kNPnodeRootCamera,			\/\/!< root node index for all cameras$/;"	e	enum:kNP_NODE_ROOT_GROUP
 kNPnodeRootCount	data/nptypes.h	/^	kNPnodeRootCount,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPnodeRootGrid	data/nptypes.h	/^	kNPnodeRootGrid,			\/\/!< root node index for all grids$/;"	e	enum:kNP_NODE_ROOT_GROUP
 kNPnodeRootHUD	data/nptypes.h	/^	kNPnodeRootHUD,$/;"	e	enum:kNP_NODE_ROOT_GROUP
-kNPnodeRootMax	data/nptypes.h	77;"	d
+kNPnodeRootMax	data/nptypes.h	78;"	d
 kNPnodeRootNull	data/nptypes.h	/^	kNPnodeRootNull = 0,$/;"	e	enum:kNP_NODE_ROOT_GROUP
 kNPnodeRootPin	data/nptypes.h	/^	kNPnodeRootPin				\/\/!< first root node for all pins$/;"	e	enum:kNP_NODE_ROOT_GROUP
 kNPnull	data/nptypes.h	/^	kNPnull = 0,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPoffsetCube	data/nptypes.h	96;"	d
-kNPoffsetPin	data/nptypes.h	98;"	d
-kNPoffsetRod	data/nptypes.h	99;"	d
-kNPoffsetTorus	data/nptypes.h	97;"	d
-kNPoffsetUnit	data/nptypes.h	95;"	d
-kNPoscListMax	data/nptypes.h	307;"	d
+kNPoffsetCube	data/nptypes.h	97;"	d
+kNPoffsetPin	data/nptypes.h	99;"	d
+kNPoffsetRod	data/nptypes.h	100;"	d
+kNPoffsetTorus	data/nptypes.h	98;"	d
+kNPoffsetUnit	data/nptypes.h	96;"	d
+kNPoscListMax	data/nptypes.h	308;"	d
 kNPouterRadius	data/nptypes.h	/^	kNPouterRadius,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPoverlay	data/nptypes.h	/^	kNPoverlay,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPpaletteMax	data/nptypes.h	68;"	d
-kNPpaletteSize	data/nptypes.h	115;"	d
+kNPpaletteMax	data/nptypes.h	69;"	d
+kNPpaletteSize	data/nptypes.h	116;"	d
 kNPparent	data/nptypes.h	/^	kNPparent,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPpin	data/nptypes.h	/^	kNPpin,			\/\/!<zz remove this, too easily confused with kNodePin$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPpinItemCount	data/nptypes.h	126;"	d
+kNPpinItemCount	data/nptypes.h	127;"	d
 kNPpointSize	data/nptypes.h	/^	kNPpointSize,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPposition	data/nptypes.h	/^	kNPposition,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPpositionBottom	data/nptypes.h	/^	kNPpositionBottom,$/;"	e	enum:kNP_QUADRANT
@@ -1548,12 +1591,12 @@ kNPpositionXY	data/nptypes.h	/^	kNPpositionXY,		\/\/!<zz debug or should this ju
 kNPpositionXYZ	data/nptypes.h	/^	kNPpositionXYZ,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPproximity	data/nptypes.h	/^	kNPproximity,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPproximityMode	data/nptypes.h	/^	kNPproximityMode,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPpwdMax	data/nptypes.h	/^	kNPpwdMax		= 256,		\/\/\/< max password length$/;"	e	enum:NP_DATABASE
+kNPpwdMax	data/npdbTypes.h	/^	kNPpwdMax		= 256,		\/\/\/< max password length$/;"	e	enum:NP_DATABASE
 kNPque	data/nptypes.h	/^	kNPque,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPqueCmd	data/nptypes.h	/^	kNPqueCmd,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPqueDefaultSize	data/npmap.c	1144;"	d	file:
+kNPqueDefaultSize	data/npmap.c	1147;"	d	file:
 kNPqueItem	data/nptypes.h	/^	kNPqueItem,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPqueMax	data/nptypes.h	1422;"	d
+kNPqueMax	data/nptypes.h	1459;"	d
 kNPradiusRatioIndex	data/nptypes.h	/^	kNPradiusRatioIndex,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPratio	data/nptypes.h	/^	kNPratio,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPrecordCount	data/nptypes.h	/^	kNPrecordCount,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
@@ -1565,17 +1608,17 @@ kNProtateVec	data/nptypes.h	/^	kNProtateVec,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPrxIP	data/nptypes.h	/^	kNPrxIP,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPrxPort	data/nptypes.h	/^	kNPrxPort,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPscale	data/nptypes.h	/^	kNPscale,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPscaleCube	data/nptypes.h	105;"	d
-kNPscaleCylinder	data/nptypes.h	107;"	d
-kNPscaleDefault	data/nptypes.h	101;"	d
-kNPscalePin	data/nptypes.h	103;"	d
-kNPscalePinPin	data/nptypes.h	104;"	d
+kNPscaleCube	data/nptypes.h	106;"	d
+kNPscaleCylinder	data/nptypes.h	108;"	d
+kNPscaleDefault	data/nptypes.h	102;"	d
+kNPscalePin	data/nptypes.h	104;"	d
+kNPscalePinPin	data/nptypes.h	105;"	d
 kNPscaleRate	data/nptypes.h	/^	kNPscaleRate,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPscaleRod	data/nptypes.h	102;"	d
-kNPscaleSphere	data/nptypes.h	106;"	d
+kNPscaleRod	data/nptypes.h	103;"	d
+kNPscaleSphere	data/nptypes.h	107;"	d
 kNPscaleTex	data/nptypes.h	/^	kNPscaleTex,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPscaleTorus	data/nptypes.h	108;"	d
-kNPscaleTorusTorus	data/nptypes.h	109;"	d
+kNPscaleTorus	data/nptypes.h	109;"	d
+kNPscaleTorusTorus	data/nptypes.h	110;"	d
 kNPscreenSizeIndex	data/nptypes.h	/^	kNPscreenSizeIndex,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPsegments	data/nptypes.h	/^	kNPsegments,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPselected	data/nptypes.h	/^	kNPselected,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
@@ -1583,21 +1626,21 @@ kNPsensorType	data/nptypes.h	/^	kNPsensorType,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPsetHi	data/nptypes.h	/^	kNPsetHi,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPsetLo	data/nptypes.h	/^	kNPsetLo,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPshader	data/nptypes.h	/^	kNPshader,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPsingleClickTime	data/nptypes.h	148;"	d
+kNPsingleClickTime	data/nptypes.h	149;"	d
 kNPsize	data/nptypes.h	/^	kNPsize$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPslices	data/nptypes.h	/^	kNPslices,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPsphereRadius	data/nptypes.h	90;"	d
+kNPsphereRadius	data/nptypes.h	91;"	d
 kNPstacks	data/nptypes.h	/^	kNPstacks,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPstereo	data/nptypes.h	/^	kNPstereo,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPsubsample	data/nptypes.h	/^	kNPsubsample,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPtag	data/nptypes.h	/^	kNPtag,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPtagDesc	data/nptypes.h	/^	kNPtagDesc,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPtagDescMax	data/nptypes.h	142;"	d
-kNPtagDrawMax	data/nptypes.h	144;"	d
+kNPtagDescMax	data/nptypes.h	143;"	d
+kNPtagDrawMax	data/nptypes.h	145;"	d
 kNPtagFieldCount	data/npmapfile.c	1382;"	d	file:
 kNPtagID	data/nptypes.h	/^	kNPtagID,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPtagItemCount	data/nptypes.h	128;"	d
-kNPtagMax	data/nptypes.h	143;"	d
+kNPtagItemCount	data/nptypes.h	129;"	d
+kNPtagMax	data/nptypes.h	144;"	d
 kNPtagMode	data/nptypes.h	/^	kNPtagMode,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPtagModeBoxHUD	data/nptypes.h	/^	kNPtagModeBoxHUD,			\/\/!<node colored text on grey box, no outline$/;"	e	enum:kNP_TAG_MODE
 kNPtagModeBoxOutlineHUD	data/nptypes.h	/^	kNPtagModeBoxOutlineHUD,	\/\/!<white text on grey box, node colored outline$/;"	e	enum:kNP_TAG_MODE
@@ -1605,13 +1648,14 @@ kNPtagModeCount	data/nptypes.h	/^	kNPtagModeCount$/;"	e	enum:kNP_TAG_MODE
 kNPtagModeNull	data/nptypes.h	/^	kNPtagModeNull = 0,			\/\/!<fixed to object in 3D scene, not oriented$/;"	e	enum:kNP_TAG_MODE
 kNPtagName	data/nptypes.h	/^	kNPtagName,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPtagOffset	data/nptypes.h	/^	kNPtagOffset,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPtagTitleMax	data/nptypes.h	141;"	d
-kNPtagWriteLimit	io/file/npcsv.c	1121;"	d	file:
-kNPtextureCountMax	data/nptypes.h	67;"	d
+kNPtagTitleMax	data/nptypes.h	142;"	d
+kNPtagWriteLimit	io/file/npcsv.c	1134;"	d	file:
+kNPtblMax	data/npdbTypes.h	/^	kNPtblMax		= 128,		\/\/\/< max number of tables, new lde$/;"	e	enum:NP_DATABASE
+kNPtextureCountMax	data/nptypes.h	68;"	d
 kNPtextureID	data/nptypes.h	/^	kNPtextureID,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPthreadFuncPtr	data/nptypes.h	/^	kNPthreadFuncPtr,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPthumbHeight	data/nptypes.h	169;"	d
-kNPthumbWidth	data/nptypes.h	168;"	d
+kNPthumbHeight	data/nptypes.h	170;"	d
+kNPthumbWidth	data/nptypes.h	169;"	d
 kNPtitle	data/nptypes.h	/^	kNPtitle,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPtoolAlpha	data/nptypes.h	/^	kNPtoolAlpha,			\/\/!< L-Click reduces Alpha color, R-Click increases$/;"	e	enum:kNP_TOOL_TYPE
 kNPtoolChannel	data/nptypes.h	/^	kNPtoolChannel,			\/\/!< L-click next Channel, R-click reverses$/;"	e	enum:kNP_TOOL_TYPE
@@ -1647,10 +1691,10 @@ kNPtopoRod	data/nptypes.h	/^	kNPtopoRod,$/;"	e	enum:kNP_TOPOLOGY_TYPE
 kNPtopoSphere	data/nptypes.h	/^	kNPtopoSphere,			\/\/!<spherical coords compatible with KML$/;"	e	enum:kNP_TOPOLOGY_TYPE
 kNPtopoSurface	data/nptypes.h	/^	kNPtopoSurface,			\/\/!<deformable grid, FFT, color ball, sound sphere$/;"	e	enum:kNP_TOPOLOGY_TYPE
 kNPtopoTorus	data/nptypes.h	/^	kNPtopoTorus,			\/\/!<default branchLevel = 1 attached to pin$/;"	e	enum:kNP_TOPOLOGY_TYPE
-kNPtorusRadius	data/nptypes.h	92;"	d
-kNPtrackBufferSize	data/nptypes.h	159;"	d
+kNPtorusRadius	data/nptypes.h	93;"	d
+kNPtrackBufferSize	data/nptypes.h	160;"	d
 kNPtrackID	data/nptypes.h	/^	kNPtrackID,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPtrackOffset	data/nptypes.h	156;"	d
+kNPtrackOffset	data/nptypes.h	157;"	d
 kNPtrackTableID	data/nptypes.h	/^	kNPtrackTableID,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPtranslate	data/nptypes.h	/^	kNPtranslate,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPtranslateRate	data/nptypes.h	/^	kNPtranslateRate,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
@@ -1665,20 +1709,21 @@ kNPubyte	data/nptypes.h	/^	kNPubyte,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPubyteRGB	data/nptypes.h	/^	kNPubyteRGB,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPubyteRGBA	data/nptypes.h	/^	kNPubyteRGBA,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPuint	data/nptypes.h	/^	kNPuint,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPurlMax	data/nptypes.h	119;"	d
-kNPuserMax	data/nptypes.h	1511;"	d
-kNPuserMax	data/nptypes.h	1529;"	d
-kNPuserNameMax	data/nptypes.h	/^	kNPuserNameMax	= 256,		\/\/\/< max user name length$/;"	e	enum:NP_DATABASE
+kNPurlMax	data/npdbTypes.h	36;"	d
+kNPurlMax	data/nptypes.h	120;"	d
+kNPuserMax	data/nptypes.h	1549;"	d
+kNPuserMax	data/nptypes.h	1567;"	d
+kNPuserNameMax	data/npdbTypes.h	/^	kNPuserNameMax	= 256,		\/\/\/< max user name length$/;"	e	enum:NP_DATABASE
 kNPversion	data/nptypes.h	/^	kNPversion,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPvoidPtr	data/nptypes.h	/^	kNPvoidPtr,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPwidth	data/nptypes.h	/^	kNPwidth,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPwindowHeight	data/nptypes.h	172;"	d
-kNPwindowPositionX	data/nptypes.h	173;"	d
-kNPwindowPositionY	data/nptypes.h	174;"	d
+kNPwindowHeight	data/nptypes.h	173;"	d
+kNPwindowPositionX	data/nptypes.h	174;"	d
+kNPwindowPositionY	data/nptypes.h	175;"	d
 kNPwindowSize	data/nptypes.h	/^	kNPwindowSize,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPwindowSizeXY	data/nptypes.h	/^	kNPwindowSizeXY,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
 kNPwindowSizeXYZ	data/nptypes.h	/^	kNPwindowSizeXYZ,$/;"	e	enum:kNP_NATIVE_DATA_TYPES
-kNPwindowWidth	data/nptypes.h	171;"	d
+kNPwindowWidth	data/nptypes.h	172;"	d
 kNeg2PI	data/npmath.h	33;"	d
 kNodeCamera	data/nptypes.h	/^	kNodeCamera,			\/\/!<for both real-world and virtual GL cameras$/;"	e	enum:kNP_NODE_TYPES
 kNodeCount	data/nptypes.h	/^	kNodeCount$/;"	e	enum:kNP_NODE_TYPES
@@ -1710,10 +1755,10 @@ kShadingPhong	data/nptypes.h	/^	kShadingPhong,$/;"	e	enum:kNP_SHADER_TYPE
 kShadingRaytrace	data/nptypes.h	/^	kShadingRaytrace,$/;"	e	enum:kNP_SHADER_TYPE
 kShadingReflection	data/nptypes.h	/^	kShadingReflection,$/;"	e	enum:kNP_SHADER_TYPE
 kShadingWire	data/nptypes.h	/^	kShadingWire,$/;"	e	enum:kNP_SHADER_TYPE
-kSocketTypeUnspecified	data/nptypes.h	1318;"	d
+kSocketTypeUnspecified	data/nptypes.h	1355;"	d
 kTorusScreenSizeCount	io/gl/npgeometry.c	31;"	d	file:
 kTorusThicknessCount	io/gl/npgeometry.c	32;"	d	file:
-kTracksDefaultUDPserverPort	data/nptypes.h	1317;"	d
+kTracksDefaultUDPserverPort	data/nptypes.h	1354;"	d
 kVideoFPS_119_88HZ	data/nptypes.h	/^	kVideoFPS_119_88HZ,$/;"	e	enum:kNP_VIDEO_HZ
 kVideoFPS_120HZ	data/nptypes.h	/^	kVideoFPS_120HZ$/;"	e	enum:kNP_VIDEO_HZ
 kVideoFPS_23_976HZ	data/nptypes.h	/^	kVideoFPS_23_976HZ,		\/\/!<Film on Video$/;"	e	enum:kNP_VIDEO_HZ
@@ -1762,14 +1807,15 @@ lineWidth	data/nptypes.h	/^	float		lineWidth;					\/\/!<draws lines, zero for of
 lineWidth	data/nptypes.h	/^	float		lineWidth;		\/\/!<1 line title only, 3 lines, max lines$/;"	m	struct:NPtag
 lines	io/net/nposcpack.cpp	/^	char* lines[NUMBER_LINES];$/;"	m	class:LineList	file:
 linkA	data/nptypes.h	/^	pNPnode		linkA;					\/\/!<used by link tool to store first pick$/;"	m	struct:NPmouse
-linkFlag	data/nptypes.h	/^	bool		linkFlag;					\/\/!<for establishing link nodes$/;"	m	struct:NPnode
+linkFlag	data/nptypes.h	/^	bool			linkFlag;					\/\/!<for establishing link nodes$/;"	m	struct:NPnode
 linkQue	data/nptypes.h	/^	pNPnode		linkQue[kNPnodeMax];	\/\/!<zz debug move this to data->map$/;"	m	struct:NPgl
 linkQueCount	data/nptypes.h	/^	int			linkQueCount;$/;"	m	struct:NPgl
+list	data/npdbTypes.h	/^	char** list;		\/\/!< list of databases by name$/;"	m	struct:NPdatabases
+list	data/npdbTypes.h	/^	char** list;		\/\/!< list of tables by name$/;"	m	struct:NPtables
 list	data/nptypes.h	/^	NPoscItem	list[kNPoscListMax];			\/\/!<list of que items or commands$/;"	m	struct:NPosc
 list	data/nptypes.h	/^	NPque**		list;			\/\/!<list of que items or commands$/;"	m	struct:NPqueList
 list	data/nptypes.h	/^	NPqueItem**	list;			\/\/!<list of que items or commands$/;"	m	struct:NPque
 list	data/nptypes.h	/^	char* list[kNPdbMax];		\/\/!<list of items by name$/;"	m	struct:NPmenu
-list	data/nptypes.h	/^	char** list;		\/\/!< list of databases by name$/;"	m	struct:NPdatabases
 list	data/nptypes.h	/^	pNPmapItemNodeID*	list;	\/\/\/< list of items that pair ID to node Ptr$/;"	m	struct:NPmapNodeID
 list	data/nptypes.h	/^	void**		list;$/;"	m	struct:NPtags
 list	data/nptypes.h	/^	void**	list;$/;"	m	struct:NPnodeList
@@ -1777,16 +1823,19 @@ list	data/nptypes.h	/^	void**	list;$/;"	m	struct:NPrecordSet
 listenerPorts	io/net/nposcpack.cpp	/^static int listenerPorts[ MAX_OSC_LISTENERS ];$/;"	v	file:
 listenerSockets	io/net/nposcpack.cpp	/^static void* listenerSockets[ MAX_OSC_LISTENERS ];$/;"	v	file:
 listeners	io/net/nposcpack.cpp	/^static void* listeners[ MAX_OSC_LISTENERS ];$/;"	v	file:
-loadUpdate	data/nptypes.h	/^	bool			loadUpdate;			\/\/\/< flag a single update this cycle$/;"	m	struct:NPdbs
-loadUpdateRate	data/nptypes.h	/^	float			loadUpdateRate;		\/\/\/< auto load update rate, 0 is off$/;"	m	struct:NPdbs
-loadUpdateRate	data/nptypes.h	/^	float		loadUpdateRate;			\/\/\/< auto load update rate, 0 is off$/;"	m	struct:NPdatabase
+literal	data/npdbTypes.h	/^	void* literal;$/;"	m	struct:NPdbLiteral
+loadLibrary	data/nptypes.h	/^	void*  (*loadLibrary)(char* filePath);$/;"	m	struct:NPosFuncSet
+loadNodeTbl	data/npdbTypes.h	/^	int			(*loadNodeTbl)();$/;"	m	struct:NPdatabase
+loadUpdate	data/npdbTypes.h	/^	bool			loadUpdate;			\/\/\/< flag a single update this cycle$/;"	m	struct:NPdbs
+loadUpdateRate	data/npdbTypes.h	/^	float			loadUpdateRate;		\/\/\/< auto load update rate, 0 is off$/;"	m	struct:NPdbs
+loadUpdateRate	data/npdbTypes.h	/^	float		loadUpdateRate;			\/\/\/< auto load update rate, 0 is off$/;"	m	struct:NPdatabase
 loading	data/nptypes.h	/^	int			loading;				\/\/!<used to signal processes to pause$/;"	m	struct:NPfile
 logMode	data/nptypes.h	/^	int			logMode;		\/\/!<0 = none, 1 = err only, 2 = all$/;"	m	struct:NPosc
 loopAtEndOfTrack	io/npch.c	/^bool loopAtEndOfTrack = true;	\/\/zz,  move to data->io.ch$/;"	v
 main	main.cpp	/^int main (int argc, char **argv)$/;"	f
 map	data/nptypes.h	/^	NPmap	map;		\/\/!< Model   - map$/;"	m	struct:Data
 map	data/nptypes.h	/^	int		map[kNPkeyEventTypeSize][kNPkeyMapSize];	\/\/!<key command map$/;"	m	struct:NPkey
-mapID	data/nptypes.h	/^	pNPmapID	mapID;		\/\/\/< maps the row id to local data ptr$/;"	m	struct:NPdbTable
+mapID	data/npdbTypes.h	/^	pNPmapID	mapID;						\/\/\/< maps the row id to local data ptr$/;"	m	struct:NPdbTable
 mapPath	data/nptypes.h	/^	char		mapPath[kNPmaxPath];$/;"	m	struct:NPfile
 mapPathA	data/nptypes.h	/^	char	mapPathA[kNPelementMax];	\/\/!<mapPtr = npGetMapID(mapID); \/\/!<and vice versa$/;"	m	struct:NPmapPair
 mapPathA	data/nptypes.h	/^	char	mapPathA[kNPnameMax];		\/\/!<db table path or RAM ptr by name$/;"	m	struct:NPmapLink
@@ -1827,34 +1876,46 @@ mouse	data/nptypes.h	/^	NPmouse		mouse;$/;"	m	struct:NPio
 msgMode	data/nptypes.h	/^	int			msgMode;		\/\/!<0 = quiet, 1 = system, 2 = GUI$/;"	m	struct:NPosc
 multiPartition	data/nptypes.h	/^	int multiPartition;		\/\/!<multi-partition NUMA HPC systems, 16384+ sockets$/;"	m	struct:NPcpu
 multiRAM	data/nptypes.h	/^	long long multiRAM;		\/\/!<total RAM across all NUMA partitions$/;"	m	struct:NPcpu
+name	data/npdbTypes.h	/^	char		name[kNPdbNameMax +1];	\/\/\/< database name +1 for '\\0'$/;"	m	struct:NPdatabase
+name	data/npdbTypes.h	/^	char		name[kNPdbNameMax];		\/\/\/< function UI name$/;"	m	struct:NPdbFunction
+name	data/npdbTypes.h	/^	char*		name;		\/\/\/< field name$/;"	m	struct:NPdbFields
+name	data/npdbTypes.h	/^	char*		name;$/;"	m	struct:NPdbTable
 name	data/nptypes.h	/^	char		name[64];			\/\/!<author, city, population...$/;"	m	struct:NPlabel
-name	data/nptypes.h	/^	char		name[kNPdbNameMax +1];	\/\/\/< database name +1 for '\\0'$/;"	m	struct:NPdatabase
-name	data/nptypes.h	/^	char		name[kNPdbNameMax];		\/\/\/< function UI name$/;"	m	struct:NPdbFunction
 name	data/nptypes.h	/^	char		name[kNPtagTitleMax];			\/\/!<name used for window title$/;"	m	struct:NPgl
 name	data/nptypes.h	/^	char	name[kNPnameMax];$/;"	m	struct:NPmapLink
 name	data/nptypes.h	/^	char name[256];$/;"	m	struct:NPuser
-name	data/nptypes.h	/^	char*		name;		\/\/\/< field name$/;"	m	struct:NPdbFields
 name	data/nptypes.h	/^	char*	name;$/;"	m	struct:NPmapType
 name	data/nptypes.h	/^	char* name;$/;"	m	struct:NPmenu
 name	io/npkey.c	/^	char*	name;$/;"	m	struct:NPkeyMap	file:
 newChunkObj	io/db/npdbz.h	/^struct newChunkObj {$/;"	s
 newChunksObj	io/db/npdbz.h	/^struct newChunksObj {$/;"	s
+newFuncSet	data/nptypes.h	/^	pNPosFuncSet (*newFuncSet)();$/;"	m	struct:NPos
+new_npGetTags	io/db/npdb.c	/^void new_npGetTags(char** buffer, int *index ,pNPnode node, void* dataRef)$/;"	f
+new_npMysqlStatementInsertFromChunk	io/db/npmysql.c	/^char* new_npMysqlStatementInsertFromChunk(char* table, struct newChunkObj *theChunk)$/;"	f
+new_npdbLoadTags	io/db/npdb.c	/^int new_npdbLoadTags ( pNPdbFuncSet func, void* result, void* dataRef )$/;"	f
+new_npdbQuery_safe	io/db/npdb.c	/^char* new_npdbQuery_safe(void* (*getConn)(pNPdbHost host, void* dataRef), void* (*getFuncs)(pNPdbHost host, void* dataRef), void* (*getHost)(pNPdatabase dbItem), pNPdatabase dbItem, char* statement, void* dataRef)$/;"	f
+new_npdbSaveAs	io/db/npdb.c	/^pNPdatabase new_npdbSaveAs( char* dbName, pNPdbHost host, void* dataRef )$/;"	f
+new_npdbSelectTable	io/db/npdb.c	/^int new_npdbSelectTable( pNPdbTable table )$/;"	f
+new_npdbShowDatabases	io/db/npmysql.c	/^void new_npdbShowDatabases(pNPdbFuncSet func, pNPdbHost host, void* dataRef)$/;"	f
+new_npdbStatementCreateNodeTable	io/db/npdb.c	/^char* new_npdbStatementCreateNodeTable(pNPdbFuncSet func, void* dataRef)$/;"	f
+new_npdbStatementCreateTable	io/db/npdb.c	/^char* new_npdbStatementCreateTable(char* table, char* (*GetTableFields)(void* dataRef), void* dataRef)$/;"	f
+newest_npdbSaveAs	io/db/npdb.c	/^char* newest_npdbSaveAs()$/;"	f
 next	data/nptypes.h	/^	pNPnode		next;						\/\/!<next sibling node in linked list, N$/;"	m	struct:NPnode
 next	data/nptypes.h	/^	void*			next;		\/\/\/< next sibling, the last sibling is null.$/;"	m	struct:NPnode2
 next	io/db/npauxdb.h	/^	struct fieldvalue *next;$/;"	m	struct:fieldvalue	typeref:struct:fieldvalue::fieldvalue
 next	io/db/npauxdb.h	/^	struct queue_node *next;$/;"	m	struct:queue_node	typeref:struct:queue_node::queue_node
 nextAvailableListenerIdx	io/net/nposcpack.cpp	/^static int nextAvailableListenerIdx = 0;$/;"	v	file:
 nextAvailableSenderIdx	io/net/nposcpack.cpp	/^static int nextAvailableSenderIdx = 0;$/;"	v	file:
-nextID	data/nptypes.h	/^	int		nextID;		\/\/\/< index used for accelerated search of ordered list$/;"	m	struct:NPmapID
+nextID	data/npdbTypes.h	/^	int		nextID;		\/\/\/< index used for accelerated search of ordered list$/;"	m	struct:NPmapID
 nextReadLineIdx	io/net/nposcpack.cpp	/^	int nextReadLineIdx;$/;"	m	class:LineList	file:
 nextWriteBufferIdx	io/net/nposcpack.cpp	/^	int nextWriteBufferIdx;$/;"	m	class:LineList	file:
 nextWriteLineIdx	io/net/nposcpack.cpp	/^	int nextWriteLineIdx;$/;"	m	class:LineList	file:
 node	data/nptypes.h	/^	pNPnode			node;	\/\/\/< pointer to the scene (node) THIS id references.$/;"	m	struct:NPmapItemNodeID
 node	data/nptypes.h	/^	void**		node;					\/\/!<root node array, uses kNPnodeRootMax$/;"	m	struct:NPmap
+nodeCount	data/npdbTypes.h	/^	int			nodeCount;				\/\/\/< if exists, node table row count \/\/ @todo, include nodeCount on dbMenu, lde$/;"	m	struct:NPdatabase
 nodeCount	data/nptypes.h	/^	int			nodeCount;				\/\/!<total for root and children nodes$/;"	m	struct:NPmap
-nodeCount	data/nptypes.h	/^	int			nodeCount;				\/\/\/< if exists, node table row count$/;"	m	struct:NPdatabase
 nodeField	data/nptypes.h	/^	NPintXYZS	nodeField;			\/\/!<which node parameter to display$/;"	m	struct:NPlabel
-nodeID	data/nptypes.h	/^	int*	nodeID;		\/\/\/< matching list of local scene node id's$/;"	m	struct:NPmapID
+nodeID	data/npdbTypes.h	/^	int*	nodeID;		\/\/\/< matching list of local scene node id's$/;"	m	struct:NPmapID
 nodeID	data/nptypes.h	/^	void**		nodeID;					\/\/!<maps nodeID to pNPnode, kNPnodeMax$/;"	m	struct:NPmap
 nodePropertyMemoryLocations	data/nptypes.h	/^	void*		nodePropertyMemoryLocations[kNPmaxFloatProperties];		\/\/!< memory address of each node property fed from track data$/;"	m	struct:NPnodePropertyTracks
 nodePropertyMemoryNextLocation	data/nptypes.h	/^	void**		nodePropertyMemoryNextLocation;							\/\/!< next available location for a float property memory address$/;"	m	struct:NPnodePropertyTracks
@@ -1867,12 +1928,11 @@ normalCount	data/nptypes.h	/^	int			normalCount;				\/\/!<$/;"	m	struct:NPgis
 normalCount	data/nptypes.h	/^	int			normalCount;				\/\/!<$/;"	m	struct:NPsurface
 note	io/npkey.c	/^	char*	note;$/;"	m	struct:NPkeyMap	file:
 npActivateDataLoadThread	io/npch.c	/^void npActivateDataLoadThread( void* dataRef )$/;"	f
-npAddDb	io/db/npdbz.c	/^int npAddDb(struct databases *dbs, char* dbType, char* hostIP, char* user, char* pass, char* dbName, void* dataRef)$/;"	f
+npAddDb	io/db/npdbz.c	/^int npAddDb(pNPdbs dbs, char* dbType, char* hostIP, char* user, char* pass, char* dbName, void* dataRef)$/;"	f
 npAddTag	io/gl/nptags.c	/^void npAddTag (pNPtag tag, void* dataRef)$/;"	f
 npAddTagToDraw	io/gl/npgldraw.c	/^void npAddTagToDraw (pNPnode node, void* dataRef)$/;"	f
 npAppLoop	npctrl.c	/^int npAppLoop (void* dataRef)$/;"	f
 npAppLoopGlut	io/npglut.c	/^void npAppLoopGlut (void* dataRef)$/;"	f
-npAttachDbsToDataRef	io/db/npdbz.c	/^int npAttachDbsToDataRef(struct databases *dbs, void* dataRef)$/;"	f
 npBeginOscPackMessage	io/net/nposcpack.cpp	/^void npBeginOscPackMessage( pNPoscPackSender oscSender, char* address )$/;"	f
 npCSVDialog	io/file/npcsv.c	/^FILE* npCSVDialog (const char* fileName, int dialogType, void* dataRef)$/;"	f
 npCSVGetAttrib	io/file/npcsv.c	/^void npCSVGetAttrib (int size, void* dataRef)$/;"	f
@@ -1913,7 +1973,7 @@ npChTrackTokens	io/npch.c	/^char** npChTrackTokens (pNPch ch, void* dataRef)$/;"
 npCircularBufferLoadLoop	io/npch.c	/^void npCircularBufferLoadLoop (void* dataRef)$/;"	f
 npClearLinkQue	io/gl/npgldraw.c	/^void npClearLinkQue (void* dataRef)$/;"	f
 npCloseAuxDB	io/db/npauxdb.c	/^void npCloseAuxDB (void* dataRef)		\/\/clean-up$/;"	f
-npCloseCSV	io/file/npcsv.c	/^void npCloseCSV (void* dataRef)$/;"	f
+npCloseCSV	io/file/npcsv.c	/^void npCloseCSV (FILE* filePtr, void* dataRef)$/;"	f
 npCloseCh	io/npch.c	/^void npCloseCh (void* dataRef)		\/\/clean-up$/;"	f
 npCloseCmd	ctrl/npcmd.c	/^void npCloseCmd (void* dataRef)$/;"	f
 npCloseConsole	io/npconsole.c	/^void npCloseConsole (void* dataRef)$/;"	f
@@ -1958,8 +2018,7 @@ npColorPicker	io/gl/npcolor.c	/^NPfloatRGBA npColorPicker( float x, float y, flo
 npColorPicker6DOE	io/gl/npcolor.c	/^NPfloatRGBA npColorPicker6DOE ( float x, float y, float z,$/;"	f
 npCompareNodes	io/gl/nptags.c	/^int npCompareNodes (const void* a, const void* b)$/;"	f
 npCompareTags	io/gl/nptags.c	/^int npCompareTags (const void* a, const void* b)$/;"	f
-npConnectDB	io/db/npdbz.c	/^int npConnectDB (void* dataRef)$/;"	f
-npConnectToDatabaseServer	io/db/npdbz.c	/^int npConnectToDatabaseServer(struct dbNewConnect *connect, void* dataRef)$/;"	f
+npConCat	io/db/npmysql.c	/^char* npConCat( char* (*first)(), char* (*second)(), int* err )$/;"	f
 npConsole	io/npconsole.c	/^void npConsole (void* dataRef)$/;"	f
 npConsoleCLS	io/npconsole.c	/^void npConsoleCLS (pNPconsole console, void* dataRef)$/;"	f
 npConsoleCmd	io/npconsole.c	/^void npConsoleCmd( pNPconsole console, void* dataRef )$/;"	f
@@ -2006,7 +2065,7 @@ npDrawSort	io/gl/npgldraw.c	/^void npDrawSort(void** sort, int count, void* data
 npDrawSortThread	io/gl/npgldraw.c	/^void npDrawSortThread(void* dataRef)										 \/\/zzhp$/;"	f
 npDrawTextTag	io/gl/nptags.c	/^void npDrawTextTag (pNPtag tag, void* dataRef)$/;"	f
 npDrawTorus	io/gl/npgeometry.c	/^void npDrawTorus (int geometry, GLfloat innerRadius)$/;"	f
-npDropDatabase	io/db/npdbz.c	/^int npDropDatabase(int dbID, struct dbFunction *db, const char* dbName, void* dataRef )$/;"	f
+npDropDatabase	io/db/npdbz.c	/^int npDropDatabase(int dbID, pNPdbFuncSet FuncSet, const char* dbName, void* dataRef )$/;"	f
 npDropTable	io/db/npdbz.c	/^int npDropTable(int dbID, struct dbFunction *db, char* table)$/;"	f
 npEndOscPackMessage	io/net/nposcpack.cpp	/^void npEndOscPackMessage( pNPoscPackSender oscSender )$/;"	f
 npEvenNewerAllChunk	io/db/npdbz.c	/^struct newChunksObj* npEvenNewerAllChunk(struct csvStrObjects *csvObjects, void* dataRef)$/;"	f
@@ -2054,7 +2113,11 @@ npGLWireSphere	io/npglut.c	/^void npGLWireSphere (GLdouble radius, GLint slices,
 npGLWireTorus	io/npglut.c	/^void npGLWireTorus (GLdouble innerRadius, GLdouble outerRadius, $/;"	f
 npGeneralAddObjectsToChunks	io/db/npdbz.c	/^struct newChunksObj* npGeneralAddObjectsToChunks(struct newChunksObj* chunks, struct csvStrObjects* strObjects, void* dataRef)$/;"	f
 npGetActiveCam	data/npnode.c	/^pNPnode npGetActiveCam (void* dataRef)$/;"	f
+npGetCSVtagFromNode	io/db/npdb.c	/^void npGetCSVtagFromNode(char** buffer, int *index ,pNPnode node, void* dataRef)$/;"	f
+npGetCSVtagsFromAllNodes	io/db/npdb.c	/^void npGetCSVtagsFromAllNodes(char** buffer, int* index, void* dataRef)$/;"	f
+npGetCSVtagsFromNodeTree	io/db/npdb.c	/^void npGetCSVtagsFromNodeTree(char** buffer, int* index, pNPnode node, void* dataRef)$/;"	f
 npGetCWD	io/npfile.c	/^void npGetCWD (char* buffer, int* size)					$/;"	f
+npGetChunk	io/db/npdbz.c	/^struct newChunkObj* npGetChunk(struct newChunksObj *chunks, int index)$/;"	f
 npGetConsoleMenuName	io/npconsole.c	/^char* npGetConsoleMenuName( pNPconsole console, char* input, void* dataRef )$/;"	f
 npGetDataRef	npdata.c	/^void* npGetDataRef()$/;"	f
 npGetDataTypeDesc	npdata.c	/^char* npGetDataTypeDesc (int type)$/;"	f
@@ -2073,6 +2136,9 @@ npGetOpenFilePath	io/npfile.c	/^void npGetOpenFilePath (char* buffer, int* size,
 npGetRootIndex	data/npmap.c	/^int npGetRootIndex (pNPnode node, void* dataRef)$/;"	f
 npGetTableID	data/npmapfile.c	/^int npGetTableID(const char* filePath, void* dataRef)$/;"	f
 npGetTag	io/gl/nptags.c	/^pNPtag npGetTag (int recordID, int tableID, void* dataRef)$/;"	f
+npGetTagFromNode	io/db/npdb.c	/^pNPtag npGetTagFromNode(pNPnode node, void* dataRef)$/;"	f
+npGetTags	io/db/npdb.c	/^void npGetTags(void* dataRef)$/;"	f
+npGetTime	io/db/npdb.c	/^double npGetTime(double start, void* function, double end)$/;"	f
 npGetType	data/npmapfile.c	/^char* npGetType(int* type, int* format, const char* str, int size, void* dataRef)$/;"	f
 npGetValueStr	io/file/npcsv.c	/^char* npGetValueStr(char* dest, pNPmapLink item, void* dataRef) \/\/*(int*)mapGlobals[id].mapPtr,$/;"	f
 npGlutDrawGLScene	io/npglut.c	/^void npGlutDrawGLScene(void) $/;"	f
@@ -2109,7 +2175,7 @@ npInitData	npdata.c	/^void* npInitData (int argc, char** argv)$/;"	f
 npInitDataCPU	npdata.c	/^void npInitDataCPU (pNPcpu cpu)$/;"	f
 npInitDataChannel	npdata.c	/^void npInitDataChannel (void* dataRef)$/;"	f
 npInitDataCtrl	npdata.c	/^void npInitDataCtrl(void* dataRef)$/;"	f
-npInitDataDB	npdata.c	/^void npInitDataDB (struct databases* dbs, void* dataRef)$/;"	f
+npInitDataDB	npdata.c	/^void npInitDataDB (void* dataRef)$/;"	f
 npInitDataFile	npdata.c	/^void npInitDataFile (pNPfile file, void* dataRef)$/;"	f
 npInitDataGL	npdata.c	/^void npInitDataGL(void* dataRef)$/;"	f
 npInitDataHUD	npdata.c	/^void npInitDataHUD (void* dataRef)$/;"	f
@@ -2148,6 +2214,7 @@ npInitNodeDefault	data/npnode.c	/^void npInitNodeDefault (pNPnode node)$/;"	f
 npInitNodeHUD	data/npnode.c	/^void npInitNodeHUD (pNPnode node)$/;"	f
 npInitOBJ	io/file/npobj.c	/^void npInitOBJ (void* dataRef)$/;"	f
 npInitOFX	ofxantz.cpp	/^void npInitOFX (void* dataRef)$/;"	f
+npInitOS	npio.c	/^void npInitOS( void* dataRef)$/;"	f
 npInitOSC	io/net/nposc.c	/^void npInitOSC (void* dataRef )$/;"	f
 npInitOscPackListener	io/net/nposcpack.cpp	/^void npInitOscPackListener( pNPoscPackListener oscListener, void* dataRef )$/;"	f
 npInitOscPackSender	io/net/nposcpack.cpp	/^void npInitOscPackSender( pNPoscPackSender oscSender, char* ip, int port )$/;"	f
@@ -2216,14 +2283,14 @@ npMouseMotion	io/npmouse.c	/^void npMouseMotion (int x, int y)$/;"	f
 npMouseWheel	io/npmouse.c	/^void npMouseWheel (int wheel, int direction, int x, int y)$/;"	f
 npMultMatrix	data/npmath.c	/^void npMultMatrix (float *matDest, float *matA, float *matB)$/;"	f
 npMysqlAddFuncSet	io/db/npmysql.c	/^pNPdbFuncSet npMysqlAddFuncSet( pNPdbs db, pNPdbFuncSet funcSet )$/;"	f
-npMysqlGetTableFields	io/db/npmysql.c	/^char* npMysqlGetTableFields( int type, void* dataRef )$/;"	f
+npMysqlGetTableFields	io/db/npmysql.c	/^char* npMysqlGetTableFields( int type, void* dataRef ) \/\/ @todo, lde, make a npdbGetTableFields function$/;"	f
 npMysqlHook	io/db/npmysql.c	/^int npMysqlHook( pNPdbFuncSet func, void* dbLib)$/;"	f
 npMysqlInitConnOptions	io/db/npmysql.c	/^int npMysqlInitConnOptions( pNPdbFuncSet func, void* connInit )$/;"	f
 npMysqlServerCtrl	io/db/npmysql.c	/^int npMysqlServerCtrl(void (*ctrlFunction)(void*), void* parameters)$/;"	f
 npMysqlStatementCreate	io/db/npmysql.c	/^char* npMysqlStatementCreate(char* dbName)$/;"	f
 npMysqlStatementCreateTable	io/db/npmysql.c	/^char* npMysqlStatementCreateTable(char* table, char* fields)$/;"	f
 npMysqlStatementDrop	io/db/npmysql.c	/^char* npMysqlStatementDrop(char* dropType, char* dropName)$/;"	f
-npMysqlStatementInsert	io/db/npmysql.c	/^char* npMysqlStatementInsert(char* table)$/;"	f
+npMysqlStatementInsert	io/db/npmysql.c	/^char* npMysqlStatementInsert(char* table, char* values) \/\/ perhaps I can pass this a function which will extract all the values from the chunks structure, lde$/;"	f
 npMysqlStatementSelect	io/db/npmysql.c	/^char* npMysqlStatementSelect( char* table )$/;"	f
 npMysqlStatementShow	io/db/npmysql.c	/^char* npMysqlStatementShow(char* showWhat)$/;"	f
 npMysqlStatementTruncate	io/db/npmysql.c	/^char* npMysqlStatementTruncate( int dbID, char* tableName )$/;"	f
@@ -2329,6 +2396,7 @@ npSort	data/npmap.c	/^void npSort (void* base, int count, int elementSize, $/;"	
 npStartOscPackListener	io/net/nposcpack.cpp	/^void npStartOscPackListener( pNPoscPackListener oscListener )$/;"	f
 npStrDigitIsNext	data/npstr.c	/^int npStrDigitIsNext( const char* str, int size )$/;"	f
 npStrToRange	data/npstr.c	/^int npStrToRange( int* lower, int* upper, const char* str, int size )$/;"	f
+npString	data/npdbTypes.h	/^	char* npString; \/\/ 'abcd' or "abcd"$/;"	m	struct:NPdbStringLiteral
 npSyncChMap	io/npch.c	/^void npSyncChMap (void* dataRef)$/;"	f
 npSyncRecords	data/npmapfile.c	/^void npSyncRecords (pNPrecordSet recordSet, void* dataRef)$/;"	f
 npSyncTags	io/gl/nptags.c	/^void npSyncTags (void* dataRef)$/;"	f
@@ -2339,6 +2407,7 @@ npTagEditMode	io/npgl.c	/^void npTagEditMode( bool tagEditMode, void* dataRef )$
 npTagNode	io/gl/nptags.c	/^void npTagNode (pNPnode node, void* dataRef)$/;"	f
 npTagSort	data/npmap.c	/^void npTagSort (void* dataRef)$/;"	f
 npTagSortAdd	data/npmap.c	/^void npTagSortAdd (pNPrecordTag recordTag, void* dataRef)$/;"	f
+npTagToCSV	io/db/npdb.c	/^int npTagToCSV(pNPtag tag, void* buffer) \/\/ lde @todo$/;"	f
 npTestCSV	io/file/npcsv.c	/^void npTestCSV (void* fileName, int wordSize, int size, void* dataRef)$/;"	f
 npTestEvenNewerAllChunk	io/db/npdbz.c	/^struct newChunksObj* npTestEvenNewerAllChunk(void* dataRef)$/;"	f
 npTestNewInitChunksObj	io/db/npdbz.c	/^struct newChunksObj* npTestNewInitChunksObj(struct newChunksObj *chunks, int chunkSize, void* dataRef)$/;"	f
@@ -2375,7 +2444,6 @@ npUpdateTest	ctrl/nptest.c	/^void npUpdateTest (void* dataRef)$/;"	f
 npUpdateTexMap	io/gl/nptexmap.c	/^void npUpdateTexMap (void* dataRef)							\/\/add to ctrl loop, debug zz$/;"	f
 npUpdateTopo	npctrl.c	/^void npUpdateTopo (pNPnode node, void* dataRef)$/;"	f
 npUpdateVideo	io/video/npvideo.c	/^void npUpdateVideo (void* dataRef)$/;"	f
-npUseDatabase2	io/db/npdbz.c	/^int npUseDatabase2(void* conn, pNPdbFuncSet func, char* dbName)$/;"	f
 npValidateURL	io/npfile.c	/^bool npValidateURL( const char* urlASCII, void* dataRef )$/;"	f
 npViewDatabases	npio.c	/^void npViewDatabases (void* dataRef)$/;"	f
 npViewFiles	npio.c	/^void npViewFiles (void* dataRef)$/;"	f
@@ -2396,49 +2464,103 @@ npctrl_H_	npctrl.h	26;"	d
 npdbActiveDB	io/db/npdb.c	/^char* npdbActiveDB( void* dataRef )$/;"	f
 npdbActiveHost	io/db/npdb.c	/^void npdbActiveHost( char* hostName, void* dataRef)$/;"	f
 npdbAddDatabase	io/db/npdb.c	/^pNPdatabase npdbAddDatabase( char* dbName, pNPdbHost host, pNPdbs dbs )$/;"	f
+npdbAddField	io/db/npdb.c	/^int npdbAddField(pNPdbTable tbl, char* name, char* typeStr)$/;"	f
 npdbAddHost	io/db/npdb.c	/^int npdbAddHost( char* type, char* ip, int port, char* user, char* pass, void* dataRef)	\/\/zzd$/;"	f
 npdbAddHostDatabases	io/db/npdb.c	/^int npdbAddHostDatabases( pNPdbHost host, pNPdbs dbs )$/;"	f
+npdbAddReservedWord	io/db/npdb.c	/^pNPdbReservedWord npdbAddReservedWord(char* word, int type)$/;"	f
 npdbAddTable	npdata.c	/^pNPdatabase npdbAddTable( void )$/;"	f
 npdbAttachHostFuncSets	io/db/npdb.c	/^void npdbAttachHostFuncSets( pNPdbs dbs )$/;"	f
+npdbBuildCreateQuery	io/db/npdb.c	/^void npdbBuildCreateQuery(char* type) \/\/ type being database or table or etc..., lde @todo$/;"	f
+npdbBuildQuery	io/db/npdb.c	/^char** npdbBuildQuery(char* item, int* num)$/;"	f
+npdbCSVtoTable	io/db/npdb.c	/^int npdbCSVtoTable( pNPdbTable tbl, FILE* filePtr, void* dataRef) \/\/ add to header, lde @todo$/;"	f
 npdbClearDatabaseList	io/db/npdb.c	/^int npdbClearDatabaseList( pNPdbs dbs )$/;"	f
 npdbConnMonitorThread	io/db/npdb.c	/^void npdbConnMonitorThread( pNPdbs dbs, void* dataRef )$/;"	f
 npdbConnect	io/db/npdb.c	/^int npdbConnect( pNPdbHost host, void* dataRef )$/;"	f
 npdbConnectHosts	io/db/npdb.c	/^void npdbConnectHosts( pNPdbs dbs, void* dataRef )$/;"	f
 npdbCreateDatabase	io/db/npdb.c	/^pNPdatabase npdbCreateDatabase( char* dbName, pNPdbHost host, pNPdbs dbs )$/;"	f
+npdbCreateNodeTable	io/db/npdb.c	/^void npdbCreateNodeTable( pNPdatabase dbItem, pNPdbFuncSet func , int* err, void* dataRef )$/;"	f
 npdbCreateTable	io/db/npdb.c	/^int npdbCreateTable( pNPdatabase dbItem, char* table, char* fields )$/;"	f
+npdbCreateTagTable	io/db/npdb.c	/^int npdbCreateTagTable( pNPdatabase dbItem, void* dataRef)$/;"	f
+npdbDatabasesStatement	io/db/npmysql.c	/^char* npdbDatabasesStatement()$/;"	f
+npdbDeleteKeyword	io/db/npdb.c	/^void npdbDeleteKeyword(pNPdbReservedWord reservedWord)$/;"	f
 npdbDrop	io/db/npdb.c	/^int npdbDrop( const char* dbName, void* dataRef )							\/\/add to ctrl loop, debug zz$/;"	f
+npdbErrMysqlToAntz	io/db/npdb.c	/^int npdbErrMysqlToAntz(int err) \/\/ @todo lde, add to header file when finished$/;"	f
+npdbFetchRow	io/db/npdb.c	/^int npdbFetchRow( pNPdbFuncSet func, pNPdbTable tbl )$/;"	f
+npdbFetchRow_safe	io/db/npdb.c	/^char** npdbFetchRow_safe(void* result, pNPdbFuncSet func, int* err)$/;"	f
+npdbFetchTableName	io/db/npdb.c	/^void* npdbFetchTableName( pNPdbFuncSet func, void* result, pNPdbTable tbl)$/;"	f
+npdbFindNodeTbl	io/db/npdb.c	/^pNPdbTable npdbFindNodeTbl( pNPdatabase db, int* err, void* dataRef)$/;"	f
+npdbFindTagTbl	io/db/npdb.c	/^pNPdbTable npdbFindTagTbl( pNPdatabase db, int* err, void* dataRef)$/;"	f
+npdbFree	io/db/npdb.c	/^void npdbFree(void* memory, pNPdatabase db, void* dataRef)$/;"	f
+npdbFreeField	io/db/npdb.c	/^void npdbFreeField(pNPdbFields field) \/\/ This should return void, not int, lde @todo \/\/ DONE$/;"	f
+npdbFreeFieldList	io/db/npdb.c	/^void npdbFreeFieldList(char* fieldList) \/\/ lde, @todo add to header file$/;"	f
+npdbFreeFields	io/db/npdb.c	/^void npdbFreeFields(pNPdbTable tbl)$/;"	f
+npdbFreeTable	io/db/npdb.c	/^void npdbFreeTable(pNPdbTable tbl)$/;"	f
+npdbFreeTables	io/db/npdb.c	/^void npdbFreeTables(pNPdatabase db)$/;"	f
 npdbGetByName	io/db/npdb.c	/^pNPdatabase npdbGetByName( char* dbName, void* dataRef)$/;"	f
 npdbGetByNameAndHost	io/db/npdb.c	/^pNPdatabase npdbGetByNameAndHost( char* dbName, pNPdbHost host, pNPdbs dbs )$/;"	f
+npdbGetCSVrowFromDB	io/db/npdb.c	/^int npdbGetCSVrowFromDB(pNPdbFuncSet func, void* result, int numFields, char* csvRow) \/\/ new, lde$/;"	f
+npdbGetCSVrowsFromDB	io/db/npdb.c	/^int npdbGetCSVrowsFromDB(pNPdbFuncSet func, void* result, int numFields, char* csvRow) \/\/ add to header, lde$/;"	f
+npdbGetConnFromHost	io/db/npdb.c	/^void* npdbGetConnFromHost(pNPdbHost host) \/\/ lde, @todo add to header file$/;"	f
 npdbGetConnectedHost	io/db/npdb.c	/^pNPdbHost npdbGetConnectedHost( pNPdbs dbs )$/;"	f
+npdbGetFieldList	io/db/npdb.c	/^void* npdbGetFieldList(pNPdbTable tbl, int* err, void* dataRef)$/;"	f
+npdbGetFields	io/db/npdb.c	/^int npdbGetFields ( pNPdbTable tbl, void* dataRef)$/;"	f
+npdbGetFuncsFromHost	io/db/npdb.c	/^pNPdbFuncSet npdbGetFuncsFromHost(pNPdbHost host, void* dataRef) \/\/ lde, @todo add to header file$/;"	f
+npdbGetHostFromDB	io/db/npdb.c	/^pNPdbHost npdbGetHostFromDB(pNPdatabase dbItem) \/\/ lde, @todo add to header file$/;"	f
 npdbGetHostFuncSet	io/db/npdb.c	/^pNPdbFuncSet npdbGetHostFuncSet( char* hostType, pNPdbs dbs )$/;"	f
-npdbGetList	io/db/npdbz.c	/^void* npdbGetList(struct database *db, void* dataRef )$/;"	f
 npdbGetMenu	io/db/npdb.c	/^pNPmenu npdbGetMenu ( pNPmenu menu, void* dataRef)$/;"	f
 npdbGetNodeByMapID	io/db/npdb.c	/^pNPnode npdbGetNodeByMapID( int id, pNPmapID map, void* dataRef )$/;"	f
+npdbGetNodeTableFields	io/db/npdb.c	/^char* npdbGetNodeTableFields(void* dataRef) \/\/ lde @todo$/;"	f
+npdbGetTagTableFields	io/db/npdb.c	/^char* npdbGetTagTableFields(pNPdbFuncSet func, void* dataRef)$/;"	f
+npdbGetTblList	io/db/npmysql.c	/^void* npdbGetTblList(pNPdbHost host ,pNPdatabase db, pNPdbFuncSet func, void* dataRef) \/\/ Put in header file, lde$/;"	f
+npdbGetTbls	io/db/npdb.c	/^int npdbGetTbls(pNPdbHost host, pNPdatabase db)$/;"	f
 npdbHostErr	io/db/npdb.c	/^int npdbHostErr( pNPdbHost host )$/;"	f
 npdbInitMapID	io/db/npdb.c	/^int npdbInitMapID( pNPmapID map, int count, void* dataRef )$/;"	f
 npdbItemErr	io/db/npdb.c	/^int npdbItemErr( pNPdatabase dbItem )$/;"	f
 npdbLoadMenuItem	io/db/npdb.c	/^int npdbLoadMenuItem (int item, void* dataRef)$/;"	f
 npdbLoadNodeTbl	io/db/npdb.c	/^int npdbLoadNodeTbl( pNPdatabase dbItem, void* dataRef )$/;"	f
-npdbLoadNodes	io/db/npdb.c	/^int npdbLoadNodes( pNPdbFuncSet func, void* result, void* dataRef )$/;"	f
+npdbLoadNodes	io/db/npdb.c	/^int npdbLoadNodes( pNPdbFuncSet func, void* result, void* dataRef ) \/\/ npdbLoadNodesFromTable , lde @todo$/;"	f
 npdbLoadScene	io/db/npdb.c	/^int npdbLoadScene( pNPdatabase dbItem, void* dataRef )$/;"	f
+npdbLoadTagTable	io/db/npdb.c	/^int npdbLoadTagTable( pNPdatabase dbItem, void* dataRef )$/;"	f
+npdbLoadTagTbl	io/db/npdb.c	/^int npdbLoadTagTbl( pNPdatabase dbItem, void* dataRef )$/;"	f
+npdbLoadTags	io/db/npdb.c	/^int npdbLoadTags ( pNPdbFuncSet func, void* result, void* dataRef )$/;"	f
 npdbLoadUpdate	io/db/npdb.c	/^int npdbLoadUpdate( void* dataRef )							\/\/add to ctrl loop, debug zz$/;"	f
+npdbMalloc	io/db/npdb.c	/^void* npdbMalloc(void* memory, pNPdatabase db, void* dataRef)$/;"	f
 npdbNewDatabase	io/db/npdb.c	/^pNPdatabase npdbNewDatabase( char* name, pNPdbHost host, pNPdbs db )$/;"	f
 npdbNewFuncSet	io/db/npdb.c	/^pNPdbFuncSet npdbNewFuncSet( pNPdbs db )$/;"	f
+npdbNumFields_safe	io/db/npdb.c	/^int npdbNumFields_safe(void* result, pNPdbFuncSet func, int rightNum, int* err )$/;"	f
+npdbNumRows_safe	io/db/npdb.c	/^int npdbNumRows_safe(void* result, pNPdbFuncSet func, int* err)$/;"	f
 npdbOpen	io/db/npdbz.c	/^int npdbOpen( pNPdatabase database, void* dataRef ) $/;"	f
+npdbPRC	io/db/npdb.c	/^void npdbPRC(pNPdatabase db)$/;"	f
 npdbPushScene	io/db/npdbz.c	/^int npdbPushScene ( void* dbID, const char* dbName, void* dataRef )							\/\/add to ctrl loop, debug zz$/;"	f
+npdbQuery_safe	io/db/npdb.c	/^int npdbQuery_safe(void* conn, pNPdbFuncSet func, pNPdbHost host ,char* statement)$/;"	f
 npdbRefreshDatabaseList	io/db/npdb.c	/^int npdbRefreshDatabaseList( pNPdbs dbs )$/;"	f
 npdbRowToNode	io/db/npdb.c	/^void npdbRowToNode( pNPnode node, char** row )$/;"	f
 npdbSaveAs	io/db/npdb.c	/^pNPdatabase npdbSaveAs( char* dbName, pNPdbHost host, void* dataRef )$/;"	f
 npdbSaveScene	io/db/npdb.c	/^void npdbSaveScene( void* dataRef )$/;"	f
+npdbSaveTags	io/db/npdb.c	/^int npdbSaveTags(pNPdatabase dbItem, pNPdbFuncSet func, char* table, void* dataRef) \/\/ lde @todo$/;"	f
 npdbSaveUpdate	io/db/npdb.c	/^int npdbSaveUpdate ( pNPdatabase dbItem, void* dataRef )$/;"	f
 npdbSelect	io/db/npdb.c	/^void npdbSelect( char* dbName, char* tblName, char* selectWhere, void* dataRef)$/;"	f
-npdbSelectTable	io/db/npdb.c	/^int npdbSelectTable( pNPdatabase dbItem, char* table ) \/\/Add field(s) choice later$/;"	f
+npdbSelectQuery	io/db/npdb.c	/^int npdbSelectQuery( void* conn, pNPdbFuncSet func, pNPdbHost host, char* (*selectStatement)(), char* table ) \/\/ new, lde @todo$/;"	f
+npdbSelectTable	io/db/npdb.c	/^int npdbSelectTable( pNPdatabase dbItem, char* table ) \/\/Add field(s) choice later, @todo, lde$/;"	f
 npdbSet	io/db/npdb.c	/^void npdbSet( char* dbName, char* tblName, char* setStatement, void* dataRef)$/;"	f
-npdbShowDatabases	io/db/npdb.c	/^int npdbShowDatabases( pNPdbHost host )$/;"	f
+npdbSetField	io/db/npdb.c	/^int npdbSetField (pNPdbFields field, pNPdbHost host, void* result, void* dataRef)$/;"	f
+npdbSetFields	io/db/npdb.c	/^int npdbSetFields ( pNPdbTable tbl, pNPdbHost host, void* dataRef) \/\/ fieldLength validation should be variable, lde$/;"	f
+npdbSetTable	io/db/npdb.c	/^int npdbSetTable( pNPdbFuncSet func, void* result, pNPdbTable tbl, pNPdbHost host, void* dataRef )$/;"	f
+npdbSetTables	io/db/npdb.c	/^int npdbSetTables(pNPdbHost host, pNPdatabase db)$/;"	f
+npdbShowDatabases	io/db/npdb.c	/^int npdbShowDatabases( pNPdbHost host ) \/\/ Make this more generic, lde @todo$/;"	f
+npdbShowDatabasesStatement	io/db/npmysql.c	/^char* npdbShowDatabasesStatement( char* (*showStatement)(), char* (*dbStatement)(), int* err )$/;"	f
+npdbShowFields	io/db/npdb.c	/^int npdbShowFields ( pNPdbHost host, pNPdbTable tbl, void* dataRef)$/;"	f
+npdbShowStatement	io/db/npmysql.c	/^char* npdbShowStatement()$/;"	f
+npdbShowTables	io/db/npdb.c	/^int npdbShowTables( pNPdbHost host)$/;"	f
 npdbStartConnMonitor	io/db/npdb.c	/^void npdbStartConnMonitor( pNPdbs dbs )							\/\/add to ctrl loop, debug zz$/;"	f
 npdbStartMapID	io/db/npdb.c	/^void npdbStartMapID( pNPmapID map, void* dataRef )$/;"	f
+npdbStatementCreateNodeTable	io/db/npdb.c	/^char* npdbStatementCreateNodeTable(pNPdbFuncSet func, char* (*fields)(void* dataRef), void* dataRef)$/;"	f
+npdbStatementCreateTagTable	io/db/npdb.c	/^char* npdbStatementCreateTagTable(pNPdbFuncSet func, void* dataRef)$/;"	f
 npdbStopMapID	io/db/npdb.c	/^void npdbStopMapID( pNPmapID map, void* dataRef )$/;"	f
-npdbTruncate	io/db/npdb.c	/^int npdbTruncate(void* conn, struct dbFunction *db, char* table)$/;"	f
+npdbStoreResult_Safe	io/db/npdb.c	/^void* npdbStoreResult_Safe(pNPdbFuncSet func, pNPdbHost host, int* err) $/;"	f
+npdbTableRowsToNodes	io/db/npdb.c	/^int npdbTableRowsToNodes() \/\/ lde @todo$/;"	f
+npdbTableToCSV	io/db/npdb.c	/^int npdbTableToCSV(pNPdbTable table, char* csvName, void* dataRef) \/\/ Put in header file, lde$/;"	f
+npdbTruncate	io/db/npdb.c	/^int npdbTruncate(void* conn, pNPdbFuncSet func, char* table)$/;"	f
 npdbUpdateAntzStateFromDatabase	io/db/npdb.c	/^int npdbUpdateAntzStateFromDatabase(void* dataRef)$/;"	f
 npdbUpdateMapID	io/db/npdb.c	/^int npdbUpdateMapID(pNPmapID map, void* dataRef)$/;"	f
 npdbUpdateNodeFromRow	io/db/npdb.c	/^void npdbUpdateNodeFromRow( char** row, void* dataRef ) \/\/ Generalize here$/;"	f
@@ -2447,24 +2569,30 @@ npdbUse	io/db/npdb.c	/^int npdbUse( pNPdatabase dbItem )$/;"	f
 npdbUse_old	io/db/npdbz.c	/^int npdbUse_old( const char* dbName, void* dataRef )							\/\/add to ctrl loop, debug zz$/;"	f
 npengine_H_	ctrl/npengine.h	26;"	d
 npglFullscreen	io/npglut.c	/^void npglFullscreen (void* dataRef)$/;"	f
+npmswGetLibSymbol	os/msw/npos.c	/^void* npmswGetLibSymbol(void* library, char* symbolName)$/;"	f
 npnode_H_	data/npnode.h	26;"	d
 nposBeginThread	os/msw/npos.c	/^void nposBeginThread (voidFnPtr vfp, void *dataRef)$/;"	f
 nposBeginThread	os/osx/nposx.c	/^void nposBeginThread (voidFnPtr vfp, void *dataRef)$/;"	f
 nposEndThread	os/msw/npos.c	/^void nposEndThread (void)$/;"	f
 nposEndThread	os/osx/nposx.c	/^void nposEndThread (void)$/;"	f
 nposFileDialog	os/msw/npos.c	/^FILE* nposFileDialog (const char* fileName, int dialogType, void* dataRef)$/;"	f
-nposFileDialog	os/posix/npos_posix.c	/^FILE* nposFileDialog (const char* fileName, int dialogType, void* dataRef)$/;"	f
+nposFileDialog	os/osx/nposx.c	/^FILE* nposFileDialog (const char* fileName, int dialogType, void* dataRef)$/;"	f
 nposGetAppPath	os/msw/npos.c	/^void nposGetAppPath (char* buffer, int* size)$/;"	f
 nposGetAppPath	os/posix/npos_posix.c	/^void nposGetAppPath (char* buffer, int* size)$/;"	f
 nposGetCWD	os/msw/npos.c	/^void nposGetCWD (char* buffer, int* size)$/;"	f
 nposGetCWD	os/posix/npos_posix.c	/^void nposGetCWD (char* buffer, int* size)$/;"	f
+nposGetKey	os/msw/npos.c	/^int nposGetKey (void)$/;"	f
 nposGetKey	os/osx/nposx.c	/^int nposGetKey (void)$/;"	f
+nposGetLibSymbol	os/msw/npos.c	/^void* nposGetLibSymbol(void* library, char* symbolName) \/\/ New function, lde$/;"	f
 nposGetLibSymbol	os/osx/nposx.c	/^void* nposGetLibSymbol(void* library, char* symbolName) \/\/ New function, lde$/;"	f
 nposGetOpenFilePath	os/msw/npos.c	/^void nposGetOpenFilePath (char* buffer, int* size, void* dataRef)$/;"	f
 nposGetOpenFilePath	os/posix/npos_posix.c	/^void nposGetOpenFilePath (char* buffer, int* size, void* dataRef)$/;"	f
 nposGetTime	os/msw/npos.c	/^double nposGetTime (void)$/;"	f
 nposGetTime	os/posix/npos_posix.c	/^double nposGetTime (void)									\/\/untested, debug zz$/;"	f
+nposHook	npio.c	/^void nposHook(pNPosFuncSet funcSet, int *err)$/;"	f
+nposLoadLibrary	os/msw/npos.c	/^void* nposLoadLibrary( char* filePath )$/;"	f
 nposLoadLibrary	os/osx/nposx.c	/^void* nposLoadLibrary( char* filePath )$/;"	f
+nposNewFuncSet	npio.c	/^pNPosFuncSet nposNewFuncSet(pNPos os, int *err)$/;"	f
 nposSetCWD	os/msw/npos.c	/^void nposSetCWD (char* buffer)$/;"	f
 nposSetCWD	os/posix/npos_posix.c	/^void nposSetCWD (char* buffer)$/;"	f
 nposSetCursorPos	os/msw/npos.c	/^int nposSetCursorPos (int x, int y)$/;"	f
@@ -2496,14 +2624,15 @@ npstrtol	data/npstr.c	/^long npstrtol(char** buffer)$/;"	f
 nptest_H_	ctrl/nptest.h	26;"	d
 numOfChunks	io/db/npdbz.h	/^	int numOfChunks;$/;"	m	struct:newChunksObj
 numOfcsvStrObjects	io/db/npdbz.h	/^	int numOfcsvStrObjects;$/;"	m	struct:csvStrObjects
-num_fields	data/nptypes.h	/^	void* (*num_fields)	    ();$/;"	m	struct:NPdbFuncSet
-num_rows	data/nptypes.h	/^	void* (*num_rows)		();$/;"	m	struct:NPdbFuncSet
-numberOfDatabases	io/db/npdbz.h	/^	int numberOfDatabases;$/;"	m	struct:databases
+num_fields	data/npdbTypes.h	/^	void* (NPDB_CALLCONV *num_fields)	    ();$/;"	m	struct:NPdbFuncSet
+num_rows	data/npdbTypes.h	/^	void* (NPDB_CALLCONV *num_rows)		();$/;"	m	struct:NPdbFuncSet
 numberTracks	data/nptypes.h	/^	int			numberTracks;			\/\/!< number of tracks in this channel$/;"	m	struct:NPch
 offset	data/nptypes.h	/^	NPfloatXYZS	offset;				\/\/!<constant to offset value by$/;"	m	struct:NPlabel
-options	data/nptypes.h	/^	void* (*options)		();$/;"	m	struct:NPdbFuncSet
+openFileDialog	os/osx/nposx.c	/^FILE* openFileDialog (const char* fileName, int dialogType, void* dataRef)$/;"	f
+options	data/npdbTypes.h	/^	int   (NPDB_CALLCONV *options)		();$/;"	m	struct:NPdbFuncSet
 orphanCount	data/nptypes.h	/^	int			orphanCount;$/;"	m	struct:NPmap
-orphanList	data/nptypes.h	/^	int*		orphanList;				\/\/!<list of orphans by node ID$/;"	m	struct:NPmap
+orphanList	data/nptypes.h	/^	int*			orphanList;				\/\/!<list of orphans by node ID$/;"	m	struct:NPmap
+os	data/nptypes.h	/^	NPos    os;         \/\/!< OS      - Operating System functions$/;"	m	struct:Data
 osc	data/nptypes.h	/^	NPosc		osc;				\/\/!<OSC stuff uses io que for thread safety$/;"	m	struct:NPio
 oscCommandIdx	io/net/nposcpack.cpp	/^	int oscCommandIdx;$/;"	m	class:OscTrackPacketListener	file:
 oscCount	data/nptypes.h	/^	int			oscCount;$/;"	m	struct:NPmap
@@ -2515,6 +2644,7 @@ outgoingCommand	io/net/nposcpack.cpp	/^	int outgoingCommand[kNPmaxCommands];$/;"
 outgoingFloatAddress	io/net/nposcpack.cpp	/^	float* outgoingFloatAddress[10];  \/\/ memory address of the destination float$/;"	m	class:OscTrackPacketListener	file:
 outgoingFloatValue	io/net/nposcpack.cpp	/^	float outgoingFloatValue[10];  \/\/ the translated value$/;"	m	class:OscTrackPacketListener	file:
 overlay	data/nptypes.h	/^	bool		overlay;					\/\/!<overlays relative to screen coord$/;"	m	struct:NPgrid
+owner	data/npdbTypes.h	/^	void*		owner;						\/\/\/< Database this table is attached to, lde pNPdatabase$/;"	m	struct:NPdbTable
 pData	data/nptypes.h	/^typedef struct Data* pData;$/;"	t	typeref:struct:Data
 pMenuCallback	data/nptypes.h	/^	NPfuncPtr   pMenuCallback;			\/\/!<menu item selected callback$/;"	m	struct:NPconsole
 pNPboolXYZ	data/nptypes.h	/^typedef struct NPboolXYZ *pNPboolXYZ;$/;"	t	typeref:struct:NPboolXYZ
@@ -2525,14 +2655,19 @@ pNPconnect	data/nptypes.h	/^typedef struct NPconnect* pNPconnect;$/;"	t	typeref:
 pNPconsole	data/nptypes.h	/^typedef struct NPconsole * pNPconsole;$/;"	t	typeref:struct:NPconsole
 pNPcpu	data/nptypes.h	/^typedef struct NPcpu* pNPcpu;$/;"	t	typeref:struct:NPcpu
 pNPctrl	data/nptypes.h	/^typedef struct NPctrl* pNPctrl;$/;"	t	typeref:struct:NPctrl
-pNPdatabase	data/nptypes.h	/^typedef struct NPdatabase * pNPdatabase;$/;"	t	typeref:struct:NPdatabase
-pNPdatabases	data/nptypes.h	/^typedef struct NPdatabases *pNPdatabases;$/;"	t	typeref:struct:NPdatabases
-pNPdbFields	data/nptypes.h	/^typedef struct NPdbFields * pNPdbFields;$/;"	t	typeref:struct:NPdbFields
-pNPdbFuncSet	data/nptypes.h	/^typedef struct NPdbFuncSet *pNPdbFuncSet;$/;"	t	typeref:struct:NPdbFuncSet
-pNPdbFunction	data/nptypes.h	/^typedef struct NPdbFunction *pNPdbFunction;$/;"	t	typeref:struct:NPdbFunction
-pNPdbHost	data/nptypes.h	/^typedef struct NPdbHost * pNPdbHost;$/;"	t	typeref:struct:NPdbHost
-pNPdbTable	data/nptypes.h	/^typedef struct NPdbTable * pNPdbTable;$/;"	t	typeref:struct:NPdbTable
-pNPdbs	data/nptypes.h	/^typedef struct NPdbs *pNPdbs;$/;"	t	typeref:struct:NPdbs
+pNPdatabase	data/npdbTypes.h	/^typedef struct NPdatabase * pNPdatabase;$/;"	t	typeref:struct:NPdatabase
+pNPdatabases	data/npdbTypes.h	/^typedef struct NPdatabases *pNPdatabases;$/;"	t	typeref:struct:NPdatabases
+pNPdbCSVwrite	data/npdbTypes.h	/^typedef struct NPdbCSVwrite *pNPdbCSVwrite;$/;"	t	typeref:struct:NPdbCSVwrite
+pNPdbFields	data/npdbTypes.h	/^typedef struct NPdbFields * pNPdbFields;$/;"	t	typeref:struct:NPdbFields
+pNPdbFuncSet	data/npdbTypes.h	/^typedef struct NPdbFuncSet *pNPdbFuncSet;$/;"	t	typeref:struct:NPdbFuncSet
+pNPdbFunction	data/npdbTypes.h	/^typedef struct NPdbFunction *pNPdbFunction;$/;"	t	typeref:struct:NPdbFunction
+pNPdbHost	data/npdbTypes.h	/^typedef struct NPdbHost * pNPdbHost;$/;"	t	typeref:struct:NPdbHost
+pNPdbLiteral	data/npdbTypes.h	/^typedef struct NPdbLiteral *pNPdbLiteral;$/;"	t	typeref:struct:NPdbLiteral
+pNPdbQuery	data/npdbTypes.h	/^typedef struct NPdbQuery *pNPdbQuery;$/;"	t	typeref:struct:NPdbQuery
+pNPdbReservedWord	data/npdbTypes.h	/^typedef struct NPdbReservedWord *pNPdbReservedWord;$/;"	t	typeref:struct:NPdbReservedWord
+pNPdbStringLiteral	data/npdbTypes.h	/^typedef struct NPdbStringLiteral *pNPdbStringLiteral;$/;"	t	typeref:struct:NPdbStringLiteral
+pNPdbTable	data/npdbTypes.h	/^typedef struct NPdbTable * pNPdbTable;$/;"	t	typeref:struct:NPdbTable
+pNPdbs	data/npdbTypes.h	/^typedef struct NPdbs *pNPdbs;$/;"	t	typeref:struct:NPdbs
 pNPfile	data/nptypes.h	/^typedef struct NPfile* pNPfile;$/;"	t	typeref:struct:NPfile
 pNPfloatRGB	data/nptypes.h	/^typedef struct NPfloatRGB *pNPfloatRGB;$/;"	t	typeref:struct:NPfloatRGB
 pNPfloatRGBA	data/nptypes.h	/^typedef struct NPfloatRGBA *pNPfloatRGBA;$/;"	t	typeref:struct:NPfloatRGBA
@@ -2550,7 +2685,7 @@ pNPio	data/nptypes.h	/^typedef struct NPio* pNPio;$/;"	t	typeref:struct:NPio
 pNPkey	data/nptypes.h	/^typedef struct NPkey * pNPkey;$/;"	t	typeref:struct:NPkey
 pNPmap	data/nptypes.h	/^typedef struct NPmap * pNPmap;$/;"	t	typeref:struct:NPmap
 pNPmapColor	data/nptypes.h	/^typedef struct NPmapColor* pNPmapColor;$/;"	t	typeref:struct:NPmapColor
-pNPmapID	data/nptypes.h	/^typedef struct NPmapID * pNPmapID;	$/;"	t	typeref:struct:NPmapID
+pNPmapID	data/npdbTypes.h	/^typedef struct NPmapID * pNPmapID;	$/;"	t	typeref:struct:NPmapID
 pNPmapItemNodeID	data/nptypes.h	/^typedef struct NPmapItemNodeID *pNPmapItemNodeID;$/;"	t	typeref:struct:NPmapItemNodeID
 pNPmapLink	data/nptypes.h	/^typedef struct NPmapLink *pNPmapLink;$/;"	t	typeref:struct:NPmapLink
 pNPmapNodeID	data/nptypes.h	/^typedef struct NPmapNodeID *pNPmapNodeID;$/;"	t	typeref:struct:NPmapNodeID
@@ -2564,6 +2699,8 @@ pNPnode2	data/nptypes.h	/^typedef struct NPnode2 *pNPnode2;$/;"	t	typeref:struct
 pNPnodeData	data/nptypes.h	/^typedef struct NPnodeData * pNPnodeData;$/;"	t	typeref:struct:NPnodeData
 pNPnodeList	data/nptypes.h	/^typedef struct NPnodeList * pNPnodeList;$/;"	t	typeref:struct:NPnodeList
 pNPnodePropertyTracks	data/nptypes.h	/^typedef struct NPnodePropertyTracks * pNPnodePropertyTracks;$/;"	t	typeref:struct:NPnodePropertyTracks
+pNPos	data/nptypes.h	/^typedef struct NPos* pNPos;$/;"	t	typeref:struct:NPos
+pNPosFuncSet	data/nptypes.h	/^typedef struct NPosFuncSet* pNPosFuncSet;$/;"	t	typeref:struct:NPosFuncSet
 pNPosc	data/nptypes.h	/^typedef struct NPosc* pNPosc;$/;"	t	typeref:struct:NPosc
 pNPoscItem	data/nptypes.h	/^typedef struct NPoscItem* pNPoscItem;$/;"	t	typeref:struct:NPoscItem
 pNPoscPackListener	io/net/nposcpack.h	/^typedef struct NPoscPackListener* pNPoscPackListener;$/;"	t	typeref:struct:NPoscPackListener
@@ -2574,6 +2711,7 @@ pNPqueItem	data/nptypes.h	/^typedef struct NPqueItem* pNPqueItem;$/;"	t	typeref:
 pNPqueList	data/nptypes.h	/^typedef struct NPqueList* pNPqueList;$/;"	t	typeref:struct:NPqueList
 pNPrecordSet	data/nptypes.h	/^typedef struct NPrecordSet* pNPrecordSet;$/;"	t	typeref:struct:NPrecordSet
 pNPrecordTag	data/nptypes.h	/^typedef struct NPrecordTag *pNPrecordTag;$/;"	t	typeref:struct:NPrecordTag
+pNPtables	data/npdbTypes.h	/^typedef struct NPtables *pNPtables;$/;"	t	typeref:struct:NPtables
 pNPtag	data/nptypes.h	/^typedef struct NPtag *pNPtag;$/;"	t	typeref:struct:NPtag
 pNPtags	data/nptypes.h	/^typedef struct NPtags * pNPtags;$/;"	t	typeref:struct:NPtags
 pNPthreadFile	data/nptypes.h	/^typedef struct NPthreadFile *pNPthreadFile;$/;"	t	typeref:struct:NPthreadFile
@@ -2587,12 +2725,12 @@ page	data/nptypes.h	/^	int			page;						\/\/!<active page, page = 0 for current$
 palette	data/nptypes.h	/^	pNPubyteRGBA*	palette;		\/\/!<list of que items or commands$/;"	m	struct:NPmapColor
 paramCount	data/npmap.c	/^	int paramCount;$/;"	m	struct:NPfuncDesc	file:
 paramList	data/npmap.c	/^	void** paramList;$/;"	m	struct:NPfuncDesc	file:
-params	data/nptypes.h	/^	char*		params;		\/\/\/< any additional field params, limits, etc.$/;"	m	struct:NPdbFields
+params	data/npdbTypes.h	/^	char*		params;		\/\/\/< any additional field params, limits, etc.$/;"	m	struct:NPdbFields
 parent	data/nptypes.h	/^	pNPnode		parent;						\/\/!<parent node, binary tree of nodes$/;"	m	struct:NPnode
 parent	data/nptypes.h	/^	void*			parent;		\/\/\/< parent node$/;"	m	struct:NPnode2
-parentID	data/nptypes.h	/^	int*		parentID;				\/\/!<maps node ID to parentID$/;"	m	struct:NPmap
+parentID	data/nptypes.h	/^	int*			parentID;				\/\/!<maps node ID to parentID$/;"	m	struct:NPmap
 pass	io/db/npauxdb.h	/^	char*	pass;$/;"	m	struct:NPdatabase
-password	data/nptypes.h	/^	char		password[kNPpwdMax];	\/\/\/< this hosts password$/;"	m	struct:NPdbHost
+password	data/npdbTypes.h	/^	char		password[kNPpwdMax];	\/\/\/< this hosts password$/;"	m	struct:NPdbHost
 password	io/db/npdbz.h	/^	char password[kNPurlMax]; \/\/ admin $/;"	m	struct:database
 pause	data/nptypes.h	/^	bool		pause;$/;"	m	struct:NPch
 permissions	data/nptypes.h	/^	int		permissions;		\/\/!<input output direction +1 = A->B, 0 = A<->B, -1 = B->A   \/\/!<$/;"	m	struct:NPmapLink
@@ -2602,10 +2740,11 @@ pickPass	data/nptypes.h	/^	int			pickPass;$/;"	m	struct:NPgl
 pinSelected	data/nptypes.h	/^	bool		pinSelected;$/;"	m	struct:NPmouse
 pin_dl	io/gl/npgeometry.c	/^static GLint pin_dl;$/;"	v	file:
 pin_wire_dl	io/gl/npgeometry.c	/^static GLint pin_wire_dl;$/;"	v	file:
-ping	data/nptypes.h	/^	void* (*ping)			();$/;"	m	struct:NPdbFuncSet
+ping	data/npdbTypes.h	/^	void* (NPDB_CALLCONV *ping)			();$/;"	m	struct:NPdbFuncSet
 pixelDepth	data/nptypes.h	/^	int			pixelDepth;$/;"	m	struct:NPgl
+placeholder	data/npdbTypes.h	/^	int placeholder;$/;"	m	struct:NPdbQuery
 pointSize	data/nptypes.h	/^	float		pointSize;					\/\/!<draws dots, zero for off$/;"	m	struct:NPnode
-port	data/nptypes.h	/^	int			port;					\/\/\/< port address$/;"	m	struct:NPdbHost
+port	data/npdbTypes.h	/^	int			port;					\/\/\/< port address$/;"	m	struct:NPdbHost
 port	io/db/npauxdb.h	/^	unsigned int port;$/;"	m	struct:NPdatabase
 port	io/db/npdbz.h	/^	int port;       \/\/ Default for MySQL is 3306$/;"	m	struct:database
 position	data/nptypes.h	/^	NPintXY		position;		\/\/!<can set these and call npGlobalsUpdate()$/;"	m	struct:NPgl
@@ -2630,7 +2769,7 @@ quadArray	io/gl/npgeometry.c	/^	GLint*			quadArray;$/;"	m	struct:NPtorus	file:
 quadArraySize	io/gl/npgeometry.c	/^	GLint			quadArraySize;$/;"	m	struct:NPtorus	file:
 que	data/nptypes.h	/^	char		que[kNPmessageQueMax][kNPmessageLengthMax + 1]; \/\/!<+1 for null$/;"	m	struct:NPmessage
 queIndex	data/nptypes.h	/^	int			queIndex;					\/\/!<the most recent message$/;"	m	struct:NPmessage
-query	data/nptypes.h	/^	void* (*query)		    ();$/;"	m	struct:NPdbFuncSet
+query	data/npdbTypes.h	/^	void* (NPDB_CALLCONV *query)		    ();$/;"	m	struct:NPdbFuncSet
 query	io/db/npdbz.h	/^	void* (*query)  ();$/;"	m	struct:dbFunction
 queue	io/db/npauxdb.h	/^struct queue {$/;"	s
 queue_node	io/db/npauxdb.h	/^struct queue_node {$/;"	s
@@ -2641,12 +2780,14 @@ radius	io/gl/npgeometry.c	/^	GLfloat			radius;$/;"	m	struct:NPcircle	file:
 radiusRatioIndex	data/nptypes.h	/^	int			radiusRatioIndex;			\/\/!<sorts pre-loaded GPU toriods$/;"	m	struct:NPpin
 ratio	data/nptypes.h	/^	float		ratio;						\/\/!<geometry ratio, torus innerRadius$/;"	m	struct:NPnode
 readIndex	data/npmapfile.c	/^	int readIndex;		\/\/write lock from index to the lock, holds until processed$/;"	m	struct:NPbuffer	file:
-recID	data/nptypes.h	/^	int*	recID;		\/\/\/< list of external table record id's to map$/;"	m	struct:NPmapID
+recID	data/npdbTypes.h	/^	int*	recID;		\/\/\/< list of external table record id's to map$/;"	m	struct:NPmapID
 recordCount	data/nptypes.h	/^	int			recordCount;$/;"	m	struct:NPtags
 recordID	data/nptypes.h	/^	int			recordID;					\/\/!<DB recordID$/;"	m	struct:NPnode
 recordID	data/nptypes.h	/^	int			recordID;			\/\/!<recordID of the node$/;"	m	struct:NPrecordTag
 recordID	data/nptypes.h	/^	int			recordID;			\/\/!<recordID of the node$/;"	m	struct:NPtag
 recordList	data/nptypes.h	/^	void**		recordList;		\/\/!<zz debug, change name?$/;"	m	struct:NPtags
+refCount	data/npdbTypes.h	/^	int*		refCount;				\/\/\/< memory reference counter, lde$/;"	m	struct:NPdatabase
+refCount	data/nptypes.h	/^	int			refCount;			\/\/ Reference Counter, lde @todo$/;"	m	struct:NPio
 refreshRate	data/nptypes.h	/^	float		refreshRate;$/;"	m	struct:NPgl
 returnType	data/npmap.c	/^	int returnType;$/;"	m	struct:NPfuncDesc	file:
 root	data/nptypes.h	/^	pNPnode		root;$/;"	m	struct:NPhud
@@ -2658,8 +2799,9 @@ rotateRate	data/nptypes.h	/^	NPfloatXYZ	rotateRate;					\/\/!<rotation rate$/;"	
 rotateTex	data/nptypes.h	/^	NPfloatXYZA	rotateTex;					\/\/!<orientation of the texture map$/;"	m	struct:NPpin
 rotateVec	data/nptypes.h	/^	NPfloatXYZA	rotateVec;					\/\/!<orientation$/;"	m	struct:NPnode
 route	data/nptypes.h	/^	void*			route;		\/*!< child branch route last travelled.$/;"	m	struct:NPnode2
-rows	data/nptypes.h	/^	int			rows;		\/\/\/< number of rows in this table$/;"	m	struct:NPdbTable
-running	data/nptypes.h	/^	bool			running;				\/\/\/< true if hosts are connected$/;"	m	struct:NPdbs
+rows	data/npdbTypes.h	/^	int			rows;						\/\/\/< number of rows in this table$/;"	m	struct:NPdbTable
+running	data/npdbTypes.h	/^	bool			running;				\/\/\/< true if hosts are connected$/;"	m	struct:NPdbs
+running	data/npdbTypes.h	/^	int		   running;$/;"	m	struct:NPdbCSVwrite
 rxIP	data/nptypes.h	/^	char	rxIP[kNPurlMax];$/;"	m	struct:NPoscItem
 rxIP	io/net/nposcpack.h	/^	char* rxIP;$/;"	m	struct:NPoscPackListener
 rxPort	data/nptypes.h	/^	int		rxPort;$/;"	m	struct:NPoscItem
@@ -2669,9 +2811,9 @@ s	data/nptypes.h	/^	bool x,y,z,s;$/;"	m	struct:NPboolXYZS
 s	data/nptypes.h	/^	int x,y,z,s;$/;"	m	struct:NPintXYZS
 saturation	data/nptypes.h	/^	float		saturation;$/;"	m	struct:NPvideo
 saveSelect	data/nptypes.h	/^	bool		saveSelect;$/;"	m	struct:NPfile
-saveUpdate	data/nptypes.h	/^	bool			saveUpdate;			\/\/\/< flag a single update this cycle$/;"	m	struct:NPdbs
-saveUpdateRate	data/nptypes.h	/^	float			saveUpdateRate;		\/\/\/< auto save update rate, 0 is off$/;"	m	struct:NPdbs
-saveUpdateRate	data/nptypes.h	/^	float		saveUpdateRate;			\/\/\/< auto save update rate, 0 is off$/;"	m	struct:NPdatabase
+saveUpdate	data/npdbTypes.h	/^	bool			saveUpdate;			\/\/\/< flag a single update this cycle$/;"	m	struct:NPdbs
+saveUpdateRate	data/npdbTypes.h	/^	float			saveUpdateRate;		\/\/\/< auto save update rate, 0 is off$/;"	m	struct:NPdbs
+saveUpdateRate	data/npdbTypes.h	/^	float		saveUpdateRate;			\/\/\/< auto save update rate, 0 is off$/;"	m	struct:NPdatabase
 scale	data/nptypes.h	/^	NPfloatXYZ	scale;						\/\/!<scale node XYZ$/;"	m	struct:NPnode
 scaleRate	data/nptypes.h	/^	NPfloatXYZ	scaleRate;					\/\/!<scale rate $/;"	m	struct:NPnode
 scaleTex	data/nptypes.h	/^	NPfloatXYZ	scaleTex;$/;"	m	struct:NPpin
@@ -2683,7 +2825,7 @@ screenSizeIndex	data/nptypes.h	/^	int			screenSizeIndex;			\/\/!<same as above f
 segments	data/nptypes.h	/^	NPintXYZ	segments;					\/\/!<geometry segments, facets, grid lines$/;"	m	struct:NPnode
 segments	io/gl/npgeometry.c	/^	int				segments;$/;"	m	struct:NPcircle	file:
 segments	io/gl/npgeometry.c	/^	int				segments;$/;"	m	struct:NPtorus	file:
-select	data/nptypes.h	/^	void* (*select)		    ();$/;"	m	struct:NPdbFuncSet
+select	data/npdbTypes.h	/^	void* (NPDB_CALLCONV *select)		    ();$/;"	m	struct:NPdbFuncSet
 select	io/db/npdbz.h	/^	void* (*select) ();$/;"	m	struct:dbFunction
 selectAll	data/nptypes.h	/^	int			selectAll;				\/\/!<true when all nodes selected$/;"	m	struct:NPmap
 selectIndex	data/nptypes.h	/^	int			selectIndex;				\/\/!<user selected line$/;"	m	struct:NPconsole
@@ -2699,24 +2841,31 @@ selectedPinNode	data/nptypes.h	/^	pNPnode		selectedPinNode;		\/\/!<currently sel
 senderSockets	io/net/nposcpack.cpp	/^static UdpTransmitSocket* senderSockets[ MAX_OSC_SENDERS ];$/;"	v	file:
 senderStreams	io/net/nposcpack.cpp	/^static osc::OutboundPacketStream* senderStreams[ MAX_OSC_SENDERS ];$/;"	v	file:
 sensorType	data/nptypes.h	/^	int			sensorType;					\/\/!<3CCD, Debayer pattern...$/;"	m	struct:NPcamera
+setCWD	data/nptypes.h	/^	void   (*setCWD)();$/;"	m	struct:NPosFuncSet
+setCursorPos	data/nptypes.h	/^	int    (*setCursorPos)();$/;"	m	struct:NPosFuncSet
 setHi	data/nptypes.h	/^	NPfloatXYZ	setHi;						\/\/!<triggers$/;"	m	struct:NPnode
 setLo	data/nptypes.h	/^	NPfloatXYZ	setLo;$/;"	m	struct:NPnode
 setNumberToLoad	data/nptypes.h	/^	int			setNumberToLoad;$/;"	m	struct:NPch
 shade	data/nptypes.h	/^	int			shade;$/;"	m	struct:NPgl
 shader	data/nptypes.h	/^	int			shader;						\/\/!<the texture ID or procedural shader type$/;"	m	struct:NPnode
-show	data/nptypes.h	/^	void* (*show)			();$/;"	m	struct:NPdbFuncSet
+show	data/npdbTypes.h	/^	void* (*show)			();$/;"	m	struct:NPdbFuncSet
 show	io/db/npdbz.h	/^	void* (*show)   ();$/;"	m	struct:dbFunction
+showCursor	data/nptypes.h	/^	int    (*showCursor)();$/;"	m	struct:NPosFuncSet
+showDatabases	data/npdbTypes.h	/^	int   (*showDatabases)          (); \/\/ I might pass this a fcn ptr and change it to (*show), lde @todo$/;"	m	struct:NPdbFuncSet
 singleClick	data/nptypes.h	/^	bool		singleClick;$/;"	m	struct:NPmouse
+size	data/npdbTypes.h	/^	int				size;				\/\/\/< size in RAM of all db elements$/;"	m	struct:NPdbs
+size	data/npdbTypes.h	/^	int			size;						\/\/\/< size of this table in bytes$/;"	m	struct:NPdbTable
+size	data/npdbTypes.h	/^	int size;			\/\/!< number of items in the list$/;"	m	struct:NPdatabases
+size	data/npdbTypes.h	/^	int size;			\/\/!< number of items in the list$/;"	m	struct:NPtables
+size	data/npdbTypes.h	/^	int size;$/;"	m	struct:NPdbFuncSet
 size	data/npmapfile.c	/^	int size;			\/\/end of the buffer, starts out at zero, stops at max$/;"	m	struct:NPbuffer	file:
 size	data/nptypes.h	/^	int					size;	\/\/\/< allocated size of list$/;"	m	struct:NPmapNodeID
-size	data/nptypes.h	/^	int				size;				\/\/\/< size in RAM of all db elements$/;"	m	struct:NPdbs
 size	data/nptypes.h	/^	int				size;			\/\/!<active memory used$/;"	m	struct:NPmapColor
 size	data/nptypes.h	/^	int			size;					\/\/!< memory used, add\/del should modify this, debug zz$/;"	m	struct:NPmap
 size	data/nptypes.h	/^	int			size;					\/\/!< memory used, add\/del should modify this, debug zz$/;"	m	struct:NPmouse
 size	data/nptypes.h	/^	int			size;			\/\/!<active memory used$/;"	m	struct:NPosc
 size	data/nptypes.h	/^	int			size;			\/\/!<active memory used$/;"	m	struct:NPque
 size	data/nptypes.h	/^	int			size;			\/\/!<active memory used$/;"	m	struct:NPqueList
-size	data/nptypes.h	/^	int			size;		\/\/\/< size of this table in bytes$/;"	m	struct:NPdbTable
 size	data/nptypes.h	/^	int			size;$/;"	m	struct:NPcamera
 size	data/nptypes.h	/^	int			size;$/;"	m	struct:NPch
 size	data/nptypes.h	/^	int			size;$/;"	m	struct:NPconnect
@@ -2744,12 +2893,11 @@ size	data/nptypes.h	/^	int		size;$/;"	m	struct:NPctrl
 size	data/nptypes.h	/^	int		size;$/;"	m	struct:NPkey
 size	data/nptypes.h	/^	int		size;$/;"	m	struct:NPoscItem
 size	data/nptypes.h	/^	int		size;$/;"	m	struct:NPrecordSet
-size	data/nptypes.h	/^	int size;			\/\/!< number of items in the list$/;"	m	struct:NPdatabases
 size	data/nptypes.h	/^	int size;		\/\/!< size in bytes of this node structure and its data$/;"	m	struct:NPnode2
-size	data/nptypes.h	/^	int size;$/;"	m	struct:NPdbFuncSet
 size	data/nptypes.h	/^	int size;$/;"	m	struct:NPuserEnvironment
 size	io/db/npdbz.h	/^	int size;$/;"	m	struct:csvStrObj
 skipCount	data/nptypes.h	/^	int		skipCount;$/;"	m	struct:NPkey
+sleep	data/nptypes.h	/^	void   (*sleep)();$/;"	m	struct:NPosFuncSet
 slices	data/nptypes.h	/^	int			slices;						\/\/!<calculated from radiusRatioIndex$/;"	m	struct:NPpin
 slices	io/gl/npgeometry.c	/^	int				slices;$/;"	m	struct:NPtorus	file:
 slow	data/nptypes.h	/^	float	slow;						\/\/!< slow velocity, shift not pressed \/\/!<zz move this to io or npengine$/;"	m	struct:NPctrl
@@ -2774,19 +2922,21 @@ stereo3D	data/nptypes.h	/^	int			stereo3D;						\/\/!<stereoscopic 3D$/;"	m	stru
 stereo3D	data/nptypes.h	/^	int			stereo3D;						\/\/!<stereoscopic 3D$/;"	m	struct:NPvideo
 stereo3D	data/nptypes.h	/^	int			stereo3D;$/;"	m	struct:NPgl
 storeResult	io/db/npdbz.h	/^	void* (*storeResult) ();$/;"	m	struct:dbFunction
-store_result	data/nptypes.h	/^	void* (*store_result)	();$/;"	m	struct:NPdbFuncSet
+store_result	data/npdbTypes.h	/^	void* (NPDB_CALLCONV *store_result)	();$/;"	m	struct:NPdbFuncSet
 subsample	data/nptypes.h	/^	int			subsample;		\/\/!<zzhp$/;"	m	struct:NPgl
+supportsAntzThreads	data/nptypes.h	/^	bool   (*supportsAntzThreads)();$/;"	m	struct:NPosFuncSet
 syncNodes	data/nptypes.h	/^	bool		syncNodes;$/;"	m	struct:NPmap
 syncTagsReady	data/nptypes.h	/^	bool		syncTagsReady;$/;"	m	struct:NPmap
 systemNodes	data/nptypes.h	/^	int systemNodes;		\/\/!<number of system nodes in this partition$/;"	m	struct:NPcpu
 systemRAM	data/nptypes.h	/^	long long systemRAM;	\/\/!<total RAM in this NUMA partition$/;"	m	struct:NPcpu
-tableCount	data/nptypes.h	/^	int			tableCount;				\/\/\/< total number of tables$/;"	m	struct:NPdatabase
+table	data/npdbTypes.h	/^	pNPdbTable table;$/;"	m	struct:NPdbCSVwrite
+tableCount	data/npdbTypes.h	/^	int			tableCount;				\/\/\/< total number of tables$/;"	m	struct:NPdatabase
 tableID	data/nptypes.h	/^	int			tableID;					\/\/!<DB table$/;"	m	struct:NPnode
 tableID	data/nptypes.h	/^	int			tableID;			\/\/!<tableID of the node, may not need these, debug zz$/;"	m	struct:NPrecordTag
 tableID	data/nptypes.h	/^	int			tableID;			\/\/!<tableID of the node, may not need these, debug zz$/;"	m	struct:NPtag
-tableInUse	data/nptypes.h	/^	pNPdbTable	tableInUse;				\/\/\/< current table in use$/;"	m	struct:NPdatabase
+tableInUse	data/npdbTypes.h	/^	pNPdbTable	tableInUse;				\/\/\/< current table in use$/;"	m	struct:NPdatabase
+tableList	data/npdbTypes.h	/^	pNPdbTable	tableList[kNPtblMax];	\/\/\/< list of tables			\/\/ new, lde$/;"	m	struct:NPdatabase
 tableParameters	io/db/npdbz.h	/^struct tableParameters {$/;"	s
-tables	data/nptypes.h	/^	pNPdbTable* tables;					\/\/\/< contains row count$/;"	m	struct:NPdatabase
 tag	data/npmap.c	/^	NPtag tag; \/\/char name[128]; \/\/char desc[2048];$/;"	m	struct:NPfuncDesc	file:
 tag	data/nptypes.h	/^	pNPtag		tag;						\/\/!<ptrr to the nodes own text tag$/;"	m	struct:NPnode
 tagMode	data/nptypes.h	/^	int			tagMode;					\/\/!<billboard tag$/;"	m	struct:NPnode
@@ -2807,6 +2957,7 @@ threads	data/nptypes.h	/^	int threads;			\/\/!<total threads, hyper-threads$/;"	
 threadsPerCPU	data/nptypes.h	/^	int threadsPerCPU;		\/\/!<typically either twice the core count or same as$/;"	m	struct:NPcpu
 threadsPerCore	data/nptypes.h	/^	int threadsPerCore;		\/\/!<typically 1 or 2$/;"	m	struct:NPcpu
 time	data/nptypes.h	/^	double		time;				\/\/!<system time in seconds$/;"	m	struct:NPio
+timeStampName	data/nptypes.h	/^	void   (*timeStampName)();$/;"	m	struct:NPosFuncSet
 timeStart	data/nptypes.h	/^	double		timeStart;			\/\/!<time at app start$/;"	m	struct:NPio
 title	data/nptypes.h	/^	char		title[kNPtagTitleMax + 1];	\/\/!<one line with max width of 63 characters$/;"	m	struct:NPtag
 title	data/nptypes.h	/^	char		title[kNPtagTitleMax + 3];	\/\/!<size + 3 for possible line endings$/;"	m	struct:NPrecordTag
@@ -2843,13 +2994,16 @@ txPort	data/nptypes.h	/^	int		txPort;$/;"	m	struct:NPoscItem
 txPort	io/net/nposcpack.h	/^	int txPort;$/;"	m	struct:NPoscPackListener
 txPorts	io/net/nposcpack.cpp	/^static int txPorts[ MAX_OSC_LISTENERS ];$/;"	v	file:
 txURL	io/net/nposcpack.h	/^	char* txURL;	\/\/requires DNS lookup, unless is a numeric IP address$/;"	m	struct:NPoscPackListener
-type	data/nptypes.h	/^	char		type[64];		\/\/\/< server type 'mysql', 'postgresql', etc.$/;"	m	struct:NPdbHost
+type	data/npdbTypes.h	/^	char		type[64];		\/\/\/< server type 'mysql', 'postgresql', etc.$/;"	m	struct:NPdbHost
+type	data/npdbTypes.h	/^	int			type;						\/\/\/< table type: node, tag, chmap, etc.$/;"	m	struct:NPdbTable
+type	data/npdbTypes.h	/^	int			type;					\/\/\/< function protype index$/;"	m	struct:NPdbFunction
+type	data/npdbTypes.h	/^	int  type; \/\/ Function, Data Type, Logical Operator, Etc...., lde$/;"	m	struct:NPdbReservedWord
+type	data/npdbTypes.h	/^	int *		type;		\/\/\/< field type constant$/;"	m	struct:NPdbFields
+type	data/npdbTypes.h	/^	int type;$/;"	m	struct:NPdbLiteral
 type	data/nptypes.h	/^	int				type;		\/\/\/< node type defines the data pointer type$/;"	m	struct:NPnode2
 type	data/nptypes.h	/^	int			type;						\/\/!<node type, point, pin, cam, video$/;"	m	struct:NPnode
-type	data/nptypes.h	/^	int			type;					\/\/\/< function protype index$/;"	m	struct:NPdbFunction
 type	data/nptypes.h	/^	int			type;			\/\/!<command or data (NP)type$/;"	m	struct:NPque
 type	data/nptypes.h	/^	int			type;			\/\/!<command or data (np type)$/;"	m	struct:NPqueList
-type	data/nptypes.h	/^	int			type;		\/\/\/< table type: node, tag, chmap, etc.$/;"	m	struct:NPdbTable
 type	data/nptypes.h	/^	int			type;$/;"	m	struct:NPcamera
 type	data/nptypes.h	/^	int			type;$/;"	m	struct:NPdataItem
 type	data/nptypes.h	/^	int			type;$/;"	m	struct:NPgis
@@ -2865,7 +3019,6 @@ type	data/nptypes.h	/^	int		type;$/;"	m	struct:NPmapType
 type	data/nptypes.h	/^	int		type;$/;"	m	struct:NPnodeList
 type	data/nptypes.h	/^	int		type;$/;"	m	struct:NPrecordSet
 type	data/nptypes.h	/^	int type;					\/\/!<same as mouse->tool$/;"	m	struct:NPtool
-type	data/nptypes.h	/^	int*		type;		\/\/\/< field type constant$/;"	m	struct:NPdbFields
 type	io/npkey.c	/^	int		type;$/;"	m	struct:NPkeyMap	file:
 typeA	data/nptypes.h	/^	int		typeA;						\/\/!<mapPtr type <-auto-> OSC typeTag$/;"	m	struct:NPmapPair
 typeA	data/nptypes.h	/^	int		typeA;$/;"	m	struct:NPmapLink
@@ -2880,7 +3033,7 @@ typeMapOSC	data/nptypes.h	/^	pNPmapLink	typeMapOSC;$/;"	m	struct:NPmap
 typeMapPalette	data/nptypes.h	/^	pNPmapType	typeMapPalette;				\/\/!<zz color$/;"	m	struct:NPmap
 typeMapPin	data/nptypes.h	/^	pNPmapType	typeMapPin;$/;"	m	struct:NPmap
 typeMapTag	data/nptypes.h	/^	pNPmapType	typeMapTag;				\/\/!< debug db \/\/!<zzssql $/;"	m	struct:NPmap
-typeStr	data/nptypes.h	/^	char*		typeStr;	\/\/\/< field type as DB string format$/;"	m	struct:NPdbFields
+typeStr	data/npdbTypes.h	/^	char*		typeStr;	\/\/\/< field type as DB string format$/;"	m	struct:NPdbFields
 typeTagA	data/nptypes.h	/^	char	typeTagA[kNPnameMax];$/;"	m	struct:NPmapLink
 typeTagB	data/nptypes.h	/^	char	typeTagB[kNPnameMax];			\/\/!<OSC type tag or data type$/;"	m	struct:NPmapLink
 typeTagB	data/nptypes.h	/^	char	typeTagB[kNPnameMax];		\/\/!<OSC type tags can be converted to type_id$/;"	m	struct:NPmapPair
@@ -2892,10 +3045,11 @@ unix_socket	io/db/npauxdb.h	/^	char*	unix_socket;$/;"	m	struct:NPdatabase
 updateData	data/nptypes.h	/^	bool		updateData;				\/\/!< true when we need to update data (either read from track to update node, or vice versa)$/;"	m	struct:NPch
 updateNodeFromMysqlRow	io/db/npdbz.c	/^void updateNodeFromMysqlRow (MYSQL_ROW *row, void* dataRef) \/\/ Generalize here$/;"	f
 updateNodesFromMysqlResult	io/db/npdbz.c	/^void updateNodesFromMysqlResult(MYSQL_RES *result, void* dataRef)$/;"	f
+updateTime	data/nptypes.h	/^	void   (*updateTime)();$/;"	m	struct:NPosFuncSet
 url	data/nptypes.h	/^	char		url[kNPurlMax];$/;"	m	struct:NPio
-use	data/nptypes.h	/^	void* (*use)			();$/;"	m	struct:NPdbFuncSet
+use	data/npdbTypes.h	/^	void* (*use)			();$/;"	m	struct:NPdbFuncSet
 use	io/db/npdbz.h	/^	void* (*use)    ();$/;"	m	struct:dbFunction
-user	data/nptypes.h	/^	char		user[kNPuserNameMax];	\/\/\/< this hosts user name$/;"	m	struct:NPdbHost
+user	data/npdbTypes.h	/^	char		user[kNPuserNameMax];	\/\/\/< this hosts user name$/;"	m	struct:NPdbHost
 user	data/nptypes.h	/^	pNPuser user[kNPuserMax];			\/\/!< List of users, stores session info.$/;"	m	struct:NPctrl
 user	io/db/npauxdb.h	/^	char*	user;$/;"	m	struct:NPdatabase
 user	io/db/npdbz.h	/^	char user[kNPurlMax];     \/\/ root$/;"	m	struct:database
@@ -2919,6 +3073,7 @@ width	data/nptypes.h	/^	int			width;			\/\/!<current draw size, both window and 
 window	data/nptypes.h	/^	NPintXYZ	window;					\/\/!<window position in pixels$/;"	m	struct:NPmouse
 windowID	data/nptypes.h	/^	int			windowID;		\/\/!<multiple GL contexts can share a windowID$/;"	m	struct:NPgl
 windowSize	data/nptypes.h	/^	NPintXY		windowSize;		\/\/!<non-fullscreen window size and position$/;"	m	struct:NPgl
+word	data/npdbTypes.h	/^	char word[20];$/;"	m	struct:NPdbReservedWord
 world	data/nptypes.h	/^	NPfloatXYZ	world;						\/\/!<child node world coordinates$/;"	m	struct:NPnode
 write	data/nptypes.h	/^	char*		write;$/;"	m	struct:NPio
 writeIndex	data/npmapfile.c	/^	int writeIndex;		\/\/most current data entry, $/;"	m	struct:NPbuffer	file:

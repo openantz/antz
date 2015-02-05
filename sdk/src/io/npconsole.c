@@ -552,17 +552,34 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 	pNPdbHost   host       = NULL;
 	pNPdbs      dbs        = &data->io.db;
 
-	pNPdbCSVwrite threadData = NULL;
+//	pNPdbCSVwrite threadData = NULL;
 	
 	
-	printf("\nnpConsoleMenuText");
-	printf("\nhostCount : %d", data->io.db.hostCount);
+//	printf("\nnpConsoleMenuText");
+//	printf("\nhostCount : %d", data->io.db.hostCount);
+ // temp, lde @todo
+//	printf("\nactiveDB : %p", activeDB);
 	if( activeDB )
-		host = activeDB->host;
+	{
+	//	host = activeDB->host;  //active->host is frequently null here, this is cause of console crash, lde
+		host = npdbGetConnectedHost(dbs);
+		activeDB->host = host;
+	}
 
+ 
 //	pNPdatabases dbList = ((struct databases*)data->io.dbs)->dbList;
 	input = console->inputStr;
-	input = tolower(input);
+
+	while(input[i] != ' ')
+	{
+		input[i] = tolower(input[i]);
+		i++;
+	}
+	i = 0;
+
+	//!strncmp(input, "save", 4) // temp, lde
+	//printf( "\nstrncmp(input, \"save\") == %d", strncmp(input, "save", 4) );
+
 //	printf("\nInput : "%s\"", input);
 	//zz clean-up
 	//zz db
@@ -675,7 +692,7 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 		sprintf(msg,"WHERE %s", input );
 		npPostMsg(msg, kNPmsgView, data );
 
-		/// @todo npdbSelect name is confusing with othe npdbSelectZZ etc.
+		/// @todo npdbSelect name is confusing with other npdbSelectZZ etc.
 		npdbSelect( NULL, "node_tbl", input, data );
 		//npdbSelectNodesWhere( activeDB, "node_tbl" );
 		npdbLoadUpdate( dataRef );
@@ -729,7 +746,7 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 		npPostMsg( msg, kNPmsgView, data );
 		npConsolePromptBlank( console, data );
 		
-		err = npdbUse( dbItem );
+		err = npdbUse( dbItem, dataRef );
 		if(err)
 		{
 			printf("\nUSE query failed");
@@ -759,7 +776,6 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 		*/
 		
 		// Put this into a thread, @todo, lde
-	
 	
 		err = npdbTableToCSV(node_table, input, dataRef); // make node_table into node_data, lde @todo
 		
@@ -804,7 +820,7 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 		sprintf(msg,"USE Database %s", dbItem->name);
 		npPostMsg(msg, kNPmsgView, dataRef);
 	//	err = npdbUse_old( dbList->list[itemChosen], dataRef );
-		err = npdbUse( dbItem );
+		err = npdbUse( dbItem, dataRef );
 		if( err )
 			npPostMsg("USE command failed!", kNPmsgCtrl, dataRef);
 
@@ -855,7 +871,7 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 					npPostMsg(msg, kNPmsgView, dataRef);
 					
 					//zzd fix
-					if( npdbSaveAs( input, host, dataRef ) == NULL )
+					if( npdbSaveAs( input, host, &err, dataRef ) == NULL )
 						sprintf( msg, "err 5402 - failed to Save DB: %s", input);
 					else
 						strcpy( msg, "Done Saving!" );
@@ -891,7 +907,11 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 		else
 		{
 			sprintf( msg,"DROP %s", dbName );
-			err = npdbDrop( dbName, data );
+			//err = npdbDrop( dbName, data ); // create npdbDropDatabase and npdbDropTable, lde @todo
+			dbItem = npdbGetByName(dbName, dataRef);
+			//npdbDropDatabase( dbName, &err, dataRef);
+			npdbDropDatabase(dbItem, &err, dataRef);
+			
 			if( err )
 			{
 				npPostMsg( "err 5547 - DROP command failed", kNPmsgView, data );
@@ -917,6 +937,8 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 	}
 	else
 	{
+	//	printf("\nInput : %s", input);
+	//	printf("\nconsole->inputStr : %s", console->inputStr);
 		itemChosen = npatoi( console->inputStr);
 
 		if ( itemChosen > 0 && itemChosen <= console->menu->count )
@@ -929,9 +951,12 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 			console->cursorShow = false;
 		//	npPostMsg( "Exit Console", kNPmsgCtrl, dataRef );			//send as kNPmsgCtrl
 		//	npPostMsg( "Keyboard: Game Mode", kNPmsgCtrl, dataRef );
-
+			
+			npdbUse(data->io.db.dbList[itemChosen], dataRef);
 			///call the menu item event processing function to load selected item
 			console->pMenuCallback( itemChosen, dataRef );
+			data->io.db.activeDB = data->io.db.dbList[itemChosen];
+			npConsolePromptBlank(console, dataRef);
 			npPostMsg( "Exit Console - Keyboard: Game Mode", kNPmsgCtrl, dataRef );
 		}
 		else
@@ -1381,7 +1406,9 @@ void npUpdateConsoleUserText(pNPconsole console, void* dataRef)
 			npPostMsg( "err 7894 - no tag", kNPmsgErr, data );
 		else
 		{
+			printf("\nTag was %s", tag->title); // temp, lde
 			tag->title[0] = '\0';
+			printf("\nAssigning console->inputStr : %s to tag->title", console->inputStr); // temp, lde
 			strncat( tag->title, console->inputStr, kNPtagTitleMax );
 			npUpdateTag( tag );
 		}
@@ -1496,12 +1523,33 @@ void npUpdateConsoleMenu (pNPconsole console, void* dataRef)
 	lastItem = firstItem + pageItemCount - 1;
 
 	//create string to display active DB if an
-
+	//printf("\nactiveDB->name :: %s", data->io.db.activeDB->name); // temp, lde @todo
+	//printf("\ndata->io.db.activeDB->host->inUseDB :: %s", data->io.db.activeDB->host->inUseDB); // temp, lde @todo
+	
+//	strcpy(activeDB->name, data->io.db.activeDB->host->inUseDB);
+//	printf("\n111 data->io.db.activeDB->name ptr : %p", data->io.db.activeDB->name);
+	
+	//data->io.db.activeDB->name[0] = 'A';
+	
 	if( !activeDB )
+	{
 		sprintf( msg, "No Active DB - load, save or use to make ACTIVE" );
+	}
 	else
-		sprintf( msg, "Active DB: %s", activeDB->name);//, hostName );
-
+	{
+		if(activeDB->name)
+		{
+	//		strcpy(activeDB->name, "things");
+//			strncpy(activeDB->name, "things", 6);
+			//printf("\nQQQ");
+			//strncpy( data->io.db.activeDB->name, "things", 6); // temp, lde @todo
+			//printf("\nRRR");
+		//	sprintf( msg, "Active DB: %s", data->io.db.activeDB->name);//, hostName ); // temp, lde @todo
+			sprintf( msg, "Active DB: %s", data->io.db.inUseDB2);
+		//	sprintf( msg, "Active DB: %s", " ");
+		}
+	}
+		
 	//build this out for mouse and cursor to highlight specific item...    zz debug
 	//arrows as page up/down, alternate method is press 'Spacebar' for next
 	//npPostMsg("| INFO [name or #] display DB details             INFO 42                     |", kNPmsgView, dataRef);

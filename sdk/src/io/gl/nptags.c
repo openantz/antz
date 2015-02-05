@@ -66,9 +66,11 @@ void npImportTagsFromCSV (char* buffer, int size, int wordSize, void* dataRef)
 
 
 //allocates buffer and fills with CSV formatted tags, includes header
-//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------ lde @todo
 void npExportTagsToCSV (char* buffer, int* size, int* wordSize, void* dataRef)
 {
+//	pNPtags tags = &dataRef->io.gl.hud.tags;
+	
 	return;
 }
 
@@ -124,7 +126,7 @@ void npSetNodeTag (pNPnode node, void* dataRef)
 	pNPrecordTag recordTag = NULL;
 	pNPtags tags = &data->io.gl.hud.tags;
 
-
+	//printf("\n----npSetNodeTag----"); // temp, lde
 	//using a simple loop for now, replace with HASH method or presort,		//zz debug, was i=0
 	//starts searching at the last location accessed, rolls over if not found
 	//this procedure is fast when nodes processed in order of record_id
@@ -374,7 +376,7 @@ void npSyncTags (void* dataRef)
 	for (i=0; i < j; i++)
 	{	npTagNode(nodes[i], data);
 	node = (pNPnode)nodes[i];
-	printf("id: %d  tag: %s\n",  node->id, node->tag->title);
+	//printf("id: %d  tag: %s\n",  node->id, node->tag->title); // Was flooding console, lde
 	}
 	printf("tag count J: %d\n", j);
 	//loop through all nodes and attach tagPtr based on recordID and tableID

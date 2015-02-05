@@ -638,6 +638,7 @@ data->io.connectCount = 0;
 	osc->size = sizeof(NPosc) + size;
 }
 
+/*
 pNPdatabase npdbAddTable( void );
 pNPdatabase npdbAddTable( void )
 {
@@ -653,7 +654,8 @@ pNPdatabase npdbAddTable( void )
 
 	return database;
 }
-
+*/
+ 
 pNPdatabase npInitDatabase( void )
 {
 	pNPdatabase database = NULL;
@@ -724,10 +726,12 @@ pNPdbHost npInitHostDB( void )
 void npInitDataDB (void* dataRef)
 {
 	int i = 0;
+	int err = 0;
 	
 	pData data = (pData) dataRef;
 	pNPdbs db = &data->io.db;
 
+	npdbInitPtrList(&data->io.db, &err, dataRef);
 	db->coreNode = NULL;	///< core nodes are created after all data map inits.
 							///< npAddCoreNode( kNPcoreDB, db, dataRef );
 							///< init the core node, creates one if does not exist
@@ -758,7 +762,9 @@ void npInitDataDB (void* dataRef)
 	///	'localhost' is same as 127.0.0.1 and mysql default port is 3306.
 	
 	printf("\nnpdbAddHost");
-	npdbAddHost( "mysql", "localhost", 3306, "root", "admin", data );
+//	npdbAddHost( "mysql", "localhost", 3306, "root", "admin", data );
+	npdbAddHost("mysql", "127.0.0.1", 3306, "root", "admin", &err, data);
+//	npdbAddHost("mysql", "192.168.1.130", 3306, "root", "admin", data);
 
 	
 	/// add access to the antz public database 

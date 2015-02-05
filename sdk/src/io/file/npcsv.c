@@ -551,12 +551,23 @@ void* npMapElementToPtr (const char* str, void* dataRef)
 	itemCount = data->map.globalsCount;
 
 	//scan map using the ID and if found return a pointer to the data
-	for( i=1; i <= itemCount; i++ )		//zz debug, why i=1 and <= works
-	{									//instead of i=0 and <
-		if (strncmp(str, (const char*)mapType[i].elementA, kNPnameMax) == 0)
+//	printf("\nitemCount : %d", itemCount); // temp, lde
+
+	for( i=0; i < itemCount; i++) // Fixed, lde
+	{
+		//printf("%d ",i);
+		if (strncmp(str, (const char*)mapType[i].elementA, kNPnameMax) == 0) 
 			return mapType[i].mapPtr;
 	}
-
+	
+/*
+	for( i=1; i <= itemCount; i++ )		//zz debug, why i=1 and <= works
+	{									//instead of i=0 and <
+		if (strncmp(str, (const char*)mapType[i].elementA, kNPnameMax) == 0) // Fails here, lde @todo
+			return mapType[i].mapPtr;
+	}	
+*/
+	
 	//get the map and itemCount
 	mapType = data->map.typeMapOSC;
 	itemCount = data->map.oscCount;
@@ -1341,7 +1352,7 @@ void npUpdateGlobals( void* dataRef )
 	if ( glutGet( 0x01FF ) != gl->fullscreen )
 	{
 	//	gl->fullscreen = 1 - gl->fullscreen;
-		npCtrlCommand( kNPcmdFullscreen, data );
+		npCtrlCommand( kNPcmdFullscreen, data ); // temp, lde
 	}
 	
 	if ( glutGet( GLUT_WINDOW_X ) != gl->position.x 

@@ -43,6 +43,7 @@
 //-----------------------------------------------------------------------------
 void npInitIO( void* dataRef )
 {
+	npInitOS( dataRef );
 	/// init the local IO devices
 	
 	/// launch file services and updates hard-coded global variables from file
@@ -73,6 +74,64 @@ void npInitIO( void* dataRef )
 	npInitDB( dataRef );
 
 }
+
+// This is a temporary location for this, lde @todo
+// This could be extended and generalized, lde @todo
+pNPosFuncSet nposNewFuncSet(pNPos os, int *err)
+{
+	pNPosFuncSet funcSet = NULL;
+	funcSet = (pNPosFuncSet)calloc( 1, sizeof(NPosFuncSet) );
+	if( !funcSet )
+	{
+		printf("err 5525 - malloc failed NPdbFuncSet"); // Add error code, lde @todo
+		err = (int*)5525;
+		return NULL;
+	}
+	
+	return funcSet;
+}
+
+void nposHook(pNPosFuncSet funcSet, int *err)
+{
+	funcSet->getAppPath = nposGetAppPath;
+	funcSet->getCWD = nposGetCWD;
+	funcSet->setCWD = nposSetCWD;
+	funcSet->getOpenFilePath = nposGetOpenFilePath;
+	funcSet->fileDialog = nposFileDialog;
+	funcSet->showCursor = nposShowCursor;
+	funcSet->setCursorPos = nposSetCursorPos;
+	funcSet->getTime = nposGetTime;
+	funcSet->updateTime = nposUpdateTime;
+	funcSet->sleep = nposSleep;
+//	funcSet->getKey = nposGetKey;
+	funcSet->timeStampName = nposTimeStampName;
+	funcSet->beginThread = nposBeginThread;
+	funcSet->endThread = nposEndThread;
+	funcSet->supportsAntzThreads = nposSupportsAntzThreads;
+	funcSet->loadLibrary = nposLoadLibrary;
+	funcSet->getLibSymbol = nposGetLibSymbol;
+	
+	return 0;
+}
+
+// This is a temporary location for this, lde @todo
+void npInitOS( void* dataRef)
+{
+	int err = 0;
+	pData data = (pData) dataRef;
+	pNPos os   = &(data->os);
+	pNPosFuncSet funcSet = NULL;
+	os->newFuncSet = nposNewFuncSet;
+	os->hook       = nposHook;
+	
+	funcSet = os->newFuncSet(os, &err);
+	os->funcSet = funcSet;
+	
+	os->hook(funcSet, &err);
+	
+}
+
+
 
 
 //-----------------------------------------------------------------------------
@@ -131,15 +190,21 @@ void npViewDatabases (void* dataRef)
 
 	console->menu = &console->menuStruct;
 
+	//printf("\nbefore npdbGetMenu");
 	console->menu = npdbGetMenu(console->menu, dataRef); //get the list
-
+	//printf("\nafter npdbGetMenu");
+	
 	if (console->menu == NULL)
 	{
 		printf( "err 5517 - null console->menu \n" );
 		return;					//failed to get menu
 	}
 	//call menu function, pass list ptr and callback function ptr
+//	printf("\n7 activeDB ptr : %p", data->io.db.activeDB);
+//	strcpy(data->io.db.activeDB->name, "things");
+//	printf("\n6 activeDB->Name : %s\n", data->io.db.activeDB->name); // temp, lde @todo
 	npConsoleMenu (npdbLoadMenuItem, console, dataRef);
+	//printf("\n3 activeDB->Name : %s\n", data->io.db.activeDB->name);
 }
 
 //hybrid ASCII text based console(s) with 3D objects, xtree vr

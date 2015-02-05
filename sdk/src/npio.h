@@ -33,6 +33,9 @@
 #include "io/npconsole.h"
 #include "io/plugin/npplugin.h"
 
+// This is a temporary location for this, lde @todo
+void npInitOS( void* dataRef);
+
 void npInitIO (void* data);			// may update default init from pref file
 void npCloseIO (void* data);
 void npUpdateIO (void* dataRef);

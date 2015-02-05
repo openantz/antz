@@ -75,7 +75,7 @@ int npWriteNode (const char* buffer, pNPnode node, int format, void* dataRef);
 
 int npFileVersion (char* buffer, int wordSize, int size);
 
-
+char* npGetType(int* type, int* format, const char* str, int size, void* dataRef); // new, lde @todo
 
 void npThreadFileOpenMap (void* dataRef);
 

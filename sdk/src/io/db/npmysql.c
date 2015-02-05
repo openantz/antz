@@ -35,7 +35,7 @@ void* nposLoadLibrary( char* filePath );	/// @todo move load library to npos.h
 int npMysqlHook( pNPdbFuncSet func, void* dbLib);
 pNPdbFuncSet npMysqlAddFuncSet( pNPdbs db, pNPdbFuncSet funcSet );
 int npMysqlInitConnOptions( pNPdbFuncSet func , void* connInit );
-
+char* new_npMysqlStatementInsertFromChunk(char* table, struct newChunkObj *theChunk);
 
 /*! Loads the MySQL Connector client library.
 	- Creates a new function set and hooks the MySQL specific methods.
@@ -50,12 +50,15 @@ void npInitMySQL (void* dataRef)
 
 	pData data = (pData) dataRef;
 	pNPdbs dbs = &data->io.db;
+	pNPos  os  = &data->os;
+	pNPosFuncSet osFunc = os->funcSet;
 	pNPdbFuncSet func = NULL;
 	void* dbLib = NULL;   /// dbLib stores the 'HINSTANCE' handle as a void*
 	char appPath[kNPmaxPath];
 	int size = 0;
 	
-	nposGetAppPath(appPath, &size);
+//	nposGetAppPath(appPath, &size);
+	osFunc->getAppPath(appPath, &size);
 	
 	printf("\nnpInitMySQL : %s\n", appPath);
 	/// post the mysql connector client library version
@@ -64,17 +67,20 @@ void npInitMySQL (void* dataRef)
 
 	/// load the mysql client library
 	printf("\nAttempting to load windows dll\n");
-	dbLib = nposLoadLibrary( "libmysql.dll" );
+	//dbLib = nposLoadLibrary( "libmysql.dll" );
+	dbLib = osFunc->loadLibrary( "libmysql.dll" );
 	if( !dbLib )
 	{
 		printf("\nFailed loading dll, trying to load mac dylib (32-bit)\n");
 		
-		dbLib = nposLoadLibrary( "libmysqlclient.18.dylib" );
+		//dbLib = nposLoadLibrary( "libmysqlclient.18.dylib" );
+		dbLib = osFunc->loadLibrary( "libmysqlclient.18.dylib" );
 		if( !dbLib )
 		{
 			printf("\nFailed loading dll, trying to load mac dylib (64-bit)\n");
 			
-			dbLib = nposLoadLibrary( "libmysqlclient.18.64.dylib" );
+			//dbLib = nposLoadLibrary( "libmysqlclient.18.64.dylib" );
+			dbLib = osFunc->loadLibrary( "libmysqlclient.18.64.dylib" );
 			
 			if( !dbLib )
 			{
@@ -131,6 +137,85 @@ void npUpdateMySQL (void* dataRef)
 	return;
 }
 
+char* npdbShowStatement()
+{
+	char* buffer = NULL;
+	buffer = malloc(sizeof(char) * 20);
+	if(buffer == NULL)
+		return NULL;
+	
+	strcpy(buffer, "show");
+	return buffer;
+}
+
+char* npdbDatabasesStatement()
+{
+	char* buffer = NULL;
+	buffer = malloc(sizeof(char) * 20);
+	if(buffer == NULL)
+		return NULL;
+	
+	strcpy(buffer, "databases");
+	return buffer;
+}
+
+char* npConCat( char* (*first)(), char* (*second)(), int* err )
+{
+	char* buffer1 = NULL;
+	char* buffer2 = NULL;
+	char* buffer  = NULL;
+	
+	buffer1 = first();
+	if( buffer1 == NULL )
+		return NULL;
+	
+	buffer2 = second();
+	if( buffer2 == NULL )
+		return NULL;
+	
+	buffer = malloc(sizeof(char) * ( strlen(buffer1) + strlen(buffer2) + 5 ) );
+	if(buffer == NULL)
+	{
+		err = (int*)9182;
+		return NULL;
+	}
+	
+	sprintf(buffer, "%s %s", buffer1, buffer2);
+	printf("\n---------%s---------\n", buffer);
+	
+	free(buffer1);
+	free(buffer2);
+	
+	return buffer;
+}
+
+char* npdbShowDatabasesStatement( char* (*showStatement)(), char* (*dbStatement)(), int* err )
+{
+	char* buffer  = NULL;
+	
+	buffer = npConCat(showStatement, dbStatement, err);
+
+	return buffer;
+}
+
+
+/* // delete, lde @todo
+void new_npdbShowDatabases(pNPdbFuncSet func, pNPdbHost host, void* dataRef)
+{
+	char* statement = NULL;
+	int   err    = 0;
+	void* conn   = NULL;
+	
+	func = host->hostFuncSet;
+	conn = host->conn;
+	
+	statement = npdbShowDatabasesStatement(func->StatementDBshow, func->StatementDatabases, &err);
+	
+	err = npdbQuery_safe(conn, func, host, statement);
+	
+	free(statement);
+}
+*/
 
 /*! Hook MySQL specific external library methods and local utility functions.
 	@param func is an initialized funcSet structure to be hooked up.
@@ -179,12 +264,24 @@ int npMysqlHook( pNPdbFuncSet func, void* dbLib)
 	func->StatementInsert		= (void*)npMysqlStatementInsert;	
 	func->StatementSelect		= (void*)npMysqlStatementSelect; 
 	func->StatementCreateTable	= (void*)npMysqlStatementCreateTable;
+	func->StatementCreateNodeTable = (void*)npdbStatementCreateNodeTable;
+	func->getNodeTableFields    =  (void*)npdbGetNodeTableFields;
+	func->getFuncsFromHost		= (void*)npdbGetFuncsFromHost;
+	
 	func->StatementUse			= (void*)npMysqlStatementUse;
 	func->StatementShow			= (void*)npMysqlStatementShow;
 	func->StatementDrop			= (void*)npMysqlStatementDrop;
 	func->StatementTruncate		= (void*)npMysqlStatementTruncate;
 	func->StatementUpdate		= (void*)npMysqlStatementUpdate;
-
+	func->StatementDBshow		= npdbShowStatement;
+	
+	func->showDatabases         = npdbShowDatabases; // new, lde
+	func->StatementDatabases    = npdbDatabasesStatement;
+	func->use					= npdbUse;
+	func->getTableFields		= npMysqlGetTableFields;
+//	func->show					= npdbShow;
+//	func->select				= new_npdbSelectTable;
+	
 	return 0;
 }
 
@@ -261,9 +358,11 @@ int npMysqlInitConnOptions( pNPdbFuncSet func, void* connInit )
 	return 0;  //success
 }
 
-char* npMysqlStatementDrop(char* dropType, char* dropName)
+char* npMysqlStatementDrop(char* dropType, char* dropName, void* dataRef)
 {
-	char* statement = malloc(sizeof(char) * (7 + strlen(dropType) + strlen(dropName)));
+	//char* statement = malloc(sizeof(char) * (7 + strlen(dropType) + strlen(dropName)));
+	pData data = (pData) dataRef;
+	char* statement = npdbMalloc( ( sizeof(char) * (7 + strlen(dropType) + strlen(dropName)) ) , dataRef);
 	if( statement )
 		sprintf(statement, "DROP %s %s", dropType, dropName);
 
@@ -407,8 +506,8 @@ char* new_npMysqlStatementInsertFromChunk(char* table, struct newChunkObj *theCh
 	int statementLength = sizeof(char) * (20 + strlen(table) + 3 + theChunk->chunkSize + 500); // added +500, hotfix, debug lde
 	char* statement = malloc(statementLength);
 	
-	printf("\nstatement length : %d", statementLength);
-	printf("\nchunkSize : %d", theChunk->chunkSize);
+//	printf("\nstatement length : %d", statementLength);
+//	printf("\nchunkSize : %d", theChunk->chunkSize);
 //	printf("\ntotalCsvStrObjectsSize : %d", theChunk->csvObjects->totalCsvStrObjectsSize); // debug, lde
 
 	
@@ -546,6 +645,13 @@ char* npMysqlStatementUpdate( int dbID, char* tableName )
 	return statement;
 }
 
+/* lde @todo, later
+char* npdbGetTableFields ( int type, void* dataRef )
+{
+	
+}
+*/
+
 /*! Get the table fields descriptor for the given table type.
 
 	@param type is a constant that defines the table type.
@@ -569,7 +675,7 @@ char* npMysqlGetTableFields( int type, void* dataRef ) // @todo, lde, make a npd
 		return NULL;
 	}
 	
-	printf("\nFields allocated\n");
+//	printf("\nFields allocated\n");
 
 	map = data->map.typeMapNode;		//debug, zz
 	

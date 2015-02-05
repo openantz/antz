@@ -382,7 +382,7 @@ bool npNodeAttach (pNPnode node, pNPnode parent, void* dataRef)
 	if (parent->childCount >= kNPnodeChildMax)
 	{
 		npPostMsg ("err 2828 - Could not attach node, kNPnodeChildMax limit",
-				kNPmsgErr, dataRef);
+			kNPmsgErr, dataRef);
 		return false;
 	}
 
@@ -430,9 +430,9 @@ void npNodeDelete (pNPnode node, void* dataRef)
 
 	data->io.mouse.linkA = NULL;	//in case of delete while using link tool
 
-	npNodeRemove (true, node, dataRef);	//set 
+//	npNodeRemove (true, node, dataRef);	//set 
 
-	if (node->type != kNodeLink && node->parent != NULL)
+	if (node->type != kNodeLink && node->parent != NULL) // This is attempting to access memory that was just freed, lde
 	{
 		parent = node->parent;
 
@@ -448,6 +448,8 @@ void npNodeDelete (pNPnode node, void* dataRef)
 		else
 			npPostMsg("err 9423 - npNodeRemove parent is NULL", kNPmsgErr, data);
 	}
+	npNodeRemove (true, node, dataRef);	//set // moved , lde
+
 }
 
 // removes node from tree and recursively traverses tree to free memory
@@ -570,7 +572,7 @@ void npNodeRemove (bool freeNode, pNPnode node, void* dataRef)
 			{
 				parent = node->child[0];	//link B is a child[0] of the link
 			
-				//methods are desinged to work with recursive delete branches
+				//methods are designed to work with recursive delete branches
 
 				//find the childIndex to this node									//zz-s
 				for (i = 0; i < parent->childCount; i++)

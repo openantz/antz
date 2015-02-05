@@ -166,7 +166,7 @@ void npInitKey (void* dataRef)
 
 
 	//Fire Commands only respond to key down event
-	key->map[kKeyDown][kKeyCodeM]				= kNPcmdMenu;
+	key->map[kKeyDown][kKeyCodeM]				= kNPcmdMenu; //kNPcmdMenu; // moved, lde @todo // was kNPcmdViewer2
 
 	key->map[kKeyDown][kKeyCodeBackSlash]		= kNPcmdSubsample;			//zzhp
 
@@ -240,6 +240,8 @@ void npInitKey (void* dataRef)
 	key->map[kKeyDown][kKeyCodeSemiColon]		= kNPcmdPrevBranch;
 	key->map[kKeyRepeat][kKeyCodeSemiColon]		= kNPcmdPrevBranch;
 */	
+	key->map[kKeyDown][kKeyCodeSemiColon]		= kNPcmdViewer2; // changed from 'm' to ';' // lde
+	
 	key->map[kKeyDown][kKeyCodeReturn]			= kNPcmdConsole;
 	key->map[kKeyRepeat][kKeyCodeReturn]		= kNPcmdConsole;
 	key->map[kKeyDown][kKeyCodeNumPadEnter]		= kNPcmdConsole;
@@ -609,11 +611,23 @@ void npKeyGlut (int key, int x, int y, int keyTypeGlut, int modifiers)
 
 	pNPkey keyboard = &data->io.key;
 
-
-/*	if (modifiers == GLUT_ACTIVE_SHIFT)		//no longer using this method
+// Shift modifier doesn't work, on the mac, without using glutGetModifiers, lde
+#ifdef NP_OSX_
+	if (modifiers == GLUT_ACTIVE_SHIFT)		//no longer using this method
+	{
 		data->io.key.modShift = true;
+		keyboard->modShiftLeft = true;
+		keyboard->modShiftRight = true;
+	}
 	else
+	{
 		data->io.key.modShift = false;
+		keyboard->modShiftLeft = false;
+		keyboard->modShiftRight = false;
+	}
+#endif
+
+/*
 	if (modifiers == GLUT_ACTIVE_CTRL)
 		data->io.key.modCtrl = true;
 	else

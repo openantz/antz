@@ -643,8 +643,8 @@ struct NPnode
 	int			colorFade;					//!<cycles to fade color alpha, 0=off
 	int			textureID;					//!<GL texture ID
 
-	bool		hide;						//!<hide the node, data stays active
-	bool		freeze;						//!<freezes data and physics updates
+	bool			hide;						//!<hide the node, data stays active
+	bool			freeze;						//!<freezes data and physics updates
 
 	int			topo;						//!<topography, cube, sphere, torus
 	int			facet;						//!<topo face number
@@ -674,7 +674,7 @@ struct NPnode
 	NPfloatXYZ	world;						//!<child node world coordinates
 	float		distFromCamera;				//!<MB-Transp					//!<zz debug
 	int			hudType;					//!<removethis, use existing param //!<zz debug
-	bool		linkFlag;					//!<for establishing link nodes
+	bool			linkFlag;					//!<for establishing link nodes
 };
 
 /// pairs an id directly to a scene node pointer, used for mapping datasets, etc.
@@ -1265,8 +1265,8 @@ struct NPmap {
 	void**		nodeID;					//!<maps nodeID to pNPnode, kNPnodeMax
 	void**		sortID;					//!<maps nodeID for sorting nodes
 
-	int*		parentID;				//!<maps node ID to parentID
-	int*		orphanList;				//!<list of orphans by node ID
+	int*			parentID;				//!<maps node ID to parentID
+	int*			orphanList;				//!<list of orphans by node ID
 	int			orphanCount;
 	int			sortCount;														//!<zzhp
 	int			sortCountA;
@@ -1608,6 +1608,38 @@ typedef struct NPctrl* pNPctrl;
 *  - containing structure with function pointers to os functions
 */
 
+struct NPosFuncSet
+{
+	void   (*getAppPath)();
+	void   (*getCWD)();
+	void   (*setCWD)();
+	void   (*getOpenFilePath)();
+	FILE*  (*fileDialog)();
+	int    (*showCursor)();
+	int    (*setCursorPos)();
+	double (*getTime)();
+	void   (*updateTime)();
+	void   (*sleep)();
+	int    (*getKey)();
+	void   (*timeStampName)();
+	void   (*beginThread)();
+	void   (*endThread)();
+	bool   (*supportsAntzThreads)();
+	void*  (*loadLibrary)(char* filePath);
+	void*  (*getLibSymbol)();
+};
+typedef struct NPosFuncSet NPosFuncSet;
+typedef struct NPosFuncSet* pNPosFuncSet;
+
+struct NPos {
+	pNPosFuncSet (*newFuncSet)();
+	void (*hook)();
+	int (*deleteFuncSet)(); // Specify later, lde @todo
+	pNPosFuncSet funcSet;
+};
+typedef struct NPos NPos;
+typedef struct NPos* pNPos;
+
 /*!
 *  Global Context reference using MVC architecture
 */
@@ -1616,6 +1648,7 @@ struct Data {
 						//!<  each global struct has a corresponding base node.
 	NPmap	map;		//!< Model   - map
 	NPio	io;			//!< View    - io
+	NPos    os;         //!< OS      - Operating System functions
 	NPctrl	ctrl;		//!< Control - ctrl
 
 	int		size;
@@ -2140,6 +2173,7 @@ enum kNP_COMMAND_TRIGGER {
 
 	kNPcmdConsole,
 	kNPcmdViewer,
+	kNPcmdViewer2, //lde @todo
 
 	//!<global graph commands
 	kNPcmdMenu = 4242,
