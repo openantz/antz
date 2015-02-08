@@ -115,7 +115,20 @@ void npInitMySQL (void* dataRef)
 
 	/// attach function sets to host items by matching the host types
 	npdbAttachHostFuncSets( dbs );
-
+	
+	/*
+	printf("\n222 IP Address : %s", data->io.db.hosts[0]->ip);
+	printf("\n222 User : %s", data->io.db.hosts[0]->user);
+	printf("\n222 Password : %s", data->io.db.hosts[0]->password);
+	*/
+	 
+	if(data->io.db.hosts[0]->ip[0] == '\0' || data->io.db.hosts[0]->user[0] == '\0' || data->io.db.hosts[0]->password[0] == '\0')
+	{
+		npdbAddHost("mysql", "127.0.0.1", 3306, "root", "admin", &err, data);
+	}
+	
+	npdbAddHost("mysql", data->io.db.hosts[0]->ip, 3306, data->io.db.hosts[0]->user, data->io.db.hosts[0]->password, &err, dataRef);
+	
 	return;
 }
 
@@ -336,7 +349,7 @@ int npMysqlInitConnOptions( pNPdbFuncSet func, void* connInit )
 	int err = 0;
 	bool enable = true;		///< enable MYSQL_OPT_RECONNECT
 	
-	printf("\nconnInit : %p\n", connInit);
+//	printf("\nconnInit : %p\n", connInit);
 	if( !func || !connInit )
 	{
 		printf("err 5590 - npMysqlInitConnOptions called with null element\n");
@@ -346,7 +359,7 @@ int npMysqlInitConnOptions( pNPdbFuncSet func, void* connInit )
 	/// set the recconect flag to prevent mysql err 2006 - connection lost
 	err = func->options( connInit, MYSQL_OPT_RECONNECT, &enable ); // changed &enable to 0
 //	err = mysql_options( connInit, MYSQL_OPT_RECONNECT, &enable );
-	printf("\nconnInit : %p\nerr : %d\n", connInit, err);
+//	printf("\nconnInit : %p\nerr : %d\n", connInit, err);
 	if( err )
 	{
 		printf( "%s err: %u - %s\n", func->hostType,

@@ -1,4 +1,4 @@
-np_globals_id,map_path,item_id,element,type,permisions,name,desc,value
+﻿np_globals_id,map_path,item_id,element,type,permisions,name,desc,value
 1,"np_gl",1,"alpha_mode","i",0,"","","1"
 2,"np_gl",1,"background_rgba","ffff",0,"","","0.000000,0.000000,0.000000,1.000000"
 3,"np_gl",1,"fullscreen","i",0,"","","1"
