@@ -28,7 +28,7 @@
 #include "../../npdata.h"
 
 //#include <my_global.h>
-#include <mysql.h>
+#include "mysql.h"
 //#include "../../npdata.h
 
 struct newChunkObj {

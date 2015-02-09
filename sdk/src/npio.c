@@ -111,7 +111,7 @@ void nposHook(pNPosFuncSet funcSet, int *err)
 	funcSet->loadLibrary = nposLoadLibrary;
 	funcSet->getLibSymbol = nposGetLibSymbol;
 	
-	return 0;
+	return;
 }
 
 // This is a temporary location for this, lde @todo

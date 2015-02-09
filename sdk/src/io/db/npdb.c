@@ -3411,13 +3411,13 @@ void npdbSelectTableByName( pNPdatabase dbItem, char* tableName, int* err, void*
 	printf("\nnpdbSelectTable");
 	
 	err = (int*)0;
-	if( npdbItemErr(dbItem)) return 1;	/// ascert valid DB and connection
+	if( npdbItemErr(dbItem)) return;	/// ascert valid DB and connection
 	
 	func = dbItem->host->hostFuncSet;
 	conn = dbItem->host->conn;
 	
 	statement = func->StatementSelect(tableName);
-	if( !statement ) return 2;
+	if( !statement ) return;
 	
 	printf("query: %s\n",statement);
 	
