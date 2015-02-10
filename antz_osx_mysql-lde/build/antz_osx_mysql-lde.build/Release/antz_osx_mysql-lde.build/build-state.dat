@@ -1,7 +1,7 @@
 Tantz_osx_mysql-lde
 v7
 r0
-t445056656.583308
+t445058200.175723
 cCheck dependencies
 cCompileC build/antz_osx_mysql-lde.build/Release/antz_osx_mysql-lde.build/Objects-normal/i386/IpEndpointName.o /Users/lucaserickson/gitFolder/antz/antz_osx_mysql-lde/../sdk/libs/oscpack/src/ip/IpEndpointName.cpp normal i386 c++ com.apple.compilers.gcc.4_2
 cCompileC build/antz_osx_mysql-lde.build/Release/antz_osx_mysql-lde.build/Objects-normal/i386/NetworkingUtils.o /Users/lucaserickson/gitFolder/antz/antz_osx_mysql-lde/../sdk/libs/oscpack/src/ip/posix/NetworkingUtils.cpp normal i386 c++ com.apple.compilers.gcc.4_2
@@ -3518,7 +3518,7 @@ i"../../npdata.h"
 
 CCheck dependencies
 r0
-lSLF07#2@18"Check dependencies445056656#445056656#0(146"[WARN]warning: no rule to process file '$(PROJECT_DIR)/../sdk/libs/soil/projects/makefile/makefile' of type sourcecode.make for architecture i3861(22@139"warning: no rule to process file '$(PROJECT_DIR)/../sdk/libs/soil/projects/makefile/makefile' of type sourcecode.make for architecture i386445056656#18446744073709551615#0#0(1@0"0(0#1#0"4317954048#0"0#
+lSLF07#2@18"Check dependencies445058200#445058200#0(146"[WARN]warning: no rule to process file '$(PROJECT_DIR)/../sdk/libs/soil/projects/makefile/makefile' of type sourcecode.make for architecture i3861(22@139"warning: no rule to process file '$(PROJECT_DIR)/../sdk/libs/soil/projects/makefile/makefile' of type sourcecode.make for architecture i386445058200#18446744073709551615#0#0(1@0"0(0#1#0"4317954048#0"0#
 
 CCompileC build/antz_osx_mysql-lde.build/Release/antz_osx_mysql-lde.build/Objects-normal/i386/IpEndpointName.o /Users/lucaserickson/Desktop/latestLantz/antz/antz_osx_mysql-lde/../sdk/libs/oscpack/src/ip/IpEndpointName.cpp normal i386 c++ com.apple.compilers.gcc.4_2
 s436133354.410109

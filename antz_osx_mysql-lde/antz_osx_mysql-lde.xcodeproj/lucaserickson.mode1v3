@@ -276,12 +276,6 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>34</integer>
-									<integer>31</integer>
-									<integer>30</integer>
-									<integer>11</integer>
-									<integer>7</integer>
-									<integer>1</integer>
 									<integer>0</integer>
 								</array>
 							</array>
@@ -397,9 +391,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>70A3DCED1A8700410046EF74</string>
+				<string>70D0AD051A870C990007F719</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>70A3DCEE1A8700410046EF74</string>
+				<string>70D0AD061A870C990007F719</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -519,7 +513,7 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>70A3DCEF1A8700410046EF74</string>
+				<string>70D0AD071A870C990007F719</string>
 				<string>11E0B1FE06471DED0097A5F4</string>
 			</array>
 			<key>ToolbarConfigUserDefaultsMinorVersion</key>
@@ -554,11 +548,10 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C530D57069F1CE1000CFCEE</string>
-		<string>70A3DD101A8706CF0046EF74</string>
-		<string>70A3DD111A8706CF0046EF74</string>
-		<string>1CD10A99069EF8BA00B06720</string>
+		<string>70D0AD111A870C990007F719</string>
+		<string>70D0AD121A870C990007F719</string>
 		<string>1C78EAAD065D492600B07095</string>
+		<string>1CD10A99069EF8BA00B06720</string>
 		<string>708F204919F1E1A200208B80</string>
 		<string>/Users/lucaserickson/gitFolder/antz/antz_osx_mysql-lde/antz_osx_mysql-lde.xcodeproj</string>
 	</array>
@@ -640,7 +633,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>708F204919F1E1A200208B80</string>
-				<string>70A3DCF01A8700410046EF74</string>
+				<string>70D0AD081A870C990007F719</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -762,13 +755,13 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1CD10A99069EF8BA00B06720</string>
-				<string>70A3DD001A8706BC0046EF74</string>
+				<string>70D0AD091A870C990007F719</string>
 				<string>1C162984064C10D400B95A72</string>
-				<string>70A3DD011A8706BC0046EF74</string>
-				<string>70A3DD021A8706BC0046EF74</string>
-				<string>70A3DD031A8706BC0046EF74</string>
-				<string>70A3DD041A8706BC0046EF74</string>
-				<string>70A3DD051A8706BC0046EF74</string>
+				<string>70D0AD0A1A870C990007F719</string>
+				<string>70D0AD0B1A870C990007F719</string>
+				<string>70D0AD0C1A870C990007F719</string>
+				<string>70D0AD0D1A870C990007F719</string>
+				<string>70D0AD0E1A870C990007F719</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.debugV3</string>
@@ -922,7 +915,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C78EAAD065D492600B07095</string>
-				<string>70A3DD0F1A8706BC0046EF74</string>
+				<string>70D0AD0F1A870C990007F719</string>
 				<string>1C78EAAC065D492600B07095</string>
 			</array>
 			<key>ToolbarConfiguration</key>
