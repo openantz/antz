@@ -708,46 +708,15 @@ pNPdbHost npInitHostDB( void )
 	host->conn_id = 0;
 	host->hostFuncSet = NULL;
 	host->conn = NULL;
-	//host->type[0] = '\0';
-	strcpy(host->type, "mysql");
-	//host->ip[0] = '\0';
-	strcpy(host->ip, "127.0.0.1");
+	host->type[0] = '\0';
+	host->ip[0] = '\0';
 	host->port = 0;
-	//host->user[0] = '\0';
-	strcpy(host->user, "root");
-	//host->password[0] = '\0';
-	strcpy(host->password, "admin");
+	host->user[0] = '\0';
+	host->password[0] = '\0';
 	host->inUseDB[0] = '\0';
 	host->dbCount = 0;
 
 	return host;
-}
-
-// new function, add to header file, lde @todo
-FILE* npOpenDefaultGlobalsFile(void* dataRef)
-{
-	pData data = (pData) dataRef;
-	FILE* filePtr = NULL;
-	int wordSize = 0; // set these, @todo lde
-	int size = 0;	 // set these, @todo lde
-	// Get the current working / appPath directory
-	char* globalsPath = NULL;
-	char* appPath = data->io.file.appPath;
-	
-	printf("\nappPath : %s", appPath);
-	
-	filePtr = npOpenGlobalsCSV(globalsPath, wordSize, size, dataRef);
-	
-	//filePtr = npOpenCSV("", "r", dataRef);
-	
-	return;
-}
-
-// add to header, lde @todo
-int npdbHostMatchesDefault()
-{
-
-	return 0;
 }
 
 //zzd
@@ -762,7 +731,7 @@ void npInitDataDB (void* dataRef)
 	pData data = (pData) dataRef;
 	pNPdbs db = &data->io.db;
 
-	npdbInitPtrList(&data->io.db, &err, dataRef); // add to header, lde @todo
+	npdbInitPtrList(&data->io.db, &err, dataRef);
 	db->coreNode = NULL;	///< core nodes are created after all data map inits.
 							///< npAddCoreNode( kNPcoreDB, db, dataRef );
 							///< init the core node, creates one if does not exist
@@ -793,22 +762,8 @@ void npInitDataDB (void* dataRef)
 	///	'localhost' is same as 127.0.0.1 and mysql default port is 3306.
 	
 	printf("\nnpdbAddHost");
-	
-	npdbHostMatchesDefault();
-	
-	//npOpenGlobalsCSV
-	/*
-	printf("activeDB ptr : %p", data->io.db.activeDB);
-	printf("\nIP Address : %s", data->io.db.activeDB->host->ip);
-	printf("\nUser : %s", data->io.db.activeDB->host->user);
-	printf("\nPassword : %s", data->io.db.activeDB->host->password);
-	*/
-	printf("\nIP Address : %s", data->io.db.hosts[0]->ip);
-	printf("\nUser : %s", data->io.db.hosts[0]->user);
-	printf("\nPassword : %s", data->io.db.hosts[0]->password);
-	
-	
-//	npdbAddHost("mysql", "127.0.0.1", 3306, "root", "admin", &err, data); // This shouldn't be in npInitDataDB, lde @todo
+//	npdbAddHost( "mysql", "localhost", 3306, "root", "admin", data );
+	npdbAddHost("mysql", "127.0.0.1", 3306, "root", "admin", &err, data);
 //	npdbAddHost("mysql", "192.168.1.130", 3306, "root", "admin", data);
 
 	
