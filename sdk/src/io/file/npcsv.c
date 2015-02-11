@@ -552,12 +552,17 @@ void* npMapElementToPtr (const char* str, void* dataRef)
 
 	//scan map using the ID and if found return a pointer to the data
 //	printf("\nitemCount : %d", itemCount); // temp, lde
-
+//	printf("\nstr : %s\n", str); // temp, lde
+	
 	for( i=0; i < itemCount; i++) // Fixed, lde
 	{
 		//printf("%d ",i);
+		//printf("\n(const char*)mapType[%d].elementA : %s\n", i, (const char*)mapType[i].elementA);
 		if (strncmp(str, (const char*)mapType[i].elementA, kNPnameMax) == 0) 
+		{
+			//printf("\nFound It 5472\n");
 			return mapType[i].mapPtr;
+		}
 	}
 	
 /*
@@ -781,12 +786,19 @@ void npMapTypeInit (void* dataRef)
 		{ &data->io.mouse.camMode,	kNPint,			kNPmouseCamMode,	0,	"np_mouse",		1,	"cam_mode",			"i",	"Mouse Camera Mode" },
 		{ &data->io.mouse.pickMode,	kNPint,			kNPmousePickMode,	0,	"np_mouse",		1,	"pick_mode",		"i",	"Mouse Pick Mode" },
 
-		//zzd
-//		{ &data->io.db.activeDB->host->ip,		kNPcstrPtr, kNPloginHostIP,	0,	"np_db",	1,	"host_ip",			"s",	"Host IP address" },
-//		{ &data->io.db.activeDB->host->user,			kNPcstrPtr, kNPloginUser,	0,	"np_db",	1,	"user",				"s",	"Username" },
-//		{ &data->io.db.activeDB->host->password,		kNPcstrPtr, kNPloginPassword, 0, "np_db",	1,	"password",			"s",	"Password" },
-//		{ &data->io.db.activeDB->host->type,		kNPcstrPtr, kNPloginHostType, 0, "np_db",	1,	"db_type",			"s",	"Database Type" },
-	
+		//zzd // uncommented, lde
+		/*
+		{ data->io.db.activeDB->host->ip,		kNPcstrPtr, kNPloginHostIP,	0,	"np_db",	1,	"host_ip",			"s",	"Host IP address" },
+		{ data->io.db.activeDB->host->user,			kNPcstrPtr, kNPloginUser,	0,	"np_db",	1,	"user",				"s",	"Username" },
+		{ data->io.db.activeDB->host->password,		kNPcstrPtr, kNPloginPassword, 0, "np_db",	1,	"password",			"s",	"Password" },
+		{ data->io.db.activeDB->host->type,		kNPcstrPtr, kNPloginHostType, 0, "np_db",	1,	"db_type",			"s",	"Database Type" },
+		 */
+		{ data->io.db.hosts[0]->ip,		kNPcstrPtr, kNPloginHostIP,	0,	"np_db",	1,	"host_ip",			"s",	"Host IP address" },
+		{ data->io.db.hosts[0]->user,			kNPcstrPtr, kNPloginUser,	0,	"np_db",	1,	"user",				"s",	"Username" },
+		{ data->io.db.hosts[0]->password,		kNPcstrPtr, kNPloginPassword, 0, "np_db",	1,	"password",			"s",	"Password" },
+		{ data->io.db.hosts[0]->type,		kNPcstrPtr, kNPloginHostType, 0, "np_db",	1,	"db_type",			"s",	"Database Type" },
+		
+		
 	//	{ &data->io.mouse.PickMode,	kNPint,			kNPmouseCamMode,	0,	"np_mouse",		1,	"cam_mode",			"i",	"Mouse Camera Mode" },
 	
 		// tables require the element list to be unique, but only within the table scope
@@ -1439,7 +1451,7 @@ int npOpenMapCSV (char* filePath, int mapType, void* dataRef)
 	void*	elementRef	= NULL;
 	int		subElement = 0;
 
-	char msg[512];
+	char msg[512] = {'\0'};
 
 	pData data = (pData) dataRef;
 
@@ -1561,7 +1573,7 @@ int npOpenMapCSV (char* filePath, int mapType, void* dataRef)
 		//			switch (typeTagB)
 			elementA++; typeTagA++; valueStr++;
 				
-			printf("%.32s", elementA, valueStr);
+			//printf("valueStr : %.32s", elementA, valueStr);
 	
 			elementRef = npMapItemPtr (NULL, NULL, elementA, NULL, data);
 			if( !elementRef )
@@ -1630,7 +1642,11 @@ int npOpenMapCSV (char* filePath, int mapType, void* dataRef)
 	} //end loop
 
 	if( mapType == kNPmapGlobals )
+	{	
+		//printf("\n7382 kNPmapGlobals");
 		npUpdateGlobals(dataRef);
+		//printf("\nafter 7382");
+	}
 
 //		return result;
 
@@ -1675,7 +1691,9 @@ finish:
 	npFree( buffer, data );
 
 	if( msg )
+	{
 		npPostMsg( msg, kNPmsgFile, data );
+	}
 
 	return result;
 }

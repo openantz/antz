@@ -392,7 +392,7 @@ void npUpdateDB (void* dataRef)							//add to ctrl loop, debug zz
 {
 	//int i = 0; // warning, lde
 	int result = 0;
-	char msg[256];
+	char msg[256] = {'\0'};
 	//char host[256];
 	pData data = (pData) dataRef;
 	pNPdbs dbs = NULL;
@@ -867,6 +867,7 @@ void npdbSetActiveDB( pNPdatabase dbItem, int* err, void* dataRef )
 	}
 	
 	data->io.db.activeDB = dbItem;
+	data->io.db.activeDB->idMap = NULL;
 	
 	return;
 }
@@ -1552,8 +1553,8 @@ void npdbAddHost( char* type, char* ip, int port, char* user, char* pass, int* e
 		return;
 	}
 
-//	printf("\nhostCount : %d", dbs->hostCount);
-	if(dbs->hostCount == 1) // First host is place holder
+	printf("\nhostCount : %d", dbs->hostCount);
+	if(dbs->hostCount == 1) // First host is place holder // temp, lde
 	{
 		//begin npInitDB() // Bring under npInitDb Func
 	/*	
@@ -1658,7 +1659,7 @@ void npdbAddHost( char* type, char* ip, int port, char* user, char* pass, int* e
 	{
 		//! @todo add support for multiple databases
 		// dbs->activeDB = realloc
-		printf("\nerr 9494 - MySQL currently only supports 1 DB\n");
+		printf("\n1 err 9494 - MySQL currently only supports 1 DB\n");
 	}
 	
 	/// if host already in list then set local host pointer to existing item
@@ -2016,6 +2017,7 @@ int npdbTableRowsToNodes() // lde @todo
 int* npdbInitIdMap(int* err, void* dataRef)
 {
 	int* IdMap = NULL;
+	printf("1722");
 	IdMap = malloc(sizeof(int) * kNPnodeMax);
 	
 	err = (int*)0;
@@ -2067,7 +2069,7 @@ int npdbLoadNodes( pNPdbFuncSet func, void* result, int* err, void* dataRef ) //
 		
 	if(data->io.db.activeDB->idMap == NULL) // This is a quick fix, lde @todo
 	{
-		printf("idMap is NULL");
+		printf("1722 idMap is NULL");
 		//data->io.db.activeDB->idMap = malloc(sizeof(int) * kNPnodeMax); // npdbInitIdMap, lde @todo
 		data->io.db.activeDB->idMap = npdbInitIdMap(err, dataRef);
 		for(i = 0; i < kNPnodeMax; i++)
@@ -3411,13 +3413,13 @@ void npdbSelectTableByName( pNPdatabase dbItem, char* tableName, int* err, void*
 	printf("\nnpdbSelectTable");
 	
 	err = (int*)0;
-	if( npdbItemErr(dbItem)) return;	/// ascert valid DB and connection
+	if( npdbItemErr(dbItem)) return 1;	/// ascert valid DB and connection
 	
 	func = dbItem->host->hostFuncSet;
 	conn = dbItem->host->conn;
 	
 	statement = func->StatementSelect(tableName);
-	if( !statement ) return;
+	if( !statement ) return 2;
 	
 	printf("query: %s\n",statement);
 	
@@ -3609,25 +3611,22 @@ int npdbUpdateAntzStateFromDatabase(void* dataRef) // This needs to take a pNPda
 
 	pData data = (pData) dataRef;
 
-	printf("\nnpdbUpdateAntzStateFromDatabase");
+	//printf("\nnpdbUpdateAntzStateFromDatabase");
 	// dbName = data->io.dbs->activeDB[0].currentlyUsedDatabase; // temp lde 
 	dbName = data->io.db.activeDB->name;
-	printf("\n5150 dbName : %s", dbName); 
+	//printf("\n5150 dbName : %s", dbName); 
 
 	/// return err 4242 if active DB is NULL or blank string '\0'
-	printf("\nBefore if");
 	if( !dbName[0] )
 		return 4242;
 	if( dbName[0] == '\0' )
 		return 4242;
-	printf("\nAfter if");
 
 //	npSelect((void*)data->io.dbs->activeDB[0].id, data->io.dbs->activeDB[0].db, "node_tbl");
 	npSelect(data->io.db.activeDB->host->conn, data->io.db.activeDB->host->hostFuncSet, "node_tbl");
 
 	// @todo: sort out void* or int id mixup, lde
 	// (myResult = (*data->io.dbs->activeDB[0].dbFunc->storeResult)(data->io.dbs->activeDB[0].id)) // old, lde
-	printf("\nBefore if 2");
 //	if( (myResult = (*data->io.db.activeDB->host->hostFuncSet->store_result)(data->io.db.activeDB->host->id)) == NULL )
 	if( (myResult = (*data->io.db.activeDB->host->hostFuncSet->store_result)(data->io.db.activeDB->host->conn)) == NULL )
 	{
@@ -3636,7 +3635,6 @@ int npdbUpdateAntzStateFromDatabase(void* dataRef) // This needs to take a pNPda
 		npPostMsg( msg, kNPmsgErr, data );
 		return 1;
 	}
-	printf("\nAfter if 2");
 
 	//printf("\nbefore npdbUpdateNodesFromMysqlResult");
 	npdbUpdateNodesFromMysqlResult( myResult, dataRef );
@@ -5203,17 +5201,36 @@ pNPdatabase npdbSaveAs( char* dbName, pNPdbHost host, int* err, void* dataRef )
 	result = npdbStoreResult_Safe(dbItem->host->hostFuncSet, host, err);
 	
 	npdbSetActiveDB(dbItem, err, dataRef);
+/*
+	if(data->io.db.activeDB->idMap != NULL)
+	{
+		free(data->io.db.activeDB->idMap);
+		data->io.db.activeDB->idMap = NULL;
+	}
+*/
+	
 	
 	if( data->io.db.activeDB->idMap == NULL )
 	{
 		data->io.db.activeDB->idMap = malloc( sizeof( int ) * kNPnodeMax );
 		printf("\n1722 idMap allocated");
+	//	for(i = 0; i < kNPnodeMax; i++)
+	//		data->io.db.activeDB->idMap[i] = -1;
+		
 	}
+	
+	
 	
 	while( row = dbItem->host->hostFuncSet->fetch_row(result) )
 	{
 		id = npatoi(row[0]);
 		node = npGetNodeByID(id, dataRef);
+		if(node == NULL)
+			printf("node %d is NULL", id);
+		else {
+		//	printf("\n290 node id : %d ", node->id);			
+		}
+		
 		data->io.db.activeDB->idMap[id] = node->id; // set active db before
 	}
 	

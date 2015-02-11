@@ -206,15 +206,15 @@ void updateNodeFromMysqlRow (MYSQL_ROW *row, void* dataRef) // Generalize here
 	pNPnode node = NULL;
 //	pNPnode nodeParent = NULL; // Warning, lde
 	int id = 0;
-	
+
 	id = atoi( (const char*)row[0] );
 
 	/// @todo create node id map for scene to DB that supports merged scenes.
 	//node = npGetNodeByID(data->io.dbs->activeDB[0].idMap[id], dataRef); // old, lde
 	//printf( "\nBefore npGetNodeByID" );
 //	printf( "\ndata->io.db.activeDB->idMap[%d] = %d", id, data->io.db.activeDB->idMap[id] );
-	printf( "\ndata->io.db.activeDB->idMap[%d]", id);
-	printf( " = %d", data->io.db.activeDB->idMap[id] ); // If one saves off a database then does an update, it doesn't create an idMap, lde @todo
+//	printf( "\ndata->io.db.activeDB->idMap[%d]", id);
+//	printf( " = %d", data->io.db.activeDB->idMap[id] ); // If one saves off a database then does an update, it doesn't create an idMap, lde @todo
 	//printf( "\nactiveDB :: %p", data->io.db.activeDB);
 	node = npGetNodeByID(data->io.db.activeDB->idMap[id], dataRef);
 	//printf("\nAfter npGetNodeByID : node ptr %p", node); 
@@ -1262,6 +1262,7 @@ int npAddDb(pNPdbs dbs, char* dbType, char* hostIP, char* user, char* pass, char
 		/// @todo add kNPnodeList type for npMalloc
 		
 		//dbs->activeDB[0].idMap = malloc( sizeof(int) * kNPnodeMax ); // old, lde
+		//printf("1722 allocating idMap");
 		dbs->activeDB->idMap = malloc( sizeof(int) * kNPnodeMax );
 		//if( !dbs->activeDB[0].idMap ) return 1010; // old, lde
 		if( !dbs->activeDB->idMap ) return 1010;
@@ -1296,7 +1297,7 @@ int npAddDb(pNPdbs dbs, char* dbType, char* hostIP, char* user, char* pass, char
 	{
 		//! @todo add support for multiple databases
 		// dbs->activeDB = realloc
-		printf("\nerr 9494 - MySQL currently only supports 1 DB\n");
+		printf("\n2 err 9494 - MySQL currently only supports 1 DB\n");
 	}
 
 	return 0;
