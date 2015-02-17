@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2014 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -17,7 +17,7 @@
 *  Released under the CC0 license, which is GPL compatible.
 *
 *  You should have received a copy of the CC0 Public Domain Dedication along
-*  with this software (license file named COPYING.txt). If not, see
+*  with this software (license file named LICENSE.txt). If not, see
 *  http://creativecommons.org/publicdomain/zero/1.0/
 *
 * --------------------------------------------------------------------------- */
@@ -398,7 +398,7 @@ void npCtrlFile (int command, void* dataRef)
 
 		//navigate folders, files and DBs
 		case kNPcmdViewer :
-			if (data->io.key.modAlt )
+			if( data->io.key.modAlt )
 			{
 				if (data->io.key.modShift)
 					npdbSaveUpdate( data->io.db.activeDB, dataRef );	///< save scene to active DB
@@ -1992,8 +1992,22 @@ void npInitCPU (void* dataRef)
 	return;
 }
 
+//zzle move to npmapfile.csv - fixes bug 119
 void npCmdOpen( char* filePath, void* dataRef)
-{
-	npFileOpenMap( filePath, 1, strlen(filePath), dataRef );
+{	
+	//npFileOpenMap( filePath, 1, strlen(filePath), dataRef );
+
+	int		result = 0;
+	char	msg[256];
+
+	pData data = (pData) dataRef;
+
+	data->io.file.loading = true;
+
+	sprintf( msg, "Loading: %s", filePath );
+	npPostMsg (msg, kNPmsgCtrl, data );
+	result += npFileOpenAuto( filePath, NULL, data );
 }
+
+
 

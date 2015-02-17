@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2014 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -17,7 +17,7 @@
 *  Released under the CC0 license, which is GPL compatible.
 *
 *  You should have received a copy of the CC0 Public Domain Dedication along
-*  with this software (license file named COPYING.txt). If not, see
+*  with this software (license file named LICENSE.txt). If not, see
 *  http://creativecommons.org/publicdomain/zero/1.0/
 *
 * --------------------------------------------------------------------------- */
@@ -378,6 +378,7 @@ void npOpenURL (const char* command, void* dataRef)
 
 	char sysCmd[kNPurlMax];	//generally 2048 is max URL length
 	char url[kNPurlMax];
+//	char msg[kNPurlMax];
 
 	// compose string using the recordID & URL passed in from the command line
 	// or the hard coded default in npdata.c,
@@ -416,19 +417,18 @@ void npOpenURL (const char* command, void* dataRef)
 
 		sprintf( sysCmd, "start %s", url ); //&node->tag->title[9] );//url );
 	}
-	else if ( data->map.currentNode->recordID )
-		sprintf( sysCmd, "start %s?id=%d", data->io.url, 
-				data->map.currentNode->recordID );
 	else
 	{
-		npPostMsg( "record_id = 0", kNPmsgCtrl, data );
-		return;
+		//strncpy( url, data->io.url, kNPurlMax );
+		sprintf( sysCmd, "start %s%d", data->io.url, 
+				data->map.currentNode->recordID );
+		//return;
 	}
 
-	// call browser with the composed URL
-	system ( sysCmd );
-	printf ("URL TEST: %s\n", url);//sysCmd );
-} 
+	/// system call with 'start' to open browser with the composed URL
+	system( sysCmd );
+	npPostMsg( sysCmd, kNPmsgCtrl, data );
+}
 
 //-----------------------------------------------------------------------------
 void npOpenApp (const char* command, void* dataRef)

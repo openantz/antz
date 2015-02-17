@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://!<openantz.com and NPE at http://!<neuralphysics.org
 *
-*  Written in 2010-2014 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -17,7 +17,7 @@
 *  Released under the CC0 license, which is GPL compatible.
 *
 *  You should have received a copy of the CC0 Public Domain Dedication along
-*  with this software (license file named COPYING.txt). If not, see
+*  with this software (license file named LICENSE.txt). If not, see
 *  http://!<creativecommons.org/publicdomain/zero/1.0/
 *
 * --------------------------------------------------------------------------- */
@@ -25,6 +25,7 @@
 #ifndef NPTYPES_H_
 #define NPTYPES_H_
 
+#define kNPappVer "0.198.0"
 
 #include "stdbool.h"
 #include "npdbTypes.h"
@@ -76,7 +77,7 @@
 
 #define	kNPnodeMax			2097152			//!< 4194304 16MB with set of 32bit ptr, 16MB if 64bit	//!<zzhp
 #define kNPnodeRootMax		2097152			//!< 1048576 4MB with 32bit ptr, 8MB if 64bit	//!<zzhp 262144
-#define kNPnodeChildMax		64				//!< 4000 uses 16KB per node	//zz hpc
+#define kNPnodeChildMax		512				//!< 4000 uses 16KB per node	//zz hpc
 											//!< C99 max fixed array size is 16383
 											//!< 266 fills a sphere at 15 deg, possibly switch data structure to GTK.org zz
 
@@ -1459,6 +1460,45 @@ typedef struct NPconnect* pNPconnect;
 #define kNPqueMax 256
 #define kNPmaxConnect 65535
 
+
+/*! lde @todo
+* Create NPos
+*  - containing structure with function pointers to os functions
+*/
+
+struct NPosFuncSet
+{
+	void   (*getAppPath)();
+	void   (*getCWD)();
+	void   (*setCWD)();
+	void   (*getOpenFilePath)();
+	FILE*  (*fileDialog)();
+	int    (*showCursor)();
+	int    (*setCursorPos)();
+	double (*getTime)();
+	void   (*updateTime)();
+	void   (*sleep)();
+	int    (*getKey)();
+	void   (*timeStampName)();
+	void   (*beginThread)();
+	void   (*endThread)();
+	bool   (*supportsAntzThreads)();
+	void*  (*loadLibrary)(char* filePath);
+	void*  (*getLibSymbol)();
+};
+typedef struct NPosFuncSet NPosFuncSet;
+typedef struct NPosFuncSet* pNPosFuncSet;
+
+struct NPos {
+	pNPosFuncSet (*newFuncSet)(void);
+	void (*hook)();
+	int (*deleteFuncSet)(); // Specify later, lde @todo
+	pNPosFuncSet funcSet;
+};
+typedef struct NPos NPos;
+typedef struct NPos* pNPos;
+
+
 struct NPio {
 	void* coreNode; ///< core nodes tie global structures to the scene graph
 						//!< each global struct has a corresponding base node.
@@ -1466,6 +1506,8 @@ struct NPio {
 	int			argc;
 	char**		argv;
 
+	NPos		os;					//!< Operating System specific	//zzd
+	
 	NPmessage	message;
 	NPkey		key;
 	NPmouse		mouse;
@@ -1485,6 +1527,7 @@ struct NPio {
 	NPqueList	fifo;				//!<io buffering for data and command sync
 	//!<zz should que be part of npmap? ...its a 'io' (data) buffer
 
+	/// @todo move time params to data->io.time
 	double		time;				//!<system time in seconds
 	double		timeStart;			//!<time at app start
 	double		cycleDelta;			//!<the actual duration of the last cycle
@@ -1603,42 +1646,6 @@ struct NPctrl {
 typedef struct NPctrl NPctrl;
 typedef struct NPctrl* pNPctrl;
 
-/*! lde @todo
-* Create NPos
-*  - containing structure with function pointers to os functions
-*/
-
-struct NPosFuncSet
-{
-	void   (*getAppPath)();
-	void   (*getCWD)();
-	void   (*setCWD)();
-	void   (*getOpenFilePath)();
-	FILE*  (*fileDialog)();
-	int    (*showCursor)();
-	int    (*setCursorPos)();
-	double (*getTime)();
-	void   (*updateTime)();
-	void   (*sleep)();
-	int    (*getKey)();
-	void   (*timeStampName)();
-	void   (*beginThread)();
-	void   (*endThread)();
-	bool   (*supportsAntzThreads)();
-	void*  (*loadLibrary)(char* filePath);
-	void*  (*getLibSymbol)();
-};
-typedef struct NPosFuncSet NPosFuncSet;
-typedef struct NPosFuncSet* pNPosFuncSet;
-
-struct NPos {
-	pNPosFuncSet (*newFuncSet)();
-	void (*hook)();
-	int (*deleteFuncSet)(); // Specify later, lde @todo
-	pNPosFuncSet funcSet;
-};
-typedef struct NPos NPos;
-typedef struct NPos* pNPos;
 
 /*!
 *  Global Context reference using MVC architecture
@@ -1648,7 +1655,6 @@ struct Data {
 						//!<  each global struct has a corresponding base node.
 	NPmap	map;		//!< Model   - map
 	NPio	io;			//!< View    - io
-	NPos    os;         //!< OS      - Operating System functions
 	NPctrl	ctrl;		//!< Control - ctrl
 
 	int		size;

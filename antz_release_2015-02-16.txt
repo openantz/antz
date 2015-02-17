@@ -1,6 +1,40 @@
-- Release Notes -                                        http://openantz.com
+﻿- Release Notes -                                        http://openantz.com
 
-         also see 'Issues' and 'Wiki' on http://github.com/openantz
+         latest code, issues and Wiki on https://github.com/openantz/
+----------------------------------------------------------------------------
+ANTz v0.198.0 - 2015-02-16
+
+Enhanced:
+#147  Mysql lde - cleanup and fixes DB login using globals CSV file  
+#139  MySQL support for Links
+#131  MySQL Manual Refresh
+#130  ANTz Globals CSV
+#82   MySQL support for tag table
+
+Fixed:
+#149  MySQL login is blank when generating a new default globals CSV file
+#145  Mysql lde - bug fixes and new support for tag table  
+#142  MySQL login not stored in antzglobals.csv file
+#141  MySQL tag_tbl has duplicate tag entries
+#140  MySQL fails to load updates after saving an update
+#138  MySQL functionality has changed
+#137  Latest OSX can't connect to MySQL
+#136  OSX version crashes on loading and saving
+#133  Latest version won't load CSV files (ver 9_13_2014)
+#132  Tags flooding console and slow loading... in version 6_29_2014
+#121  U key does not launch url from globals file
+#120  CSV Tags are printed to console during load, causes huge slowdown
+#119  CSV tag file passed in as system console argument causes a load loop
+#109  MySQL breaks if you change the default login in antzglobals.csv
+#108  Forward slash stops working
+
+Bugs Reported:
+#148  Debug build crashes on startup
+#146  Xcode will not build using 10.6 base SDK
+#144  CSV files that exceed kNPnodeChildLimit crash during load
+#143  MySQL tag edited or created by user are not saved to the database
+#134  Save selected region does not save tags
+
 ----------------------------------------------------------------------------
 antz_msw_2014-09-13
 

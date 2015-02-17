@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2014 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -17,7 +17,7 @@
 *  Released under the CC0 license, which is GPL compatible.
 *
 *  You should have received a copy of the CC0 Public Domain Dedication along
-*  with this software (license file named COPYING.txt). If not, see
+*  with this software (license file named LICENSE.txt). If not, see
 *  http://creativecommons.org/publicdomain/zero/1.0/
 *
 * --------------------------------------------------------------------------- */
@@ -50,7 +50,7 @@ void npInitMySQL (void* dataRef)
 
 	pData data = (pData) dataRef;
 	pNPdbs dbs = &data->io.db;
-	pNPos  os  = &data->os;
+	pNPos  os  = &data->io.os;
 	pNPosFuncSet osFunc = os->funcSet;
 	pNPdbFuncSet func = NULL;
 	void* dbLib = NULL;   /// dbLib stores the 'HINSTANCE' handle as a void*
@@ -60,35 +60,28 @@ void npInitMySQL (void* dataRef)
 //	nposGetAppPath(appPath, &size);
 	osFunc->getAppPath(appPath, &size);
 	
-	printf("\nnpInitMySQL : %s\n", appPath);
+	printf("appPath: %s\n", appPath);
 	/// post the mysql connector client library version
-	printf("data->io.db : %p", dbs);
-	printf( "\nMySQL Client ver: %d\n", MYSQL_VERSION_ID );
+//	printf("data->io.db : %p", dbs);
+	printf( "MySQL Client ver: %d\n", MYSQL_VERSION_ID );
 
 	/// load the mysql client library
-	printf("\nAttempting to load windows dll\n");
+//	printf("\nAttempting to load windows dll\n");
 	//dbLib = nposLoadLibrary( "libmysql.dll" );
 	dbLib = osFunc->loadLibrary( "libmysql.dll" );
 	if( !dbLib )
 	{
-		printf("\nFailed loading dll, trying to load mac dylib (32-bit)\n");
+		printf("Failed loading dll, trying mac dylib (32-bit)\n");
 		
 		//dbLib = nposLoadLibrary( "libmysqlclient.18.dylib" );
 		dbLib = osFunc->loadLibrary( "libmysqlclient.18.dylib" );
 		if( !dbLib )
 		{
-			printf("\nFailed loading dll, trying to load mac dylib (64-bit)\n");
+			printf("Failed loading dll, trying mac dylib (64-bit)\n");
 			
 			//dbLib = nposLoadLibrary( "libmysqlclient.18.64.dylib" );
 			dbLib = osFunc->loadLibrary( "libmysqlclient.18.64.dylib" );
-			
-			if( !dbLib )
-			{
-				printf("\nFailed loading dll\n");
-			}
-			
-		}
-		
+		}	
 	}
 	
 	if( !dbLib )
@@ -103,7 +96,7 @@ void npInitMySQL (void* dataRef)
 	if( !func ) return;
 	
 	/// define our funcSet host type
-	strcpy( func->hostType, "mysql" );		
+	strcpy( func->hostType, "mysql" );	
 
 	/// hook our database specific library methods and local utilities
 	err = npMysqlHook( func, dbLib );
@@ -115,20 +108,7 @@ void npInitMySQL (void* dataRef)
 
 	/// attach function sets to host items by matching the host types
 	npdbAttachHostFuncSets( dbs );
-	
-	/*
-	printf("\n222 IP Address : %s", data->io.db.hosts[0]->ip);
-	printf("\n222 User : %s", data->io.db.hosts[0]->user);
-	printf("\n222 Password : %s", data->io.db.hosts[0]->password);
-	*/
-	 
-	if(data->io.db.hosts[0]->ip[0] == '\0' || data->io.db.hosts[0]->user[0] == '\0' || data->io.db.hosts[0]->password[0] == '\0')
-	{
-		npdbAddHost("mysql", "127.0.0.1", 3306, "root", "admin", &err, data);
-	}
-	
-	npdbAddHost("mysql", data->io.db.hosts[0]->ip, 3306, data->io.db.hosts[0]->user, data->io.db.hosts[0]->password, &err, dataRef);
-	
+
 	return;
 }
 
@@ -366,7 +346,7 @@ int npMysqlInitConnOptions( pNPdbFuncSet func, void* connInit )
 				(unsigned int)func->db_errno(connInit), (char*)func->db_error(connInit) );
 		return 5591;  //err 5591
 	}
-	printf("\noptions");
+//zzd	printf("\noptions");
 
 	return 0;  //success
 }

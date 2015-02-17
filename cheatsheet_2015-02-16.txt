@@ -1,6 +1,6 @@
-antz_cheatsheet_2014-06-29.txt                           http://openantz.com
+antz_cheatsheet_2015-02-16.txt                           http://openantz.com
 
-User Manunal is in 'usr/docs/' and also see http://sf.com/p/openantz/wiki
+                   see the 'docs' folder for more info
 ----------------------------------------------------------------------------
 Appendix A - Command Cheat Sheet
 
@@ -184,7 +184,8 @@ I - Info toggle for display of Text Tags (Outline Title, Color Title, Desc)
 \ (backslash) - Subsamples nodes to draw faster, SHIFT key reverses
 
 --- Database ---
-? - Menu Loader for databases, SHIFT + ? to Save a time-stamped DB.
+? - Menu Loader for databases, SHIFT+? to Save a time-stamped DB.
+; - Load DB update, SHIFT+; to Save an update to the active DB.
 
 --- GUI Console ---
 Enter (Return) - activate Command Console for text entry.

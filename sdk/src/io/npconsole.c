@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2014 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -17,7 +17,7 @@
 *  Released under the CC0 license, which is GPL compatible.
 *
 *  You should have received a copy of the CC0 Public Domain Dedication along
-*  with this software (license file named COPYING.txt). If not, see
+*  with this software (license file named LICENSE.txt). If not, see
 *  http://creativecommons.org/publicdomain/zero/1.0/
 *
 * --------------------------------------------------------------------------- */
@@ -1406,9 +1406,7 @@ void npUpdateConsoleUserText(pNPconsole console, void* dataRef)
 			npPostMsg( "err 7894 - no tag", kNPmsgErr, data );
 		else
 		{
-			printf("\nTag was %s", tag->title); // temp, lde
 			tag->title[0] = '\0';
-			printf("\nAssigning console->inputStr : %s to tag->title", console->inputStr); // temp, lde
 			strncat( tag->title, console->inputStr, kNPtagTitleMax );
 			npUpdateTag( tag );
 		}
@@ -1792,8 +1790,6 @@ void npMainArgcArgvHandler( int argc, char** argv, void* dataRef )
 }
 
 
-#define kNPappVer "0.1 alpha"
-
 //------------------------------------------------------------------------------
 void npSystemConsoleHelp (int argc, char** argv)
 {
@@ -1806,7 +1802,7 @@ void npSystemConsoleHelp (int argc, char** argv)
 	// app ver request
 	if ( !strncmp( "-v", argv[1],2) )
 	{										//keep ver up-to-date with changes
-		printf("\nANTz ver: %s\n", kNPappVer);
+		printf("\nANTz v%s\n", kNPappVer);
 		exit(0);
 	}
 
@@ -1816,7 +1812,7 @@ void npSystemConsoleHelp (int argc, char** argv)
 		 || !strncmp( "-?",	 argv[1], 2)
 		 || !strncmp( "help",argv[1], 4) )
 	{
-		printf("v %s", kNPappVer);					//keep ver up-to-date with changes
+		printf("ANTz v%s", kNPappVer);					//keep ver up-to-date with changes
 	}
 	else
 		return;	// no help requested, continue to Startup...

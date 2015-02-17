@@ -1,6 +1,8 @@
-﻿antz_install_2014_05_20.txt
+﻿antz_install_2015_02_16.txt
 
-Latest app ver and up-to-date docs at - http://openantz.com
+http://openantz.com
+
+Latest app and dev issues at - https://github.com/openantz
 
 --------------
 
@@ -13,19 +15,17 @@ Application Install - MSW, OSX, Linux
 
 --- MS Windows ---
 
-ANTz app can run from any location!
-
-Required .DLL files: freeglut.dll, mysqllib.dll & oscpack.dll
- (as of 2014-05-20) 
-
 On most systems ANTz does not require any installation and will just run.
-Older MS Windows (XP, Win2003) require a 2008 version of vcredist_x86.exe
+
+Required .DLL files - freeglut.dll, glut32 & libmysql.dll are with the app.
 
 - Windows 7 (32 bit & 64bit) - 
 	
    Just run antz.exe
 
 - Windows XP (32 Pro) and Win 2003 (Enterprise R2 SP1) -
+
+   Requires 2008 version of vcredist_x86.exe installed (if not already.)
 
 1) Download 'vcredist_x86_2008.exe' at:
       http://sf.net/p/openantz/files/ms_windows/
@@ -41,7 +41,7 @@ copy of DLL files in the system folder:
 
 --- OSX ---
 	
-  Just run ANTz (X11 Unix executable)
+  Just run ANTz app (X11 Unix executable)
 
 --- Linux ---
 
@@ -63,7 +63,7 @@ Development Install
 Environment:
    W7-64bit with VS2008 project
    CentOS 5.5 with makefile
-   OSX 10.6.x with Xcode project
+   OSX 10.6.x with Xcode project (
 
 libraries:
    freeglut - MSW & Linux
@@ -73,13 +73,13 @@ libraries:
 
 --- MSW Libraries ---
 
-copy any .DLL files from the antz app folder to './sdk/vs/vs2008/Debug'
+copy missing .DLL files from the antz app folder to './sdk/vs/vs2008/Debug'
 
 VS project is configured with all libraries located in '/sdk/libs' folder.
 
-Currently using freeglut, oscpack and mysql
+Currently using freeglut, soil, oscpack and mysql
 
-freeglut is included in the antz lib\ folder and does not require install.
+freeglut is included in the antz libs/ folder and does not require install.
 But, some useful VS project install instructions are at:
 http://blog.thegabrielflores.com/2008/02/installing-freeglut-on-visual-studio.html
 

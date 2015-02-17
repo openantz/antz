@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2014 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -17,7 +17,7 @@
 *  Released under the CC0 license, which is GPL compatible.
 *
 *  You should have received a copy of the CC0 Public Domain Dedication along
-*  with this software (license file named COPYING.txt). If not, see
+*  with this software (license file named LICENSE.txt). If not, see
 *  http://creativecommons.org/publicdomain/zero/1.0/
 *
 * --------------------------------------------------------------------------- */
@@ -149,22 +149,22 @@ int npdbConnect( pNPdbHost host, void* dataRef )
 	
 	if( !host )
 	{	
-		printf( "err 5565 - npdbConnect host is NULL \n" );
-		return 5565;
+		printf( "err 5465 - npdbConnect host is NULL \n" );
+		return 5465;
 	}
 	
 	if( (func = host->hostFuncSet) == NULL )
 	{	
-		printf( "err 5566 - npdbConnect host->funcSet is NULL \n" );
-		return 5566;
+		printf( "err 5466 - npdbConnect host->funcSet is NULL \n" );
+		return 5466;
 	}
 
 	/// initialize the database connection structure
 	connInit = func->init(NULL);
 	if( !connInit )
 	{					//you cannot use db error checking if init fails
-		printf("err 5567 - host func->init failed, likely out of memory \n");
-		return 5567;
+		printf("err 5467 - host func->init failed, likely out of memory \n");
+		return 5467;
 	}
 	
 
@@ -181,12 +181,12 @@ int npdbConnect( pNPdbHost host, void* dataRef )
 			(unsigned int)func->db_errno(connInit), (char*)func->db_error(connInit) );
 		
 		host->connected = false; // lde, new
-		printf("\nhost not connected");
-		return 5568;   //err 5568
+		printf("host not connected\n");
+		return 5468;   //err 5468
 	}
 	
 	host->connected = true; // lde, new
-	printf("\nhost connected");
+	printf("host connected\n");
 	
 	// Should I use client / server instead of host / db, lde
 	//printf("\ndata->io.db : %p", &data->io.db);
@@ -225,11 +225,11 @@ void npdbConnectHosts( pNPdbs dbs, void* dataRef )
 				printf( "err %d - failed to connect %s host: %s\n", 
 						err, host->type, host->ip ); 
 				host->connected = false;
-				printf("\nHost connection lost");
+				printf("Host connection lost\n");
 			}
 			else
 			{
-				printf("\nconnected %s host: %s\n", host->type, host->ip );
+				printf("connected %s host: %s\n", host->type, host->ip );
 				host->connected = true;
 			}
 		}
@@ -319,7 +319,7 @@ void npdbConnMonitorThread( pNPdbs dbs, void* dataRef )
 		//printf("\nbefore sleeping...\n");
 		nposSleep( 10.0 );
 
-		printf( "ping DB hosts\n" );
+		//printf( "ping DB hosts\n" );
 
 		for( i=1; i < dbs->hostCount; i++ )
 		{
@@ -336,7 +336,9 @@ void npdbConnMonitorThread( pNPdbs dbs, void* dataRef )
 			{
 				/// @todo attempt to establish a connection
 				//npdbConnect( host, dataRef ); //@todo, this should be passed a pNPdatabase / pNPserver / pNPdbServer structure, lde
-				host->connect( host, dataRef ); // experimental, lde @todo
+				
+				if( host->connected ) //zzd added if(connected) this to avoid spamming when no connection
+					host->connect( host, dataRef ); // experimental, lde @todo
 				
 			}
 			else
@@ -997,7 +999,7 @@ void npdbAttachHostFuncSets( pNPdbs dbs )
 	for( i=0; i < dbs->hostCount; i++ )
 	{
 		host = dbs->hosts[i];
-		host->connect = npdbConnect; // Expand on later, @todo
+		host->connect = npdbConnect; // Expand on later, @todo   //zzd ummm...
 		/// search function sets for host type match
 		for( j=0; j < dbs->funcSetCount; j++ )
 			if( strcmp( host->type, dbs->funcSetList[j]->hostType ) == 0 )
@@ -1459,9 +1461,9 @@ int npdbAddHostDatabases( pNPdbHost host, pNPdbs dbs )
 		/// get the database name string length, string is not terminated!
 		if( (fieldLengths = func->fetch_lengths(result)) == 0 )
 		{
-			printf("err 5568 - DB function fetch_lengths failed \n" );
+			printf("err 5469 - DB function fetch_lengths failed \n" );
 			func->free_result( result );
-			return 5568;
+			return 5469;
 		}
 
 		/// copy our database cell to our local dbName cstr
@@ -1501,7 +1503,7 @@ pNPdbFuncSet npdbGetHostFuncSet( char* hostType, pNPdbs dbs )
 {
 	int i = 0;
 	pNPdbFuncSet func = NULL;
-	printf("\nnpdbGetHostFuncSet : ");
+	printf("npdbGetHostFuncSet : \n");
 	if( !hostType )
 	{
 		printf( "err 5529 - npdbGetHostFuncSet called with null hostType \n");
@@ -1536,6 +1538,7 @@ pNPdbFuncSet npdbGetHostFuncSet( char* hostType, pNPdbs dbs )
 	@return 0 if success, else an error number if there is a input format problem.
 */
 
+//zz perhaps make function return the host id or host pointer, or 0 if err
 // Add error code, lde @todo
 void npdbAddHost( char* type, char* ip, int port, char* user, char* pass, int* err, void* dataRef)	//zzd
 {
@@ -1553,75 +1556,31 @@ void npdbAddHost( char* type, char* ip, int port, char* user, char* pass, int* e
 		return;
 	}
 
-	printf("\nhostCount : %d", dbs->hostCount);
+//	printf("hostCount : %d \n", dbs->hostCount);
+
+	/// @todo activeDB should just point to an item in the DB list, not allocate mem
+	/// if there is no activeDB then should be NULL, or perhaps point to slot 0 in list
+	/// host list keeps track of host connection, the database list points to parent host
 	if(dbs->hostCount == 1) // First host is place holder // temp, lde
 	{
-		//begin npInitDB() // Bring under npInitDb Func
-	/*	
-		dbs->activeDB                    = malloc(sizeof(NPdatabase) * 1);
-		dbs->activeDB->host              = malloc(sizeof(NPdbHost));
-		dbs->activeDB->host->hostFuncSet = malloc(sizeof(NPdbFuncSet));
-	*/	
-		/*
-		dbs->activeDB					 = npMalloc(0, sizeof(NPdatabase), dataRef); // should these return? lde, @todo
-		if(dbs->activeDB == NULL) {
+		dbs->activeDB = npdbMalloc( sizeof(NPdatabase) , dataRef ); // should these return? lde, @todo
+		if( !dbs->activeDB ) {
 			err = (int*)1734; // add error code, lde @todo
 			return;
 		}
 		
-		dbs->activeDB->host				 = npMalloc(0, sizeof(NPdbHost), dataRef);
-		if( dbs->activeDB->host == NULL ) {
+		dbs->activeDB->host = npdbMalloc( sizeof(NPdbHost), dataRef );
+		if( !dbs->activeDB->host ) {
 			err = (int*)1735; // add error code, lde @todo
 			return;
 		}
-		
-		if(dbs->activeDB->host == NULL) {
-			err = (int*)1736; // add error code, lde @todo
-			return;
-		}
-		
-		dbs->activeDB->host->hostFuncSet = npMalloc(0, sizeof(NPdbFuncSet), dataRef);
-		if(dbs->activeDB->host->hostFuncSet == NULL) {
-			err = (int*)1737; // add error code, lde @todo
-			return;
-		}
-		*/
-		
-		dbs->activeDB					 =  npdbMalloc( sizeof(NPdatabase) , dataRef ); // should these return? lde, @todo
-		if(dbs->activeDB == NULL) {
-			err = (int*)1734; // add error code, lde @todo
-			return;
-		}
-		
-		dbs->activeDB->host				 = npdbMalloc( sizeof(NPdbHost), dataRef );
-		if( dbs->activeDB->host == NULL ) {
-			err = (int*)1735; // add error code, lde @todo
-			return;
-		}
-		
-		if(dbs->activeDB->host == NULL) {
-			err = (int*)1736; // add error code, lde @todo
-			return;
-		}
-		
+
 		dbs->activeDB->host->hostFuncSet = npdbMalloc( sizeof(NPdbFuncSet), dataRef );
-		if(dbs->activeDB->host->hostFuncSet == NULL) {
+		if( dbs->activeDB->host->hostFuncSet == NULL) {
 			err = (int*)1737; // add error code, lde @todo
 			return;
 		}
-		
-		/*
-		dbs->activeDB = npdbMalloc(dbs->activeDB, dbs, dataRef);
-		dbs->activeDB->host = npdbMalloc(dbs->activeDB->host, dbs, dataRef);
-		dbs->activeDB->host->hostFuncSet = npdbMalloc(dbs->activeDB->host->hostFuncSet, dbs, dataRef);
-		npdbPRC(dbs);
-		*/
-		/// @todo upgrade idMap to map from DB node_id to scene node ptr, fasted updates
-		/// @todo support changes to scene graph structure when updating DB
-		/// @todo add kNPnodeList type for npMalloc
-		
-		//dbs->activeDB[0].idMap = malloc( sizeof(int) * kNPnodeMax ); // old, lde
-		//dbs->activeDB->idMap = malloc( sizeof(int) * kNPnodeMax );
+	
 		dbs->activeDB->idMap = npdbMalloc( sizeof(int) * kNPnodeMax , dataRef);
 		if(dbs->activeDB->idMap == NULL)
 		{
@@ -1631,7 +1590,8 @@ void npdbAddHost( char* type, char* ip, int port, char* user, char* pass, int* e
 		}
 
 		//if( !dbs->activeDB[0].idMap ) return 1010; // old, lde
-		if( !dbs->activeDB->idMap ) {
+		if( !dbs->activeDB->idMap )
+		{
 			err = (int*)1739; // add error code, lde @todo
 			return;
 		}
@@ -1645,21 +1605,20 @@ void npdbAddHost( char* type, char* ip, int port, char* user, char* pass, int* e
 		strcpy(dbs->activeDB->host->user, user);
 		strcpy(dbs->activeDB->host->password, pass);
 		strcpy(dbs->activeDB->host->inUseDB, "none");
-		//strcpy(dbs->inUseDB2, "none");
+
 		dbs->inUseDB2[0] = '\0';
 		dbs->activeDB->name[0] = '\0';
-		//strcpy(dbs->activeDB->name, "NONE");
+
 		dbs->activeDB->host->conn_id = 0;
 		dbs->activeDB->host->connected = false;
-		printf("\nhost not connected");
+//		printf("host not connected\n");
 		dbs->dbCount++; 
 		
 	}
 	else
 	{
 		//! @todo add support for multiple databases
-		// dbs->activeDB = realloc
-		printf("\n1 err 9494 - MySQL currently only supports 1 DB\n");
+		printf("err 5494 - MySQL currently only supports 1 DB\n");
 	}
 	
 	/// if host already in list then set local host pointer to existing item
@@ -1689,7 +1648,7 @@ void npdbAddHost( char* type, char* ip, int port, char* user, char* pass, int* e
 		}
 		host = dbs->hosts[dbs->hostCount] = npInitHostDB();
 		host->id = dbs->hostCount;
-		host->hostFuncSet = npdbGetHostFuncSet( type, dbs );
+//		host->hostFuncSet = npdbGetHostFuncSet( type, dbs );
 	}
 
 //	printf("4");
@@ -2214,9 +2173,9 @@ int npdbSetField (pNPdbFields field, pNPdbHost host, void* result, void* dataRef
 	
 	if( (fieldLengths = func->fetch_lengths(result)) == 0 )
 	{
-		printf("err 5568 - DB function fetch_lengths failed \n" );
+		printf("err 5470 - DB function fetch_lengths failed \n" );
 		func->free_result( result );
-		return 5568;
+		return 5470;
 	}
 	
 	//tbl->fieldCount++;
@@ -2639,9 +2598,9 @@ int npdbFetchRow( pNPdbFuncSet func, pNPdbTable tbl )
 	/// get the table name string length, string is not terminated!
 	if( (fieldLengths = func->fetch_lengths(result)) == 0 )
 	{
-		printf("err 5568 - DB function fetch_lengths failed \n" );
+		printf("err 5472 - DB function fetch_lengths failed \n" );
 		func->free_result( result );
-		return 5568;
+		return 5472;
 	}
 	
 	// Start, lde, all this could be put into a function @todo npdbAddField
@@ -2684,9 +2643,9 @@ int npdbSetTable( pNPdbFuncSet func, void* result, pNPdbTable tbl, pNPdbHost hos
 		return 1234; 
 	
 	name = npdbFetchTableName(func, result, tbl);
-	if((int)name == 5568) // temporary, lde @todo
+	if((int)name == 5473) // temporary, lde @todo
 	{
-		return 5568;
+		return 5473;
 	}
 	
 	tbl->name = malloc(sizeof(char) * strlen(name));

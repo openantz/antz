@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2014 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -17,7 +17,7 @@
 *  Released under the CC0 license, which is GPL compatible.
 *
 *  You should have received a copy of the CC0 Public Domain Dedication along
-*  with this software (license file named COPYING.txt). If not, see
+*  with this software (license file named LICENSE.txt). If not, see
 *  http://creativecommons.org/publicdomain/zero/1.0/
 *
 * --------------------------------------------------------------------------- */
@@ -793,11 +793,10 @@ void npMapTypeInit (void* dataRef)
 		{ data->io.db.activeDB->host->password,		kNPcstrPtr, kNPloginPassword, 0, "np_db",	1,	"password",			"s",	"Password" },
 		{ data->io.db.activeDB->host->type,		kNPcstrPtr, kNPloginHostType, 0, "np_db",	1,	"db_type",			"s",	"Database Type" },
 		 */
-		{ data->io.db.hosts[0]->ip,		kNPcstrPtr, kNPloginHostIP,	0,	"np_db",	1,	"host_ip",			"s",	"Host IP address" },
-		{ data->io.db.hosts[0]->user,			kNPcstrPtr, kNPloginUser,	0,	"np_db",	1,	"user",				"s",	"Username" },
-		{ data->io.db.hosts[0]->password,		kNPcstrPtr, kNPloginPassword, 0, "np_db",	1,	"password",			"s",	"Password" },
-		{ data->io.db.hosts[0]->type,		kNPcstrPtr, kNPloginHostType, 0, "np_db",	1,	"db_type",			"s",	"Database Type" },
-		
+		{ data->io.db.hosts[1]->ip,			kNPcstrPtr, kNPloginHostIP,		0, "np_db",	1,	"host_ip",			"s",	"Host IP address" },
+		{ data->io.db.hosts[1]->user,		kNPcstrPtr, kNPloginUser,		0, "np_db",	1,	"user",				"s",	"Username" },
+		{ data->io.db.hosts[1]->password,	kNPcstrPtr, kNPloginPassword,	0, "np_db",	1,	"password",			"s",	"Password" },
+		{ data->io.db.hosts[1]->type,		kNPcstrPtr, kNPloginHostType,	0, "np_db",	1,	"db_type",			"s",	"Database Type" },
 		
 	//	{ &data->io.mouse.PickMode,	kNPint,			kNPmouseCamMode,	0,	"np_mouse",		1,	"cam_mode",			"i",	"Mouse Camera Mode" },
 	
