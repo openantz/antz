@@ -2,6 +2,20 @@
 
          latest code, issues and Wiki on https://github.com/openantz/
 ----------------------------------------------------------------------------
+ANTz v0.198.1 - 2015-02-24
+
+Enhanced:
+a) VS project settings adapted to be compatible with zspace sdk.
+b) Now prints error if CSV link nodes exceed kNPnodeChildMax.
+
+Fixed:
+#148  Debug build crashes on startup
+
+Bugs Reported:
+#151  Tag created by user has conflicting record_id with existing tags
+#150  MySQL fails to save complete tag table when there are links...
+
+----------------------------------------------------------------------------
 ANTz v0.198.0 - 2015-02-16
 
 Enhanced:

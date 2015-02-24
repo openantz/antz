@@ -1863,7 +1863,7 @@ void npSystemConsoleHelp (int argc, char** argv)
 	printf("|------------------------------------------------------------|\n");
 	printf("| '-u'  URL used for Browser Query to view by record_id      |\n");
 	printf("|                                                            |\n");
-	printf("| ex: antz -u \"http://openantz.com/docs/query.php\"           |\n");
+	printf("| ex: antz -u \"http://openantz.com/docs/id.html?id=\"         |\n");
 	printf("|                                                            |\n");
 	printf("| URL points to a web service page generated per record_id   |\n");
 	printf("| Launches default browser with record_id of active node.    |\n");

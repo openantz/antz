@@ -749,7 +749,7 @@ void npMapSortAdd (int id, int parentID, void* nodeRef, void* dataRef)
 
 		if ( count >= kNPnodeMax - 1 )
 		{
-			printf ("err 4835 - kNPorphanMax node limit exceeded\n");
+			printf ("err 4835 - kNPnodeMax node limit exceeded\n");
 			return;
 		}
 
@@ -758,7 +758,13 @@ void npMapSortAdd (int id, int parentID, void* nodeRef, void* dataRef)
 		
 		data->map.orphanCount++;
 
-		printf ("orphanID: %d   parentID: %d\n", id, parentID);
+		if( count < 5 )
+		{
+			if( node->type == kNodeLink )
+				printf( "link id: %d   parent_id: %d\n", id, parentID );
+			else
+				printf( "orphan node id: %d   parent_id: %d\n", id, parentID );
+		}
 	}
 }
 
@@ -848,6 +854,7 @@ void npNodeMoveBranch (pNPnode node, pNPnode newParent, void* dataRef)
 void npMapSort(void* dataRef)
 {
 	int i = 0;
+	bool result = false;
 	int parentIndex = 0;
 
 	pNPnode node = NULL;
@@ -872,7 +879,15 @@ void npMapSort(void* dataRef)
 		//	node->childCount++;
 
 			//attach node to link B end
-			npNodeAttach (node, child, data);
+			result = npNodeAttach (node, child, data);
+			if( !result)
+			{
+				npNodeDelete (node, dataRef);
+				data->map.sortID[i] = NULL;
+
+				printf ("err 4837 - orphan link node id: %d   parent_id: %d\n",
+					data->map.orphanList[i], data->map.parentID[i] );
+			}
 
 			//if this is not an actual orphan the skip the rest
 			if (node->parent == nodeParent)

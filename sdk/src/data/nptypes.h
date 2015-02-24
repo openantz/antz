@@ -25,7 +25,7 @@
 #ifndef NPTYPES_H_
 #define NPTYPES_H_
 
-#define kNPappVer "0.198.0"
+#define kNPappVer "0.198.1"
 
 #include "stdbool.h"
 #include "npdbTypes.h"
@@ -77,7 +77,7 @@
 
 #define	kNPnodeMax			2097152			//!< 4194304 16MB with set of 32bit ptr, 16MB if 64bit	//!<zzhp
 #define kNPnodeRootMax		2097152			//!< 1048576 4MB with 32bit ptr, 8MB if 64bit	//!<zzhp 262144
-#define kNPnodeChildMax		512				//!< 4000 uses 16KB per node	//zz hpc
+#define kNPnodeChildMax		512				//!< 512 uses 2KB per node	//zz hpc
 											//!< C99 max fixed array size is 16383
 											//!< 266 fills a sphere at 15 deg, possibly switch data structure to GTK.org zz
 
