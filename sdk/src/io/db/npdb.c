@@ -219,8 +219,8 @@ void npdbConnectHosts( pNPdbs dbs, void* dataRef )
 		else
 		{
 			data->io.db.activeDB->host = host;
-			//if( err = npdbConnect(host, dataRef) ) // Experimental, lde
-			if( err = host->connect(host, dataRef) )
+			if( err = npdbConnect(host, dataRef) ) // Experimental, lde
+			//if( err = host->connect(host, dataRef) )
 			{
 				printf( "err %d - failed to connect %s host: %s\n", 
 						err, host->type, host->ip ); 
@@ -3742,7 +3742,7 @@ void npdbRowToNode( pNPnode node, char** row )
 	//workaround for keeping track of link end B, processed by orphan list , lde
 	if(node->type == kNodeLink)
 	{
-		printf("\nnode type is kNodeLink : %d\n", kNodeLink);
+		//printf("\nnode type is kNodeLink : %d\n", kNodeLink);
 		node->childIndex = npatoi(row[6]);
 	}
 	else {
@@ -4085,9 +4085,13 @@ void npdbCreateTableQuery( pNPdatabase database, char* name, char* fields, int* 
 {
 	char* statement = NULL;
 	
+	//printf("\nnpdbCreateTableQuery");
 	npdbUse(database, dataRef);
+	//printf("\nAfter npdbUse");
 	statement = npMysqlStatementCreateTable(name, fields); // Replace with npdbStatementCreateTable, lde @todo
+	//printf("\nafter npMysqlStatementCreateTable");
 	err = (int*)new_npdbQuery_safe(database, statement); // add error handling, lde @todo
+	//printf("\nafter new_npdbQuery_safe");
 	//printf("\nnpdbCreateTableQuery err : %d", (int)err);
 
 	free(statement);
@@ -4582,8 +4586,11 @@ pNPdatabase new_npdbSaveAs( char* dbName, pNPdbHost host, void* dataRef )
 pNPtag npGetTagFromNode(pNPnode node, void* dataRef)
 {	
 	if(node->tag == NULL) // This isn't even needed, lde @todo
+	{
+		printf("\nTag is NULL");
 		return NULL;
-	
+	}
+
 	return node->tag;
 }
 
@@ -4611,20 +4618,32 @@ void npGetTags(void* dataRef)
 void npGetCSVtagFromNode(char** buffer, int *index ,pNPnode node, void* dataRef)
 {	 
 	pNPtag tag = NULL;
+	//printf("\nBefore npGetTagFromNode :: %p", tag);
 	tag = npGetTagFromNode(node, dataRef); 
+	//printf("\nAfter npGetTagFromNode :: %p", tag);
 
 	if( tag )
 	{
+		//printf("\ntag->title : %s", tag->title);
+		//if(1) // temp new, lde @todo
 		if( strncmp(tag->title, "id: ", 4) )
 		{
 			buffer[*index] = malloc(sizeof(char) * 4096); // 4096 is arbritary, lde @todo
+			
 			if(buffer[*index] == NULL)
 			{
+				printf("\nRETURNING");
 				return;
 			}
-			
+			//memset(buffer[*index], '\0', sizeof(char)*4096);
+
+			//printf("\nbefore sprintf");
 			sprintf(buffer[*index], "%i,%i,%i,\"%s\",\"%s\"", (*index)+1, node->recordID, tag->tableID, tag->title, tag->desc );
+			//printf("\nafter sprintf");
+			
+			//printf("\nBefore printf");
 			//printf("\nbuffer[%d] : %s\n", (*index), buffer[*index] );
+			//printf("\nAfter printf");
 			(*index)++;
 		}
 	//	else if ( (*index) != 0 )
@@ -4642,13 +4661,20 @@ void new_npGetCSVtagsFromNodeTree(char** buffer, int* index, pNPnode node, void*
 	int i = 0;
 	
 	//npGetCSVtagFromNode(buffer, index, node, dataRef);
+	//printf("\nnew_npGetCSVtagsFromNodeTree :: Before for loop");
+	//printf("\nchildCount :: %d", node->childCount);
 	for( i = 0; i < node->childCount; i++ )
 	{
+		//printf("\nBefore i : %d", i);
 		new_npGetCSVtagsFromNodeTree(buffer, index, node->child[i], dataRef);
+		//printf("\nAfter i : %d", i);
 	}
-	
+	//printf("\nnew_npGetCSVtagsFromNodeTree :: After for loop");
+
+	//printf("\nBefore npGetCSVtagFromNode");
 	npGetCSVtagFromNode(buffer, index, node, dataRef);
-	
+	//printf("\nAfter npGetCSVtagFromNode");
+
 }
 
 void npGetCSVtagsFromNodeTree(char** buffer, int* index, pNPnode node, void* dataRef)
@@ -4677,12 +4703,17 @@ void npGetCSVtagsFromAllNodes(char** buffer, int* index, void* dataRef)
 	pData data = (pData) dataRef;
 	pNPnode node = NULL;
 	int  x;
+
+	//printf("\nnpGetCSVtagsFromAllNodes :: Before for loop");
 	for( x = kNPnodeRootPin; x < data->map.nodeRootCount; x++ )
 	{
 		//npGetCSVtagsFromNodeTree(buffer, index, data->map.node[x], dataRef);
+	//	printf("\nBefore new_npGetCSVtagsFromNodeTree %d", x);
 		new_npGetCSVtagsFromNodeTree(buffer, index, data->map.node[x], dataRef);
-
+	//	printf("\nAfter new_npGetCSVtagsFromNodeTree %d", x);
 	}
+	//printf("\nnpGetCSVtagsFromAllNodes :: After for loop");
+
 }
 
 void new_npGetTags(char** buffer, int *index ,pNPnode node, void* dataRef)
@@ -4814,10 +4845,17 @@ pNPdbTable new_npdbCreateTable(pNPdatabase database, char* table_name, char* fie
 {
 	pNPdbTable table = NULL;
 	
+	//printf("\nBefore npdbCreateTableQuery");
 	npdbCreateTableQuery(database, table_name, fields, err, dataRef);
-	
+	//printf("\nAfter npdbCreateTableQuery");
+
+	//printf("\nBefore npdbNewTable");
 	table = npdbNewTable(database, table_name, fields, err);
+	//printf("\nAfter npdbNewTable");
+
+	//printf("\nBefore npdbAddTable");
 	npdbAddTable(database, table, err);
+	//printf("\nAfter npdbAddTable");
 	
 	return table;
 }
@@ -4829,9 +4867,14 @@ pNPdbTable TheNew_npdbCreateNodeTable( pNPdatabase database, int* err, void* dat
 	char* fields = NULL;
 	
 	//fields = npdbNodeTableFields(dataRef);
+	//printf("\nBefore npdbGetNodeTableFields");
 	fields = npdbGetNodeTableFields(dataRef);
+	//printf("\nAfter npdbGetNodeTableFields");
+
+	//printf("\nBefore new_npdbCreateTable");
 	nodeTable = new_npdbCreateTable(database, "node_tbl", fields, err, dataRef);
-	
+	//printf("\nAfter new_npdbCreateTable");
+
 	free(fields);
 	return nodeTable;
 }
@@ -5000,9 +5043,11 @@ int npdbSaveTags(pNPdatabase dbItem, pNPdbFuncSet func, char* table, void* dataR
 	int i = 0;
 	char line[421] = {'\0'}; // 421 is arbritrary, lde @todo
 	char* statement = NULL;
-	char** buffer = malloc(sizeof(char*) * data->map.nodeCount);
+//	char** buffer = malloc(sizeof(char*) * (data->map.nodeCount));
+	char** buffer = malloc(sizeof(char*) * ( data->map.tagCount + data->map.nodeCount )); // (data->map.tagCount + data->map.nodeCount) > (total number of tag instances) , temp @todo 
 	int index = 0;
 	
+	printf("\ntag count : %d", data->map.tagCount);
 	// put in this in npdbSaveTag , lde @todo
 //	printf("\ntags->recordCount : %d\n", tags->recordCount);
 //	printf("\ntags->count : %d\n", tags->count);
@@ -5011,9 +5056,15 @@ int npdbSaveTags(pNPdatabase dbItem, pNPdbFuncSet func, char* table, void* dataR
 	
 	//npGetTags(dataRef);
 	
+	//printf("\nBefore npGetCSVtagsFromAllNodes");
 	npGetCSVtagsFromAllNodes(buffer, &index, dataRef); // If this fails and returns it needs to set an err var, lde @todo
+	//printf("\nAfter npGetCSVtagsFromAllNodes");
+
+	//printf("\nBefore for loop : i : %d \n index : %d", i, index);
 	for(i = 0; i < index; i++)
 	{
+		//printf("\ni:%d", i);
+		//printf("\nBuffer %d : %s", i, buffer[i]);
 		statement = func->StatementInsert("tag_tbl", buffer[i]);
 		
 		//npdbQuery_safe(dbItem->host->conn, func, dbItem->host, statement);
@@ -5021,6 +5072,7 @@ int npdbSaveTags(pNPdatabase dbItem, pNPdbFuncSet func, char* table, void* dataR
 		free(statement);
 		free(buffer[i]);
 	}
+	//printf("\nAfter for loop");
 	
 	/*
 	for( i = 0; i < kNPtagMax; i++ )
@@ -5083,6 +5135,8 @@ pNPdatabase npdbSaveAs( char* dbName, pNPdbHost host, int* err, void* dataRef )
 	struct newChunksObj *chunks = NULL;
 	int id = 0;
 	int i = 0;
+	int newerr = 0;
+	int b = 0;
 
 	pData data = (pData) dataRef;
 	pNPtags tags = &data->io.gl.hud.tags;
@@ -5117,28 +5171,44 @@ pNPdatabase npdbSaveAs( char* dbName, pNPdbHost host, int* err, void* dataRef )
 	/// create new DB on specified host
 	//dbItem = npdbCreateDatabase( dbName, host, dbs );
 	dbItem = new_npdbCreateDatabase( dbName, host, dbs, err, dataRef);
-	if( !dbItem ) return NULL; 
-
+	b = 1;
+	if( !dbItem ) {
+		newerr |= b;
+		return NULL; 
+	}
+		
+	b *= 2;
 	/// now use the database so we may operate on it
 	err = (int*)npdbUse( dbItem, dataRef );
 	if( err ) 
 	{
+		newerr |= b;
 		err = (int*)9245; // add error code, lde @todo
 		return NULL;
 	}
 		
+	b *= 2;
 //	nodeTable = new_npdbCreateNodeTable(dbItem, &err, dataRef);
 	nodeTable = TheNew_npdbCreateNodeTable(dbItem, err, dataRef);
-	if(err || nodeTable == NULL) return NULL; // lde @todo this might have edge cases I haven't thought of
+	if(err || nodeTable == NULL) {
+		newerr |= b;
+		return NULL; // lde @todo this might have edge cases I haven't thought of
+	}
 	
+	b *= 2;
 	// We're going to go ahead and create a tag table and a ChMap table even if they'll be empty, lde
 	//npdbCreateTagTable(dbItem, dataRef);
 //	tagTable = new_npdbCreateTagTable(dbItem, &err, dataRef);
 	tagTable = TheNew_npdbCreateTagTable(dbItem, err, dataRef);
-	if(err || tagTable == NULL) return NULL;
-
+	if(err || tagTable == NULL) {
+		newerr |= b;
+		return NULL;
+	}
+	
 	// Check to see if tags exist
-	npdbSaveTags(dbItem, func, "tag_tbl", dataRef);
+	//printf("\nBefore npdbSaveTags");
+	npdbSaveTags(dbItem, func, "tag_tbl", dataRef); /// @todo This should return success or failure
+	//printf("\nAfter npdbSaveTags");
 /*
 	if(tags->recordCount > 0)
 	{

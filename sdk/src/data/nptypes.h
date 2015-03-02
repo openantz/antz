@@ -1280,6 +1280,8 @@ struct NPmap {
 	int			nodeRootCount;			//!<number of root nodes
 	int			nodeRootIndex;			//!<the active node root
 	
+	int			tagCount;				//!<number of tags
+	
 	pNPnode		previousNode;			//!<used for clicking away...
 	pNPnode		currentNode;			//!<active node, commands, traversing tree
 	pNPnode		currentCam;				//!<active camera used for zsort distance
@@ -1490,7 +1492,7 @@ typedef struct NPosFuncSet NPosFuncSet;
 typedef struct NPosFuncSet* pNPosFuncSet;
 
 struct NPos {
-	pNPosFuncSet (*newFuncSet)(void);
+	pNPosFuncSet (*newFuncSet)(); // removed void
 	void (*hook)();
 	int (*deleteFuncSet)(); // Specify later, lde @todo
 	pNPosFuncSet funcSet;

@@ -1475,12 +1475,14 @@ int npCSVtoC (pNPrecordSet recSet, const char* read, int size, void* dataRef);
 //zz debug, use a func ptr to npLoadCSV() from generic parent file IO process	
 int npCSVtoC (pNPrecordSet recSet, const char* read, int size, void* dataRef)
 {
+	pData data = (pData) dataRef;
 	int recordCount = 0;
 
 	switch(recSet->type)
 	{
 		case kNPmapTag :
 			recordCount = npLoadTags (read, size, dataRef);
+			data->map.tagCount = recordCount; /// @todo temp, lde
 			break;
 		case kNPmapNode :
 			recordCount = npLoadNodesCSV (read, size, recSet->type, dataRef);
