@@ -25,7 +25,7 @@
 #ifndef NPTYPES_H_
 #define NPTYPES_H_
 
-#define kNPappVer "0.198.1"
+#define kNPappVer "0.198.2"
 
 #include "stdbool.h"
 #include "npdbTypes.h"

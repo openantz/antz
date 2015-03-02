@@ -1,6 +1,12 @@
-﻿- Release Notes -                                        http://openantz.com
+- Release Notes -                                        http://openantz.com
 
          latest code, issues and Wiki on https://github.com/openantz/
+----------------------------------------------------------------------------
+ANTz v0.198.2 - 2015-03-01
+
+Fixed:
+#150  MySQL fails to save complete tag table when there are links in scene
+
 ----------------------------------------------------------------------------
 ANTz v0.198.1 - 2015-02-24
 
