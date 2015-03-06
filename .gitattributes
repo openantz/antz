@@ -1,0 +1,11 @@
+*.md        eol=crlf
+*.txt       eol=crlf
+*.csv       eol=crlf
+*.h         eol=crlf
+*.c         eol=crlf
+*.cpp       eol=crlf
+*.rc        eol=crlf
+*.vcproj    eol=crlf
+*.bat       eol=crlf
+*.sln       eol=crlf
+*.ico       -text
