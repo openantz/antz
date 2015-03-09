@@ -211,25 +211,6 @@ char* npdbShowDatabasesStatement( char* (*showStatement)(), char* (*dbStatement)
 	return buffer;
 }
 
-
-/* // delete, lde @todo
-void new_npdbShowDatabases(pNPdbFuncSet func, pNPdbHost host, void* dataRef)
-{
-	char* statement = NULL;
-	int   err    = 0;
-	void* conn   = NULL;
-	
-	func = host->hostFuncSet;
-	conn = host->conn;
-	
-	statement = npdbShowDatabasesStatement(func->StatementDBshow, func->StatementDatabases, &err);
-	
-	err = npdbQuery_safe(conn, func, host, statement);
-	
-	free(statement);
-}
-*/
-
 /*! Hook MySQL specific external library methods and local utility functions.
 	@param func is an initialized funcSet structure to be hooked up.
 	@param dbLib is the connection handle.
@@ -349,17 +330,15 @@ int npMysqlInitConnOptions( pNPdbFuncSet func, void* connInit )
 	int err = 0;
 	bool enable = true;		///< enable MYSQL_OPT_RECONNECT
 	
-//	printf("\nconnInit : %p\n", connInit);
 	if( !func || !connInit )
 	{
 		printf("err 5590 - npMysqlInitConnOptions called with null element\n");
 		return 5590;
 	}	
 
-	/// set the recconect flag to prevent mysql err 2006 - connection lost
+	/// set the reconnect flag to prevent mysql err 2006 - connection lost
 	err = func->options( connInit, MYSQL_OPT_RECONNECT, &enable ); // changed &enable to 0
 //	err = mysql_options( connInit, MYSQL_OPT_RECONNECT, &enable );
-//	printf("\nconnInit : %p\nerr : %d\n", connInit, err);
 	if( err )
 	{
 		printf( "%s err: %u - %s\n", func->hostType,
@@ -519,11 +498,6 @@ char* new_npMysqlStatementInsertFromChunk(char* table, struct newChunkObj *theCh
 	int statementLength = sizeof(char) * (20 + strlen(table) + 3 + theChunk->chunkSize + 500); // added +500, hotfix, debug lde
 	char* statement = malloc(statementLength);
 	
-//	printf("\nstatement length : %d", statementLength);
-//	printf("\nchunkSize : %d", theChunk->chunkSize);
-//	printf("\ntotalCsvStrObjectsSize : %d", theChunk->csvObjects->totalCsvStrObjectsSize); // debug, lde
-
-	
 	count = sprintf(statement, "INSERT INTO %s VALUES", table);
 	for(i = 0; i <= theChunk->csvObjects->numOfcsvStrObjects; i++ ) 
 		count += sprintf(statement+count, "(%s),", theChunk->csvObjects->csvObj[i].csvStr);
@@ -534,33 +508,6 @@ char* new_npMysqlStatementInsertFromChunk(char* table, struct newChunkObj *theCh
 	
 	return statement;
 }
-
-/*
- char* npMysqlStatementInsert(char* table, struct newChunkObj *value)
- {
- char* statement = NULL;
- int count = 0;
- int index = 0;
- 
- statement = malloc(sizeof(char) * (21 + strlen(table) + value->chunkSize + (value->csvObjects->numOfcsvStrObjects * 6) ) ); //*6 is too much, reduce, debug db
- //zz	statement = malloc(sizeof(char) * (64 + strlen(table) + value->chunkSize + (value->csvObjects->numOfcsvStrObjects * 6) ) ); //*6 is too much, reduce, debug db
- // count = sprintf(statement, "TRUNCATE %s", table);
- count = sprintf(statement, "INSERT INTO %s VALUES ", table);
- //	count = sprintf(statement, "UPDATE SET %s VALUES ", table);
- 
- for(index = 0; index <=	value->csvObjects->numOfcsvStrObjects; index++) 
- {
- count += sprintf(statement+count, "(%s),", value->csvObjects->csvObj[index].csvStr);
- free(value->csvObjects->csvObj[index].csvStr);
- }
- 
- statement[count-1] = '\0';
- 
- return statement;
- }
- */
-
-
 
 char* npMysqlStatementCreate(char* dbName)
 {
