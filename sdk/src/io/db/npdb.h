@@ -74,7 +74,6 @@ void* npMigrateTable(void* tablePtr, int size, int formatID, void* dataRef);
 //prompt user for migration source dataset and to select format mapping prefs	//zz debug
 void npMigrate(int tableMap, void* dataRef);
 
-pNPdbTable npdbCreateChMapTable(pNPdatabase dbItem, int* err, void* dataRef);
 //-------------------------------------------------------------------------- //zz db
 //manual database Load, Save and Update methods
 //auto update logic is done at a higher level, shared with DB, file, OSC...
@@ -182,14 +181,23 @@ void npdbCreateTableQuery( pNPdatabase database, char* name, char* fields, int* 
 void npdbSaveChMap (pNPdbTable table, int* err, void* dataRef);
 void npdbInsertQuery(pNPdbTable table, char* values, int* err, void* dataRef);
 
+// Functions to create Antz DB tables
+// ----------------------------------
+pNPdbTable TheNew_npdbCreateNodeTable( pNPdatabase database, int* err, void* dataRef ); // new
+pNPdbTable new_npdbCreateTable(pNPdatabase database, char* table_name, char* fields, int* err, void* dataRef); // new
+pNPdbTable TheNew_npdbCreateTagTable( pNPdatabase database, int* err, void* dataRef );  // new
+pNPdbTable npdbCreateChMapTable( pNPdatabase database, int* err, void* dataRef );
+// ----------------------------------
 
+
+/// @todo organize these function prototypes
 int npdbClearDatabaseList( pNPdbs dbs );
-int npdbQuery_safe(void* conn, pNPdbFuncSet func, pNPdbHost host ,char* statement); // Organize these new function prototypes, lde @todo
+int npdbQuery_safe(void* conn, pNPdbFuncSet func, pNPdbHost host ,char* statement); 
 int npdbNumRows_safe(void* result, pNPdbFuncSet func, int* err);
 pNPdbTable npdbNewTable( pNPdatabase database ,char* name, char* fields, int* err );
 void npdbDropTable( pNPdbTable table, int* err, void* dataRef );
 
-pNPdatabase new_npdbCreateDatabase( char* dbName, pNPdbHost host, pNPdbs dbs, int* err, void* dataRef ); //for now we'll pass pNPdbs dbs, lde @todo
+pNPdatabase npdbCreateDatabase( char* dbName, pNPdbHost host, pNPdbs dbs, int* err, void* dataRef ); //for now we'll pass pNPdbs dbs, lde @todo
 pNPdbFuncSet npdbGetFuncSetFromHost(pNPdbHost host);
 pNPdbHost npdbGetHostFromDatabase( pNPdatabase database );
 int npdbLoadTagTbl( pNPdatabase dbItem, void* dataRef );
