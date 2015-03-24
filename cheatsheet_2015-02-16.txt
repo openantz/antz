@@ -1,0 +1,195 @@
+antz_cheatsheet_2015-02-16.txt                           http://openantz.com
+
+                   see the 'docs' folder for more info
+----------------------------------------------------------------------------
+Appendix A - Command Cheat Sheet
+
+---
+A.1 - Mouse
+
+Behaviour is based on the active 'Mouse Tool' mode.
+Use the Mouse Wheel to change tool type.
+Also, you can press the 'T' or click on the 'tool: ....' menu items.
+
+--- Mouse 'Combo Tool' behavior ---
+L - Click on an object NOT selected will select it and unselect all others
+L - Hold on an object NOT selected will drag only the object, DRAGS in XY 
+L - Hold on an object CURRENTLY selected will drag all, DRAGS in XY
+L - Hold on background orbits object in both axes of EXAMINER mode XY
+
+R - Click on object toggles its selection on/off
+R - Hold on object DRAGS selected objects in XZ plane (L-R & Up-Down)
+R - Hold on background for camera Fly Mode
+
+L+R - Hold on background orbits and ZOOMS in and out Examiner mode XZ
+
+You can switch directly between Examiner mode XZ and XY by
+releasing the right button and continuing to hold the left button.
+
+Note that after using FLY mode (R-Hold on background) you will then be
+able to use 'Look Mode' with the L-Hold. To exit to Pin Mode use 'Tab'.
+
+--- Mouse Hide and Info tools ---
+
+ALT+H - toggle 'Hide Tool'
+R - Click to Hide ALL sub-branches of selected node
+L - Click to Show ALL sub-branches of selected node
+
+4 - Key to Show ALL nodes
+'~' (Tilda) - Key to Hide ALL nodes with branchlevel > 1
+
+ALT+I - toggle 'Info Tool'
+
+Right - Click to Hide Text Tag title
+Left - Click to Show tag title, additional clicks change display mode
+
+4 - key to Show ALL Tags
+'~' (Tilda) - key to Hide ALL Tags
+
+---
+A.2 - Keyboard
+
+Note: Numbers, -, +, etc apply to the main keyboard, not the number pad.
+
+A useful 'bug' is to change selection to another object (TAB, New, etc..)
+and do this while performing a rotation, it will continue to rotate, also
+applies to zoom and translate...
+
+It is possible to press multiple keys at once (3-5 typical depending on the
+keyboard and key combo...)  So for example, you can do a rotation and zoom
+while simultaneously changing the color.
+
+SHIFT - Reverses some functions, speeds up rotation and translation
+
+ESC - Fullscreen Toggle and also exits console mode (return to Game Mode.)
+
+T - Tool type selection, SHIFT-N for previous tool.
+
+X - change active aXes, for non-uniform scaling, channels, segments
+
+--- Node Creation ---
+
+N - New node, creates nodes, (SHIFT-N to create a new primary torus)
+Del - Delete node, deletes active node and all its child branches
+
+--- Pick Active Object ---
+Tab - pick Next sibling node, (SHIFT+Tab for previous)
+
+Left arrow - select left sibling (SHIFT+arrow to skip towards first node)
+Right arrow - select right sibling (SHIFT skips towards last node)
+Up arrow - select child, up a branch level (SHIFT jumps to leaf)
+Down arrow - select parent, down a branch level (SHIFT jumps to root)
+
+C - pick Camera, repeat to select next camera
+G - pick Grid, repeat to iterate through grids
+
+4 - select ALL nodes
+~ (tilda)	un-select ALL nodes
+spacebar - select or unselect currently active object
+
+--- Move Camera or Objects ---
+
+A - decrease X
+D - increase X
+
+W - increase Y
+S - decrease Y
+
+E - increase Z
+Q - decrease Z
+
+--- Rotate (same keys as Move with 'Alt' key held) ---
+
+Alt+A - Left
+Alt+D - Right
+
+Alt+W - Up
+Alt+S - Down
+
+Alt+E - CW
+Alt+Q - CCW
+
+--- Scale ---
+Z - Scale objects up (SHIFT+Z for down) based on active aXes 'X'
+ -- scaling Z-axis of the root 'G'rid will compact/expand entire scene
+
+--- Topology & Geometry ---
+J - Change 'topo' type, also changes the geometry primitive
+ -- SHIFT-J will change the facet (on a cube...)
+
+O (alpha) - Object geometry, does not change the 'topo' type.
+R - Ratio sets inner radius of a torus, SHIFT-R to reduce.
+
+Y - Grid Segments, adds (or SHIFT-Y to subtract) 2D and 3D layers
+ -- effected by the active aXes (Z axis creates 3D grid layers)
+
+--- Color & Transparency ---
+
+'+' (plus) - next color
+'-' (minus) - previous color
+
+9 - less opaque (more translucent)
+0 (zero) - more opaque (less translucent)
+
+B - Background color, toggle between black and white
+R - Rescale normals toggle, effects lighting of scaled objects
+8 - change transparency mode (3 alpha modes + none)
+
+V - Video or Image texture map (SHIFT for previous)
+
+F - Freeze;
+H - Hide;
+
+--- Set Points restrict the translate_x/y/z range of an object ---
+
+[ - Low set point, object default is z = 0.0 for ground level.
+] - High set point (set points are applied to the active aXes)
+
+--- Scene (hard-coded) Presets ---
+
+5 - Preset 1
+6 - Preset 2
+7 - Preset 3
+
+--- State Files ---
+
+K - Keep(SAVE) writes a time-stamped ANTzYrMoDaHrMnSe.csv
+
+L - Load CSV file using File Dialog
+    ALSO... launches URL as tag title ie: http://example.com or app.exe
+
+1 - Load ANTZ0001....CSV file set (SHIFT+1 to Save)
+2 - Load ANTZ0002....CSV (SHIFT to save)
+3 - Load ANTZ0003....CSV
+
+F4 - Take Screenshot, saved to usr/images/antz(timestamp).bmp
+
+--- IO Channels ---
+P - Loads and Plays channels data (ANTzCh0001.csv & ANTzChMap0001.csv)
+> - Channel Up
+< - Channel Down
+
+... Pause and Play animation
+
+--- Browser URL & record_id Retrieval ---
+U - Opens Tag title URL in the system browser.
+    If no URL in title, then uses default URL with record_id appended.
+
+--- GUI Console ---
+M - Menu display mode (1, 3, or 40 lines, then off)
+
+--- Info Text Tags ---
+I - Info toggle for display of Text Tags (Outline Title, Color Title, Desc)
+
+\ (backslash) - Subsamples nodes to draw faster, SHIFT key reverses
+
+--- Database ---
+? - Menu Loader for databases, SHIFT+? to Save a time-stamped DB.
+; - Load DB update, SHIFT+; to Save an update to the active DB.
+
+--- GUI Console ---
+Enter (Return) - activate Command Console for text entry.
+Esc  (Escape) - leave Console 'Text Mode' and return to 'Game Mode.'
+
+--- System Console ---
+At OS system console type 'antz ?' for help on command line arguements.

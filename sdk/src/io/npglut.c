@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2014 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -17,7 +17,7 @@
 *  Released under the CC0 license, which is GPL compatible.
 *
 *  You should have received a copy of the CC0 Public Domain Dedication along
-*  with this software (license file named COPYING.txt). If not, see
+*  with this software (license file named LICENSE.txt). If not, see
 *  http://creativecommons.org/publicdomain/zero/1.0/
 *
 * --------------------------------------------------------------------------- */
@@ -580,7 +580,7 @@ void npGlutKeyDownSpecial (int key, int x, int y)
 {
 	int special = 0;
 	special = glutGetModifiers();  // temp, lde @todo
-	 printf("3 key: %d \n", key);
+	// printf("3 key: %d \n", key);
 	npKeyGlut (key, x, y, kGlutKeyDownSpecial, special);	// glutGetModifiers());	
 	
 	//zz debug, if glutGetModifiers() called from a ...Special callback 

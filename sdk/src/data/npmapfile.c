@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2014 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -17,7 +17,7 @@
 *  Released under the CC0 license, which is GPL compatible.
 *
 *  You should have received a copy of the CC0 Public Domain Dedication along
-*  with this software (license file named COPYING.txt). If not, see
+*  with this software (license file named LICENSE.txt). If not, see
 *  http://creativecommons.org/publicdomain/zero/1.0/
 *
 * --------------------------------------------------------------------------- */
@@ -1475,12 +1475,14 @@ int npCSVtoC (pNPrecordSet recSet, const char* read, int size, void* dataRef);
 //zz debug, use a func ptr to npLoadCSV() from generic parent file IO process	
 int npCSVtoC (pNPrecordSet recSet, const char* read, int size, void* dataRef)
 {
+	pData data = (pData) dataRef;
 	int recordCount = 0;
 
 	switch(recSet->type)
 	{
 		case kNPmapTag :
 			recordCount = npLoadTags (read, size, dataRef);
+			data->map.tagCount = recordCount; /// @todo temp, lde
 			break;
 		case kNPmapNode :
 			recordCount = npLoadNodesCSV (read, size, recSet->type, dataRef);

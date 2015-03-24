@@ -1,6 +1,12 @@
-﻿antz_install_2014_05_20.txt
+﻿antz_libs_notes.txt 
 
-Latest app ver and up-to-date docs at - http://openantz.com
+updated 2015-02-13
+
+Latest app ver and up-to-date docs at - https://github.com/openantz/
+----------------------------------------------------------------------------
+
+3rd party libraries have their own licenses. In general we attempt to only
+include libraries that provide free commercial use.
 
 ----------------------------------------------------------------------------
 Development Environment

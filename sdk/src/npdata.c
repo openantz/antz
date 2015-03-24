@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2014 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -17,7 +17,7 @@
 *  Released under the CC0 license, which is GPL compatible.
 *
 *  You should have received a copy of the CC0 Public Domain Dedication along
-*  with this software (license file named COPYING.txt). If not, see
+*  with this software (license file named LICENSE.txt). If not, see
 *  http://creativecommons.org/publicdomain/zero/1.0/
 *
 * --------------------------------------------------------------------------- */
@@ -50,7 +50,8 @@ void* npInitData (int argc, char** argv)
 	// if console help requested then show command usage help and exit
 	npSystemConsoleHelp( argc, argv );
 
-	printf ("Starting...\n");
+	printf( "Starting...\n" );
+	printf( "v%s\n\n", kNPappVer );
 
 	// allocate memory for the global 'data' structure
 	data = (pData) malloc (sizeof(Data));
@@ -62,11 +63,10 @@ void* npInitData (int argc, char** argv)
 	gData = data;						//store a copy for retrieval
 
 	// initialize data
-	printf("\nnpInitDataMap");
 	npInitDataMap (data);
-	printf("\nnpInitDataIO");
+//zzd	printf("npInitDataIO\n");
 	npInitDataIO (argc, argv, data);	//stores the command line arguments
-	printf("\nnpInitDataCtrl");
+//zzd	printf("npInitDataCtrl\n");
 	npInitDataCtrl (data);
 
 	return gData;
@@ -760,29 +760,14 @@ void npInitDataDB (void* dataRef)
 
 	/// Add our default host now, this is needed for antzglobals.csv file.
 	///	'localhost' is same as 127.0.0.1 and mysql default port is 3306.
-	
-	printf("\nnpdbAddHost");
-//	npdbAddHost( "mysql", "localhost", 3306, "root", "admin", data );
-	npdbAddHost("mysql", "127.0.0.1", 3306, "root", "admin", &err, data);
-//	npdbAddHost("mysql", "192.168.1.130", 3306, "root", "admin", data);
 
+//	npdbAddHost("mysql", "localhost", 3306, "root", "admin", data );			//zzd
+	npdbAddHost("mysql", "127.0.0.1", 3306, "root", "admin", &err, data);
 	
 	/// add access to the antz public database 
 	// npdbAddHost( "mysql", "openantz.com", 3306, "guest", "guest", dataRef);	//zzd
 	
 	db->size = 0;			///< @todo add methods to track memory usage
-
-//------------- //zzd r
-	/* // Not necessary anymore, old, lde
-	data->io.dbs = malloc(sizeof(struct databases));
-	data->io.dbs->numberOfDatabases = 0;
-	data->io.dbs->dbList = NULL;
-	*/
-	//data->io.db = malloc(sizeof(NPdbs));
-//	npAddDb( db, "mysql", "localhost", "root", "admin", "", dataRef);	//zzd r   // lde, grab from npdbAddHost parameters
-	
-//	data->io.dbs->activeDB[0].currentlyUsedDatabase[0] = '\0';	//zz hmm
-
 }
 
 
@@ -845,16 +830,17 @@ void npInitDataIO(int argc, char** argv, void* dataRef)
 
 	// setup the default URL
 	memset (&io->url, '\0', kNPurlMax);
-	sprintf (io->url, "http://openantz.com/code/docs/id.html");
+	sprintf (io->url, "http://openantz.com/docs/id.html?id=");
 
 	npInitKey (data);					///< setup key command assignments	
 	npInitDataGL (data);
 	npInitDataChannel (data);
 	npInitDataOSC (&io->osc, data);
-//	npInitDataDB (io->db, data);		///< create core db structure // old, lde
-	printf("\nnpInitDataDB");
+
+//zzd	printf("npInitDataDB\n");
 	npInitDataDB (data);				///< create core db structure
-	printf("\nnpInitDataFile");
+
+//zzd	printf("npInitDataFile\n");
 	npInitDataFile (&io->file, data);	//zz file io to npglobals.csv needs to be last
 
 	io->size = sizeof(NPio);	//memory size of this struct, runtime dynamic

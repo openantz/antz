@@ -284,8 +284,8 @@
 		708F1CDA19F1E19C00208B80 /* npdata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = npdata.h; sourceTree = "<group>"; };
 		708F1CDB19F1E19C00208B80 /* npio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = npio.c; sourceTree = "<group>"; };
 		708F1CDC19F1E19C00208B80 /* npio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = npio.h; sourceTree = "<group>"; };
-		708F1CDD19F1E19C00208B80 /* ofxantz.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxantz.cpp; sourceTree = "<group>"; };
-		708F1CDE19F1E19C00208B80 /* ofxantz.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxantz.h; sourceTree = "<group>"; };
+		708F1CDD19F1E19C00208B80 /* ofxantz.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxantz.cpp; path = ../libs/ofx/ofxantz.cpp; sourceTree = "<group>"; };
+		708F1CDE19F1E19C00208B80 /* ofxantz.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxantz.h; path = ../libs/ofx/ofxantz.h; sourceTree = "<group>"; };
 		708F1CE119F1E19C00208B80 /* npos.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = npos.c; sourceTree = "<group>"; };
 		708F1CE219F1E19C00208B80 /* resource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resource.h; sourceTree = "<group>"; };
 		708F1CE319F1E19C00208B80 /* npos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = npos.h; sourceTree = "<group>"; };
@@ -3300,10 +3300,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				FRAMEWORK_SEARCH_PATHS = "${SRCROOT}/../sdk/libs/mysql/";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "${SRCROOT}/../sdk/libs/mysql/include";
+				LIBRARY_SEARCH_PATHS = "${SRCROOT}/../sdk/libs/mysql/";
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
 				SDKROOT = macosx10.6;
@@ -3313,6 +3316,7 @@
 		1DEB928B08733DD80010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				FRAMEWORK_SEARCH_PATHS = "${SRCROOT}/../sdk/libs/mysql/";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -3322,6 +3326,7 @@
 				LIBRARY_SEARCH_PATHS = "${SRCROOT}/../sdk/libs/mysql/";
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
+				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = macosx10.6;
 			};
 			name = Release;
