@@ -43,6 +43,9 @@
 //-----------------------------------------------------------------------------
 void npInitIO( void* dataRef )
 {
+	pData data = (pData) dataRef;
+	NPjson gitJSON;
+
 	npInitOS( dataRef );
 	/// init the local IO devices
 	
@@ -73,6 +76,9 @@ void npInitIO( void* dataRef )
 	/// @todo change npConnectDB over to npInitDB
 	npInitDB( dataRef );
 
+	new_npGithubInit( dataRef );
+
+	npGitJSONinit( &gitJSON, &data->io.issues);	
 }
 
 // This is a temporary location for this, lde @todo
@@ -159,6 +165,8 @@ void npUpdateIO (void* dataRef)
 	npUpdateCh (dataRef);			//zz-JJ
 
 	npUpdateDB( dataRef );			//zzd
+
+	npGithubRun( dataRef );
 }
 
 

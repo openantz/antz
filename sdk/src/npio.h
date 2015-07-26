@@ -40,6 +40,8 @@ void npInitIO (void* data);			// may update default init from pref file
 void npCloseIO (void* data);
 void npUpdateIO (void* dataRef);
 
+void npGithubUpdate(void* dataRef);
+
 void npViewer (void* dataRef);
 
 #ifdef __cplusplus
