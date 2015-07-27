@@ -1,0 +1,10 @@
+prefix=C:/Program Files (x86)/jansson
+exec_prefix=C:/Program Files (x86)/jansson
+libdir=C:/Program Files (x86)/jansson/C:/Program Files (x86)/jansson/lib
+includedir=${prefix}/include
+
+Name: Jansson
+Description: Library for encoding, decoding and manipulating JSON data
+Version: 2.7
+Libs: -L${libdir} -ljansson
+Cflags: -I${includedir}

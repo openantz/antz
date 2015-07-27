@@ -14,7 +14,7 @@
 #include "../../os/npos.h"
 #include "../gl/nptags.h"
 
-#include "test.h"
+#include "npcurl.h"
 
 enum {
     kNPissueUrl = 0,
@@ -140,21 +140,24 @@ void new_npGithubGetIssueClosedAt(pNPgithubIssue issue)
 	int index = 0;
     size_t symbolArraySize = 0;
     symbolArraySize = sizeof(symbol) / sizeof(char*);
-    
+	printf("\nsizeof(symbol) : %d", sizeof(symbol));
+	printf("\nsymbolArraySize : %d", symbolArraySize);
+
     if(ptr != NULL)
     {
-        issue->issue_closed_at = malloc(sizeof(NPgithubIssueCreatedAt));
+       issue->issue_closed_at = malloc(sizeof(NPgithubIssueCreatedAt));
     }
     else
     {
         return;
     }
         
-    for(index = 0; index <= (int)symbolArraySize-1; index++)
-    {
+  //  for(index = 0; index <= (int)symbolArraySize-1; index++)
+	for(index = 0; index < sizeof(symbol); index++)
+	{
         ptr = dumpTill(ptr, str[index], symbol[index]);
         ptr++;
-        //printf("\n%s", str[index]);
+       // printf("\n%s", str[index]);
     }
     
     issue->issue_closed_at->year  = atoi(str[0]);
@@ -768,6 +771,148 @@ void npGithubCtrlCountWordsInIssueTitle(pNPgithubIssue issue, void* dataRef)
             issueTitlePtr++;
         }
     }
+}
+
+pNPnode new_new_npGithubNewIssueGlyph(pNPgithubIssue issue, void* dataRef)
+{
+	time_t issue_creation_time;
+	time_t issue_closed_time;
+	struct tm created_at_time;
+	struct tm closed_at_time;
+	struct tm *now_time;
+	time_t current_time;
+	char buffer[80];
+	double duration_of_existence;	
+	double time_to_close;
+	pNPnode issue_node;
+	pNPnode timeOpen_node;
+	pNPnode timeClosed_node;
+	pNPnode issueTitle_node;
+	pNPnode issueUserLogin_node;
+	issueUserLogin_node = NULL;
+	issueTitle_node = NULL;
+	timeClosed_node = NULL;
+	timeOpen_node = NULL;
+	timeClosed_node = NULL;
+	issue_node = NULL;
+	issue_creation_time = NULL;
+	duration_of_existence = 0;
+
+	issue_node = npNodeNew(kNodePin, NULL, dataRef);
+	issue_node->geometry = kNPgeoTorus;
+	issue_node->topo = kNPtopoTorus;
+	//node = npNodeNew(issue->issueNodeType, NULL, dataRef);
+	//current_time = time(NULL);
+	time(&current_time);
+	now_time = localtime(&current_time);
+	printf("Current local time and date: %s", asctime(now_time));
+
+	//strftime(buffer, sizeof(buffer), "%c", &now_time);
+	//printf("\n%s", buffer);
+
+	new_npGithubGetIssueCreatedAt(issue);
+	created_at_time.tm_year = issue->issue_created_at.year - 1900;
+	created_at_time.tm_mon  = issue->issue_created_at.month - 1;
+	created_at_time.tm_mday = issue->issue_created_at.day;
+	created_at_time.tm_hour = issue->issue_created_at.hour;
+	created_at_time.tm_min  = issue->issue_created_at.minute;
+	created_at_time.tm_sec  = issue->issue_created_at.second;
+	created_at_time.tm_isdst = -1;
+
+	issue_creation_time = mktime(&created_at_time);
+	if( issue_creation_time == -1 )
+	{
+		printf("Error: unable to make time using mktime\n");
+	}
+	else
+	{
+		strftime(buffer, sizeof(buffer), "%c", &created_at_time);
+		printf("\nIssue Opened @ %s", buffer);
+	}
+
+	issue_node->translate.z  = (float)((float)created_at_time.tm_year - 114) * 5;
+	issue_node->translate.z += (created_at_time.tm_yday  * ( 5/365) );
+	issue_node->translate.z += ( created_at_time.tm_mon  * ( 5/11 )  );
+	issue_node->translate.z += ( created_at_time.tm_mday * ( 5/31 )  );
+	issue_node->translate.z += ( created_at_time.tm_hour * ( 5/23 )  );
+	issue_node->translate.z += ( created_at_time.tm_min  * ( 5/59 )  );
+	issue_node->translate.z += ( created_at_time.tm_sec  * ( 5/59 )  );
+
+//	issue_node->translate.z += (float)((float)created_at_time.tm_yday / 365) * 5;
+//	issue_node->translate.z += (created_at_time.tm_hour / 24) * 5;
+	//issue_node->translate.z += (float)((float)created_at_time.tm_hour / 23)  *  ;
+
+
+//	issue_node->translate.z  += (float)((float)created_at_time.tm_yday / 365) * 10;
+//	issue_node->translate.z += (float)((float)created_at_time.tm_mon / 11) * 0.9;
+//	issue_node->translate.z += (float)((float)created_at_time.tm_md
+//	issue_node->translate.z = (float)((double)issue_creation_time / 100000000) * 15;
+	//printf("\n2345 year : %d", (int)created_at_time.tm_year - 114) * 5);
+//	printf("\n2346b yearDay : %d"
+	printf("\n2344 month : %f", (float)((float)created_at_time.tm_mon / 11) * 0.9); 
+	printf("\n2346 issue_node->translate.z : %f", issue_node->translate.z);
+		
+	if(strcmp(issue->state, "closed") == 0)
+	{
+		new_npGithubGetIssueClosedAt(issue);
+		closed_at_time.tm_year = issue->issue_closed_at->year - 1900;
+		closed_at_time.tm_mon  = issue->issue_closed_at->month - 1;
+		closed_at_time.tm_mday = issue->issue_closed_at->day;
+		closed_at_time.tm_hour = issue->issue_closed_at->hour;
+		closed_at_time.tm_min  = issue->issue_closed_at->minute;
+		closed_at_time.tm_sec  = issue->issue_closed_at->second;
+		issue_closed_time = mktime(&closed_at_time);
+
+		time_to_close = difftime(issue_closed_time, issue_creation_time);
+		printf("\nIssue closed @ %s", asctime(&closed_at_time));
+		printf("\nTime to close : %f\n", time_to_close);
+
+		issue_node->color.b = 255;
+        issue_node->color.r = 0;
+        issue_node->color.g = 0;
+
+		timeClosed_node = npNodeNew(kNodePin, issue_node, dataRef);
+		timeClosed_node->geometry = kNPgeoTorus;
+		timeClosed_node->topo = kNPtopoTorus;
+		timeClosed_node->scale.z = (float)(time_to_close / (double)issue_creation_time) * 500;
+		printf("\nissue_creation_time : %f", (double)issue_creation_time);
+		printf("\ntimeClosed_node->scale.z : %f", timeClosed_node->scale.z);
+	}
+	else
+	{
+		duration_of_existence = difftime(current_time, issue_creation_time);
+		printf("\nHas existed for %f seconds \n", duration_of_existence);
+
+		/// (time_open / total_seconds_to_now) * 15000
+		/*
+		issue_node->translate.z = (duration_of_existence / current_time) * 1000;
+		printf("\n(duration_of_existence / current_time) : %f", (duration_of_existence / current_time) * 1000);
+		*/
+		timeOpen_node = npNodeNew(kNodePin, issue_node, dataRef);
+		timeOpen_node->geometry = kNPgeoTorus;
+		timeOpen_node->topo = kNPtopoTorus;
+		timeOpen_node->scale.z = (float)(duration_of_existence / (double)current_time) * 500;
+		printf("\ntimeOpen_node->scale.z : %f", timeOpen_node->scale.z);
+
+		issue_node->color.b = 0;
+        issue_node->color.r = 255;
+        issue_node->color.g = 0;
+	}
+
+    issueTitle_node = npNodeNew(kNodePin, issue_node, dataRef);
+    issueTitle_node->geometry = kNPgeoSphere;
+    issueTitle_node->topo = kNPtopoTorus;
+    issueTitle_node->scale.x = issue->numOfWordsInIssueTitle / 2;
+    issueTitle_node->translate.x += 45;
+
+    issueUserLogin_node = npNodeNew(kNodePin, issue_node, dataRef);
+    issueUserLogin_node->geometry = kNPgeoCube;
+    issueUserLogin_node->translate.x += (-45);	
+    issueUserLogin_node->textureID = issue->partOf->current->user.avatar_image_textureID;
+
+		
+
+	return issue_node;
 }
 
 pNPnode new_npGithubNewIssueGlyph(pNPgithubIssue issue, void* dataRef)
@@ -1879,8 +2024,9 @@ pNPnode npGithubAntzIssueToAntzNode(pNPgithubIssues issues, void* dataRef)
  //   npGithubCtrlInitRecordTag(issue, 0, dataRef);
     npGithubCtrlSetRecordTagIndex(issue->partOf, 0, dataRef);
     */
-    issues->current->issue_node = new_npGithubNewIssueGlyph(issues->issue[issues->index], dataRef);
-    
+//    issues->current->issue_node = new_npGithubNewIssueGlyph(issues->issue[issues->index], dataRef);
+      issues->current->issue_node = new_new_npGithubNewIssueGlyph(issues->issue[issues->index], dataRef);
+  
     
     
    // return issue->issue_node;
@@ -2459,6 +2605,7 @@ json_t* npCURLgetJSONgithubIssues(pNPgithubIssues issues)
     free(chunk[0].memory);
     free(chunk[1].memory);
     
+	curl_easy_cleanup(curl_handle);
     curl_global_cleanup();
     
     return root;

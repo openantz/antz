@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding = "UTF-8"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="INSTALL"
+	ProjectGUID="{D9EDEA7C-6FF4-440C-BF0F-41899A53B9D8}"
+	Keyword="Win32Proj">
+	<Platforms>
+		<Platform
+			Name="Win32"/>
+	</Platforms>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			IntermediateDirectory="INSTALL.dir\Debug"
+			ConfigurationType="10"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\include&quot;;&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\private_include&quot;;"
+				AssemblerListingLocation="Debug/"
+				DisableSpecificWarnings="4005;4996"
+				ExceptionHandling="0"
+				SuppressStartupBanner="true"
+				WarningLevel="3"
+				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\&quot;Debug\&quot;"
+				ObjectFile="$(IntDir)\"
+/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\include&quot;;&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\private_include&quot;;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\&quot;Debug\&quot;"/>
+			<Tool
+				Name="VCMIDLTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\include&quot;;&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\private_include&quot;;"
+				MkTypLibCompatible="false"
+				TargetEnvironment="1"
+				GenerateStublessProxies="true"
+				TypeLibraryName="$(InputName).tlb"
+				OutputDirectory="$(IntDir)"
+				HeaderFileName="$(InputName).h"
+				DLLDataFileName=""
+				InterfaceIdentifierFileName="$(InputName)_i.c"
+				ProxyFileName="$(InputName)_p.c"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+CommandLine="&quot;c:\Program Files (x86)\CMake\bin\cmake.exe&quot; -DBUILD_TYPE=$(ConfigurationName) -P cmake_install.cmake&#x0D;&#x0A;if errorlevel 1 goto :VCReportError"/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			IntermediateDirectory="INSTALL.dir\Release"
+			ConfigurationType="10"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\include&quot;;&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\private_include&quot;;"
+				AssemblerListingLocation="Release/"
+				DisableSpecificWarnings="4005;4996"
+				ExceptionHandling="0"
+				SuppressStartupBanner="true"
+				WarningLevel="3"
+				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\&quot;Release\&quot;"
+				ObjectFile="$(IntDir)\"
+/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\include&quot;;&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\private_include&quot;;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\&quot;Release\&quot;"/>
+			<Tool
+				Name="VCMIDLTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\include&quot;;&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\private_include&quot;;"
+				MkTypLibCompatible="false"
+				TargetEnvironment="1"
+				GenerateStublessProxies="true"
+				TypeLibraryName="$(InputName).tlb"
+				OutputDirectory="$(IntDir)"
+				HeaderFileName="$(InputName).h"
+				DLLDataFileName=""
+				InterfaceIdentifierFileName="$(InputName)_i.c"
+				ProxyFileName="$(InputName)_p.c"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+CommandLine="&quot;c:\Program Files (x86)\CMake\bin\cmake.exe&quot; -DBUILD_TYPE=$(ConfigurationName) -P cmake_install.cmake&#x0D;&#x0A;if errorlevel 1 goto :VCReportError"/>
+		</Configuration>
+		<Configuration
+			Name="MinSizeRel|Win32"
+			IntermediateDirectory="INSTALL.dir\MinSizeRel"
+			ConfigurationType="10"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\include&quot;;&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\private_include&quot;;"
+				AssemblerListingLocation="MinSizeRel/"
+				DisableSpecificWarnings="4005;4996"
+				ExceptionHandling="0"
+				SuppressStartupBanner="true"
+				WarningLevel="3"
+				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\&quot;MinSizeRel\&quot;"
+				ObjectFile="$(IntDir)\"
+/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\include&quot;;&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\private_include&quot;;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\&quot;MinSizeRel\&quot;"/>
+			<Tool
+				Name="VCMIDLTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\include&quot;;&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\private_include&quot;;"
+				MkTypLibCompatible="false"
+				TargetEnvironment="1"
+				GenerateStublessProxies="true"
+				TypeLibraryName="$(InputName).tlb"
+				OutputDirectory="$(IntDir)"
+				HeaderFileName="$(InputName).h"
+				DLLDataFileName=""
+				InterfaceIdentifierFileName="$(InputName)_i.c"
+				ProxyFileName="$(InputName)_p.c"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+CommandLine="&quot;c:\Program Files (x86)\CMake\bin\cmake.exe&quot; -DBUILD_TYPE=$(ConfigurationName) -P cmake_install.cmake&#x0D;&#x0A;if errorlevel 1 goto :VCReportError"/>
+		</Configuration>
+		<Configuration
+			Name="RelWithDebInfo|Win32"
+			IntermediateDirectory="INSTALL.dir\RelWithDebInfo"
+			ConfigurationType="10"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\include&quot;;&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\private_include&quot;;"
+				AssemblerListingLocation="RelWithDebInfo/"
+				DisableSpecificWarnings="4005;4996"
+				ExceptionHandling="0"
+				SuppressStartupBanner="true"
+				WarningLevel="3"
+				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;"
+				ObjectFile="$(IntDir)\"
+/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\include&quot;;&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\private_include&quot;;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;"/>
+			<Tool
+				Name="VCMIDLTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\include&quot;;&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\private_include&quot;;"
+				MkTypLibCompatible="false"
+				TargetEnvironment="1"
+				GenerateStublessProxies="true"
+				TypeLibraryName="$(InputName).tlb"
+				OutputDirectory="$(IntDir)"
+				HeaderFileName="$(InputName).h"
+				DLLDataFileName=""
+				InterfaceIdentifierFileName="$(InputName)_i.c"
+				ProxyFileName="$(InputName)_p.c"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+CommandLine="&quot;c:\Program Files (x86)\CMake\bin\cmake.exe&quot; -DBUILD_TYPE=$(ConfigurationName) -P cmake_install.cmake&#x0D;&#x0A;if errorlevel 1 goto :VCReportError"/>
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter
+			Name="CMake Rules"
+			Filter="">
+			<File
+				RelativePath="C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\CMakeFiles\INSTALL_force.rule">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+					Name="VCCustomBuildTool"
+					Description=" "
+					CommandLine="cd .&#x0D;&#x0A;if errorlevel 1 goto :VCReportError"
+					AdditionalDependencies="&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\CMakeFiles\INSTALL_force.rule&quot;"
+					Outputs="C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\CMakeFiles\INSTALL_force"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+					Name="VCCustomBuildTool"
+					Description=" "
+					CommandLine="cd .&#x0D;&#x0A;if errorlevel 1 goto :VCReportError"
+					AdditionalDependencies="&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\CMakeFiles\INSTALL_force.rule&quot;"
+					Outputs="C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\CMakeFiles\INSTALL_force"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="MinSizeRel|Win32">
+					<Tool
+					Name="VCCustomBuildTool"
+					Description=" "
+					CommandLine="cd .&#x0D;&#x0A;if errorlevel 1 goto :VCReportError"
+					AdditionalDependencies="&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\CMakeFiles\INSTALL_force.rule&quot;"
+					Outputs="C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\CMakeFiles\INSTALL_force"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="RelWithDebInfo|Win32">
+					<Tool
+					Name="VCCustomBuildTool"
+					Description=" "
+					CommandLine="cd .&#x0D;&#x0A;if errorlevel 1 goto :VCReportError"
+					AdditionalDependencies="&quot;C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\CMakeFiles\INSTALL_force.rule&quot;"
+					Outputs="C:\Users\z z\Desktop\Antz\antz\sdk\libs\jansson\make\CMakeFiles\INSTALL_force"/>
+				</FileConfiguration>
+			</File>
+		</Filter>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>
