@@ -123,8 +123,8 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="../../libs/freeglut/include/GL;../../libs/oscpack/src;../../libs/soil/src;../../libs/mysql/include/"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE"
+				AdditionalIncludeDirectories="../../libs/curl/include;../../libs/jansson/src;../../libs/freeglut/include/GL;../../libs/oscpack/src;../../libs/soil/src;../../libs/mysql/include/"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;CURL_STATICLIB;BUILDING_LIBCURL;USE_WINDOWS_SSPI;USE_SCHANNEL"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -143,10 +143,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib SOIL.lib libmysql.lib mysqlclient.lib ws2_32.lib"
+				AdditionalDependencies="opengl32.lib glu32.lib SOIL.lib libmysql.lib mysqlclient.lib ws2_32.lib libcurl.lib jansson.lib wldap32.lib"
 				OutputFile="$(OutDir)\..\..\..\..\$(ProjectName).exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../libs/freeglut/lib/x86;../../libs/oscpack;../../libs/soil/lib;../../libs/mysql"
+				AdditionalLibraryDirectories="../../libs/jansson/make/lib/Release;&quot;../../libs/curl/build/Win32/VC9/LIB Release - DLL Windows SSPI&quot;;../../libs/freeglut/lib/x86;../../libs/oscpack;../../libs/soil/lib;../../libs/mysql"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				LargeAddressAware="2"

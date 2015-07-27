@@ -1,0 +1,17 @@
+C:/Users/z z/Desktop/Antz/antz/sdk/libs/jansson/make/CMakeFiles/test_copy.dir
+C:/Users/z z/Desktop/Antz/antz/sdk/libs/jansson/make/CMakeFiles/check.dir
+C:/Users/z z/Desktop/Antz/antz/sdk/libs/jansson/make/CMakeFiles/test_loadb.dir
+C:/Users/z z/Desktop/Antz/antz/sdk/libs/jansson/make/CMakeFiles/test_pack.dir
+C:/Users/z z/Desktop/Antz/antz/sdk/libs/jansson/make/CMakeFiles/test_unpack.dir
+C:/Users/z z/Desktop/Antz/antz/sdk/libs/jansson/make/CMakeFiles/json_process.dir
+C:/Users/z z/Desktop/Antz/antz/sdk/libs/jansson/make/CMakeFiles/jansson.dir
+C:/Users/z z/Desktop/Antz/antz/sdk/libs/jansson/make/CMakeFiles/test_dump.dir
+C:/Users/z z/Desktop/Antz/antz/sdk/libs/jansson/make/CMakeFiles/test_load.dir
+C:/Users/z z/Desktop/Antz/antz/sdk/libs/jansson/make/CMakeFiles/test_equal.dir
+C:/Users/z z/Desktop/Antz/antz/sdk/libs/jansson/make/CMakeFiles/ALL_BUILD.dir
+C:/Users/z z/Desktop/Antz/antz/sdk/libs/jansson/make/CMakeFiles/test_array.dir
+C:/Users/z z/Desktop/Antz/antz/sdk/libs/jansson/make/CMakeFiles/ZERO_CHECK.dir
+C:/Users/z z/Desktop/Antz/antz/sdk/libs/jansson/make/CMakeFiles/test_number.dir
+C:/Users/z z/Desktop/Antz/antz/sdk/libs/jansson/make/CMakeFiles/test_simple.dir
+C:/Users/z z/Desktop/Antz/antz/sdk/libs/jansson/make/CMakeFiles/test_object.dir
+C:/Users/z z/Desktop/Antz/antz/sdk/libs/jansson/make/CMakeFiles/test_dump_callback.dir

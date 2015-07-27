@@ -26,7 +26,8 @@
 #define NPTYPES_H_
 
 #define kNPappVer "0.198.2"
-
+#include <jansson.h>	
+//#include "../libs/jansson/src/jansson.h"
 #include "stdbool.h"
 #include "npdbTypes.h"
 //#include <stdint.h>
@@ -1500,6 +1501,188 @@ struct NPos {
 typedef struct NPos NPos;
 typedef struct NPos* pNPos;
 
+typedef struct NPgithubIssue NPgithubIssue;
+typedef NPgithubIssue* pNPgithubIssue;
+
+//typedef NPgithubIssue* pNPgithubIssue;
+typedef int NPgithubIssueIndex;
+typedef int NPgithubIssueCount;
+//typedef pNPgithubNode pNPgithubCurrentNode;
+
+typedef char NPurl;
+typedef NPurl* pNPurl;
+//typedef int NPgithubIssueID;
+typedef long long NPgithubIssueID;
+typedef int NPgithubIssueNumber;
+//typedef long long NPgithubIssueNumber;
+
+typedef int NPgithubErrValue;
+typedef void Nothing;
+typedef pNPurl pNPissueUrl;
+typedef pNPissueUrl pNPgithubIssueUrl;
+//typedef pNPnode pNPgithubIssueNode;
+
+struct NPgithubUser {
+    char* login;
+    char* id;
+    char* avatar_url;
+    char* avatar_image_file;
+    char* avatar_image_file_path;
+    int avatar_image_textureID;
+    char* gravatar_id;
+    char* url;
+    char* html_url;
+    char* followers_url;
+    char* gists_url;
+    char* starred_url;
+    char* subscriptions_url;
+    char* organizations_url;
+    char* repos_url;
+    char* events_url;
+    char* received_events_url;
+    char* type;
+    bool site_admin;
+};
+typedef struct NPgithubUser NPgithubUser;
+typedef struct NPgithubUser* pNPgithubUser;
+
+struct NPgithubIssueTime {
+    int hour;
+    int minute;
+    int second;
+};
+typedef struct NPgithubIssueTime NPgithubIssueTime;
+typedef struct NPgithubIssueTime* pNPgithubIssueTime;
+
+struct NPgithubIssueDate {
+    int year;
+    int month;
+    int day;
+};
+typedef struct NPgithubIssueDate NPgithubIssueDate;
+typedef struct NPgithubIssueDate* pNPgithubIssueDate;
+
+struct NPgithubIssueDates {
+    pNPgithubIssueDate date;
+    pNPgithubIssueTime time;
+};
+typedef struct NPgithubIssueDates NPgithubIssueDates;
+typedef struct NPgithubIssueDates* pNPgithubIssueDates;
+
+typedef NPgithubIssueDates NPgithubIssueCreation;
+
+
+
+
+typedef int pNPjsonIndex;
+
+/// "raw" json
+
+struct NPgithubIssueFunctions {
+    char* variable[10];
+    char* IssueFunctions[50][50];
+    int*  functionUniqueId[50];
+    void* (*npGithubIssueFunction[50])(void*);
+    int* executionLock[50]; /// @todo Locks functions not to be called 1 == Locked && 0 == Unlocked
+    int* loopStartIndex[50]; /// One for each
+    int* loopEndIndex[50];
+    int* currentPositionInLoop[50];
+};
+typedef struct NPgithubIssueFunctions NPgithubIssueFunctions;
+typedef struct NPgithubIssueFunctions* pNPgithubIssueFunctions;
+
+
+
+struct NPgithubIssues {
+    pNPnode parent;
+    NPgithubIssueIndex index;
+    pNPgithubIssue current;
+    pNPnode node;
+    pNPgithubIssue issue[300]; /// Hardcoded at 300
+    pNPgithubUser user[50];    /// Hardcoded at 50
+    int userIndex;
+    int userCount;
+    int recordTagVariableIndex;
+    char* recordTagVariable[20];
+    char* recordTagVariableFormat[20];
+    int recordTagVariableFormatIndex;
+    char* recordTagFormat[300];
+    pNPrecordTag recordTag[300];
+    int recordTagIndex;
+    int recordTagCount;
+    int issueVariableIndex;
+    NPgithubIssueCount count;
+    pNPgithubIssueFunctions issueFunctions;
+    bool loadAvatarTextures;
+    bool running;
+};
+typedef struct NPgithubIssues NPgithubIssues;
+typedef struct NPgithubIssues* pNPgithubIssues;
+
+struct NPgithubIssueCreatedAt {
+    int year;
+    int month;
+    int day;
+    int hour;
+    int minute;
+    int second;
+};
+typedef struct NPgithubIssueCreatedAt NPgithubIssueCreatedAt;
+typedef NPgithubIssueCreatedAt* pNPgithubIssueCreatedAt;
+
+struct NPgithubIssue {
+    int recordId; /// for text tags
+    pNPrecordTag recordTag;
+    pNPgithubIssues partOf;
+    pNPgithubIssue this_issue;
+    pNPnode issue_node;
+    pNPgithubIssueUrl url;
+    char* labels_url;
+    char* comments_url;
+    char* events_url;
+    char* html_url;
+    NPgithubIssueID id;
+    NPgithubIssueNumber index; /// This is also number
+    char* title;
+    int numOfWordsInIssueTitle;
+    NPgithubUser user;
+    char* state;
+    bool locked;
+    char* assignee;
+    char* milestone; /// Is this char*?
+    int num_comments;
+    pNPgithubIssueDates dates;
+    char* created_at;
+    NPgithubIssueCreatedAt issue_created_at;
+    pNPgithubIssueCreatedAt issue_closed_at;
+ //   pNPgithubIssueCreatedAt issue_created_at;
+ //   pNPgithubIssueCreatedAt issue_closed_at;
+    char* updated_at;
+    char* closed_at;
+    char* body;
+    char* closed_by;
+    int issueNodeType; //kNPpin
+    int issueGeoType;
+    int issueTopoType;
+};
+
+struct NPjsonCtrl {
+    int index;
+};
+typedef struct NPjsonCtrl NPjsonCtrl;
+typedef struct NPjsonCtrl* pNPjsonCtrl;
+
+struct NPjson {
+    struct NPjsonCtrl jsonCtrl;
+    json_t *root;
+    json_t *issue[300];
+    int issueIndex;
+    int numOfIssues;
+    size_t array_size;
+};
+typedef struct NPjson NPjson;
+typedef struct NPjson* pNPjson;
+
 
 struct NPio {
 	void* coreNode; ///< core nodes tie global structures to the scene graph
@@ -1520,6 +1703,7 @@ struct NPio {
 //!<	struct	dbNewConnect *connect;	//!<zzsql							//!<zz debug	//!<zz dbz
 //	struct databases *dbs;			//!<zz dbz
 	NPdbs		db;
+	NPgithubIssues issues;
 
 //!<	NPoscPackListener oscListener;		//!<JJ-zz
 	pNPconnect	connect[kNPmaxConnect];	//!<zz osc
