@@ -195,6 +195,7 @@ typedef struct NPjson NPjson;
 typedef struct NPjson* pNPjson;
 */
 
+void gitVizTest(pNPgithubIssues issues, void* dataRef);
 int npJSONgithubIssuesToAntzIssues(pNPjson gitJSON, pNPgithubIssues issues, void* dataRef);
 int npGithubIssueCountIncrement(pNPgithubIssues issues);
 int npGithubIssueCountDecrement(pNPgithubIssues issues);
@@ -204,7 +205,7 @@ int getGithubIssues(void* dataRef);
 json_t* npJSONgetObject(json_t* data, char* key);
 char* npJSONgetGithubIssueUrl(json_t * data);
 struct NPgithubIssue* npJSONgetGithubIssue(struct NPgithubIssues * github, json_t * data);
-long long npJSONgetGithubIssueId(json_t * data);
+int npJSONgetGithubIssueId(json_t * data);
 long long npJSONgetGithubIssueNumber(json_t * data);
 size_t npJSONgetGithubIssuesArraySize(json_t *root, pNPgithubIssues issues);
 char* npJSONgetGithubIssueTitle(json_t * issue);
@@ -231,4 +232,5 @@ void npGithubCtrlSetCurrentIssueUserAvatarImageFile(pNPgithubIssues issues, void
 int new_getGithubProcessIssues(pNPgithubIssues issues, int issuesToProcess, void* dataRef);
 int getGithubProcessUsers(pNPgithubIssues issues, int usersToProcess, void* dataRef);
 json_t* npGitJSONsetRoot(pNPjson gitJSON, void* (*get_json_root)(void *issues), pNPgithubIssues issues );
+void* new_npJSONgetGithubIssueFunction(pNPgithubIssues issues, pNPjson json ,int functionIndex, void* dataRef);
 #endif

@@ -1631,7 +1631,7 @@ typedef struct NPgithubIssueCreatedAt NPgithubIssueCreatedAt;
 typedef NPgithubIssueCreatedAt* pNPgithubIssueCreatedAt;
 
 struct NPgithubIssue {
-    int recordId; /// for text tags
+    int recordId;
     pNPrecordTag recordTag;
     pNPgithubIssues partOf;
     pNPgithubIssue this_issue;
@@ -1642,10 +1642,12 @@ struct NPgithubIssue {
     char* events_url;
     char* html_url;
     NPgithubIssueID id;
-    NPgithubIssueNumber index; /// This is also number
+    NPgithubIssueNumber index;
     char* title;
+	pNPtag titleTag;
     int numOfWordsInIssueTitle;
     NPgithubUser user;
+	int userId;
     char* state;
     bool locked;
     char* assignee;

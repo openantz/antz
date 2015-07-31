@@ -17,5 +17,5 @@ np_globals_id,map_path,item_id,element,type,permisions,name,desc,value
 16,"np_osc",1,"rx_ip","s",0,"","","127.0.0.1"
 17,"np_osc",1,"tx_port","i",0,"","","8000"
 18,"np_osc",1,"rx_port","i",0,"","","9000"
-19,"np_browser",1,"url","s",0,"","","http://openantz.com/docs/id.html?id="
+19,"np_browser",1,"url","s",0,"","","http://github.com/openantz/antz/issues/"
 20,"np_globals",1,"item_count","i",1,"","","20"

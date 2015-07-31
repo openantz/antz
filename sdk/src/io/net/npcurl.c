@@ -35,15 +35,16 @@ enum {
     kNPgithubJSONgetIssueUpdatedAt = 5,
     kNPgithubJSONgetIssueClosedAt = 6,
     kNPgithubJSONgetIssueUserLogin = 7,
-    kNPgithubJSONgetIssueUserAvatarUrl = 8,
-    kNPgithubSetIssueUrl = 9,
-    kNPgithubSetIssueId  = 10,
-    kNPgithubSetIssueTitle = 11,
-    kNPgithubSetIssueState = 12,
-    kNPgithubSetIssueCreatedAt = 13,
-    kNPgithubSetIssueUpdatedAt = 14,
-    kNPgithubSetIssueClosedAt = 15,
-    kNPgithubSetIssueUserLogin = 16
+    kNPgithubJSONgetIssueUserAvatarUrl = 9,
+	kNPgithubJSONgetIssueNumber = 8,
+    kNPgithubSetIssueUrl = 10,
+    kNPgithubSetIssueId  = 11,
+    kNPgithubSetIssueTitle = 12,
+    kNPgithubSetIssueState = 13,
+    kNPgithubSetIssueCreatedAt = 14,
+    kNPgithubSetIssueUpdatedAt = 15,
+    kNPgithubSetIssueClosedAt = 16,
+    kNPgithubSetIssueUserLogin = 17
 };
 
 
@@ -530,6 +531,22 @@ void npGithubCtrlSetRecordTagIndex(pNPgithubIssues issues, int index, void* data
     issues->recordTagIndex = index;
 }
 
+
+void npGithubCtrlInitIssueTitleTextTag(pNPgithubIssues issues, int index, void* dataRef)
+{
+
+}
+
+void npGithubCtrlInitIssueTextTag(pNPgithubIssues issues, int index, void* dataRef)
+{
+	issues->issue[index]->titleTag = npNewTag(dataRef);
+	if(issues->issue[index]->titleTag == NULL)
+	{
+		printf("2387 Null");
+	}
+
+}
+
 void npGithubCtrlInitRecordTag(pNPgithubIssues issues, int index, void* dataRef)
 {
     npGithubCtrlSetRecordTagIndex(issues, index, dataRef);
@@ -773,6 +790,570 @@ void npGithubCtrlCountWordsInIssueTitle(pNPgithubIssue issue, void* dataRef)
     }
 }
 
+void npGithubIncrementIssuesIndex(pNPgithubIssues issues, void* dataRef)
+{
+	issues->index++;
+	issues->current = issues->issue[issues->index];
+}
+
+void npGithubInitIssueGlyph(pNPgithubIssues issues, void* dataRef)
+{
+	pNPnode issue_node = issues->issue[issues->index]->issue_node;
+
+	npInitNodeDefault(issue_node);
+}
+
+void npGithubInitAllIssueGlyphs(pNPgithubIssues issues, void* dataRef)
+{
+	while(issues->index < issues->count)
+	{
+		npGithubInitIssueGlyph(issues, dataRef);
+		npGithubIncrementIssuesIndex(issues, dataRef);
+	}
+}
+
+
+void npGithubInitIssue(pNPgithubIssues issues, void* dataRef)
+{
+	pNPgithubIssue issue = NULL;
+	issues->current = issues->issue[issues->index];
+	issues->current->assignee = NULL;
+	issues->current->body = NULL;
+	issues->current->closed_at = NULL;
+	issues->current->closed_by = NULL;
+	issues->current->comments_url = NULL;
+	issues->current->created_at = NULL;
+	issues->current->events_url = NULL;
+	issues->current->html_url = NULL;
+	issues->current->id = 0;
+	issues->current->index = issues->index;
+	issues->current->issue_node = NULL;
+	issues->current->issueGeoType = 0;
+	issues->current->issueNodeType = 0;
+	issues->current->issueTopoType = 0;
+	issues->current->labels_url = NULL;
+	issues->current->locked = NULL;
+	issues->current->milestone = NULL;
+	issues->current->num_comments = 0;
+	issues->current->numOfWordsInIssueTitle = 0;
+	issues->current->partOf = issues;
+	issues->current->recordId = 0;
+	issues->current->recordTag = NULL;
+	issues->current->state = NULL;
+	issues->current->title = NULL;
+	issues->current->titleTag = NULL; /// issueTags array
+	issues->current->updated_at = NULL;
+	issues->current->url = NULL;
+	issues->current->userId = 0;
+
+	issues->current->user.avatar_image_file = NULL;
+	issues->current->user.avatar_image_file_path = NULL;
+	issues->current->user.avatar_image_textureID = 0;
+	issues->current->user.avatar_url = NULL;
+	issues->current->user.events_url = NULL;
+	issues->current->user.followers_url = NULL;
+	issues->current->user.gists_url = NULL;
+	issues->current->user.gravatar_id = NULL;
+	issues->current->user.html_url = NULL;
+	issues->current->user.id = NULL;
+	issues->current->user.login = NULL;
+	issues->current->user.organizations_url = NULL;
+	issues->current->user.received_events_url = NULL;
+	issues->current->user.repos_url = NULL;
+	issues->current->user.site_admin = NULL;
+	issues->current->user.starred_url = NULL;
+	issues->current->user.subscriptions_url = NULL;
+	issues->current->user.type = NULL;
+	issues->current->user.url = NULL;
+}
+
+void npGithubInitAllIssues(pNPgithubIssues issues, void* dataRef)
+{
+	while(issues->index < issues->count)
+	{
+		npGithubInitIssue(issues, dataRef);
+		npGithubIncrementIssuesIndex(issues, dataRef);
+	}
+
+}
+
+void new_gitVizTest(pNPgithubIssues issues, void* dataRef)
+{
+	pNPgithubIssue current_issue = NULL;
+	pNPnode issue_creation_node = NULL;
+	pNPnode issue_closed_node = NULL;
+	pNPnode issue_day_node = NULL;
+	pNPnode link = NULL;
+	static float y_translate = 0;
+	static float x_translate = 0;
+	static float z_translate = 0;
+	static int id = 0;
+	int childIndex = 0;
+	
+	int dayIndex = 0;
+	int monthIndex = 0;
+	int yearIndex = 0;
+	int dayClosedIndex = 0;
+	int monthClosedIndex = 0;
+	int yearClosedIndex = 0;
+	int dayCreatedIndex = 0;
+	int monthCreatedIndex = 0;
+	int yearCreatedIndex = 0;
+	int issuesInYear2014 = 0;
+	int issuesInYear2015 = 0;
+	int issuesInMonth[12] = {0,0,0,0,0,0,0,0,0,0,0,0}; // [year][month]
+	int numOfIssuesInTime[2][12][32] = {0,0,0,0,0,0,0,0,0,0,0,0}; // [year][month][day]
+	char* monthString[] = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"}; 
+	//int id_one = 0;
+	//int id_two = 0;
+	int idOne = 0;
+	int idTwo = 0;
+	bool showMonth = true;
+	bool showDay = true;
+
+	int issueIndex = 0;
+	pNPnode time_node = NULL;
+	pNPnode year_2014 = NULL;
+	pNPnode year_2015 = NULL;
+
+	pNPrecordTag year_recordTag = NULL;
+	pNPrecordTag month_recordTag = NULL;
+	pNPrecordTag day_recordTag = NULL;
+
+	pNPnode year_node[2];
+	pNPnode month_node;
+	pNPnode day_node;
+
+	/*
+	year_2014 = npNodeNew(kNodePin, NULL, dataRef);
+	year_2014->geometry = kNPgeoTorus;
+	year_2014->topo = kNPtopoTorus;
+
+	year_2015 = npNodeNew(kNodePin, NULL, dataRef);
+	year_2015->geometry = kNPgeoTorus;
+	year_2015->topo = kNPtopoTorus;
+	*/
+
+	for(yearIndex = 0; yearIndex < 2; yearIndex++)
+	{
+		year_node[yearIndex] = npNodeNew(kNodePin, NULL, dataRef);
+		year_node[yearIndex]->geometry = kNPgeoTorus;
+		year_node[yearIndex]->topo = kNPtopoTorus;
+
+		year_recordTag = npNewTag( dataRef );
+		sprintf(year_recordTag->title, "%d", yearIndex + 2014);
+		year_recordTag->titleSize = strlen(year_recordTag->title) + 1;
+		year_recordTag->recordID = id+1;
+		year_node[yearIndex]->recordID = id+1;
+		id++;
+		npTagSortAdd(year_recordTag, dataRef);
+		npTagNode(year_node[yearIndex], dataRef);
+
+		for(monthIndex = 0; monthIndex <= 11; monthIndex++)
+		{
+			month_node = year_node[yearIndex]->child[monthIndex];
+			month_node = npNodeNew(kNodePin, year_node[yearIndex], dataRef);
+			month_node->translate.x = (-30 * monthIndex);
+//			month_node->geometry = kNPgeoTorus;
+//			month_node->topo = kNPtopoTorus;
+			month_node->scale.x = 0.5;
+			month_node->scale.y = 0.5;
+			month_node->scale.z = 0.5;
+			month_node->translate.y += 90;
+
+			month_recordTag = npNewTag( dataRef );
+			sprintf(month_recordTag->title, "%s", monthString[monthIndex]);
+			month_recordTag->titleSize =  3;
+			month_recordTag->recordID = id+1;
+			month_node->recordID = id+1;
+			id++;
+
+			npTagSortAdd(month_recordTag, dataRef);
+    
+			/// @todo npTagGithubIssueNode
+			npTagNode(month_node, dataRef);
+
+			/*
+			year_node[yearIndex]->child[monthIndex] = npNodeNew(kNodePin, year_node[yearIndex], dataRef);
+			year_node[yearIndex]->child[monthIndex]->translate.x = (30 * monthIndex);
+			year_node[yearIndex]->child[monthIndex]->geometry = kNPgeoTorus;
+			year_node[yearIndex]->child[monthIndex]->topo = kNPtopoTorus;
+			year_node[yearIndex]->child[monthIndex]->scale.x = 0.5;
+			year_node[yearIndex]->child[monthIndex]->scale.y = 0.5;
+			year_node[yearIndex]->child[monthIndex]->scale.z = 0.5;
+			*/
+			for(dayIndex = 0; dayIndex <= 31; dayIndex++)
+			{
+				day_node = year_node[yearIndex]->child[monthIndex]->child[dayIndex];
+			//	printf("\n2318 month index : %d", monthIndex);
+
+				day_node = npNodeNew(kNodePin, month_node, dataRef);
+//				day_node->translate.x = (11.61290 * dayIndex);
+			//	day_node->translate.x = (11.61290 * dayIndex);s
+				day_node->translate.x = 0;
+
+		/*
+				day_recordTag = npNewTag( dataRef );
+				sprintf(day_recordTag->title, "%d", dayIndex+1);
+				day_recordTag->titleSize =  strlen(day_recordTag->title) + 1;
+				day_recordTag->recordID = 
+				//	day_recordTag->recordID = id+1;
+			//	day_node->recordID = id+1;
+				id++;
+		 
+				npTagSortAdd(day_recordTag, dataRef);
+		
+				/// @todo npTagGithubIssueNode
+				npTagNode(day_node, dataRef);
+		*/
+
+//				day_node->geometry = kNPgeoTorus;
+//				day_node->topo = kNPgeoTorus;
+
+				/*
+				year_node[yearIndex]->child[monthIndex]->child[dayIndex] = npNodeNew(kNodePin, year_node[yearIndex]->child[monthIndex], dataRef);
+				year_node[yearIndex]->child[monthIndex]->child[dayIndex]->translate.x = (11.61290 * dayIndex);
+				year_node[yearIndex]->child[monthIndex]->child[dayIndex]->geometry = kNPgeoTorus;
+				*/
+			}
+
+		}
+	}
+ 
+	while(issueIndex < issues->count)
+	{
+		current_issue = issues->issue[issueIndex];
+		//issues->issue[issueIndex]->
+		if( strcmp(current_issue->state, "closed") == 0 )
+		{
+			new_npGithubGetIssueCreatedAt(current_issue);
+			yearCreatedIndex = current_issue->issue_created_at.year - 2014;
+			monthCreatedIndex = current_issue->issue_created_at.month - 1;
+			dayCreatedIndex = current_issue->issue_created_at.day;
+
+			issue_day_node = year_node[yearCreatedIndex]->child[monthCreatedIndex]->child[dayCreatedIndex];
+			issue_creation_node = year_node[yearCreatedIndex]->child[monthCreatedIndex]->child[dayCreatedIndex]->child[year_node[yearCreatedIndex]->child[monthCreatedIndex]->child[dayCreatedIndex]->childCount];
+			issue_creation_node = npNodeNew(kNodePin, issue_day_node, dataRef);
+			issue_creation_node->color.r = 255;
+			issue_creation_node->color.g = 0;
+			issue_creation_node->color.b = 0;
+			issue_creation_node->translate.x = (11.25 * dayCreatedIndex);
+//			issue_creation_node->translate.z = 10;
+
+			/// Text tag and record id
+			day_recordTag = npNewTag( dataRef );
+		//	sprintf(day_recordTag->title, "%d test", dayCreatedIndex);
+		//	sprintf(day_recordTag->title, "%d", current_issue->index);
+			sprintf(day_recordTag->title, "%s", current_issue->title);
+			//	printf("\n2383 day_recordTag->title : %s", day_recordTag->title);	
+			day_recordTag->titleSize =  strlen(day_recordTag->title) + 1;
+		//	day_recordTag->recordID = current_issue->id;
+			day_recordTag->recordID = current_issue->index;
+			printf("\n2384 %d", current_issue->index);
+			day_recordTag->tableID = 1;
+			issue_creation_node->recordID = day_recordTag->recordID;
+			issue_creation_node->tableID = day_recordTag->tableID;
+			id++;
+
+			npTagSortAdd(day_recordTag, dataRef);
+		
+			/// @todo npTagGithubIssueNode
+		//	npTagNode(issue_day_node, dataRef);
+			npTagNode(issue_creation_node, dataRef);
+
+			issuesInMonth[monthCreatedIndex]++;
+			numOfIssuesInTime[yearCreatedIndex][monthCreatedIndex][dayCreatedIndex]++;
+			
+			new_npGithubGetIssueClosedAt(current_issue);
+			yearClosedIndex = current_issue->issue_closed_at->year - 2014;
+			monthClosedIndex = current_issue->issue_closed_at->month - 1;
+			dayClosedIndex = current_issue->issue_closed_at->day;
+
+			issue_day_node = year_node[yearClosedIndex]->child[monthClosedIndex]->child[dayClosedIndex];
+			issue_closed_node = year_node[yearClosedIndex]->child[monthClosedIndex]->child[dayClosedIndex]->child[year_node[yearClosedIndex]->child[monthClosedIndex]->child[dayClosedIndex]->childCount];
+			//issue_closed_node = npNodeNew(kNodePin, year_node[yearClosedIndex]->child[monthClosedIndex]->child[dayClosedIndex], dataRef);
+			issue_closed_node = npNodeNew(kNodePin, issue_day_node, dataRef);
+			issue_closed_node->geometry = kNPgeoSphere;
+			issue_closed_node->color.r = 0;
+			issue_closed_node->color.g = 0;
+			issue_closed_node->color.b = 255;
+			issue_closed_node->translate.x = (11.25 * dayClosedIndex);
+
+			issue_closed_node->recordID = day_recordTag->recordID;
+			issue_closed_node->tableID = day_recordTag->tableID;
+			npTagNode(issue_closed_node, dataRef);
+
+			issuesInMonth[monthClosedIndex]++; /// iterate over this later
+
+			numOfIssuesInTime[yearClosedIndex][monthClosedIndex][dayClosedIndex]++;
+
+			link = npNodeNewLink(issue_creation_node, issue_closed_node, dataRef);
+			//link->geometry = kNPgeoCylinder;
+			//link->geometry = 20;
+			link->geometry = 20;
+			link->scale.z = 0.5;
+			//link->scale.z = 5;
+			link->lineWidth = 0.1;
+				
+			idOne++;
+			printf("\nCLOSED : %d", idOne);
+
+		}
+		else if( strcmp(current_issue->state, "open") == 0 )
+		{
+			new_npGithubGetIssueCreatedAt(current_issue);
+			yearCreatedIndex = current_issue->issue_created_at.year - 2014;
+			monthCreatedIndex = current_issue->issue_created_at.month - 1;
+			dayCreatedIndex = current_issue->issue_created_at.day;
+
+			issue_creation_node = year_node[yearCreatedIndex]->child[monthCreatedIndex]->child[dayCreatedIndex];
+
+			printf("\nYear Created Index : %d Year %d", yearCreatedIndex, current_issue->issue_created_at.year);
+			printf("\nMonth Created Index : %d Month %d", monthCreatedIndex, current_issue->issue_created_at.month);
+			printf("\nOPEN : %d", idTwo);
+			
+			issue_day_node = year_node[yearCreatedIndex]->child[monthCreatedIndex]->child[dayCreatedIndex];
+			issue_creation_node = npNodeNew(kNodePin, issue_day_node, dataRef);
+//			issue_creation_node->geometry = kNPgeoTorus;
+//			issue_creation_node->topo = kNPtopoTorus;
+			issue_creation_node->color.r = 255;
+			issue_creation_node->color.g = 0;
+			issue_creation_node->color.b = 0;
+
+			day_recordTag = npNewTag( dataRef );
+		//	sprintf(day_recordTag->title, "%d test", dayCreatedIndex);
+		//	sprintf(day_recordTag->title, "%d test", current_issue->id);
+			sprintf(day_recordTag->title, "%s", current_issue->title);
+			printf("\n2384 %d", current_issue->index);
+			printf("\n2383 day_recordTag->title : %s", day_recordTag->title);	
+			day_recordTag->titleSize =  strlen(day_recordTag->title) + 1;
+			//day_recordTag->recordID = current_issue->id;
+			day_recordTag->recordID = current_issue->index;
+			day_recordTag->tableID = 1;
+			issue_creation_node->recordID = day_recordTag->recordID;
+			issue_creation_node->tableID = day_recordTag->tableID;
+			id++;
+
+			npTagSortAdd(day_recordTag, dataRef);
+		
+			/// @todo npTagGithubIssueNode
+		//	npTagNode(issue_day_node, dataRef);
+			npTagNode(issue_creation_node, dataRef);
+
+
+			/*
+			year_node[yearCreatedIndex]->child[monthCreatedIndex]->child[issuesInMonth[monthCreatedIndex]]->child[dayCreatedIndex] = npNodeNew(kNodePin, year_node[yearCreatedIndex]->child[monthCreatedIndex]->child[dayCreatedIndex], dataRef);
+			year_node[yearCreatedIndex]->child[monthCreatedIndex]->child[issuesInMonth[monthCreatedIndex]]->child[dayCreatedIndex]->color.r = 255;
+			year_node[yearCreatedIndex]->child[monthCreatedIndex]->child[issuesInMonth[monthCreatedIndex]]->child[dayCreatedIndex]->color.g = 0;
+			year_node[yearCreatedIndex]->child[monthCreatedIndex]->child[issuesInMonth[monthCreatedIndex]]->child[dayCreatedIndex]->color.b = 0;
+			*/
+
+			idTwo++;
+			issuesInMonth[monthCreatedIndex]++;
+			numOfIssuesInTime[yearCreatedIndex][monthCreatedIndex][dayCreatedIndex]++;
+
+			printf("\nid_two after : %d", idTwo);
+		}
+
+		issueIndex++;
+	}
+	
+	for(yearIndex = 0; yearIndex < 2; yearIndex++)
+	{
+		for(monthIndex = 0; monthIndex <= 11; monthIndex++)
+		{
+			for(dayIndex = 0; dayIndex <= 31; dayIndex++)
+			{
+				if( numOfIssuesInTime[yearIndex][monthIndex][dayIndex] == 0 )
+				{
+					/// Nothing here, hide it
+					//printf("\nzero");
+					showDay = false;
+					showMonth = false;
+					//year_node[yearIndex]->child[monthIndex]->child[dayIndex]->hide = true;
+				}
+				else
+				{
+					//showMonth = true;
+					showDay = true;
+					showMonth = true;
+				}
+
+				if(showDay == false)
+				{
+					year_node[yearIndex]->child[monthIndex]->child[dayIndex]->hide = true;
+					//year_node[yearIndex]->child[monthIndex]->hide = true;
+				}
+				else
+				{
+					year_node[yearIndex]->child[monthIndex]->child[dayIndex]->hide = false;
+					//year_node[yearIndex]->child[monthIndex]->hide = false;
+				}
+
+			}
+			
+
+		}
+	}
+
+
+}
+
+void gitVizTest(pNPgithubIssues issues, void* dataRef)
+{
+	//pNPnode github_node = NULL;
+	pNPgithubIssue current_issue = NULL;
+	static float y_translate = 0;
+	static float x_translate = 0;
+	static float z_translate = 0;
+	static int id = 0;
+	int childIndex = 0;
+	
+	int monthIndex = 0;
+	int yearIndex = 0;
+	int monthClosedIndex = 0;
+	int yearClosedIndex = 0;
+	int monthCreatedIndex = 0;
+	int yearCreatedIndex = 0;
+	int issuesInYear2014 = 0;
+	int issuesInYear2015 = 0;
+
+	
+	int issueIndex = 0;
+	pNPnode time_node = NULL; /// Not to be confused with time cube
+	time_node = npNodeNew(kNodePin, NULL, dataRef);
+//	time_node->geometry = kNPgeoPin;
+	time_node->geometry = kNPgeoTorus;
+	time_node->topo = kNPtopoTorus;
+	time_node->scale.z = 4;
+	time_node->scale.x = 4;
+	time_node->scale.y = 4;
+	//time_node->scale.z = 90;
+	//time_node->rotate.x = 90;
+
+	/// yearIndex range [0 (2014), 1 (2015)]
+	for(yearIndex = 0; yearIndex <= 1; yearIndex++)
+	{
+		time_node->child[yearIndex] = npNodeNew(kNodePin, time_node, dataRef);
+		time_node->child[yearIndex]->geometry = kNPgeoTorus;
+		time_node->child[yearIndex]->translate.y += 180;
+
+		if(yearIndex == 0)
+			time_node->child[yearIndex]->translate.x += 180;
+
+		/// monthIndex range [0 (January) ,11 (December)]
+		for(monthIndex = 0; monthIndex <= 11; monthIndex++)
+		{
+			time_node->child[yearIndex]->child[monthIndex] = npNodeNew(kNodePin, time_node->child[yearIndex], dataRef);
+			time_node->child[yearIndex]->child[monthIndex]->geometry = kNPgeoTorus;
+			//time_node->child[yearIndex]->child[monthIndex]->translate.x = (15 * monthIndex);
+			time_node->child[yearIndex]->child[monthIndex]->translate.x = (30 * monthIndex);
+		}
+	}
+
+/// Have a seperate node for creation and closing of an issue, place each on time hierarchy 
+/// makes issues tree, link together creation nodes and closing nodes
+	/// A month node scales with how many issues it has associated with it
+
+	time_node->scale.y = (issues->count) * 0.10;
+
+	while(issueIndex < issues->count)
+	{
+		current_issue = issues->issue[issueIndex];
+		//issues->issue[issueIndex]->
+		if( strcmp(current_issue->state, "closed") == 0 )
+		{
+			new_npGithubGetIssueClosedAt(current_issue);
+			yearClosedIndex =  current_issue->issue_closed_at->year - 2014;
+			monthClosedIndex = current_issue->issue_closed_at->month - 1;
+
+			new_npGithubGetIssueCreatedAt(current_issue);
+			yearCreatedIndex = current_issue->issue_created_at.year - 2014;
+			monthCreatedIndex = current_issue->issue_created_at.month - 1;
+
+			printf("\nYear Created Index : %d Year %d", yearCreatedIndex, current_issue->issue_created_at.year);
+			printf("\nMonth Created Index : %d Month %d", monthCreatedIndex, current_issue->issue_created_at.month);
+			
+			time_node->child[yearCreatedIndex]->child[monthCreatedIndex]->child[id] = npNodeNew(kNodePin, time_node->child[yearCreatedIndex]->child[monthCreatedIndex], dataRef);
+			//time_node->child[yearCreatedIndex]->child[monthCreatedIndex]->child[id]->geometry = kNPgeoPin;
+		//	time_node->child[yearCreatedIndex]->child[monthCreatedIndex]->child[id]->translate.y += 45;
+			time_node->child[yearCreatedIndex]->child[monthCreatedIndex]->translate.y += 0.1;
+			id++;
+			
+
+		}
+		else if( strcmp(current_issue->state, "open") == 0 )
+		{
+			new_npGithubGetIssueCreatedAt(current_issue);
+			yearCreatedIndex = current_issue->issue_created_at.year - 2014;
+			monthCreatedIndex = current_issue->issue_created_at.month - 1;
+
+			printf("\nYear Created Index : %d Year %d", yearCreatedIndex, current_issue->issue_created_at.year);
+			printf("\nMonth Created Index : %d Month %d", monthCreatedIndex, current_issue->issue_created_at.month);
+
+			time_node->child[yearCreatedIndex]->child[monthCreatedIndex]->child[id] = npNodeNew(kNodePin, time_node->child[yearCreatedIndex]->child[monthCreatedIndex], dataRef);
+		//	time_node->child[yearCreatedIndex]->child[monthCreatedIndex]->child[id]->geometry = kNPgeoPin;
+		//	time_node->child[yearCreatedIndex]->child[monthCreatedIndex]->translate.y += 0.1;
+			id++;
+
+		}
+
+		/*
+		if(yearCreatedIndex == 0)
+		{
+			issuesInYear2014++;
+	//		time_node->child[yearCreatedIndex]->scale.x += 0.1;
+			time_node->child[yearCreatedIndex]->scale.z += 0.1;
+			time_node->child[yearCreatedIndex]->scale.x += 0.1;
+			time_node->child[yearCreatedIndex]->scale.y += 0.1;
+		}
+		else if(yearCreatedIndex == 1)
+		{
+			issuesInYear2015++;
+	//		time_node->child[yearCreatedIndex]->scale.x += 0.1;
+			time_node->child[yearCreatedIndex]->scale.z += 0.1;
+			time_node->child[yearCreatedIndex]->scale.x += 0.1;
+			time_node->child[yearCreatedIndex]->scale.y += 0.1;
+		}
+		*/
+
+	//	time_node->scale.x += 0.1;
+	//	time_node->scale.z += 0.1;
+		
+		issueIndex++;
+	}
+
+/*
+	printf("2374 issues->count : %d", issues->count);
+	while(childIndex < issues->count)
+	{
+		time_node->child[childIndex] = npNodeNew(kNodePin, time_node, dataRef);
+	//	time_node->child[childIndex]->geometry = kNPgeoCylinder;
+		time_node->child[childIndex]->geometry = kNPgeoTorus;
+		time_node->child[childIndex]->scale.z = 3;
+
+
+		if( strcmp(issues->issue[childIndex]->state, "open") == 0 )
+		{
+			time_node->child[childIndex]->color.r = 255;
+			time_node->child[childIndex]->color.g = 0;
+			time_node->child[childIndex]->color.b = 0;
+		}
+		else
+		{
+			time_node->child[childIndex]->color.r = 0;
+			time_node->child[childIndex]->color.g = 0;
+			time_node->child[childIndex]->color.b = 255;
+		}
+
+		time_node->child[childIndex]->translate.x = x_translate;
+		x_translate += 3;
+
+		childIndex++;
+	}
+*/
+}
+
 pNPnode new_new_npGithubNewIssueGlyph(pNPgithubIssue issue, void* dataRef)
 {
 	time_t issue_creation_time;
@@ -788,7 +1369,9 @@ pNPnode new_new_npGithubNewIssueGlyph(pNPgithubIssue issue, void* dataRef)
 	pNPnode timeOpen_node;
 	pNPnode timeClosed_node;
 	pNPnode issueTitle_node;
+	pNPtag issueTitle_tag;
 	pNPnode issueUserLogin_node;
+	static int id = 1;
 	issueUserLogin_node = NULL;
 	issueTitle_node = NULL;
 	timeClosed_node = NULL;
@@ -797,6 +1380,8 @@ pNPnode new_new_npGithubNewIssueGlyph(pNPgithubIssue issue, void* dataRef)
 	issue_node = NULL;
 	issue_creation_time = NULL;
 	duration_of_existence = 0;
+	issueTitle_tag = issue->titleTag;
+
 
 	issue_node = npNodeNew(kNodePin, NULL, dataRef);
 	issue_node->geometry = kNPgeoTorus;
@@ -910,7 +1495,35 @@ pNPnode new_new_npGithubNewIssueGlyph(pNPgithubIssue issue, void* dataRef)
     issueUserLogin_node->translate.x += (-45);	
     issueUserLogin_node->textureID = issue->partOf->current->user.avatar_image_textureID;
 
-		
+	
+	///issueTitle_tag /// lde @todo
+	sprintf(issueTitle_tag->title, "%s", issue->title);
+	issueTitle_tag->titleSize = strlen(issue->title) + 1;
+	issueTitle_node->recordID = (issueTitle_tag->recordID = id);
+	npTagSortAdd(issueTitle_tag, dataRef);
+    npTagNode(issueTitle_node, dataRef);
+	id++;
+	/*
+     title_recordTag = npNewTag( dataRef );
+     sprintf(title_recordTag->title, "%s", issue->title);
+     //    strcpy( recordTag->title, "TIA" );
+     title_recordTag->titleSize = strlen(issue->title) + 1;
+     issue_node->recordID = title_recordTag->recordID = id;
+     id++;
+    */
+    
+
+	/*
+	issue->partOf->recordTagVariableIndex = 1;
+	issue->partOf->issueVariableIndex = 0;
+    issueTitle_tag = npGithubIssueInitNodeTag(issue, dataRef);
+    issueTitle_node->recordID = issueTitle_tag->recordID = id;
+    npTagSortAdd(issueTitle_tag, dataRef);
+    npTagNode(issueTitle_node, dataRef);
+    id++;
+	*/
+
+
 
 	return issue_node;
 }
@@ -1596,6 +2209,8 @@ void* new_npJSONgetGithubIssueFunction(pNPgithubIssues issues, pNPjson json ,int
     
     func(issues, json, dataRef);
     
+
+
     return func;
 }
 
@@ -1603,12 +2218,12 @@ void* new_npJSONgetGithubIssueFunction(pNPgithubIssues issues, pNPjson json ,int
 
 npGetIssueFunc npJSONgetGithubIssueFunction(char* issue_variable, int* returnType)
 {
-    void* (*possible_func[]) = {(void*)npJSONgetGithubIssueUrl, (void*)npJSONgetGithubIssueId, (void*)npJSONgetGithubIssueTitle, (void*)npJSONgetGithubIssueState,
+    void* (*possible_func[]) = {(void*)npJSONgetGithubIssueUrl, (void*)npJSONgetGithubIssueId, (void*)npJSONgetGithubIssueTitle, (void*)npJSONgetGithubIssueNumber, (void*)npJSONgetGithubIssueState,
     (void*)npJSONgetGithubIssueCreatedAt, (void*)npJSONgetGithubIssueUpdatedAt, (void*)npJSONgetGithubIssueClosedAt, (void*)npJSONgetGithubIssueUserLogin};
     char* possible[] = {"url", "id", "title", "state", "created_at", "updated_at", "closed_at", "login"};
     int returnTypes[] = {kNPcharArray, 903, kNPcharArray, kNPcharArray, kNPcharArray, kNPcharArray, kNPcharArray};
     int possible_index = 0;
-    int possible_array_size = 8;
+    int possible_array_size = 9;
     int returnTypes_index = 0;
     int strcmp_result = -1;
  //   void* (*gen_issue_general)(void*) = NULL;
@@ -1733,9 +2348,11 @@ pNPgithubIssueFunctions npGithubInitFunctions(void* (*functions[]), int num_func
     if(github_functions == NULL) return NULL;
 
     ///Replace with while not null
+	num_functions = 10;
     for(index = 0; index < num_functions; index++)
     {
        //   new_func = functions[index];
+		printf("\nfunction index : %d", index);
           new_func = (void*)functions[index];
           github_functions->npGithubIssueFunction[index] = new_func;
    //     github_functions->npGithubIssueFunction[index] = functions[index];
@@ -1759,11 +2376,22 @@ void new_new2_npJSONsetGithubIssue(pNPgithubIssues issues, pNPgithubIssue issue,
 {
 	int index = 0;
     //new_npJSONgetGithubIssueFunction
-    int functionIndex[] = {kNPgithubJSONgetIssueClosedAt,kNPgithubJSONgetIssueCreatedAt, kNPgithubJSONgetIssueId, kNPgithubJSONgetIssueState,kNPgithubJSONgetIssueTitle,kNPgithubJSONgetIssueUpdatedAt,kNPgithubJSONgetIssueUrl,kNPgithubJSONgetIssueUserLogin, kNPgithubJSONgetIssueUserAvatarUrl, kNPgithubJSONgetIssueClosedAt};
+    int functionIndex[] = {kNPgithubJSONgetIssueClosedAt,
+							kNPgithubJSONgetIssueCreatedAt, 
+							kNPgithubJSONgetIssueId, 
+							kNPgithubJSONgetIssueNumber,
+							kNPgithubJSONgetIssueState,
+							kNPgithubJSONgetIssueTitle,
+							kNPgithubJSONgetIssueUpdatedAt,
+							kNPgithubJSONgetIssueUrl,
+							kNPgithubJSONgetIssueUserLogin,
+							kNPgithubJSONgetIssueUserAvatarUrl,
+							kNPgithubJSONgetIssueClosedAt};
     
     //issues->index = 0;
     for(index = 0; index < 8; index++)
     {
+		//printf("\nindex : %d", index);
         new_npJSONgetGithubIssueFunction(issues, json, functionIndex[index], dataRef);
     }
    //2 kNPgithub
@@ -2085,8 +2713,9 @@ int npGithubAntzIssuesToAntzNodes(pNPgithubIssues issues, void* dataRef)
 
     if(issues->index < issues->count)
     {
-        node = npGithubAntzIssueToAntzNode(issues, dataRef);
-        issues->recordTagIndex += 1;
+     //   node = npGithubAntzIssueToAntzNode(issues, dataRef);
+//		gitVizTest(issues, dataRef);      
+		issues->recordTagIndex += 1;
     }
     
     return issues->count - issues->index;
@@ -2258,12 +2887,13 @@ char* npJSONgetGithubIssueUrl(json_t * issue)
 }
 
 
-long long npJSONgetGithubIssueId(json_t * issue)
+int npJSONgetGithubIssueId(json_t * issue)
 {
     json_t *id;
-    long long id_val;
+    int id_val;
     id = npJSONgetObject(issue, "id");
     id_val = json_integer_value(id);
+	printf("\n2389 issue id : %d", id_val);
     return id_val;
 }
 
@@ -2286,6 +2916,7 @@ long long npJSONgetGithubIssueNumber(json_t * data)
   //  json_incref(data);
     number = npJSONgetObject(data, "number");
     number_val = json_integer_value(number);
+	printf("\n2390 issue number : %d", number_val);
  //   json_decref(data);
     return number_val;
 }
@@ -2682,6 +3313,18 @@ void npGithubSetUser(pNPgithubIssues issues, pNPjson json, void* dataRef)
     
 }
 
+/// @todo Add to header
+void npGithubSetIssueNumber(pNPgithubIssues issues, pNPjson json, void* dataRef)
+{
+	json_t *issue_number = NULL;
+	int issue_number_val = 0;
+
+	issue_number = npJSONgetObject(json->issue[json->issueIndex], "number");
+	issue_number_val = json_integer_value(issue_number);
+	printf("\n2391 issue number : %d", issue_number_val);
+	issues->issue[issues->index]->index = issue_number_val;
+}
+
 void npGithubSetIssueUser(pNPgithubIssues issues, pNPjson json, void* dataRef)
 {
     pNPgithubUser github_user = &issues->issue[issues->index]->user;
@@ -2715,13 +3358,22 @@ void npGithubSetIssueUser(pNPgithubIssues issues, int index, void* (*gen_issue_u
 }
 */
 
+/*
+int new_npGithubIssuesInit(pNPgithubIssues issues, void* dataRef)
+{
+	
+}
+*/
+
+
+
 int npGithubIssuesInit(pNPgithubIssues issues)
 {
     char* recordTagVariableFormat[] = {"%s", "%s"};
     /// changed void* to void ,lde
     void (*issue_set_function[]) = {npGithubSetIssueUrl, npGithubSetIssueId, npGithubSetIssueTitle, npGithubSetIssueState,
-        npGithubSetIssueCreatedAt, npGithubSetIssueUpdatedAt, npGithubSetIssueClosedAt, npGithubSetIssueUser};
-    issues->issueFunctions = npGithubInitFunctions(issue_set_function, 9);
+        npGithubSetIssueCreatedAt, npGithubSetIssueUpdatedAt, npGithubSetIssueClosedAt, npGithubSetIssueUser, npGithubSetIssueNumber};
+    issues->issueFunctions = npGithubInitFunctions(issue_set_function, 10);
     
     issues->count   = 0;
     issues->current = NULL;
@@ -2898,6 +3550,11 @@ size_t npGitJSONsetArraySize(pNPjson gitJSON, size_t (*npGet_JSON_arraySize)(pNP
     return gitJSON->array_size;
 }
 
+void prot(pNPgithubIssues issues, void* dataRef)
+{
+	
+}
+
 void npGitJSONinit(pNPjson gitJSON, pNPgithubIssues issues, void* dataRef)
 {
     int githubIssuesLeft = 0;
@@ -2912,16 +3569,16 @@ void npGitJSONinit(pNPjson gitJSON, pNPgithubIssues issues, void* dataRef)
 
 	}
 
-    issues->count = 0;
-    // issues.count = (int)gitJSON.array_size;
-    issues->index = 0;
+    //issues->count = 0;
+	issues->count = (int)gitJSON->array_size;
+	issues->index = 0;
     gitJSON->issueIndex = 0;
     do{/// npJSONgithubIssuesToAntzIssues not in header
         githubIssuesLeft = npJSONgithubIssuesToAntzIssues(gitJSON, issues, dataRef);
         issues->index++;
         gitJSON->issueIndex++;
         issues->count = ((int)gitJSON->array_size - githubIssuesLeft);
-           printf("\n2301 githubIssues Left : %d", githubIssuesLeft);
+         //  printf("\n2301 githubIssues Left : %d", githubIssuesLeft);
     }
     while (githubIssuesLeft > 0);
     issues->index = 0;
@@ -2980,7 +3637,9 @@ void npGithubRun(void* dataRef)
     
     if(issues->running != false)
     {
-        new_getGithubProcessIssues(issues, 20, dataRef);
+       // new_getGithubProcessIssues(issues, 20, dataRef);
+		new_gitVizTest(issues, dataRef);
+		issues->running = false;
     }
     
     if( getUsers == true )
@@ -3029,8 +3688,10 @@ int new_getGithubProcessIssues(pNPgithubIssues issues, int issuesToProcess, void
         return 0;
     }
     
+
     do{
         npGithubCtrlInitRecordTag(issues, issues->index, dataRef);
+		npGithubCtrlInitIssueTextTag(issues, issues->index, dataRef);
         //npGithubCtrlSetCurrentIssue(issues->issue[issues->index], dataRef);
         npGithubCtrlSetCurrentIssueIndex(issues, issues->index, dataRef);
         npGithubCtrlSetCurrentIssue(issues, dataRef);
@@ -3043,8 +3704,8 @@ int new_getGithubProcessIssues(pNPgithubIssues issues, int issuesToProcess, void
         npGithubCtrlLoadIssueUserAvatarTextureID(issues, dataRef);
         npGithubCtrlCountWordsInIssueTitle(issues->issue[issues->index], dataRef);
         
-        antzIssuesLeft = npGithubAntzIssuesToAntzNodes(issues, dataRef);
-        issues->index++;
+   //     antzIssuesLeft = npGithubAntzIssuesToAntzNodes(issues, dataRef);
+		issues->index++;
         antzIssuesProcessed++;
     }
     while( (antzIssuesProcessed < issuesToProcess) && antzIssuesLeft > 0);
