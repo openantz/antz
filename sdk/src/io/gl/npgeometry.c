@@ -83,6 +83,133 @@ void DeleteCircle (NPcirclePtr circle);
 GLuint npCreatePrimitiveDL (void);
 
 
+void npInitGeoList(void* dataRef)
+{
+	pData data = (pData) dataRef;
+	pNPgeoList geoList = &data->io.gl.geoList;
+	int i = 0;
+	
+	geoList->numModels = 0;
+	geoList->numPrimitives = 0;
+
+	for(i = 0; i < kNPgeoListMax; i++)
+	{
+		geoList->name[i][0] = '\0';
+		geoList->DL[i] = 0;
+		geoList->textureID[i] = 0;
+	}	
+
+	// may need to be 20 and not 19
+	// 0 index is dummy
+	for(i = 1; i <= 19; i++)
+	{ 
+	/// The first 20 primitives will remain unnamed, unless they need to be.
+		geoList->DL[i] = primitiveDL + i;
+		geoList->numPrimitives = i;
+	}
+
+	/// Assimp Models start at index 1000
+
+	return;
+}
+
+void npAddModelToGeoList(char* name, GLuint displayList, int textureId, void* dataRef)
+{
+	pData data = (pData) dataRef;
+	pNPgeoList geoList = &data->io.gl.geoList;
+
+	if( (geoList->numModels + 1) > (kNPgeoListMax / 2))
+	{
+		printf("\nModel Limit Hit");
+		return;
+	}
+
+	geoList->numModels++;
+	strcpy(geoList->name[1000 + geoList->numModels], name);
+	geoList->DL[1000 + geoList->numModels] = displayList;
+	geoList->textureID[1000 + geoList->numModels] = textureId;
+	
+
+}
+
+void npAddPrimitiveToGeoList(char* name, GLuint displayList, int textureId, void* dataRef)
+{
+	pData data = (pData) dataRef;
+	pNPgeoList geoList = &data->io.gl.geoList;
+
+	if( (geoList->numPrimitives + 1) > (kNPgeoListMax / 2)) /// 1001
+	{
+		printf("\nPrimitives Limit Hit");
+		return;
+	}
+
+	geoList->numPrimitives++;
+	strcpy(geoList->name[geoList->numPrimitives], name);
+	geoList->DL[geoList->numPrimitives] = displayList;
+	geoList->textureID[geoList->numPrimitives] = textureId;
+
+	return;
+}
+
+void npDelPrimitiveFromGeoList(int index, void* dataRef)
+{
+	pData data = (pData) dataRef;
+	pNPgeoList geoList = &data->io.gl.geoList;
+
+	if(geoList->numPrimitives == 0)
+	{
+		printf("\nNo Primitives to Delete");
+		return;
+	}
+
+	if(index == 0)
+	{
+		printf("\nCannot delete value at 0th index for it is the dummy value");
+		return;
+	}
+
+	if( (index > (kNPgeoListMax / 2)) || (index > geoList->numPrimitives) || (index == 0) )
+	{
+		printf("\nIndex %d out of primitive range : [1,%d]", index, (kNPgeoListMax/2) );	
+		return;
+	}
+
+	geoList->DL[index] = 0;
+	geoList->name[index][0] = '\0';
+	geoList->textureID[index] = 0;
+	geoList->numPrimitives--;
+
+}
+
+void npDelModelFromGeoList(int index, void* dataRef)
+{
+	pData data = (pData) dataRef;
+	pNPgeoList geoList = &data->io.gl.geoList;
+
+	if(geoList->numModels == 0)
+	{
+		printf("\nNo models to delete");
+		return;
+	}
+
+	if( ( (index+1000) > (kNPgeoListMax+1) ) || (index > geoList->numPrimitives) || ((index+1000) == 1000) )
+	{
+		printf("\nIndex %d out of primitive range : [1,%d]", index, (kNPgeoListMax/2) );	
+		return;
+	}
+
+	geoList->DL[(1000+index)] = 0;
+	geoList->name[(1000+index)][0] = '\0';
+	geoList->textureID[(1000+index)] = 0;
+	geoList->numModels--;
+
+}
+
+
+
+
+
+
 //------------------------------------------------------------------------------
 void npInitGLPrimitive (void* dataRef)
 {
@@ -106,7 +233,10 @@ void npCloseGLPrimitive (void* dataRef)
 //------------------------------------------------------------------------------
 void npGLPrimitive (int geometry, float ratio)
 {
+	pData data = (pData) npGetDataRef();
 	glPushMatrix();									//is glPushMatrix necessary, zz debug
+
+	printf("\ngeometry : %d", geometry);
 
 	//draw the object using the primitive DL offset by geometry index
 	if (geometry == kNPgeoTorus || geometry == kNPgeoTorusWire)

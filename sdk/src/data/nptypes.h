@@ -1014,9 +1014,22 @@ struct NPhud {
 typedef struct NPhud NPhud;
 typedef struct NPhud * pNPhud;
 
+#define kNPgeoListMax 2000
+struct NPgeoList {
+	unsigned int DL[kNPgeoListMax+1];	///<! Display Lists for drawing geometries
+	int textureID[kNPgeoListMax+1];		///<! Texture Associated with each geometry
+	char name[kNPgeoListMax+1][32];		///<! Name of each geometry
+	int numPrimitives;
+	int numModels;
+};
+typedef struct NPgeoList NPgeoList;
+typedef NPgeoList* pNPgeoList;
+
+
 struct NPgl {
 	void* coreNode; ///< core nodes tie global structures to the scene graph
 						//!< each global struct has a corresponding base node.
+	NPgeoList geoList;
 
 	int			id;				//!<the node ID used to store this GL item 
 

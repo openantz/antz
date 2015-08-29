@@ -28,6 +28,7 @@
 
 #include "../../npdata.h"
 
+void npInitGeoList(void* dataRef);
 
 void npInitGLPrimitive (void* dataRef);
 void npCloseGLPrimitive (void* dataRef);

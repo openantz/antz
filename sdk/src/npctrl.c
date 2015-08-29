@@ -1517,10 +1517,31 @@ void npCtrlProperty (int command, void* dataRef)
 			else
 				node->geometry++;
 
-			if (node->geometry >= kNPgeoCount )//kNPgeoPin)	//zz debug
+			printf("\ndata->io.gl.geoList.numPrimitives+1 : %d",data->io.gl.geoList.numPrimitives+1); 
+			data->io.gl.geoList.numModels = 10;
+			if (node->geometry >= data->io.gl.geoList.numPrimitives+1 )//kNPgeoPin)	//zz debug
+			{
+				if( data->io.gl.geoList.numModels == 0)
+				{
+					node->geometry = 0;
+				}
+				else
+				{
+					//node->geometry++;	
+					if(node->geometry < 1000)
+					{
+						node->geometry = 1000;
+					}
+				}
+			}
+			
+			if(node->geometry > (data->io.gl.geoList.numModels+1000) )
+			{
 				node->geometry = 0;
-			if (node->geometry < 0)
-				node->geometry = kNPgeoCount - 1;//kNPgeoPin;
+			}
+
+			if (node->geometry < 0) /// make it roll back to the model geometries
+				node->geometry = data->io.gl.geoList.numPrimitives - 1;//kNPgeoPin;
 			npSetTagOffset (node);
 			sprintf(msg, "geometry: %d", node->geometry);
 			npPostMsg (msg, kNPmsgCtrl, dataRef);
