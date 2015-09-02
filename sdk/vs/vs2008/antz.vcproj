@@ -570,11 +570,27 @@
 					Name="file"
 					>
 					<File
+						RelativePath="..\..\src\io\file\gitjson.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\file\gitjson.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\io\file\npcsv.c"
 						>
 					</File>
 					<File
 						RelativePath="..\..\src\io\file\npcsv.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\net\npcurljson.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\net\npcurljson.h"
 						>
 					</File>
 					<File
@@ -706,6 +722,30 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\src\io\net\npCurlGithub.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\net\npCurlGithub.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\net\npGithub.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\net\npGithub.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\net\npgitviz.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\net\npgitviz.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\io\net\nposc.c"
 						>
 					</File>
@@ -757,18 +797,18 @@
 						RelativePath="..\..\src\io\video\npvideo.h"
 						>
 					</File>
-				</Filter>
-				<Filter
-					Name="plugin"
-					>
-					<File
-						RelativePath="..\..\src\io\plugin\npplugin.c"
+					<Filter
+						Name="plugin"
 						>
-					</File>
-					<File
-						RelativePath="..\..\src\io\plugin\npplugin.h"
-						>
-					</File>
+						<File
+							RelativePath="..\..\src\io\plugin\npplugin.c"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\io\plugin\npplugin.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 			<Filter

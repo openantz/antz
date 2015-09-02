@@ -25,10 +25,28 @@
 #ifndef NPJSON_H_
 #define NPJSON_H_
 
+#include <jansson.h>	
+#include "../../data/nptypes.h"
+
+/*
+struct NPjson {
+    json_t *root;
+    json_t *data, *url, *commit, *message;
+    json_t *id;
+    json_t *number;
+    json_error_t* error;
+};
+typedef struct NPjson NPjson;
+typedef NPjson* pNPjson;
+*/
 
 //------------------------------------------------------------------------------
-void npInitJSON (void* dataRef);
+void npInitJSON (pNPjson json, void* dataRef);
 void npCloseJSON (void* dataRef);
+
+
+void npJSON_loads(pNPjson json ,char* input, void* dataRef);
+void npJSON_arrayExtend(pNPjson json, json_t* other, void* dataRef);
 
 
 #endif

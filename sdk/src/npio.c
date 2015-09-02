@@ -29,6 +29,9 @@
 #include "io/npmouse.h"
 #include "io/npconsole.h"
 #include "io/net/nposc.h"
+#include "io/net/npcurl.h"
+#include "io/net/npGithub.h"
+#include "io/file/npjson.h"
 
 #include "io/db/npdb.h"
 
@@ -74,11 +77,20 @@ void npInitIO( void* dataRef )
 	npInitOSC( dataRef );			//zz-osc
 
 	/// @todo change npConnectDB over to npInitDB
+	printf("\nInit DB");
 	npInitDB( dataRef );
 
-	new_npGithubInit( dataRef );
+	printf("\nInit JSON");
+	npInitJSON( &data->io.json, dataRef);
 
-	npGitJSONinit( &gitJSON, &data->io.issues);	
+	printf("\nInit CURL");
+	npCurlInit( dataRef );
+
+	printf("\nInit Github");
+//	npGithubInit( dataRef );
+	npGithubInit( &data->io.github, dataRef);
+
+	//npGitJSONinit( &gitJSON, &data->io.issues);	
 }
 
 // This is a temporary location for this, lde @todo

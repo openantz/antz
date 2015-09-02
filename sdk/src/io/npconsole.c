@@ -120,7 +120,8 @@ void npConsoleCmdText( pNPconsole console, void* dataRef )
 	}
 	else if( strncmp("issues ", console->inputStr, 6) == 0 )
 	{
-		data->io.issues.running = true;
+		//data->io.issues.running = true;
+		data->io.github.issues->running = true;
 	}
 	else if( strncmp ( "pick ", console->inputStr, 5 ) == 0 )
 	{
@@ -821,7 +822,7 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 			return;
 		}
 
-		data->io.issues.running = true;
+//		data->io.issues.running = true;
 		/*
 		sprintf(msg,"USE Database %s", dbItem->name);
 		npPostMsg(msg, kNPmsgView, dataRef);
@@ -839,7 +840,8 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 	}
 	else if( !strncmp(input, "issues ", 4) )
 	{
-		data->io.issues.running = true;
+	//	data->io.issues.running = true;
+		data->io.github.issues->running = true;
 	}
 	else if( !strncmp(input, "save", 4) )
 	{
