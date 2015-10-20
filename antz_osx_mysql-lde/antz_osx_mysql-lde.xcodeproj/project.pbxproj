@@ -94,6 +94,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		191B8E0A1BD6DAA2000B4219 /* antz */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = antz; sourceTree = "<group>"; };
 		708A87FB1A2FE0DD00B7B625 /* npdbTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = npdbTypes.h; sourceTree = "<group>"; };
 		708F145819F1E19B00208B80 /* antz.exe */ = {isa = PBXFileReference; lastKnownFileType = file; name = antz.exe; path = ../antz.exe; sourceTree = SOURCE_ROOT; };
 		708F145919F1E19B00208B80 /* freeglut.dll */ = {isa = PBXFileReference; lastKnownFileType = file; name = freeglut.dll; path = ../freeglut.dll; sourceTree = SOURCE_ROOT; };
@@ -389,6 +390,7 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				191B8E0A1BD6DAA2000B4219 /* antz */,
 				708F145819F1E19B00208B80 /* antz.exe */,
 				708F145919F1E19B00208B80 /* freeglut.dll */,
 				708F145A19F1E19B00208B80 /* glut32.dll */,
