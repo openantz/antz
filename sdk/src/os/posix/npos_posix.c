@@ -56,6 +56,13 @@
 //	#include <unistd.h>			//debug zz
 #endif
 
+// current working directory is OS specific
+//-----------------------------------------------------------------------------
+void nposGetCWD (char* buffer, int* size)
+{
+	getcwd (buffer, size);
+}
+
 //-----------------------------------------------------------------------------
 void nposGetAppPath (char* buffer, int* size)
 {
@@ -79,12 +86,7 @@ void nposGetAppPath (char* buffer, int* size)
 	*size = strlen(buffer); 
 }
 
-// current working directory is OS specific
-//-----------------------------------------------------------------------------
-void nposGetCWD (char* buffer, int* size)
-{
-	getcwd (buffer, size);
-}
+
 
 //-----------------------------------------------------------------------------
 void nposSetCWD (char* buffer)

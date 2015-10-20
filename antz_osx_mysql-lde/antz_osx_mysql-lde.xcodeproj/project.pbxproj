@@ -3163,6 +3163,8 @@
 /* Begin PBXProject section */
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+			};
 			buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "antz_osx_mysql-lde" */;
 			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;
@@ -3309,7 +3311,7 @@
 				LIBRARY_SEARCH_PATHS = "${SRCROOT}/../sdk/libs/mysql/";
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx10.8;
 			};
 			name = Debug;
 		};
@@ -3327,7 +3329,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx10.8;
 			};
 			name = Release;
 		};

@@ -44,7 +44,7 @@ void npOSXTimeStampCSV (char* fileName);
 void npOSXSetCursorPos (int x, int y);
 void npOSXShowCursor (int hide);
 
-bool nposSupportsAntzThreads (void); // lde
+//bool nposSupportsAntzThreads (void); // lde
 void nposEndThread (void); // lde
 void nposBeginThread (voidFnPtr vfp, void *dataRef); // lde
 

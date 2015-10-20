@@ -47,6 +47,23 @@ pNPdbFuncSet npdbGetHostFuncSet( char* hostType, pNPdbs dbs );
 void npdbRowToNode( pNPnode node, char** row );
 void npdbUpdateNodesFromMysqlResult( MYSQL_RES *result, void* dataRef );
 
+int* npdbInitIdMap(int* err, void* dataRef)
+{
+	int* IdMap = NULL;
+	printf("1722");
+	IdMap = malloc(sizeof(int) * kNPnodeMax);
+	
+	err = (int*)0;
+	
+	if( IdMap == NULL)
+	{
+		err = (int*)3791; // add error code, lde @todo
+		return NULL;
+	}
+	
+    return IdMap;
+}
+
 // add to header, lde @todo
 void npdbInitPtrList(pNPdbs dbs, int* err, void* dataRef)
 {
@@ -833,7 +850,7 @@ void npdbSetActiveDB( pNPdatabase dbItem, int* err, void* dataRef )
 	}
 	
 	data->io.db.activeDB = dbItem;
-	data->io.db.activeDB->idMap = NULL;
+	//data->io.db.activeDB->idMap = NULL;
 	
 	return;
 }
@@ -1074,7 +1091,16 @@ int npdbUse( pNPdatabase dbItem, void* dataRef )
 	{
 		strcpy(data->io.db.inUseDB2, dbItem->name);
 		data->io.db.activeDB = npdbGetByName(dbItem->name, dataRef);
+        if(data->io.db.activeDB == NULL)
+            return err;
+        
 		printf("\nActive Database is now %s\n", data->io.db.activeDB->name);
+        printf("\nActive Database id map ptr %p", data->io.db.activeDB->idMap);
+        if(data->io.db.activeDB->idMap == NULL)
+        {
+            data->io.db.activeDB->idMap = npdbInitIdMap(&err, dataRef);
+        }
+        
 	}
 
 	free(statement);
@@ -1249,7 +1275,7 @@ int npdbClearDatabaseList( pNPdbs dbs )
 	//	if( i < dbs->dbCount && dbs->dbList[i] )
 			if( dbs->dbList[i] != NULL)
 			{
-				free( dbs->dbList[i] );
+                free( dbs->dbList[i] );
 			}
 		
 		dbs->dbList[i] = NULL;	/// set entire list of pointers to NULL
@@ -1286,6 +1312,8 @@ pNPdatabase npdbNewDatabase( char* name, pNPdbHost host, pNPdbs db )
 
 	database->format = 0;		/// @todo implement 3rd party format support
 
+    database->idMap = NULL;
+    
 	/// add the new database item to the dbList and increment the count
 	db->dbList[db->dbCount++] = database;
 
@@ -1517,6 +1545,7 @@ void npdbAddHost( char* type, char* ip, int port, char* user, char* pass, int* e
 		/// @todo add kNPnodeList type for npMalloc
 		
 		dbs->activeDB->idMap = npdbMalloc( sizeof(int) * kNPnodeMax , dataRef);
+        printf("\ndbs->activeDB->idMap : %p", dbs->activeDB->idMap);
 		if(dbs->activeDB->idMap == NULL)
 		{
 			printf("idMap Malloc failed");
@@ -1878,22 +1907,7 @@ int npdbTableRowsToNodes()
 	return 0;
 }
 
-int* npdbInitIdMap(int* err, void* dataRef)
-{
-	int* IdMap = NULL;
-	printf("1722");
-	IdMap = malloc(sizeof(int) * kNPnodeMax);
-	
-	err = (int*)0;
-	
-	if( IdMap == NULL)
-	{
-		err = (int*)3791; // add error code, lde @todo
-		return NULL;
-	}
-	
-	return IdMap;
-}
+
 
 /// Loads the result set for a node_tbl select query
 int npdbLoadNodes( pNPdbFuncSet func, void* result, int* err, void* dataRef ) // npdbLoadNodesFromTable , lde @todo
@@ -1926,12 +1940,15 @@ int npdbLoadNodes( pNPdbFuncSet func, void* result, int* err, void* dataRef ) //
 	//numFields = mysql_num_fields(result);
 	//	table = npdbGetTable( "node_tbl", dbItem );
 
+    /*
 	if(data->io.db.activeDB->idMap != NULL)
 	{
 		free(data->io.db.activeDB->idMap);
 		data->io.db.activeDB->idMap = NULL;
 	}
-		
+    */
+    
+    /*
 	if(data->io.db.activeDB->idMap == NULL) // This is a quick fix, lde @todo
 	{
 		printf("1722 idMap is NULL");
@@ -1942,6 +1959,7 @@ int npdbLoadNodes( pNPdbFuncSet func, void* result, int* err, void* dataRef ) //
 
 		//if(data->io.db.activeDB->idMap == NULL) return NULL;	
 	}
+    */
 
 	while( row = func->fetch_row(result) )
 	{
@@ -1980,8 +1998,10 @@ int npdbLoadNodes( pNPdbFuncSet func, void* result, int* err, void* dataRef ) //
 			printf("err 5538 - npMapNodeAdd returned null node id: %d \n", id);
 		else
 		{		
-
-			data->io.db.activeDB->idMap[id] = node->id; //new, lde // when npdbClearDatabaseList is run, it doesn't free the idMap and it isn't reallocated later, lde @todo
+            printf("\nactiveDB : %p", data->io.db.activeDB);
+            printf("\nactiveDB->idMap : %p", data->io.db.activeDB->idMap	);
+            
+            data->io.db.activeDB->idMap[id] = node->id; //new, lde // when npdbClearDatabaseList is run, it doesn't free the idMap and it isn't reallocated later, lde @todo
 			npdbRowToNode( node, row );
 			//npAddNodeMapID( map, id, node, data );
 			nodeCount++;
@@ -3250,13 +3270,13 @@ void npdbSelectTableByName( pNPdatabase dbItem, char* tableName, int* err, void*
 	printf("\nnpdbSelectTable");
 	
 	err = (int*)0;
-	if( npdbItemErr(dbItem)) return 1;	/// ascert valid DB and connection
+	if( npdbItemErr(dbItem)) return;	///1 ascert valid DB and connection
 	
 	func = dbItem->host->hostFuncSet;
 	conn = dbItem->host->conn;
 	
 	statement = func->StatementSelect(tableName);
-	if( !statement ) return 2;
+	if( !statement ) return; ///2
 	
 	printf("query: %s\n",statement);
 	
@@ -3509,7 +3529,11 @@ int npdbLoadMenuItem (int item, void* dataRef)
 
 	/// load the database
 	dbItem = npdbGetByName(data->io.db.inUseDB2, dataRef);
-	
+	if(dbItem == NULL)
+    {
+        printf("\nnpdbGetByName Returned NULL");
+    }
+    
 	data->io.db.activeDB = dbItem;
 	strcpy(data->io.db.activeDB->name, dbItem->name); // new, lde @todo // pos obs
 	strcpy(data->io.db.inUseDB2, dbItem->name); // new, lde

@@ -1591,7 +1591,7 @@ int npOpenMapCSV (char* filePath, int mapType, void* dataRef)
 
 					if (*typeTagA == 'i')	//goto next field if more then one element
 					{
-						(int*)elementRef += 1;
+						elementRef += 1;
 						i = npNextField(valueStr); valueStr = &valueStr[i];
 					}
 				}
@@ -1605,7 +1605,7 @@ int npOpenMapCSV (char* filePath, int mapType, void* dataRef)
 					
 					if (*typeTagA == 'f')	//goto next field if more then one element
 					{
-						(float*)elementRef += 1;
+						elementRef += 1;
 						i = npNextField( valueStr ); valueStr = &valueStr[i];	//zz debug, what if no more fields... mem violation?
 					}
 				}
@@ -1626,7 +1626,7 @@ int npOpenMapCSV (char* filePath, int mapType, void* dataRef)
 					
 					if (*typeTagA == 's')	//goto next field if more then one element
 					{
-						(char*)elementRef += 1;
+						elementRef += 1;
 						i = npNextField( valueStr ); valueStr = &valueStr[i];	//zz debug, what if no more fields... mem violation?
 					}
 				}
