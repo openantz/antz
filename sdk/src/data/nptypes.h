@@ -25,9 +25,10 @@
 #ifndef NPTYPES_H_
 #define NPTYPES_H_
 
-#define kNPappVer "0.198.2"
-#include <jansson.h>	
-//#include "../libs/jansson/src/jansson.h"
+#define kNPappVer "0.199.0"
+
+#include "jansson.h"				//zz move this to npjson.h
+
 #include "stdbool.h"
 #include "npdbTypes.h"
 //#include <stdint.h>
@@ -47,15 +48,16 @@
 //! #define NP_APP_CONSOLE		// console app works without drawing = no GL
 #define NP_APP_FREEGLUT			// freeglut app framework on MSW and linux
 //! #define NP_APP_APPLE_GLUT	// Apple GLUT app framework for OSX
+//! #define NP_APP_OFX			// OFX framework
+//! #define NP_APP_QT			// QT framework
 //! #define NP_APP_SDL			// SDL app on Linux, MSW, OSX, iOS & Android //zz v2
 
 //!> OPTIONAL 3rd party freeware (library) plugins
 //!---------------------------------------------------------------------------
 //! #define NP_PLUGIN_ASSIMP	// 3D model load and save, non-KML
-//! #define NP_PLUGIN_CJSON		// JSON parser, lightweight
-//! #define NP_PLUGIN_CURL		// network with ftp, http, smtp, ssh, etc...
+#define NP_PLUGIN_CURL			// network with ftp, http, smtp, ssh, etc...
 //! #define NP_PLUGIN_DEVIL		// texture map image load and save library
-//! #define NP_PLUGIN_JANNSON	// JSON parser
+#define NP_PLUGIN_JANNSON		// JSON parser
 //! #define NP_PLUGIN_FREETYPE	// GL friendly font library
 //! #define NP_PLUGIN_MINIZ		// ZIP file compression
 #define NP_PLUGIN_MYSQL			// MySQL database access
