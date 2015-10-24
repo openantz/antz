@@ -1,4 +1,26 @@
-
+/* -----------------------------------------------------------------------------
+*
+*  npcurl.c
+*
+*  ANTz - realtime 3D data visualization tools for the real-world, based on NPE.
+*
+*  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
+*
+*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*
+*  Please see main.c for a complete list of additional code contributors.
+*
+*  To the extent possible under law, the author(s) have dedicated all copyright 
+*  and related and neighboring rights to this software to the public domain
+*  worldwide. This software is distributed without any warranty.
+*
+*  Released under the CC0 license, which is GPL compatible.
+*
+*  You should have received a copy of the CC0 Public Domain Dedication along
+*  with this software (license file named LICENSE.txt). If not, see
+*  http://creativecommons.org/publicdomain/zero/1.0/
+*
+* --------------------------------------------------------------------------- */
 //#include <curl/curl.h>
 #include "npcurl.h"
 
@@ -18,19 +40,21 @@ void npCurlInit(void* dataRef)
 	printf("\nafter npCurlInit");
 }
 
+/*
 static size_t
 WriteMemoryCallback2(void *contents, size_t size, size_t nmemb, void *userp)
 {
     size_t realsize = size * nmemb;
 	pData data = (pData) userp;
 
+	
 	data->io.curl.mem[data->io.github.request->page-1].memory = realloc(data->io.curl.mem[data->io.github.request->page-1].memory,
 		data->io.curl.mem[data->io.github.request->page-1].size + realsize + 1);
 
 	if(data->io.curl.mem[data->io.github.request->page-1].memory == NULL) {
         // out of memory! 
-        printf("not enough memory (realloc returned NULL)\n");
-        return 0;
+		printf("not enough memory (realloc returned NULL)\n");
+		return 0;
 	}
 	
 	memcpy(&data->io.curl.mem[data->io.github.request->page - 1].memory[data->io.curl.mem[data->io.github.request->page - 1].size], contents, realsize); 
@@ -40,9 +64,9 @@ WriteMemoryCallback2(void *contents, size_t size, size_t nmemb, void *userp)
 
 //	printf("\nContents : %s\n", (char*)contents);
 
-    return realsize;
+	return realsize;
 }
-
+*/
 
 
 /*
@@ -182,17 +206,20 @@ void npCURL_easyCleanup(pNPcurl curl, void* dataRef)
 }
 
 //void npCURL_easySetOpt(CURL* curl_handle, int flags, char* url_string, void* dataRef);
+/*
 void npCURL_easySetOpt(pNPcurl curl, void* dataRef)
 {
+	/// temp
     curl_easy_setopt(curl, curl->easySetOptFlag, WriteMemoryCallback2);
 }
+*/
 
-
-void npCURL_easySetOptUrl(pNPcurl curl, char* url, void* dataRef)
+void npcurlEasySetOptUrl(pNPcurl curl, char* url, void* dataRef)
 {
 //	npCURL_easySetOptFlag(curl, CURLOPT_URL, dataRef);
 //	curl->url = url; /// @todo copy it and retain it for later	
-//	strcpy(curl->url, url);
+	strcpy(curl->url, url);
+//	printf("curl->url : %s", curl->url);
 	curl_easy_setopt(curl->curl_handle, CURLOPT_URL, curl->url);
 }
 
@@ -217,17 +244,18 @@ char* npCURL_easyStrError(pNPcurl curl, void* dataRef)
 	curl->errorStr = curl_easy_strerror(curl->res);
 }
 
-/*
+
 void npCURL_easySetOptUrl(pNPcurl curl, void* dataRef)
 {
-	npCURL_easySetOpt(curl, dataRef);
+	//npCURL_easySetOpt(curl, dataRef);
 }
-*/
+
 
 void npCURL_easySetOptWriteFunction(pNPcurl curl, static size_t (*func)(void* contents, size_t size, size_t nmemb, void *userp), void* dataRef)
 {
-//	curl_easy_setopt(curl->curl_handle, CURLOPT_WRITEFUNCTION, func);
-	curl_easy_setopt(curl->curl_handle, CURLOPT_WRITEFUNCTION, WriteMemoryCallback2);
+	/// temp
+	curl_easy_setopt(curl->curl_handle, CURLOPT_WRITEFUNCTION, func);
+//	curl_easy_setopt(curl->curl_handle, CURLOPT_WRITEFUNCTION, WriteMemoryCallback2);
 }
 
 void npCURL_easySetOptWriteData(pNPcurl curl, void*	data, void* dataRef)
@@ -240,15 +268,19 @@ void npCURL_easySetOptUserAgent(pNPcurl curl, char* userAgentString, void* dataR
 	curl_easy_setopt(curl->curl_handle, CURLOPT_USERAGENT, userAgentString);
 }
 
-void npCURL_easyPerform(pNPcurl curl, void* dataRef)
+int npCURL_easyPerform(pNPcurl curl, void* dataRef)
 {
+//	printf("\ncurl->curl_handle : %p", curl->curl_handle);
 	curl->res = curl_easy_perform(curl->curl_handle);	
 	if( curl->res != CURLE_OK ) {
 		printf("\nnpCURL_easyPerform failed");
 		fprintf(stderr, "curl_easy_perform() failed: %s\n",
 			curl_easy_strerror(curl->res));	
+		return -1;
 	}
+
 //	printf("\nContents : %s\n", curl->mem.memory);
+	return 0;
 }
 
 /*
@@ -264,11 +296,12 @@ static size_t WriteImage(void *contents, size_t size, size_t nmemb, void *userp)
 void npCURLgetImage(pNPcurl curl, char* url, void* dataRef)
 {
 	pData data = (pData) dataRef;
+	int err = -1;
 
-	npCURL_easySetOptUrl(curl, url, dataRef); 
+//	npCURL_easySetOptUrl(curl, url, dataRef); 
       
 	// send all data to this function  
-	npCURL_easySetOptWriteFunction(curl, WriteMemoryCallback2, dataRef);
+//	npCURL_easySetOptWriteFunction(curl, WriteMemoryCallback2, dataRef);
 
     // we pass our 'chunk' struct to the callback function 
 	npCURL_easySetOptWriteData(curl, dataRef, dataRef);
@@ -278,17 +311,25 @@ void npCURLgetImage(pNPcurl curl, char* url, void* dataRef)
 	npCURL_easySetOptUserAgent(curl, "libcurl-agent/1.0", dataRef);
 
     // get it!
-	npCURL_easyPerform(curl, dataRef);        
+	err = npCURL_easyPerform(curl, dataRef);        
+	if(err == -1)
+	{
+		return -1;
+	}
+
 }
 
-void npCURLgetUrl(pNPcurl curl, char* url, int memory_index, void* dataRef)
+int npCURLgetUrl(pNPcurl curl, char* url, int memory_index, void* dataRef)
 {
 	pData data = (pData) dataRef;
+	int err = -1;
 
-	npCURL_easySetOptUrl(curl, url, dataRef); 
+//	npCURL_easySetOptUrl(curl, url, dataRef); 
+//	printf("curl url : %s", url);
+	npcurlEasySetOptUrl(curl, url, dataRef);
       
 	// send all data to this function  
-	npCURL_easySetOptWriteFunction(curl, WriteMemoryCallback2, dataRef);
+//	npCURL_easySetOptWriteFunction(curl, WriteMemoryCallback2, dataRef);
 
     // we pass our 'chunk' struct to the callback function 
 	npCURL_easySetOptWriteData(curl, dataRef, dataRef);
@@ -298,7 +339,13 @@ void npCURLgetUrl(pNPcurl curl, char* url, int memory_index, void* dataRef)
 	npCURL_easySetOptUserAgent(curl, "libcurl-agent/1.0", dataRef);
 
     // get it!
-	npCURL_easyPerform(curl, dataRef);        
+	err = npCURL_easyPerform(curl, dataRef);        
+	if(err == -1)
+	{
+		return -1;
+	}
+
+	return 0;
 }
 
 void npCURLsetGithubRequest(pNPgithubRequest request, int page, int per_page, char* state, void* dataRef)

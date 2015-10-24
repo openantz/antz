@@ -34,7 +34,7 @@
 #include "io/file/npjson.h"
 
 #include "io/db/npdb.h"
-
+#include <assert.h>
 
 /*! Initialize IO systems
 *
@@ -81,14 +81,22 @@ void npInitIO( void* dataRef )
 	npInitDB( dataRef );
 
 	printf("\nInit JSON");
-	npInitJSON( &data->io.json, dataRef);
+	//npInitJSON( &data->io.json, dataRef);
+	npInitJSON( &data->io.json2, dataRef);
 
 	printf("\nInit CURL");
 	npCurlInit( dataRef );
 
-	printf("\nInit Github");
+	data->io.github.issues = NULL;
+	printf("\nInit Github : issues ptr %p", data->io.github.issues);
+//	getchar();
 //	npGithubInit( dataRef );
-	npGithubInit( &data->io.github, dataRef);
+	if( !npGithubInit( &data->io.github, dataRef) == 0 )
+		printf("\ngithub issues not inited");
+	else
+		printf("\ngithub issues inited");
+
+	assert(data->io.github.issues != NULL);
 
 	//npGitJSONinit( &gitJSON, &data->io.issues);	
 }

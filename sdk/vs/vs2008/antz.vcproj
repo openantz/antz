@@ -44,8 +44,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../libs/freeglut/include/GL;../../libs/oscpack/src;../../libs/soil/src;../../libs/mysql/include/"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE"
+				AdditionalIncludeDirectories="../../libs/curl/include;../../libs/jansson/src;../../libs/freeglut/include/GL;../../libs/oscpack/src;../../libs/soil/src;../../libs/mysql/include/"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;CURL_STATICLIB;BUILDING_LIBCURLD;USE_WINDOWS_SSPI;USE_SCHANNEL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -65,9 +65,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib SOIL.lib libmysql.lib mysqlclient.lib ws2_32.lib"
+				AdditionalDependencies="opengl32.lib glu32.lib SOIL.lib libmysql.lib mysqlclient.lib ws2_32.lib jansson_d.lib libcurld.lib wldap32.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="../../libs/freeglut/lib/x86;../../libs/oscpack;../../libs/mysql;../../libs/soil/lib"
+				AdditionalLibraryDirectories="../../libs/jansson/make/lib/Debug;../../libs/freeglut/lib/x86;../../libs/oscpack;../../libs/mysql;../../libs/soil/lib;&quot;../../libs/curl/build/Win32/VC9/LIB Debug - DLL Windows SSPI&quot;"
+				IgnoreAllDefaultLibraries="false"
+				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				LargeAddressAware="2"
@@ -150,7 +152,7 @@
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				LargeAddressAware="2"
-				OptimizeReferences="2"
+				OptimizeReferences="1"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"
 			/>
@@ -570,27 +572,11 @@
 					Name="file"
 					>
 					<File
-						RelativePath="..\..\src\io\file\gitjson.c"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\io\file\gitjson.h"
-						>
-					</File>
-					<File
 						RelativePath="..\..\src\io\file\npcsv.c"
 						>
 					</File>
 					<File
 						RelativePath="..\..\src\io\file\npcsv.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\io\net\npcurljson.c"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\io\net\npcurljson.h"
 						>
 					</File>
 					<File
@@ -722,19 +708,11 @@
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\io\net\npCurlGithub.c"
+						RelativePath="..\..\src\io\net\npgithub.c"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\io\net\npCurlGithub.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\io\net\npGithub.c"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\io\net\npGithub.h"
+						RelativePath="..\..\src\io\net\npgithub.h"
 						>
 					</File>
 					<File

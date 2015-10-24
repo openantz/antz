@@ -1658,12 +1658,14 @@ struct NPgithubIssue {
 typedef struct NPgithubIssue NPgithubIssue;
 typedef NPgithubIssue* pNPgithubIssue;
 
+#define kNPgithubMaxIssues 500
+
 struct NPgithubIssues {
     pNPnode parent;
     NPgithubIssueIndex index;
     pNPgithubIssue current;
     pNPnode node;
-    NPgithubIssue issue[300]; /// Hardcoded at 300
+    NPgithubIssue issue[kNPgithubMaxIssues];
 //    NPgithubUser user[10];    
 //	int num_of_users;
 //    int userIndex;
@@ -1691,6 +1693,8 @@ typedef NPgithubIssues* pNPgithubIssues;
 
 
 struct NPgithubRequest {
+	char url[100];
+	int urlSize;
 	char* state;
 	int per_page;
 	int page;
@@ -1717,17 +1721,18 @@ struct NPjson {
 typedef struct NPjson NPjson;
 typedef struct NPjson* pNPjson;
 */
-
+/*
 struct NPgithub {
 	char* repo_name;
 	pNPgithubIssues issues;
 	NPgithubUser user[200];
 	int num_of_users;
 	pNPgithubRequest request;
+	new2_pNPjson jsonGithub;
 };
 typedef struct NPgithub NPgithub;
 typedef NPgithub* pNPgithub;
-
+*/
 
 /*
 struct NPjsonGithubIssue {
@@ -1756,6 +1761,125 @@ struct NPjson {
 typedef struct NPjson NPjson;
 typedef NPjson* pNPjson;
 
+/// @todo: implement selectors
+struct NPjsonKeyList {
+	char key[30]; 
+	json_t* value;
+	int index;
+};
+typedef struct NPjsonKeyList NPjsonKeyList;
+typedef NPjsonKeyList* pNPjsonKeyList;
+
+struct NPjsonKey {
+	char* key;
+//	char key[30];
+};
+typedef struct NPjsonKey NPjsonKey;
+typedef NPjsonKey pNPjsonKey;
+
+/*
+type (enum)
+----
+kNPjsonString
+kNPjsonNumber
+kNPjsonObject
+kNPjsonArray
+kNPjsonTrue
+kNPjsonFalse
+kNPjsonNull
+*/
+struct NPjsonValue {
+	int j_type; /// result of json_t* j_value;
+	json_t* j_value; 
+	int c_type; /// could be: pNPjsonObject, pNPjsonArray
+	void* c_value;
+};
+typedef struct NPjsonValue NPjsonValue;
+typedef NPjsonValue* pNPjsonValue;
+
+#define kNPjsonMaxKeyValuePairs 30
+
+/// An object is an unordered set of name/value pairs
+struct NPjsonObject {
+	void* parent; /// can be pNPjsonArray, pNPjsonObject, if null then no parent
+	int parentType;
+	int numNameValuePairs;	
+	NPjsonKey jsonKey[kNPjsonMaxKeyValuePairs];
+	NPjsonValue jsonValue[kNPjsonMaxKeyValuePairs];
+};
+typedef struct NPjsonObject NPjsonObject;
+typedef NPjsonObject* pNPjsonObject;
+
+//#define kNPjsonArrayMaxElements 200
+#define kNPjsonArrayMaxElements 1500
+
+struct NPjsonArray {
+	void* parent; /// can be pNPjsonArray, pNPjsonObject, if null then no parent
+	int numElements;
+	pNPjsonValue element[kNPjsonArrayMaxElements];
+};
+typedef struct NPjsonArray NPjsonArray;
+typedef NPjsonArray* pNPjsonArray;
+
+struct NPjsonInteger {
+	int j_int;
+};
+typedef struct NPjsonInteger NPjsonInteger;
+typedef NPjsonInteger* pNPjsonInteger;
+
+struct NPjsonReal {
+	double j_real;
+};
+typedef struct NPjsonReal NPjsonReal;
+typedef NPjsonReal* pNPjsonReal;
+
+struct NPjsonBoolean {
+	int j_bool; // 1 for true, 0 for false
+};
+typedef struct NPjsonBoolean NPjsonBoolean;
+typedef NPjsonBoolean* pNPjsonBoolean;
+
+/*
+struct new_NPjson {
+	json_t *root;
+	json_t *jsonArray[300];
+	int jsonArrayIndex;
+	json_t *currentArray;
+	int numOfJsonArrays;
+	NPjsonKeyList Key[30];
+	int error;
+};
+typedef struct new_NPjson new_NPjson;
+typedef new_NPjson* new_pNPjson;
+*/
+
+struct NPjsonRoot {
+	json_t* root;
+	int type; /// can be either kNPjsonArray, or kNPjsonObject
+	void* jsonRoot;
+};
+typedef struct NPjsonRoot NPjsonRoot;
+typedef NPjsonRoot* pNPjsonRoot;
+
+struct NPjsonSchema {
+	json_t* s_root;
+	NPjsonRoot schemaRoot;
+};
+typedef struct NPjsonSchema NPjsonSchema;
+typedef struct NPjsonSchema* pNPjsonSchema;
+
+struct new2_NPjson {
+	char* input[30];
+	char* input_current; /// Tracks
+	int   input_index;
+	json_t* root;
+	NPjsonRoot jRoot;
+	NPjsonValue all_values;
+	pNPjsonValue latest;
+	int error;
+};
+typedef struct new2_NPjson new2_NPjson;
+typedef new2_NPjson* new2_pNPjson;
 
 
 struct NPgithubJSONuser {
@@ -1851,10 +1975,44 @@ struct NPcurl
 	CURLcode res;
 	MemoryStruct2 mem[10];
 	int numMem;
+	int memIndex;
 };
 typedef struct NPcurl NPcurl;
 typedef NPcurl* pNPcurl;
 
+struct NPgithubResponse {
+	int fnord;	
+	void* response;
+};
+typedef struct NPgithubResponse NPgithubResponse;
+typedef NPgithubResponse* pNPgithubResponse;
+
+struct NPgithubRequestResponse {
+	char requestUrl[100];
+	int urlSize;
+	char* state;
+	char* per_page;
+	int page;
+	char* response;
+	int responseSize;
+};
+typedef struct NPgithubRequestResponse NPgithubRequestResponse;
+typedef NPgithubRequestResponse* pNPgithubRequestResponse;
+
+struct NPgithub {
+	char* repo_name;
+	pNPgithubIssues issues;
+	NPgithubUser user[200];
+	int num_of_users;
+	int err;
+//	pNPgithubRequest request;
+	NPgithubRequestResponse rR[50];
+	int requestResponse_index;
+	int num_of_RequestResponses;
+	new2_pNPjson jsonGithub;
+};
+typedef struct NPgithub NPgithub;
+typedef NPgithub* pNPgithub;
 
 struct NPio {
 	void* coreNode; ///< core nodes tie global structures to the scene graph
@@ -1881,7 +2039,9 @@ struct NPio {
 //!<	NPoscPackListener oscListener;		//!<JJ-zz
 	pNPconnect	connect[kNPmaxConnect];	//!<zz osc
 	NPcurl     curl;
-	NPjson     json;
+//	NPjson     json;
+//	new_NPjson json2;
+	new2_NPjson json2;
 
 	int			connectCount;
 	NPosc		osc;				//!<OSC stuff uses io que for thread safety
