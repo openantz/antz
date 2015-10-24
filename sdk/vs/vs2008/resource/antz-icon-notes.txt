@@ -1,0 +1,6 @@
+When editing or creating a new icon you may need to type:
+
+ie4uinit.exe -ClearIconCache (in a command window)
+
+Otherwise your new icon may appear not to have changed,
+ (if the file name of the .exe stays the same.)
