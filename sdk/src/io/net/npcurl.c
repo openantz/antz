@@ -239,9 +239,10 @@ void npCURL_easyPerform(pNPcurl curl, void* dataRef)
 }
 */
 //char* npCURL_easyStrError(CURLcode res);
-char* npCURL_easyStrError(pNPcurl curl, void* dataRef)
+const char* npCURL_easyStrError(pNPcurl curl, void* dataRef)
 {
 	curl->errorStr = curl_easy_strerror(curl->res);
+	return curl->errorStr;
 }
 
 
@@ -250,8 +251,8 @@ void npCURL_easySetOptUrl(pNPcurl curl, void* dataRef)
 	//npCURL_easySetOpt(curl, dataRef);
 }
 
-
-void npCURL_easySetOptWriteFunction(pNPcurl curl, static size_t (*func)(void* contents, size_t size, size_t nmemb, void *userp), void* dataRef)
+/// removed static size_t
+void npCURL_easySetOptWriteFunction(pNPcurl curl, size_t (*func)(void* contents, size_t size, size_t nmemb, void *userp), void* dataRef)
 {
 	/// temp
 	curl_easy_setopt(curl->curl_handle, CURLOPT_WRITEFUNCTION, func);
@@ -293,7 +294,7 @@ static size_t WriteImage(void *contents, size_t size, size_t nmemb, void *userp)
 
 }
 
-void npCURLgetImage(pNPcurl curl, char* url, void* dataRef)
+int npCURLgetImage(pNPcurl curl, char* url, void* dataRef)
 {
 	pData data = (pData) dataRef;
 	int err = -1;
@@ -317,6 +318,7 @@ void npCURLgetImage(pNPcurl curl, char* url, void* dataRef)
 		return -1;
 	}
 
+	return 0;
 }
 
 int npCURLgetUrl(pNPcurl curl, char* url, int memory_index, void* dataRef)

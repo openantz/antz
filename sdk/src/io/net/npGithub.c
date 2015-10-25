@@ -23,7 +23,8 @@
 * --------------------------------------------------------------------------- */
 #include "npgithub.h"
 #include <assert.h>
-
+#include "../file/npjson.h"
+#include "npgitviz.h"
 
 
 
@@ -98,20 +99,20 @@ int npGithubInit(pNPgithub github, void* dataRef)
 	{
 		github->user[index].avatar_image_file = NULL;
 		github->user[index].avatar_image_file_path = NULL;
-		github->user[index].avatar_image_textureID = NULL;
+		github->user[index].avatar_image_textureID = 0;
 		github->user[index].avatar_url = NULL;
 		github->user[index].events_url = NULL;
 		github->user[index].followers_url = NULL;
 		github->user[index].gists_url = NULL;
 		github->user[index].gravatar_id = NULL;
 		github->user[index].html_url = NULL;
-		github->user[index].id = NULL;
+		github->user[index].id = -1;
 		github->user[index].login = NULL;
 		github->user[index].number = -1;
 		github->user[index].organizations_url = NULL;
 		github->user[index].received_events_url = NULL;
 		github->user[index].repos_url = NULL;
-		github->user[index].site_admin = NULL;
+		github->user[index].site_admin = false;
 		github->user[index].starred_url = NULL;
 		github->user[index].subscriptions_url = NULL;
 		github->user[index].type = NULL;
@@ -153,7 +154,7 @@ void npGithubIssuesInit(pNPgithubIssues issues, void* dataRef)
 		issues->issue[index].issueNodeType = 0;
 		issues->issue[index].issueTopoType = 0;
 		issues->issue[index].labels_url = NULL;
-		issues->issue[index].locked = NULL;
+		issues->issue[index].locked = false;
 		issues->issue[index].milestone = NULL;
 		issues->issue[index].num_comments = 0;
 		issues->issue[index].numOfWordsInIssueTitle = 0;
@@ -222,7 +223,7 @@ void npGithubGetIssues(void* dataRef)
 //	npCURLgetGithubRepoIssuesAll(curl, github, dataRef);
 
 	for(github->requestResponse_index = 0; github->requestResponse_index < github->num_of_RequestResponses; github->requestResponse_index++)
-	{
+	{ // include npjson.h
 		npjsonSetInput(&data->io.json2, github->rR[github->requestResponse_index].response, github->requestResponse_index, dataRef);	
 		npjsonLoadInput(&data->io.json2, dataRef);
 	}
@@ -384,7 +385,8 @@ char* npGithubGetUserAvatar(pNPgithubUser user, void* dataRef)
 
 //	printf("DONE 23444");
 
-    return fileName;
+//    return fileName;
+	return user->avatar_image_file;
 	
 
 }
@@ -555,6 +557,7 @@ int npGithubGetIssueLabels(pNPjsonObject json_issue, pNPgithubIssue github_issue
 int npGithubGetIssueKeyIndex(pNPjsonObject json_issue, char* key, void* dataRef)
 {
 	int index = -1;
+//	printf("\nKey is %s", key);
 	index = npJSONgetObjectKeyIndex(json_issue, key, dataRef);
 
 //	printf("\nkey index : %d", index);
@@ -686,7 +689,7 @@ void npGithubAddUserFromIssue(pNPgithub github, pNPjsonObject json_github_user_o
 		issueUser->type = json_github_user_object->jsonValue[user_key_index].c_value;
 
 		user_key_index = npGithubGetUserKeyIndex(json_github_user_object, "site_admin", dataRef);
-		issueUser->site_admin = json_github_user_object->jsonValue[user_key_index].c_value;
+		issueUser->site_admin = ((pNPjsonBoolean)json_github_user_object->jsonValue[user_key_index].c_value)->j_bool;
 
 //		npGithubPrintUserData(issueUser, dataRef);
 //		getchar();
@@ -789,7 +792,7 @@ void npGithubGetIssue(new2_pNPjson github_json, pNPgithubIssues github_issues, i
 	github_issues->issue[index].html_url = issue->jsonValue[key_index].c_value;
 
 	key_index = npGithubGetIssueKeyIndex(issue, "id", dataRef);
-	github_issues->issue[index].id = issue->jsonValue[key_index].c_value; /// @todo unpack
+	github_issues->issue[index].id = ((pNPjsonInteger)issue->jsonValue[key_index].c_value)->j_int; /// @todo unpack
 	
 	key_index = npGithubGetIssueKeyIndex(issue, "number", dataRef);
 	github_issues->issue[index].number = ((pNPjsonInteger)issue->jsonValue[key_index].c_value)->j_int; /// @todo unpack

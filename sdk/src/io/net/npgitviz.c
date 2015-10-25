@@ -22,6 +22,8 @@
 *
 * --------------------------------------------------------------------------- */
 #include "npgitviz.h"
+#include "../../data/npmap.h"
+#include "../gl/nptags.h"
 //#include "npGithub.h"
 #include <time.h>
 #include <soil.h>
@@ -41,6 +43,7 @@ char* dumpTill(char* dump_from, char* dump_to, char* till)
     return ptr;
 }
 
+/*
 pNPnode npCreateTimeDayViz2(int day, pNPnode parent, void* dataRef)
 {
 	pNPnode day_node;
@@ -63,7 +66,9 @@ pNPnode npCreateTimeDayViz2(int day, pNPnode parent, void* dataRef)
 
 	return day_node;
 }
+*/
 
+/*
 pNPnode npCreateTimeMonthViz2(char* month, pNPnode parent, void* dataRef)
 {
 	pNPnode month_node;
@@ -86,6 +91,7 @@ pNPnode npCreateTimeMonthViz2(char* month, pNPnode parent, void* dataRef)
 
 	return month_node;
 }
+*/
 
 /*
 pNPnode new_npCreateTimeViz2(pNPnode year_node[], void* dataRef)
@@ -243,7 +249,7 @@ void old_npGithubGetIssueCreatedAt2(pNPgithubIssue issue)
 {
     char* ptr = issue->created_at;
     char str[6][5] = {'\0'};
-    char* symbol[] = {'-','-','T',':',':', 'Z'};
+    char symbol[] = {'-','-','T',':',':', 'Z'};
     int index = 0;
     size_t symbolArraySize = 0;
     symbolArraySize = sizeof(symbol) / sizeof(char*);
@@ -253,7 +259,7 @@ void old_npGithubGetIssueCreatedAt2(pNPgithubIssue issue)
     
     for(index = 0; index <= (int)symbolArraySize-1; index++)
     {
-        ptr = dumpTill(ptr, str[index], symbol[index]);
+        ptr = dumpTill(ptr, str[index], &symbol[index]);
         ptr++;
        // printf("\n%s", str[index]);
     }
@@ -269,7 +275,93 @@ void old_npGithubGetIssueCreatedAt2(pNPgithubIssue issue)
 }
 
 
+void npGithubGetIssueClosedAt(pNPgithubIssue issue)
+{
+    char* ptr  = issue->closed_at;
+    char year_str[5] = {'\0'};
+    char month_str[3] = {'\0'};
+    char day_str[3] = {'\0'};
+    char hour_str[3] = {'\0'};
+    char minute_str[3] = {'\0'};
+    char second_str[3] = {'\0'};
+    
+    int index = 0;
+    
+    issue->issue_closed_at = malloc(sizeof(NPgithubIssueCreatedAt));
+    
+    if(ptr == NULL)
+    {
+        printf("\nIssue has not been closed");
+        return;
+    }
+    
+    while((*ptr) != '-')
+    {
+        year_str[index] = (*ptr);
+        index++; ptr++;
+    }
+    
+//    printf("\nUpdate Year String : %s\n", year_str);
+    issue->issue_closed_at->year = atoi(year_str);
+    
+    ptr++;
+    index = 0;
+    while((*ptr) != '-')
+    {
+        month_str[index] = (*ptr);
+        index++; ptr++;
+    }
+    
+//    printf("\nUpdate Month String : %s\n", month_str);
+    issue->issue_closed_at->month = atoi(month_str);
+    
+    ptr++;
+    index = 0;
+    while((*ptr) != 'T')
+    {
+        day_str[index] = (*ptr);
+        index++; ptr++;
+    }
+    
+//    printf("\nUpdate Day String : %s\n", day_str);
+    issue->issue_closed_at->day = atoi(day_str);
+    
+    ptr++;
+    index = 0;
+    while((*ptr) != ':')
+    {
+        hour_str[index] = (*ptr);
+        index++; ptr++;
+    }
+    
+//    printf("\nUpdate Hour String : %s\n", hour_str);
+    issue->issue_closed_at->hour = atoi(hour_str);
+    
+    ptr++;
+    index = 0;
+    while((*ptr) != ':')
+    {
+        minute_str[index] = (*ptr);
+        index++; ptr++;
+    }
+    
+//    printf("\nUpdate Minute String : %s\n", minute_str);
+    issue->issue_closed_at->minute = atoi(minute_str);
+    
+    ptr++;
+    index = 0;
+    while((*ptr) != 'Z')
+    {
+        second_str[index] = (*ptr);
+        index++; ptr++;
+    }
+    
+//    printf("\nUpdate Second String : %s\n", second_str);
+    issue->issue_closed_at->second = atoi(second_str);
+    
+}
 
+/// @todo rewrite this function
 void new_npGithubGetIssueClosedAt2(pNPgithubIssue issue)
 {
     char* ptr = issue->closed_at;
@@ -294,7 +386,7 @@ void new_npGithubGetIssueClosedAt2(pNPgithubIssue issue)
   //  for(index = 0; index <= (int)symbolArraySize-1; index++)
 	for(index = 0; index < sizeof(symbol); index++)
 	{
-        ptr = dumpTill(ptr, str[index], symbol[index]);
+        ptr = dumpTill(ptr, str[index], &symbol[index]);
         ptr++;
        // printf("\n%s", str[index]);
     }
@@ -308,13 +400,14 @@ void new_npGithubGetIssueClosedAt2(pNPgithubIssue issue)
     issue->issue_closed_at->second= atoi(str[5]);
     
 }
-
+/*
 pNPnode npLinkIssueCreationNodeToIssueClosedNode2(pNPnode issue_creation_node, pNPnode issue_closed_node, void* dataRef)
 {
 	pNPnode link;
 		link = npNodeNewLink(issue_creation_node, issue_closed_node, dataRef);
 	return link;
 }
+*/
 
 /* Temporarily commented out, lde /// @todo
 void npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
@@ -436,7 +529,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 //		printf("%.f seconds have passed since the issue was created \n", seconds);
 	//	seconds += 10000;
 //		current_issue->issue_node->scale.z = seconds / 12500000;
-		current_issue->issue_node->scale.z = seconds / 10000000;
+		current_issue->issue_node->scale.z = (float)(seconds / 10000000);
 //		printf("\ncurrent_issue->issue_node->scale.z :: %f", current_issue->issue_node->scale.z);  	
 	}
 	else if( strcmp(current_issue->state, "closed") == 0 )
@@ -447,7 +540,8 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 		current_issue->issue_node->color.g = 0;
 		current_issue->issue_node->color.b = 255;
 		
-		new_npGithubGetIssueClosedAt2(current_issue);
+	//	new_npGithubGetIssueClosedAt2(current_issue);
+		npGithubGetIssueClosedAt(current_issue);
 
 		time_closed.tm_year = current_issue->issue_closed_at->year - 1900;
 		time_closed.tm_mon  = current_issue->issue_closed_at->month - 1;
@@ -460,7 +554,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	//	////getchar();
 	//	seconds += 10000;
 		//current_issue->issue_node->scale.z = seconds / 12500000;
-		current_issue->issue_node->scale.z = seconds / 10000000;
+		current_issue->issue_node->scale.z = (float)(seconds / 10000000);
 	}
 	
 	durationTag->titleSize = strlen(durationTag->title) + 1;
@@ -721,7 +815,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 			return;
 		}
 
-//		printf("\ncurrent_issue->user->avatar_image_textureID : %d", current_issue->user->avatar_image_textureID);  
+	//	printf("\ncurrent_issue->user->avatar_image_textureID : %d", current_issue->user->avatar_image_textureID);  
 		
 		if(current_issue->user->avatar_image_textureID == 0)
 		{

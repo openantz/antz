@@ -1525,7 +1525,7 @@ typedef pNPissueUrl pNPgithubIssueUrl;
 
 struct NPgithubUser {
     char* login;
-    char* id;
+    int id;
 	int number;
     char* avatar_url;
     char* avatar_image_file;
@@ -1627,7 +1627,8 @@ struct NPgithubIssue {
     char* comments_url;
     char* events_url;
     char* html_url;
-    NPgithubIssueID id;
+//    NPgithubIssueID id;
+	int id;
     NPgithubIssueNumber index;
     char* title;
 	pNPtag titleTag;
@@ -1823,6 +1824,7 @@ typedef NPjsonArray* pNPjsonArray;
 
 struct NPjsonInteger {
 	int j_int;
+//	json_int_t j_int;
 };
 typedef struct NPjsonInteger NPjsonInteger;
 typedef NPjsonInteger* pNPjsonInteger;
@@ -1834,7 +1836,7 @@ typedef struct NPjsonReal NPjsonReal;
 typedef NPjsonReal* pNPjsonReal;
 
 struct NPjsonBoolean {
-	int j_bool; // 1 for true, 0 for false
+	bool j_bool; 
 };
 typedef struct NPjsonBoolean NPjsonBoolean;
 typedef NPjsonBoolean* pNPjsonBoolean;
@@ -1876,7 +1878,8 @@ struct new2_NPjson {
 	NPjsonRoot jRoot;
 	NPjsonValue all_values;
 	pNPjsonValue latest;
-	int error;
+//	int error;
+	json_error_t error; 
 };
 typedef struct new2_NPjson new2_NPjson;
 typedef new2_NPjson* new2_pNPjson;
@@ -1969,7 +1972,7 @@ struct NPcurl
 	char* urlPtr;
 	int urlSize;
 	int numArgs;
-	int errorStr;
+	const char* errorStr;
 	int globalInitFlag;
 	int easySetOptFlag;
 	CURLcode res;

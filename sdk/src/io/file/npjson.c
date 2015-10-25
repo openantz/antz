@@ -29,7 +29,7 @@
 void npInitJSON (new2_pNPjson json, void* dataRef)
 {
 	int index = 0;
-	json->error = 0;
+//	json->error = 0; // temp
 
 	for(index = 0; index < 30; index++){
 		json->input[index] = NULL;
@@ -73,14 +73,16 @@ void npJSON_loads(pNPjson json, char* input, void* dataRef){
 
 int npjsonArrayExtend(new2_pNPjson json, json_t* to_extend, void* dataRef)
 {
+	int err = -1;
+
 	/*
 	printf("\nnpjsonArrayExtend");
 	printf("\njson->jRoot.root : %p", json->jRoot.root);
 	printf("\nto_extend : %p", to_extend);
 	*/
-	json->error = json_array_extend(json->jRoot.root, to_extend); 
+	err = json_array_extend(json->jRoot.root, to_extend); 
 	//printf(" : %d\n", json->error);
-	return json->error; 
+	return err; 
 }
 
 void npJSON_arrayExtend(pNPjson json, json_t* other, void* dataRef){
@@ -248,7 +250,7 @@ pNPjsonArray npjsonArrayInit(void* parent, void* dataRef)
 {
 	pNPjsonArray jsonArray = NULL;
 	pNPjsonValue element = NULL;
-	int index;
+//	int index;
 	jsonArray = malloc(sizeof(NPjsonArray));
 
 //	jsonArray->
@@ -332,16 +334,22 @@ int npJSONunpackArray(new2_pNPjson json, pNPjsonArray jsonArray, json_t* jArray_
 				break;
 			case JSON_OBJECT:
 //				printf("\nJSON_OBJECT");
-//				jsonArray->element[index]->c_value = malloc(sizeof(NPjsonObject));
 				jsonArray->element[index]->c_value = npjsonObjectInit(jsonArray, kNPjsonArray, dataRef);
 				if(jsonArray->element[index]->c_value == NULL)
 				{
 					printf("\nnpJSONunpackArray :: malloc failed");
 					return kNPmallocFailed;
 				}
+				err = -1;
 
 //				printf("\nBefore npJSONunpackObject");
-				npJSONunpackObject(json, jsonArray->element[index]->c_value, jsonArray->element[index]->j_value, dataRef);
+				err = npJSONunpackObject(json, jsonArray->element[index]->c_value, jsonArray->element[index]->j_value, dataRef);
+				if(err != 0)
+				{
+					printf("\nnpJSONunpackObject Failed");
+					getchar();
+				}
+
 //				printf("\nAfter npJSONunpackObject");
 //				((pNPjsonArray)jsonArray->element[index]->c_value)->parent = jsonArray;	
 //				printf("\nasdf");
@@ -350,7 +358,8 @@ int npJSONunpackArray(new2_pNPjson json, pNPjsonArray jsonArray, json_t* jArray_
 			case JSON_STRING:
 //				printf("\nJSON_STRING npJSONunpackArray");
 				//jsonObject->jsonValue[index].c_value = json_string_value(jsonObject->jsonValue[index].j_value);	
-				jsonArray->element[index]->c_value = json_string_value(jsonArray->element[index]->j_value);
+				jsonArray->element[index]->c_value = (char*)json_string_value(jsonArray->element[index]->j_value);
+				jsonArray->element[index]->j_type = JSON_STRING;
 				//getchar();
 				break;
 			case JSON_INTEGER:
@@ -362,7 +371,7 @@ int npJSONunpackArray(new2_pNPjson json, pNPjsonArray jsonArray, json_t* jArray_
 					return kNPmallocFailed ;
 				}
 
-				((pNPjsonInteger)jsonArray->element[index]->c_value)->j_int = json_integer_value(jsonArray->element[index]->j_value); 
+				((pNPjsonInteger)jsonArray->element[index]->c_value)->j_int = (int)json_integer_value(jsonArray->element[index]->j_value); 
 				//jsonObject->jsonValue[index].c_value = json_integer_value(jsonObject->jsonValue[index].j_value);
 //				jsonArray->element[index]->c_value = 
 				//getchar();
@@ -406,7 +415,7 @@ int npJSONunpackArray(new2_pNPjson json, pNPjsonArray jsonArray, json_t* jArray_
 			case JSON_NULL: /// @todo JSON_NULL processing
 //				printf("\nJSON_NULL npJSONunpackArray");
 				jsonArray->element[index]->c_value = NULL;
-				jsonArray->element[index]->c_value = -1;
+//				jsonArray->element[index]->c_value = -1;
 				jsonArray->element[index]->j_type = JSON_NULL;
 				jsonArray->element[index]->j_value = NULL;
 				//getchar();
@@ -473,7 +482,7 @@ int npJSONunpackObject(new2_pNPjson json, pNPjsonObject jsonObject, json_t* jObj
 
 //	printf("\nNew Object");
 //	getchar();
-	json_object_foreach(jObject_t, key, value) {
+	json_object_foreach(jObject_t, (const char*)key, value) {
 		jsonObject->numNameValuePairs++;
 //		printf("\nKey : %s & Index : %d & object size : %d", key, index, json_object_size(jObject_t));
 //		printf("\njsonObject->numnameValuePairs == %d :: index == %d", jsonObject->numNameValuePairs, index);	
@@ -524,22 +533,26 @@ int npJSONunpackObject(new2_pNPjson json, pNPjsonObject jsonObject, json_t* jObj
 					return -1;
 				}
 
-				((pNPjsonInteger)jsonObject->jsonValue[index].c_value)->j_int = json_integer_value(jsonObject->jsonValue[index].j_value);
+				((pNPjsonInteger)jsonObject->jsonValue[index].c_value)->j_int = (int)json_integer_value(jsonObject->jsonValue[index].j_value);
+				jsonObject->jsonValue[index].j_type = JSON_INTEGER;
 				//getchar();
 				break;
 			case JSON_STRING:
-				jsonObject->jsonValue[index].c_value = json_string_value(jsonObject->jsonValue[index].j_value);	
+				jsonObject->jsonValue[index].c_value = (char*)json_string_value(jsonObject->jsonValue[index].j_value);	
 				if(jsonObject->jsonValue[index].c_value == NULL)
 				{
 					printf("\nnpJSONunpackObject :: malloc failed");
 					return -1;
 				}
 
+				jsonObject->jsonValue[index].j_type = JSON_STRING;
 //				printf("\nJSON_STRING npJSONunpackObject : %s", jsonObject->jsonValue[index].c_value );
 //				printf("\nAFTER npJSONunpackObject");
 				//getchar();
 				break;
 			case JSON_REAL:
+				printf("\nJSON_REAL not yet supported");
+				return -1;
 //				printf("\nJSON_REAL npJSONunpackObject");	
 				jsonObject->jsonValue[index].c_value = malloc(sizeof(NPjsonReal)); 
 				if(jsonObject->jsonValue[index].c_value == NULL)
@@ -548,7 +561,8 @@ int npJSONunpackObject(new2_pNPjson json, pNPjsonObject jsonObject, json_t* jObj
 					return -1;
 				}
 
-				((pNPjsonReal)jsonObject->jsonValue[index].c_value)->j_real = json_integer_value(jsonObject->jsonValue[index].j_value);
+//				((pNPjsonReal)jsonObject->jsonValue[index].c_value)->j_real = json_integer_value(jsonObject->jsonValue[index].j_value);
+
 				//getchar();
 //				jsonObject->jsonValue[index].c_value = json_real_value(jsonObject->jsonValue[index].j_value);	
 				break;
@@ -683,10 +697,8 @@ int npjsonSetInput(new2_pNPjson json, char* input, int index, void* dataRef)
 {
 	json->input[index] = input;
 	json->input_index = index;
-//	json->input_current = json->input[index];
 	json->input_current = input;
-//	printf("\nnpjsonSetInput : %s after input\n", json->input_current);
-//	getchar();
+	return 0;
 }
 
 int npjsonLoadInput(new2_pNPjson json, void* dataRef)
@@ -701,20 +713,12 @@ int npjsonLoadInput(new2_pNPjson json, void* dataRef)
 
 	if(json->input_index > 0 && json->jRoot.root != NULL)
 	{
-//		error = npjsonArrayExtend(json->jRoot.root, json->input_current, dataRef);	
-		to_extend = json_loads(json->input[json->input_index], 0, json->error);	
-//		error = npjsonArrayExtend(json->jRoot.root, to_extend, dataRef);
+		to_extend = json_loads(json->input[json->input_index], 0, &json->error);	
 		error = npjsonArrayExtend(json, to_extend, dataRef);
 	}
 	else
 	{
-//		json->jRoot.root = json_loads(json->input_current, 0, json->error);
-		json->jRoot.root = json_loads(json->input[json->input_index], 0, json->error);
-//		printf("\njson->error : %d", json->error);
-//		getchar();
-//		printf("\njson->jRoot.root : %p", json->jRoot.root);
-//		printf("\njson->input_current : %s \n json->input_current", json->input_current);
-//		getchar();
+		json->jRoot.root = json_loads(json->input[json->input_index], 0, &json->error);
 	}
 
 	if(json->jRoot.root == NULL)
@@ -824,15 +828,17 @@ int npJSONgetObjectKeyIndex(pNPjsonObject object, char* key, void* dataRef)
 		if( strcmp(object->jsonKey[index].key, key) == 0)
 		{
 			//printf("\nFound it : %s : %s", key, object->jsonValue[index].c_value);
+	//		printf("\nType is %d\n", object->jsonValue->j_type);
 			return index;
 		}
 	}	
 
+	printf("\n");
 	/// Didn't find it
 	return -1;
 }
 
-int npjsonGetRoot(new2_pNPjson json, void* dataRef)
+json_t* npjsonGetRoot(new2_pNPjson json, void* dataRef)
 {
 	return json->jRoot.root;
 }
@@ -850,7 +856,7 @@ void new_npJSON_loads(new2_pNPjson json, char* input, void* dataRef)
 	pData data = (pData) dataRef;
 	int index = 0;
 //	json->root = json_loads(input, 0, json->error);
-	json->jRoot.root = json_loads(input, 0, json->error);
+	json->jRoot.root = json_loads(input, 0, &json->error);
 	if(json->jRoot.root == NULL)
 	{
 		printf("\nnpJSON_loads returned NULL");
@@ -909,7 +915,7 @@ void new_npJSON_loads(new2_pNPjson json, char* input, void* dataRef)
 			npGithubGetIssue(json, data->io.github.issues, index, dataRef);
 		}
 
-		theNew_npGitViz(&data->io.github, dataRef);
+	//	theNew_npGitViz(&data->io.github, dataRef);
 	}
 
 //	npJSONprocess(json, json->root, dataRef);	

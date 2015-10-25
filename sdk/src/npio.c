@@ -47,7 +47,7 @@
 void npInitIO( void* dataRef )
 {
 	pData data = (pData) dataRef;
-	NPjson gitJSON;
+//	NPjson gitJSON;
 
 	npInitOS( dataRef );
 	/// init the local IO devices

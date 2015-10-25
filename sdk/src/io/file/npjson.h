@@ -54,6 +54,7 @@ void npJSONprocess(new2_pNPjson json, json_t* toProcess, void* dataRef);
 pNPjsonObject npJSONprocessObject(new2_pNPjson json, json_t* toProcess, void* dataRef);
 int npJSONunpackObject(new2_pNPjson json, pNPjsonObject jsonObject, json_t* jObject_t, void* dataRef);
 int npjsonSetInput(new2_pNPjson json, char* input, int index, void* dataRef);
+int npjsonLoadInput(new2_pNPjson json, void* dataRef);
 int npjsonUnpackRoot(new2_pNPjson json, void* dataRef);
 pNPjsonArray npjsonArrayInit(void* parent, void* dataRef);
 int npJSONgetObjectKeyIndex(pNPjsonObject object, char* key, void* dataRef);

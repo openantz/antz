@@ -65,7 +65,9 @@ void npCURL_easySetOptFlag(pNPcurl curl, int flag, void* dataRef);
 int npCURL_easyPerform(pNPcurl curl, void* dataRef);
 
 void npCURLsetGithubRequest(pNPgithubRequest request, int page, int per_page, char* state, void* dataRef);
-char* npCURL_easyStrError(pNPcurl curl, void* dataRef);
+const char* npCURL_easyStrError(pNPcurl curl, void* dataRef);
+void npCURL_easySetOptWriteFunction(pNPcurl curl, size_t (*func)(void* contents, size_t size, size_t nmemb, void *userp), void* dataRef);
+int npCURLgetImage(pNPcurl curl, char* url, void* dataRef);
 
 int npCURLgetUrl(pNPcurl curl, char* url, int memory_index, void* dataRef);
 
