@@ -35,7 +35,6 @@ void* nposLoadLibrary( char* filePath );	/// @todo move load library to npos.h
 int npMysqlHook( pNPdbFuncSet func, void* dbLib);
 pNPdbFuncSet npMysqlAddFuncSet( pNPdbs db, pNPdbFuncSet funcSet );
 int npMysqlInitConnOptions( pNPdbFuncSet func , void* connInit );
-char* new_npMysqlStatementInsertFromChunk(char* table, struct newChunkObj *theChunk);
 
 /*! Loads the MySQL Connector client library.
 	- Creates a new function set and hooks the MySQL specific methods.

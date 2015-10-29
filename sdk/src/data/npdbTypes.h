@@ -117,7 +117,7 @@ struct NPdbFuncSet{
 	void* (NPDB_CALLCONV *store_result)	();
 	void* (NPDB_CALLCONV *free_result)	();
 	
-	void* (*use)			();
+	int   (*use)						();
 	void* (NPDB_CALLCONV *select)		    ();
 	void* (NPDB_CALLCONV *alter)		    ();
 	void* (NPDB_CALLCONV *insert)		    ();

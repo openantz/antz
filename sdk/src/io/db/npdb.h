@@ -205,5 +205,7 @@ pNPmenu npdbGetMenu ( pNPmenu menu, void* dataRef);
 int npdbLoadMenuItem (int item, void* dataRef);
 pNPdbHost npdbGetConnectedHost( pNPdbs dbs );
 
+void npdbInitPtrList(pNPdbs dbs, int* err, void* dataRef);
+
 #endif
 

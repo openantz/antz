@@ -69,7 +69,7 @@
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;../../libs/curl/build/Win32/VC9/LIB Debug - DLL Windows SSPI/&quot;;../../libs/freeglut/lib/x86;../../libs/oscpack;../../libs/mysql;../../libs/jansson/make/lib/Debug;../../libs/soil/lib"
 				IgnoreAllDefaultLibraries="false"
-				IgnoreDefaultLibraryNames=""
+				IgnoreDefaultLibraryNames="LIBCMT"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				LargeAddressAware="2"

@@ -394,7 +394,7 @@ void npConsoleCmdText( pNPconsole console, void* dataRef )
 		npPostMsg ("| sel branch=1   - all nodes with branch_level = 1                  |", kNPmsgView, dataRef);
 		npPostMsg ("| sel branch=1:3 - all nodes with branch_level = 1 to 3             |", kNPmsgView, dataRef);
 		npPostMsg ("|                                                                   |", kNPmsgView, dataRef);	
-		npPostMsg ("| issues        - visualize issues from github                      |", kNPmsgView, dataRef);
+		npPostMsg ("| gitviz        - visualize issues from github                      |", kNPmsgView, dataRef);
 	//	npPostMsg ("| (current) selection attributes: geo, topo, color and branch       |", kNPmsgView, dataRef);
 	//	npPostMsg ("| *future support for all attributes and boolean logic.             |", kNPmsgView, dataRef);
 	//	npPostMsg ("| ie: sel 42:99 with geo = 3:7 and branch >= 1 and not color = 4    |", kNPmsgView, dataRef);

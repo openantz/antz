@@ -63,6 +63,8 @@ int npExportMapFile (FILE* file, int type, void* dataRef);
 
 int npWriteMapHeader (char* bufferIndex, int count, int type, void* dataRef); // New, lde
 
+int npCSVtoC (pNPrecordSet recSet, const char* read, int size, void* dataRef);
+
 // file and directory management
 int npGetMapFile (char* buffer, int wordSize, int size, void* dataRef);
 
@@ -89,6 +91,7 @@ int npMapTraverseTree (char* buffer, pNPnode node, int format, void* dataRef);
 //zzsql
 int npMapTraverseTreeLL(char* buffer, int* index, pNPnode node, int format, void* dataRef);
 
+void npPreLoadInit(pNPrecordSet recSet, void* dataRef);
 
 #endif
 

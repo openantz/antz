@@ -1470,7 +1470,6 @@ int npLoadNodesCSV (const char* buffer, int size, int type, void* dataRef)
 	return nodeCount;
 }
 
-int npCSVtoC (pNPrecordSet recSet, const char* read, int size, void* dataRef);
 //-----------------------------------------------------------------------------
 //zz debug, use a func ptr to npLoadCSV() from generic parent file IO process	
 int npCSVtoC (pNPrecordSet recSet, const char* read, int size, void* dataRef)
@@ -1862,7 +1861,7 @@ void npSyncRecords (pNPrecordSet recordSet, void* dataRef)
 	}
 }
 
-void npPreLoadInit(pNPrecordSet recSet, void* dataRef);
+
 //-----------------------------------------------------------------------------
 void npPreLoadInit(pNPrecordSet recSet, void* dataRef)
 {

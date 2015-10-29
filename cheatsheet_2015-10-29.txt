@@ -35,7 +35,6 @@ ALT+H - toggle 'Hide Tool'
 R - Click to Hide ALL sub-branches of selected node
 L - Click to Show ALL sub-branches of selected node
 
-4 - Key to Show ALL nodes
 '~' (Tilda) - Key to Hide ALL nodes with branchlevel > 1
 
 ALT+I - toggle 'Info Tool'
@@ -43,8 +42,7 @@ ALT+I - toggle 'Info Tool'
 Right - Click to Hide Text Tag title
 Left - Click to Show tag title, additional clicks change display mode
 
-4 - key to Show ALL Tags
-'~' (Tilda) - key to Hide ALL Tags
+'~' (Tilda) - key to Show or Hide ALL Tags
 
 ---
 A.2 - Keyboard
@@ -83,7 +81,6 @@ Down arrow - select parent, down a branch level (SHIFT jumps to root)
 C - pick Camera, repeat to select next camera
 G - pick Grid, repeat to iterate through grids
 
-4 - select ALL nodes
 ~ (tilda)	un-select ALL nodes
 spacebar - select or unselect currently active object
 
@@ -145,12 +142,6 @@ H - Hide;
 [ - Low set point, object default is z = 0.0 for ground level.
 ] - High set point (set points are applied to the active aXes)
 
---- Scene (hard-coded) Presets ---
-
-5 - Preset 1
-6 - Preset 2
-7 - Preset 3
-
 --- State Files ---
 
 K - Keep(SAVE) writes a time-stamped ANTzYrMoDaHrMnSe.csv
@@ -159,8 +150,17 @@ L - Load CSV file using File Dialog
     ALSO... launches URL as tag title ie: http://example.com or app.exe
 
 1 - Load ANTZ0001....CSV file set (SHIFT+1 to Save)
-2 - Load ANTZ0002....CSV (SHIFT to save)
+2 - Load ANTZ0002....CSV
 3 - Load ANTZ0003....CSV
+
+--- Scene (hard-coded) Presets ---
+
+4 - Reserved for future VizCode (formally Selcect ALL, now '~' tilda)
+
+5 - Load FileViz of directory tree structure
+6 - Load GitViz from github repo (specified in npglobals.csv)
+
+7 - Test Scene (used for to test app for > 100K nodes)
 
 F4 - Take Screenshot, saved to usr/images/antz(timestamp).bmp
 

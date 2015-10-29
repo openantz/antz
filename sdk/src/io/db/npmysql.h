@@ -51,5 +51,7 @@ char* npMysqlStatementDrop(char* dropType, char* dropName, void* dataRef);
 
 char* npMysqlGetTableFields( int type, void* dataRef );
 
+char* new_npMysqlStatementInsertFromChunk(char* table, struct newChunkObj *theChunk);
+
 #endif
 
