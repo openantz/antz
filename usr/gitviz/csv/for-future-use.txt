@@ -1,0 +1,2 @@
+It is planned to separate out datasets using a folder for each dataset.
+With sub-folders for each data type, (ie: /images /csv /audio /video...)

@@ -832,6 +832,10 @@ void npInitDataIO(int argc, char** argv, void* dataRef)
 	memset (&io->url, '\0', kNPurlMax);
 	sprintf (io->url, "http://openantz.com/docs/id.html?id=");
 
+	// setup the default URL
+	memset (&io->urlGitviz, '\0', kNPurlMax);
+	sprintf (io->urlGitviz, "https://github.com/openantz/antz");
+
 	npInitKey (data);					///< setup key command assignments	
 	npInitDataGL (data);
 	npInitDataChannel (data);

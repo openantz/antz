@@ -813,6 +813,7 @@ void npMapTypeInit (void* dataRef)
 
 		// URL for external Browser record retrieval
 		{ data->io.url,				kNPcstrPtr,		kNPgBrowserURL,		0, "np_browser",	1,	"url",				"s",	"Browser URL" },
+		{ data->io.urlGitviz,		kNPcstrPtr,		kNPgGitvizURL,		0, "np_gitviz",		1,	"url",				"s",	"Gitviz URL" },
 
 		{ &data->map.globalsCount,	kNPint,			kNPitemCount,		1, "np_globals",	1,	"item_count",		"i",	"Item count for this table"}	//end
 	};
@@ -951,9 +952,10 @@ void npMapTypeInit (void* dataRef)
 	// if an 'osc_np' address entry is used then it can be dynamically mapped directly to an internal c-struct parameter...
 	// if both osc - osc mapping pair addresses are unknown then the data can be routed RX->TX and auto-referenced by the internal global c-structure
 
-	{ data->io.url,				kNPcstrPtr,		kNPgBrowserURL,		0, "np_browser", 1,	"url",				 "s",	"osc_np",0,	"/np/browser/1/url", "s" },
+//	{ data->io.url,				kNPcstrPtr,		kNPgBrowserURL,		0, "np_browser", 1,	"url",				 "s",	"osc_np",0,	"/np/browser/1/url", "s" },
 	// above is native translation of Globals...
 	// below is 3rd party OSC schema
+	//zz debug duplicate url entries???
 	{ data->io.url,				kNPcstrPtr,		kNPgBrowserURL,		0, "np_browser", 1,	"/np/browser/1/url", "s",	"osc",	 0,	"/mrmr/textinput/7/z-zs-iPhone", "s" },
 	{ data->io.url,				kNPcstrPtr,		kNPgBrowserURL,		0, "osc_np",	 1,	"/np/browser/1/url", "s",	"osc",	 0,	"/mrmr/textinput/7",			"s" },
 

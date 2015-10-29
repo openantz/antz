@@ -2,6 +2,31 @@
 
          latest code, issues and Wiki on https://github.com/openantz/
 ----------------------------------------------------------------------------
+ANTz v0.199.1 - 2015-10-28
+
+Enhanced:
+#169 GitViz now displays tags and stores icons in 'usr/gitviz/images/'
+a) Usage - Press '6' key or enter 'gitviz' in the GUI command console.
+
+Fixed:
+#183 File (X-Tree) Viz is not working
+#168 OpenAntz MSW 2014-09-13 will not load saved pins for me
+#134 Save selected region does not save tags
+
+Bugs Reported:
+#180 Loading CSV preset crashes if the files don't exist
+#171 OSX version exceeds 60FPS in fullscreen mode
+#167 VR zoom eye separation before target lock
+#166 Tool type changes to 'Move' after using Camera mode
+#163 Loading globals CSV file does not exit fullscreen when specified
+#159 Branch level bug beyond 27 levels
+#158 Crash on save selection
+#157 Cannot select next Grid using the keyboard
+#156 Transparency/color_a related crashing
+#155 Channel track constants exceeds memory limits for hard-coded arrays
+#152 MySQL MSW debug build fails to load dataset
+
+----------------------------------------------------------------------------
 ANTz v0.199.0 - 2015-10-23
 
 Enhanced:

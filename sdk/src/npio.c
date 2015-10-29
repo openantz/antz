@@ -32,6 +32,14 @@
 
 #include "io/db/npdb.h"
 
+#ifdef NP_PLUGIN_JANNSON
+	#include "io/file/npjson.h"
+#endif
+
+#ifdef NP_PLUGIN_CURL
+	#include "io/net/npcurl.h"
+	#include "io/net/npgithub.h"
+#endif
 
 /*! Initialize IO systems
 *
@@ -44,7 +52,6 @@
 void npInitIO( void* dataRef )
 {
 	pData data = (pData) dataRef;
-	NPjson gitJSON;
 
 	npInitOS( dataRef );
 	/// init the local IO devices
@@ -76,9 +83,31 @@ void npInitIO( void* dataRef )
 	/// @todo change npConnectDB over to npInitDB
 	npInitDB( dataRef );
 
-	new_npGithubInit( dataRef );
+	
+#ifdef NP_PLUGIN_JANNSON
+	printf("Init JSON\n");
+	//npInitJSON( &data->io.json, dataRef);
+	npInitJSON( &data->io.json2, dataRef);
+#endif
 
-	npGitJSONinit( &gitJSON, &data->io.issues);	
+#ifdef NP_PLUGIN_CURL
+	printf("Init CURL\n");
+	npCurlInit( dataRef );
+
+	data->io.github.issues = NULL;
+	printf("Init Github : issues ptr %p\n", data->io.github.issues);
+//	getchar();
+//	npGithubInit( dataRef );
+	if( !npGithubInit( &data->io.github, dataRef) == 0 )
+		printf("Init github failed\n");
+	else
+		printf("Init github\n");
+
+	if(data->io.github.issues == NULL);
+		printf("data->io.github.issues\n");
+
+	//npGitJSONinit( &gitJSON, &data->io.issues);	
+#endif
 }
 
 // This is a temporary location for this, lde @todo
@@ -89,7 +118,7 @@ pNPosFuncSet nposNewFuncSet(pNPos os, int *err)
 	funcSet = (pNPosFuncSet)calloc( 1, sizeof(NPosFuncSet) );
 	if( !funcSet )
 	{
-		printf("err 5525 - malloc failed NPdbFuncSet"); // Add error code, lde @todo
+		printf("err 5525 - malloc failed NPdbFuncSet\n"); // Add error code, lde @todo
 		err = (int*)5525;
 		return NULL;
 	}
@@ -166,7 +195,9 @@ void npUpdateIO (void* dataRef)
 
 	npUpdateDB( dataRef );			//zzd
 
+#ifdef NP_PLUGIN_CURL
 	npGithubRun( dataRef );
+#endif
 }
 
 

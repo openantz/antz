@@ -44,11 +44,11 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../libs/curl/include;../../libs/jansson/src;../../libs/freeglut/include/GL;../../libs/oscpack/src;../../libs/soil/src;../../libs/mysql/include/"
+				AdditionalIncludeDirectories="../../libs/curl/include/curl;../../libs/jansson/src;../../libs/freeglut/include/GL;../../libs/oscpack/src;../../libs/soil/src;../../libs/mysql/include/"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;CURL_STATICLIB;BUILDING_LIBCURL;USE_WINDOWS_SSPI;USE_SCHANNEL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
+				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
@@ -68,7 +68,8 @@
 				AdditionalDependencies="opengl32.lib glu32.lib SOIL.lib libmysql.lib mysqlclient.lib libcurld.lib jansson_d.lib wldap32.lib ws2_32.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;../../libs/curl/build/Win32/VC9/LIB Debug - DLL Windows SSPI/&quot;;../../libs/freeglut/lib/x86;../../libs/oscpack;../../libs/mysql;../../libs/jansson/make/lib/Debug;../../libs/soil/lib"
-				IgnoreDefaultLibraryNames="LIBCMTD"
+				IgnoreAllDefaultLibraries="false"
+				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				LargeAddressAware="2"
@@ -124,7 +125,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="../../libs/curl/include;../../libs/jansson/src;../../libs/freeglut/include/GL;../../libs/oscpack/src;../../libs/soil/src;../../libs/mysql/include/"
+				AdditionalIncludeDirectories="../../libs/curl/include/curl;../../libs/jansson/src;../../libs/freeglut/include/GL;../../libs/oscpack/src;../../libs/soil/src;../../libs/mysql/include/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;CURL_STATICLIB;BUILDING_LIBCURL;USE_WINDOWS_SSPI;USE_SCHANNEL"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -679,6 +680,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\src\io\db\npostgis.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\db\npostgis.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\io\db\npostgresql.c"
 						>
 					</File>
@@ -704,6 +713,22 @@
 					</File>
 					<File
 						RelativePath="..\..\src\io\net\npcurl.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\net\npgithub.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\net\npgithub.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\net\npgitviz.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\net\npgitviz.h"
 						>
 					</File>
 					<File

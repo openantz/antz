@@ -28,10 +28,18 @@
 
 //------------------------------------------------------------------------------
 void npInitTexMap (void* dataRef);
+
 void npCloseTexMap (void* dataRef);
 
 void npUpdateTexMap (void* dataRef);
 
+void npLoadTextures(void* dataRef);
+
+int npLoadTexture( char* filePath, void* dataRef);
+
+int npScreenGrab( char* filePath, int type, int x, int y, int w, int h, void* dataRef);
+
+int npScreenGrabThumb( char* name, int type, int x, int y, int w, int h, void* dataRef );
 
 #endif
 

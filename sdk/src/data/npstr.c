@@ -418,6 +418,10 @@ char* npNewStrcpy (const char* str, void* dataRef)
 
 	return result;
 }
+char* npstrdup( const char* str, void* dataRef)
+{
+	return npNewStrcpy( str, dataRef );
+}
 
 //------------------------------------------------------------------------------
 int npNextField(const char* buffer)	//does NOT Check Max

@@ -195,6 +195,11 @@ void npCtrlCommand (int command, void* dataRef)
 		case kNPcmdFileMapTwo : npCtrlFile (command, dataRef); break;
 		case kNPcmdFileMapThree : npCtrlFile (command, dataRef); break;
 
+		case kNPcmdVizCode : npCtrlFile (command, dataRef); break;
+		case kNPcmdFileViz : npCtrlFile (command, dataRef); break;
+		case kNPcmdGitViz : npCtrlFile (command, dataRef); break;
+		case kNPcmdWebViz : npCtrlFile (command, dataRef); break;
+
 		case kNPcmdOpenURL : npCtrlFile (command, dataRef); break;
 		case kNPcmdOpenApp : npCtrlFile (command, dataRef); break;
 		case kNPcmdOpenAntz : npCtrlFile (command, dataRef); break;
@@ -421,7 +426,22 @@ void npCtrlFile (int command, void* dataRef)
 				else
 					npdbLoadUpdate( dataRef );	///< load scene update from DB
 			break;
-			
+
+		case kNPcmdVizCode :
+			npPostMsg( "Oops... Select ALL now '~' Tilda key", kNPmsgCtrl, data );
+			break;
+		case kNPcmdFileViz :
+			npPostMsg( "Loading FileViz Directory Tree", kNPmsgCtrl, data );
+			npNewDirTree( data->io.file.appPath, NULL, dataRef );		//zz file tree
+			break;
+		case kNPcmdGitViz :
+			npPostMsg( "Fetching GitViz Issues", kNPmsgCtrl, data );
+			data->io.github.issues->running = true;
+			break;
+		case kNPcmdWebViz :
+			npPostMsg( "WebViz not yet implemented", kNPmsgCtrl, data );
+			break;
+
 		case kNPcmdFileOpen :
 			npFileBrowser (dataRef);
 			break;
@@ -461,8 +481,7 @@ void npCtrlFile (int command, void* dataRef)
 			if (data->io.key.modShift)
 				npSaveScene(kNPmapCSV, name, data);
 			else
-				//npLoadScene(kNPmapCSV, name, data);
-				//npNewDirTree(data->io.file.appPath, NULL, dataRef);		//zz file tree // lde
+				npLoadScene(kNPmapCSV, name, data);
 			break;
 
 		case kNPcmdFileImport :
@@ -1224,6 +1243,12 @@ void npCtrlSelect (int command, void* dataRef)
 		case kNPcmdSelectToggle : node->selected = 1 - node->selected; break;
 
 		case kNPcmdSelectAll :
+			if( data->map.selectAll == true )	//zz move to kNPcmdSelectToggle
+			{
+				npCtrlSelect( kNPcmdSelectNone, data );
+				break;
+			}
+			
 			if (data->io.mouse.tool == kNPtoolHide 
 				|| data->io.mouse.tool == kNPtoolTag )	//add more tool handling //zz debug
 				commandTemp = kNPcmdSelect;
@@ -1249,9 +1274,7 @@ void npCtrlSelect (int command, void* dataRef)
 				npPostMsg("Select ALL",kNPmsgCtrl,data);
 			break;
 
-		case kNPcmdSelectNone :
-			data->map.selectAll = false;
-											//turn OFF selected for all nodes
+		case kNPcmdSelectNone :			//turn OFF selected for all nodes
 			for (i = kNPnodeRootPin; i < data->map.nodeRootCount; i++)
 				TraverseTree (kNPcmdSelectOff, data->map.node[i], data);
 			
