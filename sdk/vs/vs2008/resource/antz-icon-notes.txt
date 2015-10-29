@@ -4,3 +4,14 @@ ie4uinit.exe -ClearIconCache (in a command window)
 
 Otherwise your new icon may appear not to have changed,
  (if the file name of the .exe stays the same.)
+
+---
+note that the icon only shows up for the app icon and console window,
+not for the main window. The app could be compiled as a window app
+instead of a console app, or below are some links that suggest methods 
+that could be implemented to set a main window icon with freeglut.
+
+http://stackoverflow.com/questions/12748103/how-to-change-freeglut-main-window-icon-in-c
+
+http://stackoverflow.com/questions/18064943/console-window-has-icon-but-opengl-glut-window-dont-have-why
+

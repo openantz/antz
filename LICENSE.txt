@@ -10,10 +10,7 @@
 *
 * Please see main.c for a complete list of additional code contributors.
 *
-* This license does NOT apply to 3rd party libraries. You can find the 3rd
-* party library licenses in the sdk/libs/ subfolders. Generally we only 
-* include libraries that are free for commercial use. Though some versions may
-* include proprietary libraries to support things such as video or VR hardware.
+* This license does NOT apply to 3rd party libraries.
 *
 * To the extent possible under law, the author(s) have dedicated all copyright
 * and related and neighboring rights to this software to the public domain

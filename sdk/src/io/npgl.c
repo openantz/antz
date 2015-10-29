@@ -24,8 +24,6 @@
 
 #include "npgl.h"
 
-#include "../../libs/soil/src/SOIL.h"						//zz debug should just be SOIL.h
-
 #include "gl/nptags.h"
 
 #include "../npio.h"
@@ -37,70 +35,6 @@
 
 void npGLResizeScene (int width, int height);
 void npCopyGPUtoCPU (void* dataRef);
-
-
-//Textures, fonts, display lists, etc... can all be shared provided that:
-//All rendering contexts of a shared display list must use an identical pixel format.
-//http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=79299&page=1
-//wglShareLists() supports texture sharing across GL contexts
-//------------------------------------------------------------------------------
-void npLoadTextures(void* dataRef) 
-{
-	int textureSize = 0;
-	int fileNumber = 1;
-	char* filename = (char*)malloc(4096);
-
-	unsigned int textureID;									// texture, debug zz
-
-											//zz debug, allow loading textures at runtime, 
-											//use data->io.file.mapPath
-	pData data = (pData) dataRef;
-
-	glGetIntegerv (GL_MAX_TEXTURE_SIZE, &textureSize);
-	printf ("\nMax Texture Size: %dx%d\n", textureSize, textureSize);
-	printf ("Larger textures down converted\n", textureSize);
-
-	printf ("\nSearching For Textures\n");
-	// load our texture		// texture, debug zz
-	for (fileNumber = 1; fileNumber <= kNPtextureCountMax; fileNumber++)
-	{
-		//append the file number, deals with the leading zeros
-		if (fileNumber < 10)
-			sprintf (filename, "usr/images/map0000%d.jpg", fileNumber);
-		else if (fileNumber < 100)
-			sprintf (filename, "usr/images/map000%d.jpg", fileNumber);
-		else if (fileNumber < 1000)
-			sprintf (filename, "usr/images/map00%d.jpg", fileNumber);
-		else if (fileNumber < 10000)
-			sprintf (filename, "usr/images/map0%d.jpg", fileNumber);
-
-		textureID = SOIL_load_OGL_texture
-		(
-			filename,
-			SOIL_LOAD_AUTO,
-			SOIL_CREATE_NEW_ID,
-			SOIL_FLAG_INVERT_Y |
-			SOIL_FLAG_MIPMAPS //|			//disabling breaks RGBA textures
-			// | SOIL_FLAG_NTSC_SAFE_RGB	//we want the entire RGB spectrum
-			// | SOIL_FLAG_COMPRESS_TO_DXT	//no lossy compression, faster too
-		);																// texture, debug zz
-		
-		//the last texture loaded is the texture count, non-loads return a texture=0
-		if (textureID)
-		{
-			data->io.gl.textureCount = textureID;
-			printf ("Loaded textureID: %d\n", textureID);
-		}
-	}
-
-	if (data->io.gl.textureCount)
-		printf ("Done Loading Textures\n\n");
-	else
-		printf ("Could Not Find Textures\n\n");
-
-	//zz debug, move this out to external thread worker wrapper function, zz debug
-//	nposEndThread();
-}
 
 
 //------------------------------------------------------------------------------
@@ -1251,17 +1185,3 @@ void npResizeConsole (void* dataRef)
 	}
 }
 
-npScreenGrabThumb( char* name, int type, int x, int y, int w, int h, void* dataRef )
-{
-	pData data = (pData) dataRef;
-
-	char pathName[kNPmaxPath];
-
-	pathName[0] = '\0';
-	strncat( pathName, data->io.file.mapPath, kNPmaxPath );
-	strncat( pathName, name, kNPmaxPath - strlen( pathName ) );
-	
-	data->io.gl.datasetName[0] = '\0';
-	strncat( data->io.gl.datasetName, pathName, kNPmaxPath );
-	data->io.gl.screenGrab = 2;	//zz debug triggers a screenGrab timestamp not synced!!!			
-}

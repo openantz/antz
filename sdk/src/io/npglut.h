@@ -28,7 +28,7 @@
 #include "../npdata.h"
 
 #ifdef NP_MSW_
-	#include <freeglut.h>
+	#include "freeglut.h"
 #endif
 #ifdef NP_OSX_
 	#include <GLUT/glut.h>

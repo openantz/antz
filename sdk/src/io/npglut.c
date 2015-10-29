@@ -23,7 +23,6 @@
 * --------------------------------------------------------------------------- */
 
 #include "npglut.h"
-#include "../../libs/soil/src/SOIL.h"						//zz debug screenGrab
 
 #include "../npio.h"
 #include "../npctrl.h"				//remove once npPostMsg is global, debug zz
@@ -36,6 +35,7 @@
 
 #include "../data/npmapfile.h"		//debug, zz
 
+#include "SOIL.h"
 
 void npGlutInitGL();
 void npGlutDrawGLScene(void);
@@ -230,55 +230,6 @@ void npAppLoopGlut (void* dataRef)
 	glutMainLoop();
 }
 
-
-void npScreenGrab( char* filePath, int type, int x, int y, int w, int h, void* dataRef);
-//zz screenGrab
-//grabs back buffer from current OpenGL context
-//this function needs to be called just before glSwapBuffers()
-//------------------------------------------------------------------------------
-void npScreenGrab( char* filePath, int type, int x, int y, int w, int h,  void* dataRef )
-{
-	int i = 0;
-	int err = 0;
-	int temp = 0; //store console level
-	unsigned char* pixelBuf = NULL;
-//	char filePath[kNPmaxPath];
-	static char timeStamp[64];
-
-	static unsigned char tempLine[65535];	//max fixed array size is 65535
-
-	w = glutGet( GLUT_WINDOW_WIDTH );
-	h = glutGet( GLUT_WINDOW_HEIGHT );
-
-	pixelBuf = (unsigned char*)npMalloc( 0, w*h*3, dataRef );
-	if (!pixelBuf) return;
-   
-    glPixelStorei( GL_PACK_ALIGNMENT, 1 );
-    glReadPixels( 0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, pixelBuf );
-	
-	//RGBA is good for DB thumbnails... see-through dataset snapshot
-	//backbuffer needs to be black with alpha = 0
-	//glReadPixels( 0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, &buf[0] );	 
-
-	for (i=0; i < (h / 2); i++);
-	{	
-		memcpy( tempLine, &pixelBuf[i * w * 3], w );
-		memcpy( &pixelBuf[i * w * 3], &pixelBuf[(h-i) * w * 3], w );
-		memcpy( &pixelBuf[(h-i) * w * 3], tempLine, w );
-	}
-
-	nposTimeStampName( timeStamp );
-	sprintf( filePath, "usr/images/%s.bmp", timeStamp );
-    SOIL_save_image
-		(
-        filePath,
-        SOIL_SAVE_TYPE_BMP, //SOIL_SAVE_TYPE_TGA, //SOIL_SAVE_TYPE_DDS
-        w, h, 3,
-        pixelBuf
-        );
-}
-
-
 //------------------------------------------------------------------------------
 void npGlutDrawGLScene(void) 
 {
@@ -306,6 +257,7 @@ void npGlutDrawGLScene(void)
 	//screenGrab
     if( data->io.gl.screenGrab ) //screenGrab F12
     {
+//		npScreenGrab()
 		w = glutGet( GLUT_WINDOW_WIDTH );
 		h = glutGet( GLUT_WINDOW_HEIGHT );
 

@@ -69,6 +69,7 @@ double npstrtod( char** buffer );		//64bit double is akin to strtod
 	
 // copy a string to a new memory location and return a pointer to the new copy
 char* npNewStrcpy( const char* str, void* dataRef );							
+char* npstrdup( const char* str, void* dataRef);
 
 char* npNextWhiteSpace( const char* buffer, int size );
 char* npSkipWhiteSpace( const char* buffer, int size );

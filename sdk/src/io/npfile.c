@@ -803,7 +803,7 @@ pNPnode npNewDirNode( pNPnode parent, char* path, int type, int view, void* data
 //creates a new node attached to parent, NULL parent creates root pin
 //sets the new node attributes based on the file/dir path string and type
 //default file type = 0 and dir = 1, app/exe = 2, file.txt = 3, csv, jpg.. 
-#include "../../libs/soil/src/SOIL.h"	
+#include "SOIL.h"	
 //---------------------------------------------------------------------------
 pNPnode npNewDirNode( pNPnode node, char* path, int type, int view, void* dataRef )
 {
@@ -937,7 +937,6 @@ pNPnode npNewDirNode( pNPnode node, char* path, int type, int view, void* dataRe
 
 //builds a node tree of the file directory structure
 //---------------------------------------------------------------------------
-/* temp lde
 bool npNewDirTree(const char *basePath, pNPnode parent, void* dataRef)
 {
     WIN32_FIND_DATA fdFile;
@@ -1007,7 +1006,6 @@ bool npNewDirTree(const char *basePath, pNPnode parent, void* dataRef)
 
     return true;
 }
-lde */ 
 
 //zz msw unicode sample code below
 /*

@@ -88,5 +88,7 @@ bool nposSupportsAntzThreads (void);
 void* nposLoadLibrary( char* filePath );
 void* nposGetLibSymbol(void* library, char* symbolName); // New function, lde
 
+int nposGetKey (void);
+
 #endif
 

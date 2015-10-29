@@ -183,16 +183,16 @@ void npInitKey (void* dataRef)
 	key->map[kKeyDown][kKeyCodeC]				= kNPcmdCamera;
 	key->map[kKeyDown][kKeyCodeG]				= kNPcmdGrid;
 
-	key->map[kKeyDown][kKeyCode4]				= kNPcmdSelectAll;
-	key->map[kKeyDown][kKeyCodeTilda]			= kNPcmdSelectNone;
+	key->map[kKeyDown][kKeyCodeTilda]			= kNPcmdSelectAll;
 //	key->map[kKeyDown][kKeyCodeSlash]			= kNPcmdSelectToggle; //zzsql
 	key->map[kKeyDown][kKeyCode1]				= kNPcmdFileMapOne;
 	key->map[kKeyDown][kKeyCode2]				= kNPcmdFileMapTwo;
 	key->map[kKeyDown][kKeyCode3]				= kNPcmdFileMapThree;
 
-	key->map[kKeyDown][kKeyCode5]				= kNPcmdPresetOne;
-	key->map[kKeyDown][kKeyCode6]				= kNPcmdPresetTwo;
-	key->map[kKeyDown][kKeyCode7]				= kNPcmdPresetThree;
+	key->map[kKeyDown][kKeyCode4]				= kNPcmdVizCode;
+	key->map[kKeyDown][kKeyCode5]				= kNPcmdFileViz;
+	key->map[kKeyDown][kKeyCode6]				= kNPcmdGitViz;
+	key->map[kKeyDown][kKeyCode7]				= kNPcmdPresetTwo; //kNPcmdWebViz;
 //	key->map[kKeyDown][kKeyCode8]				= kNPcmdPresetFour;
 
 //	key->map[kKeyDown][kKeyCodeC]				= kNPcmdCenter;

@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------------------
 *
-*  npgeometry.h
+*  npostgis.c
 *
 *  ANTz - realtime 3D data visualization tools for the real-world, based on NPE.
 *
@@ -22,39 +22,25 @@
 *
 * --------------------------------------------------------------------------- */
 
-#ifndef NPGL_H_
-#define NPGL_H_
+#include "npostgis.h"
 
 
-#include "../npdata.h"
+//------------------------------------------------------------------------------
+void npInitPostGIS (void* dataRef)
+{
+	return;
+}
 
-#include "npglut.h"
+//------------------------------------------------------------------------------
+void npClosePostGIS (void* dataRef)
+{
+	return;
+}
 
-#include "gl/npgldraw.h"
-#include "gl/npgeometry.h"
-#include "gl/npcolor.h"
-#include "gl/nptexmap.h"
+//------------------------------------------------------------------------------
+void npUpdatePostGIS (void* dataRef)
+{
+	return;
+}
 
-
-//--- Functions ----------------------------------------------------------------
-
-void npInitGL (void* dataRef);
-void npCloseGL (void* dataRef);
-
-void npGLDrawScene (void* dataRef);
-
-void npGLResizeScene (int width, int height);
-
-void npPick (int x, int y, void* dataRef);
-
-void npResizeConsole (void* dataRef);
-
-void npPostMode (pNPnode node, void* dataRef);
-void npPostTool (pNPnode node, void* dataRef);
-
-void npMenuRefresh ( pNPhud hud, void* dataRef );
-
-void npTagEditMode( bool tagMode, void* dataRef );
-
-#endif
 
