@@ -5,3 +5,5 @@ By default we keep all release .DLL files with antz.exe in the main root folder.
 Debug version of freeglut.dll is already present in this folder.
 
 Copy (release version) libmysql.dll from the root folder to here.
+
+Copy (debug version) libcurld.dll from the root folder to here.

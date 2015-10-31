@@ -73,3 +73,6 @@ int npCURLgetUrl(pNPcurl curl, char* url, int memory_index, void* dataRef);
 
 void npCurlInit(void* dataRef);
 void npcurlEasySetOptUrl(pNPcurl curl, char* url, void* dataRef);
+
+pNPcurlFuncSet npcurlNewFuncSet( pNPcurl curl );
+int npCurlHook( pNPcurl curl, void* libcurl);

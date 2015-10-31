@@ -1659,7 +1659,7 @@ struct NPgithubIssue {
 typedef struct NPgithubIssue NPgithubIssue;
 typedef NPgithubIssue* pNPgithubIssue;
 
-#define kNPgithubMaxIssues 500
+#define kNPgithubMaxIssues 2000
 
 struct NPgithubIssues {
     pNPnode parent;
@@ -1965,6 +1965,51 @@ struct MemoryStruct2 {
 typedef struct MemoryStruct2 MemoryStruct2;
 typedef MemoryStruct2* pMemoryStruct2;
 
+
+struct NPcurlFuncSet{
+	int			id;						///< the function set ID
+	
+	char		hostType[kNPdbNameMax];	///< content type, antz or 3rd party
+	void*		libHandle;					///< library handle
+	
+	/// curl uses cdecl as their calling convention
+	/// mysql uses stdcall
+	CURLcode (__cdecl *global_init)		(long flags);
+	void* (__cdecl *easy_init)		();
+	int   (__cdecl *easy_perform)		();
+	char* (__cdecl *easy_strerror)    ();
+	CURLcode (__cdecl *easy_setopt)   ();
+	
+
+	///< error and errno use 'db_' prefix to prevent name conflict
+	
+	int   (*InitConnOptions)		();
+	void* (*GetTableFields)			();	///creates the table fields descrisptor
+	void* (*getNodeTableFields)  ();
+	
+	void* (*StatementInsert)		();
+	void* (*StatementCreate)		();
+	void* (*StatementCreateTable)	();
+	void* (*StatementCreateNodeTable) ();
+	void* (*StatementUse)			();
+	void* (*StatementShow)			();
+	void* (*StatementDrop)			();
+	void* (*StatementSelect)		();
+	void* (*StatementTruncate)		();
+	void* (*StatementUpdate)		();
+	void* (*StatementDBshow)		();
+	void* (*StatementDatabases)     ();
+	void* (*getFuncsFromHost)    ();
+	
+	int   (*showDatabases)          (); // I might pass this a fcn ptr and change it to (*show), lde @todo
+	char* (*getTableFields)			();
+	
+	int size;
+};
+typedef struct NPcurlFuncSet NPcurlFuncSet;
+typedef struct NPcurlFuncSet *pNPcurlFuncSet;
+
+
 struct NPcurl
 {
 	CURL* curl_handle;
@@ -1972,6 +2017,7 @@ struct NPcurl
 	char* urlPtr;
 	int urlSize;
 	int numArgs;
+	int funcSetCount;
 	const char* errorStr;
 	int globalInitFlag;
 	int easySetOptFlag;
@@ -1979,6 +2025,8 @@ struct NPcurl
 	MemoryStruct2 mem[10];
 	int numMem;
 	int memIndex;
+	//pNPcurlFuncSet	funcSetList[kNPdbFuncSetMax]; ///< host type specific
+	pNPcurlFuncSet funcSetList; ///< host type specific
 };
 typedef struct NPcurl NPcurl;
 typedef NPcurl* pNPcurl;
@@ -2002,10 +2050,11 @@ struct NPgithubRequestResponse {
 typedef struct NPgithubRequestResponse NPgithubRequestResponse;
 typedef NPgithubRequestResponse* pNPgithubRequestResponse;
 
+#define kNPgithubMaxUsers 1000
 struct NPgithub {
 	char* repo_name;
 	pNPgithubIssues issues;
-	NPgithubUser user[200];
+	NPgithubUser user[kNPgithubMaxUsers];
 	int num_of_users;
 	int err;
 //	pNPgithubRequest request;

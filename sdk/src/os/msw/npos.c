@@ -99,6 +99,7 @@ void nposGetAppPath (char* buffer, int* size)
 	//copy the app path to the passed in buffer
 	strcpy (buffer, appPath);
 
+	printf("\nnposGetAppPath : %s", appPath);
 	//set the length
 	*size = strlen(buffer); 
 }
