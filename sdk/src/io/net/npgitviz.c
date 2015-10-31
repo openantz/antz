@@ -479,7 +479,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	time_closed  = *localtime(&now);
 
 //	printf("\nissue index : %d", issueIndex);
-	if(issueIndex < 0 || issueIndex >= 500)
+	if(issueIndex < 0 || issueIndex >= kNPgithubMaxIssues)
 	{
 		printf("\nissue index : out of domain");
 		getchar();
