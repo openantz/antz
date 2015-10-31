@@ -118,9 +118,8 @@ void npConsoleCmdText( pNPconsole console, void* dataRef )
 	{
 		printf("\n-----CSV-----\n");
 	}
-	else if( strncmp("issues ", console->inputStr, 6) == 0 )
+	else if( strncmp("gitviz ", console->inputStr, 6) == 0 )
 	{
-		//data->io.issues.running = true;
 		data->io.github.issues->running = true;
 	}
 	else if( strncmp ( "pick ", console->inputStr, 5 ) == 0 )

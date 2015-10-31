@@ -1,276 +1,90 @@
-#include "npGithub.h"
-
-void npCURLbuildGithubURL(pNPcurl curl, pNPgithub github, void* dataRef)
-{
-	
-
-}
-
-
-void npGithubGetIssues(void* dataRef)
-{
-	pData data = (pData) dataRef;	
-
-	pNPgithub github = &data->io.github;
-
-	pNPcurl curl = &data->io.curl; 
-	pNPjson json = &data->io.json; 
-
-	npCURLsetGithubRequest(github->request, 1, 200, "all", dataRef);
-	npCURLsetGithubRepoName(curl, github, "openantz/antz", dataRef);
-//	npCURLsetGithubRepoName(curl, github, "bagder/curl", dataRef);
-//	npCURLsetGithubRepoName(curl, github, "reddit/reddit", dataRef);
-
-	npCURLgetGithubRepoIssuesAll(curl, github, dataRef);
-
-	npJSONloadCURLdata(curl, json, dataRef);
-
-	npJSONissuesGetGithubIssues(json, github, dataRef); /// @todo temp	
-	return;
-}
+/* -----------------------------------------------------------------------------
+*
+*  npgithub.c
+*
+*  ANTz - realtime 3D data visualization tools for the real-world, based on NPE.
+*
+*  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
+*
+*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*
+*  Please see main.c for a complete list of additional code contributors.
+*
+*  To the extent possible under law, the author(s) have dedicated all copyright 
+*  and related and neighboring rights to this software to the public domain
+*  worldwide. This software is distributed without any warranty.
+*
+*  Released under the CC0 license, which is GPL compatible.
+*
+*  You should have received a copy of the CC0 Public Domain Dedication along
+*  with this software (license file named LICENSE.txt). If not, see
+*  http://creativecommons.org/publicdomain/zero/1.0/
+*
+* --------------------------------------------------------------------------- */
+#include "npgithub.h"
+#include <assert.h>
+#include "../file/npjson.h"
+#include "npgitviz.h"
 
 
 
-void npGithubRun(void* dataRef)
+int npGithubInit(pNPgithub github, void* dataRef)
 {
     pData data = (pData) dataRef;
-
-	pNPgithub github = &data->io.github;
-    bool getUsers = false;
-	int userIndex = 0;
-   
-	if(github->issues->running != false)
-    {
-		npGithubGetIssues(dataRef);
-//		npGitViz(&data->io.github, dataRef);
-//		printf("\ngithub->num_of_users : %d", github->num_of_users);
-		while(userIndex < github->num_of_users)
-		{
-			npCURLgetGithubUserAvatar(&data->io.curl, &data->io.github.user[userIndex], dataRef);
-			userIndex++;
-		}
-
-		theNew_npGitViz(&data->io.github, dataRef);
-		
-		github->issues->running = false;
-    }
-    
-    if( getUsers == true )
-    {
-		//getGithubProcessUsers(issues, 1, dataRef);
-    }
-    
-}
-
-/*
-void npGitVizIssue(pNPgithubIssues issues, int issueIndex, void* dataRef)
-{
-	pNPnode issue_creation_node;
-
-	pNPgithubIssue current_issue;
-	int yearCreatedIndex  = 0;
-	int monthCreatedIndex = 0;
-	int dayCreatedIndex   = 0;
-
-	current_issue = &issues->issue[issueIndex];
-
-	/// @todo not sure that this segment belongs here
-
-	new_npGithubGetIssueCreatedAt(current_issue);	
-	yearCreatedIndex = current_issue->issue_created_at.year - 2014; // - 2014 temporary
-	monthCreatedIndex = current_issue->issue_created_at.month - 1;
-	dayCreatedIndex = current_issue->issue_created_at.day;
-
-	/// ---------------------------------------------
-
-//	current_issue->issue_creation_node = npNodeNew(kNodePin, NULL, dataRef);
-
-	current_issue->issue_creation_node = (pNPnode) malloc (sizeof(NPnode));
-	npInitNodeDefault(current_issue->issue_creation_node); /// new
-	current_issue->issue_creation_node->hide = true;
-	npGitVizSetIssueCreationNodeState(current_issue, dataRef);
-
-	if( strcmp(current_issue->state, "closed") == 0 )
-	{
-//		current_issue->issue_closed_node = npNodeNew(kNodePin, NULL, dataRef);
-		current_issue->issue_closed_node = (pNPnode) malloc (sizeof(NPnode));
-		npInitNodeDefault(current_issue->issue_closed_node);
-		current_issue->issue_closed_node->hide = true; 
-		npGitVizSetIssueClosedNodeState(current_issue, dataRef);
-	}
-
-}
-*/
-
-void npGithubCtrlSetCurrentIssue(pNPgithubIssues issues, void* dataRef)
-{
-    //issue->partOf->current = issue;
-    issues->current = &issues->issue[issues->index];
-}
-
-void npGithubCtrlSetRecordTagIndex(pNPgithubIssues issues, int index, void* dataRef)
-{
-  //  pNPgithubIssue current_issue = npGithubCtrlGetCurrentIssue(issue, dataRef);
-  //  current_issue->partOf->recordTagIndex = index;
-    //issue->partOf->recordTagIndex = index;
-    issues->recordTagIndex = index;
-}
-
-void new_npGithubGetIssueCreatedAt(pNPgithubIssue issue)
-{
-    char* ptr = issue->created_at;
-    char str[6][5] = {'\0'};
-    char* symbol[] = {'-','-','T',':',':', 'Z'};
-    int index = 0;
-    size_t symbolArraySize = 0;
-    symbolArraySize = sizeof(symbol) / sizeof(char*);
-    
-  //  issue->issue_created_at = malloc(sizeof(NPgithubIssueCreatedAt));
-    
-    for(index = 0; index <= (int)symbolArraySize-1; index++)
-    {
-        ptr = dumpTill(ptr, str[index], symbol[index]);
-        ptr++;
-       // printf("\n%s", str[index]);
-    }
-    
-    issue->issue_created_at.year  = atoi(str[0]);
-    issue->issue_created_at.month = atoi(str[1]);
-    issue->issue_created_at.day   = atoi(str[2]);
-    
-    issue->issue_created_at.hour  = atoi(str[3]);
-    issue->issue_created_at.minute= atoi(str[4]);
-    issue->issue_created_at.second= atoi(str[5]);
-    
-}
-
-
-void new_npGithubGetIssueClosedAt(pNPgithubIssue issue)
-{
-    char* ptr = issue->closed_at;
-    char str[6][5] = {'\0'};
-//    char* symbol[] = {'-','-','T',':',':', 'Z'};
-    char symbol[] = {'-','-','T',':',':', 'Z'};
 	int index = 0;
-    size_t symbolArraySize = 0;
-    symbolArraySize = sizeof(symbol) / sizeof(char*);
-//	printf("\nsizeof(symbol) : %d", sizeof(symbol));
-//	printf("\nsymbolArraySize : %d", symbolArraySize);
+    
+	github->issues = malloc(sizeof(NPgithubIssues));
+	if(github->issues == NULL)
+	{	
+		return -1;
+	}
+	
+	index = 0;	
 
-    if(ptr != NULL)
-    {
-       issue->issue_closed_at = malloc(sizeof(NPgithubIssueCreatedAt));
-    }
-    else
-    {
-        return;
-    }
-        
-  //  for(index = 0; index <= (int)symbolArraySize-1; index++)
-	for(index = 0; index < sizeof(symbol); index++)
+	data->io.github.issues->running = false;
+
+	/// @todo add define : kNPgithubMaxRequests
+	for(index = 0; index < 10; index++)
 	{
-        ptr = dumpTill(ptr, str[index], symbol[index]);
-        ptr++;
-       // printf("\n%s", str[index]);
-    }
-    
-    issue->issue_closed_at->year  = atoi(str[0]);
-    issue->issue_closed_at->month = atoi(str[1]);
-    issue->issue_closed_at->day   = atoi(str[2]);
-    
-    issue->issue_closed_at->hour  = atoi(str[3]);
-    issue->issue_closed_at->minute= atoi(str[4]);
-    issue->issue_closed_at->second= atoi(str[5]);
-    
-}
-
-/*
-void new_new_gitVizTest(pNPgithub github, void* dataRef)
-{
-	pNPnode year_node[2];
-	pNPnode dayCreated_node;
-	pNPnode dayClosed_node;
-	pNPnode link;
-
-	pNPgithubIssue current_issue;
-	int issueIndex = 0;
-	int yearCreatedIndex = 0;
-	int monthCreatedIndex = 0;
-	int dayCreatedIndex = 0;
-	int childCount = 0;
-
-	int yearClosedIndex = 0;
-	int monthClosedIndex = 0;
-	int dayClosedIndex = 0;
-
-	new_npCreateTimeViz(&year_node, dataRef); 
-	for(github->issues->index = 0; github->issues->index < github->issues->count; github->issues->index++)
-	{
-		npGitVizIssue(github, github->issues->index, dataRef); /// @todo npGitVizAllIssues
-		github->issues->current = &github->issues->issue[github->issues->index];	
-
-		new_npGithubGetIssueCreatedAt(github->issues->current);	
-
-		yearCreatedIndex = github->issues->current->issue_created_at.year - 2014; // 2014 temporary
-
-		monthCreatedIndex = github->issues->current->issue_created_at.month - 1;
-
-		dayCreatedIndex = github->issues->current->issue_created_at.day;
-
-//		printf("\nIndexes, Year : %d, Month : %d, Day : %d", yearCreatedIndex, monthCreatedIndex, dayCreatedIndex);
+		github->rR[index].page = -1;
+		github->rR[index].per_page = NULL;
+		github->rR[index].requestUrl[0] = '\0';
+		github->rR[index].response = NULL;
+		github->rR[index].responseSize = 0;
+		github->rR[index].state = NULL;
+		github->rR[index].urlSize = -1;
+	}
 		
-		dayCreated_node = year_node[yearCreatedIndex]->child[monthCreatedIndex]->child[dayCreatedIndex];
-		dayCreated_node->translate.x = (11.61290 * dayCreatedIndex);
-		year_node[yearCreatedIndex]->child[monthCreatedIndex]->hide = false;
-
-		dayCreated_node->hide = false;
-
-		childCount = dayCreated_node->childCount;
-
-		dayCreated_node->child[childCount] = github->issues->current->issue_creation_node;
-
-		npShowIssueCreationNode(github->issues->current, dataRef);
-		npSetIssueCreationNodeParent(github->issues->current, dayCreated_node, dataRef);
-		npSetIssueCreationNodeGeometry(github->issues->current, kNPgeoTorus, dataRef);
-		npSetIssueCreationNodeTopo(github->issues->current, kNPtopoTorus, dataRef);
-
-		dayCreated_node->childCount++;		
-		if(github->issues->current->issue_closed_node != NULL)
-		{	
-			new_npGithubGetIssueClosedAt(github->issues->current);
-
-			yearClosedIndex = github->issues->current->issue_closed_at->year - 2014; // - 2014 temporary
-			monthClosedIndex = github->issues->current->issue_closed_at->month - 1;
-			dayClosedIndex = github->issues->current->issue_closed_at->day;
-			
-			dayClosed_node = year_node[yearClosedIndex]->child[monthClosedIndex]->child[dayClosedIndex];
-			dayClosed_node->translate.x = (11.61290 * dayClosedIndex);
-			year_node[yearClosedIndex]->child[monthClosedIndex]->hide = false;
-			dayClosed_node->hide = false;
-
-			childCount = dayClosed_node->childCount;
-			dayClosed_node->child[childCount] = github->issues->current->issue_closed_node;
-//			dayClosed_node->child[childCount] = current_issue->issue_closed_node;
-			
-			npShowIssueClosedNode(github->issues->current, dataRef);
-			npSetIssueClosedNodeParent(github->issues->current, dayClosed_node, dataRef);
-			npSetIssueClosedNodeGeometry(github->issues->current, kNPgeoSphere, dataRef);
-			npSetIssueClosedNodeTopo(github->issues->current, kNPtopoSphere, dataRef);
-
-			dayClosed_node->childCount++;
-			link = npLinkIssueCreationNodeToIssueClosedNode(github->issues->current->issue_creation_node, github->issues->current->issue_closed_node, dataRef);
-			link->geometry = 20;
-
-		}
-
+	github->num_of_users = 0;
+	/// @todo add define : kNPgithubMaxUsers
+	for(index = 0; index < kNPgithubMaxUsers; index++)
+	{
+		github->user[index].avatar_image_file = NULL;
+		github->user[index].avatar_image_file_path = NULL;
+		github->user[index].avatar_image_textureID = 0;
+		github->user[index].avatar_url = NULL;
+		github->user[index].events_url = NULL;
+		github->user[index].followers_url = NULL;
+		github->user[index].gists_url = NULL;
+		github->user[index].gravatar_id = NULL;
+		github->user[index].html_url = NULL;
+		github->user[index].id = -1;
+		github->user[index].login = NULL;
+		github->user[index].number = -1;
+		github->user[index].organizations_url = NULL;
+		github->user[index].received_events_url = NULL;
+		github->user[index].repos_url = NULL;
+		github->user[index].site_admin = false;
+		github->user[index].starred_url = NULL;
+		github->user[index].subscriptions_url = NULL;
+		github->user[index].type = NULL;
+		github->user[index].url = NULL;
 	}
 
-}
-*/
+	printf("\nnpGithubInit");
+	npGithubIssuesInit(github->issues, dataRef); 
 
-void npGithubCtrlSetCurrentIssueIndex(pNPgithubIssues issues, int index, void* dataRef)
-{
-    issues->index = index;
+	return 0;
 }
 
 void npGithubIssuesInit(pNPgithubIssues issues, void* dataRef)
@@ -282,8 +96,9 @@ void npGithubIssuesInit(pNPgithubIssues issues, void* dataRef)
 	issues->current = NULL;
 	issues->index = 0;
 
-	for(index = 0; index < 200; index++)
+	for(index = 0; index < kNPgithubMaxIssues; index++)
 	{
+		issues->issue[index].user = NULL;
 		issues->issue[index].assignee = NULL;
 		issues->issue[index].body = NULL;
 		issues->issue[index].closed_at = NULL;
@@ -301,7 +116,7 @@ void npGithubIssuesInit(pNPgithubIssues issues, void* dataRef)
 		issues->issue[index].issueNodeType = 0;
 		issues->issue[index].issueTopoType = 0;
 		issues->issue[index].labels_url = NULL;
-		issues->issue[index].locked = NULL;
+		issues->issue[index].locked = false;
 		issues->issue[index].milestone = NULL;
 		issues->issue[index].num_comments = 0;
 		issues->issue[index].numOfWordsInIssueTitle = 0;
@@ -314,412 +129,580 @@ void npGithubIssuesInit(pNPgithubIssues issues, void* dataRef)
 		issues->issue[index].updated_at = NULL;
 		issues->issue[index].url = NULL;
 		issues->issue[index].userId = 0;
+		issues->issue[index].num_of_labels = 0;
 	}
 	
 
 	printf("\nnext 2");
 }
 
-void npGithubInit(pNPgithub github, void* dataRef)
+
+void npGithubSetRepo(pNPgithub github, char* repo, void* dataRef)
+{
+	//strcpy(github->repo_name, repo);
+	github->repo_name = repo;
+}	
+
+void npGithubGetIssues(void* dataRef)
+{
+	pData data = (pData) dataRef;	
+
+	pNPcurl curl = &data->io.curl; 
+	pNPgithub github = &data->io.github;
+	
+	char* response = NULL;
+	int   index    = 0;
+	int   err      = -1;
+
+//	pNPjson json = &data->io.json; 
+	new2_pNPjson json = &data->io.json2; /// @todo change json2 to json
+	json->jRoot.jsonRoot = NULL; /// @todo npjsonInit
+//	github->jsonGithub = json;
+
+	npGithubSetRepo(github, "openantz/antz", dataRef);
+//	npGithubSetRepo(github, "bagder/curl", dataRef);
+//	npGithubSetRepo(github, "reddit/reddit", dataRef);
+//	npGithubSetRepo(github, "torvalds/linux", dataRef);
+	
+	do{
+		npGithubBuildRequest(github, index, "all", "200", index+1, dataRef);
+//		printf("\nurl : %s", github->rR[index].requestUrl); printf("\npage : %d", github->rR[index].page);
+		err = npGithubSendRequest(github, index, dataRef);
+		if(err == -1)
+			return;
+
+		response = npGithubReceiveResponse(github, index, dataRef);	
+		index++;
+	}while(response != NULL);
+	
+	github->num_of_RequestResponses = index;
+	//printf("github->num_of_RequestResponses : %d", github->num_of_RequestResponses);
+
+	for(github->requestResponse_index = 0; github->requestResponse_index < github->num_of_RequestResponses; github->requestResponse_index++)
+	{ // include npjson.h
+		npjsonSetInput(&data->io.json2, github->rR[github->requestResponse_index].response, github->requestResponse_index, dataRef);	
+		npjsonLoadInput(&data->io.json2, dataRef);
+	}
+	
+	if(json->jRoot.jsonRoot == NULL)
+	{
+		npjsonUnpackRoot(json, dataRef);
+	}
+	else
+	{
+		return;
+	}
+
+
+	if(json->jRoot.type == JSON_ARRAY)
+	{
+	
+//		printf("\nnum of issues : %d" ,((pNPjsonArray)json->jRoot.jsonRoot)->numElements);	
+		data->io.github.issues->count = ((pNPjsonArray)json->jRoot.jsonRoot)->numElements;	
+		printf("\nnum of issues : %d\n" , data->io.github.issues->count );	
+		
+		if(data->io.github.issues->count > kNPgithubMaxIssues)
+		{
+			printf("kNPgithubMaxIssues Exceeded");
+			getchar();
+		}
+
+
+		for(index = 0; index < data->io.github.issues->count; index++)
+		{
+			npGithubGetIssue(&data->io.json2, data->io.github.issues, index, dataRef); /// @todo This should just take pNPgithub
+		}
+	}
+
+	return;
+}
+
+size_t write_avatar_image(void* ptr, size_t size, size_t nmemb, FILE *stream) {
+    size_t written = fwrite(ptr, size, nmemb, stream);
+    return written;
+}
+
+char* npGithubGetUserAvatar(pNPgithubUser user, void* dataRef)
+{
+	pData data = (pData) dataRef;	
+	pNPcurl curl = &data->io.curl;
+	pNPcurlFuncSet curlFunc = curl->funcSetList;
+	pNPgithubIssues issues = data->io.github.issues;
+    CURL *curl_handle = NULL;
+    CURLcode res;
+    FILE *fp = NULL;
+    static int id = 0;
+    int my_index = 0;
+	char fileName[40] = {'\0'};
+
+	sprintf(fileName, "%s.png", user->login); 
+	user->avatar_image_file = malloc(sizeof(char) * strlen(fileName));
+	strcpy(user->avatar_image_file, fileName);
+
+    id++;
+    fp = fopen(fileName, "wb");
+    if(fp == NULL)
+	{
+		printf("2371 File Open Failed");
+		return NULL;
+	}
+
+ //   curl_global_init(CURL_GLOBAL_ALL);
+
+	curl_handle = curlFunc->easy_init(); 
+    if(curl_handle == NULL)
+	{
+		printf("2312 curl easy init failed");
+		return NULL;
+	}
+
+	if(curl_handle != NULL && fp != NULL)
+	{
+		curlFunc->easy_setopt(curl_handle, CURLOPT_URL, user->avatar_url);
+		curlFunc->easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_avatar_image);
+		curlFunc->easy_setopt(curl_handle, CURLOPT_WRITEDATA, fp);
+		curlFunc->easy_setopt(curl_handle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+    
+		res = curlFunc->easy_perform(curl_handle);
+
+      if(res != CURLE_OK)
+	  {
+		printf("\nError : Error with curl_easy_perform : %d", res);
+	  }
+
+	  fclose(fp);
+	}
+	else
+	{
+		return NULL;
+	}
+
+	return user->avatar_image_file;
+	
+
+}
+
+void npGithubRun(void* dataRef)
 {
     pData data = (pData) dataRef;
-	int index = 0;
-    //pNPgithubIssues issues = NULL;
-    //issues = malloc(sizeof(NPgithubIssues));
-    /*
-    if(issues == NULL)
+
+	pNPgithub github = &data->io.github;
+    bool getUsers = false;
+	int userIndex = 0;
+   
+	if(github->issues->running != false)
     {
-        printf("\n2387Malloc Failed");
-        return NULL;
+		npGithubGetIssues(dataRef);
+		while(userIndex < github->num_of_users)
+		{
+		//	printf("\nuserIndex : %d", userIndex);
+			npGithubGetUserAvatar(&data->io.github.user[userIndex], dataRef); /// temp
+			userIndex++;
+		}
+
+		theNew_npGitViz(&data->io.github, dataRef);
+		
+		github->issues->running = false;
     }
-    */
-    
-   // data->io.
-/*
-	npGithubIssuesInit(&data->io.issues);
-    data->io.issues.running = false;
-    npGithubCtrlSetCurrentIssueIndex(&data->io.issues, 0, dataRef);
-    npGithubCtrlSetCurrentIssue(&data->io.issues, dataRef);
-    npGithubCtrlSetRecordTagIndex(&data->io.issues, 0, dataRef);
-*/   
-
-	github->issues = malloc(sizeof(NPgithubIssues));
-	if(github->issues == NULL)
-	{
-		return;
-	}
-	data->io.github.issues->running = false;
-
-	github->request = malloc(sizeof(NPgithubRequest));
-	if(github->request == NULL)
-	{
-		printf("\nmalloc failed");
-		return;
-	}
-
-	github->request->page = 0;
-	github->request->per_page = 200;
-	github->request->state = NULL;
-
-	github->num_of_users = 0;
-	for(index = 0; index < 20; index++)
-	{
-		github->user[index].avatar_image_file = NULL;
-		github->user[index].avatar_image_file_path = NULL;
-		github->user[index].avatar_image_textureID = NULL;
-		github->user[index].avatar_url = NULL;
-		github->user[index].events_url = NULL;
-		github->user[index].followers_url = NULL;
-		github->user[index].gists_url = NULL;
-		github->user[index].gravatar_id = NULL;
-		github->user[index].html_url = NULL;
-		github->user[index].id = NULL;
-		github->user[index].login = NULL;
-		github->user[index].number = -1;
-		github->user[index].organizations_url = NULL;
-		github->user[index].received_events_url = NULL;
-		github->user[index].repos_url = NULL;
-		github->user[index].site_admin = NULL;
-		github->user[index].starred_url = NULL;
-		github->user[index].subscriptions_url = NULL;
-		github->user[index].type = NULL;
-		github->user[index].url = NULL;
-	}
-
-	printf("\nnpGithubInit");
-	npGithubIssuesInit(github->issues, dataRef); 
 }
 
 
-
-void npGithubGetIssueClosedAt(pNPgithubIssue issue)
+void npGithubBuildRequest(pNPgithub github, int request_index, char* state, char* per_page, int page, void* dataRef)
 {
-    char* ptr  = issue->closed_at;
-    char year_str[5] = {'\0'};
-    char month_str[3] = {'\0'};
-    char day_str[3] = {'\0'};
-    char hour_str[3] = {'\0'};
-    char minute_str[3] = {'\0'};
-    char second_str[3] = {'\0'};
-    
-    int index = 0;
-    
-    issue->issue_closed_at = malloc(sizeof(NPgithubIssueCreatedAt));
-    
-    if(ptr == NULL)
-    {
-        printf("\nIssue has not been closed");
-        return;
-    }
-    
-    while((*ptr) != '-')
-    {
-        year_str[index] = (*ptr);
-        index++; ptr++;
-    }
-    
-    printf("\nUpdate Year String : %s\n", year_str);
-    issue->issue_closed_at->year = atoi(year_str);
-    
-    ptr++;
-    index = 0;
-    while((*ptr) != '-')
-    {
-        month_str[index] = (*ptr);
-        index++; ptr++;
-    }
-    
-    printf("\nUpdate Month String : %s\n", month_str);
-    issue->issue_closed_at->month = atoi(month_str);
-    
-    ptr++;
-    index = 0;
-    while((*ptr) != 'T')
-    {
-        day_str[index] = (*ptr);
-        index++; ptr++;
-    }
-    
-    printf("\nUpdate Day String : %s\n", day_str);
-    issue->issue_closed_at->day = atoi(day_str);
-    
-    ptr++;
-    index = 0;
-    while((*ptr) != ':')
-    {
-        hour_str[index] = (*ptr);
-        index++; ptr++;
-    }
-    
-    printf("\nUpdate Hour String : %s\n", hour_str);
-    issue->issue_closed_at->hour = atoi(hour_str);
-    
-    ptr++;
-    index = 0;
-    while((*ptr) != ':')
-    {
-        minute_str[index] = (*ptr);
-        index++; ptr++;
-    }
-    
-    printf("\nUpdate Minute String : %s\n", minute_str);
-    issue->issue_closed_at->minute = atoi(minute_str);
-    
-    ptr++;
-    index = 0;
-    while((*ptr) != 'Z')
-    {
-        second_str[index] = (*ptr);
-        index++; ptr++;
-    }
-    
-    printf("\nUpdate Second String : %s\n", second_str);
-    issue->issue_closed_at->second = atoi(second_str);
-    
+	pNPgithubRequestResponse rR = &github->rR[request_index];
+	github->requestResponse_index = request_index;
+	
+	rR->state = state;
+	rR->per_page = per_page;
+	rR->page = page;
+	
+	rR->urlSize = sprintf(rR->requestUrl, "https://api.github.com/repos/%s/issues?state=%s&per_page=%s&page=%d", github->repo_name, rR->state, rR->per_page, rR->page);
+	rR->requestUrl[rR->urlSize] = 0;
+
+	return;
 }
 
-
-int npGithubNewIssueCreationGlyph(pNPgithubIssue issue, void* dataRef)
+char* npGithubReceiveResponse(pNPgithub github, int request_index, void* dataRef)
 {
-	/// @todo	
-	return 0;
-}
-
-
-int npGithubNewIssueGlyphs(pNPgithubIssue issue, void* dataRef)
-{
-	static int id = 0;
-
-	if(issue == NULL)	
+	if( github->rR[request_index].response == NULL )
 	{
-		printf("\nIssue is NULL");
+		return NULL;	
+	}
+
+	if( github->rR[request_index].response[0] == '[' 
+		&&
+		github->rR[request_index].response[3] == ']')
+	{
+		//printf("\nNo more to receive");
+		return NULL;
+	}
+	
+	if( strstr(github->rR[request_index].response, "API rate limit exceeded") != NULL )
+	{
+		printf("\nGithub API rate limit exceeded");
 		return NULL;
 	}
 
 
-  //  npGithubGetIssueCreatedAtYear(issue); /// @todo Rename to npGithubGetIssueCreatedAt
-    new_npGithubGetIssueCreatedAt(issue);
-    npGithubGetIssueClosedAt(issue);
-    issue->issue_node->colorIndex = 2;
-    
-	issue->issue_creation_node = npNodeNew(kNodePin, NULL, dataRef);
-	issue->issue_creation_node->geometry = kNPgeoTetrahedron;
-	issue->issue_creation_node->color.r = 255;
-	issue->issue_creation_node->color.g = 0;
-	issue->issue_creation_node->color.b = 0;
-    
-    /// -----------------
-    if(strcmp(issue->state, "closed") == 0)
-    {
-		issue->issue_closed_node = npNodeNew(kNodePin, NULL, dataRef); /// Init this @todo
-		issue->issue_closed_node->geometry = kNPgeoTorus;
-		issue->issue_closed_node->color.r = 0;
-		issue->issue_closed_node->color.g = 0;
-		issue->issue_closed_node->color.b = 255;
-    }
-    
-    return 1;
+	return github->rR[request_index].response;
 }
 
-pNPnode npGithubNewIssueGlyph(pNPgithubIssue issue, void* dataRef)
+int npGithubSendRequest(pNPgithub github, int request_index, void* dataRef)
 {
+	pData data = (pData) dataRef;
+	pNPcurl curl = &data->io.curl;
+	pNPcurlFuncSet func = data->io.curl.funcSetList;
+	int err = -1;
+
+	npCURL_easySetOptWriteFunction(curl, npGithubWriteMemoryCallback, dataRef);
+	err = npCURLgetUrl(curl, github->rR[request_index].requestUrl, 0, dataRef);
+	if(err == -1)
+		return -1;
+
+	return 0;
+}
+
+size_t npGithubWriteMemoryCallback(void* contents, size_t size, size_t nmemb, void* userp)
+{
+	size_t realSize = size * nmemb;
+	pData data = (pData) userp;
+	pNPgithub github = &data->io.github;
+	pNPgithubRequestResponse rR = &github->rR[github->requestResponse_index];	
+
+	
+//	printf("\nnpGithubWriteMemoryCallback : %d", rR->responseSize);
+
+	rR->response = realloc(rR->response, rR->responseSize + realSize + 1);
+	if(rR->response == NULL)
+	{
+		printf("\nrR->response == NULL");
+		return 0; /// out of memory
+	}
+
+//	printf("\ncontents : %s\n%d\n", (char*)contents, github->requestResponse_index);
+	memcpy(&rR->response[rR->responseSize], contents, realSize);
+	rR->responseSize += realSize;
+
+	/// null terminate it
+	rR->response[rR->responseSize] = '\0';
+
+	return realSize;
+}
+
+
+int npGithubGetIssueLabels(pNPjsonObject json_issue, pNPgithubIssue github_issue, void* dataRef)
+{
+	pNPjsonArray json_issue_labels = NULL;
+	pNPjsonObject json_issue_label = NULL;
+	int labels_key_index = -1;
+	int label_index = 0;
+	int url_key_index = -1;
+	int name_key_index = -1;
+	int color_key_index = -1;
+
+	labels_key_index = npJSONgetObjectKeyIndex(json_issue, "labels", dataRef);	
+	json_issue_labels = ((pNPjsonArray)json_issue->jsonValue[labels_key_index].c_value);
+	
+	for(label_index = 0; label_index < json_issue_labels->numElements; label_index++)
+	{
+		json_issue_label = ((pNPjsonObject)json_issue_labels->element[label_index]->c_value);		
+
+		url_key_index    = npJSONgetObjectKeyIndex(json_issue_label, "url", dataRef);	
+		name_key_index   = npJSONgetObjectKeyIndex(json_issue_label, "name", dataRef);
+		color_key_index  = npJSONgetObjectKeyIndex(json_issue_label, "color", dataRef);
+//		printf("\n(ids) url, name, color :: %d %d %d", url_key_index, name_key_index, color_key_index); 
+
+		/// now put it in the github issue labels struct
+		github_issue->label[github_issue->num_of_labels].url = json_issue_label->jsonValue[url_key_index].c_value;
+		github_issue->label[github_issue->num_of_labels].name = json_issue_label->jsonValue[name_key_index].c_value;  
+		github_issue->label[github_issue->num_of_labels].color = json_issue_label->jsonValue[color_key_index].c_value;  
+		github_issue->num_of_labels++;
+	}
+	
+	return 0;
+}
+
+int npGithubGetIssueKeyIndex(pNPjsonObject json_issue, char* key, void* dataRef)
+{
+	int index = -1;
+	index = npJSONgetObjectKeyIndex(json_issue, key, dataRef);
+
+	return index;
+}
+
+int npGithubGetUserKeyIndex(pNPjsonObject json_github_user, char* key, void* dataRef)
+{
+	int index = -1;
+	index = npJSONgetObjectKeyIndex(json_github_user, key, dataRef);
+
+	return index;
+}
+
+int npGithubSearchForUser(pNPgithub github, char* user, void* dataRef)
+{
+	int user_index = 0;
+
+	if(user == NULL)
+		return -2;
+
+	/// Now search to see if the user's data is already in the system
+	for(user_index = 0; user_index < github->num_of_users; user_index++)
+	{
+		if( github->user[user_index].login != NULL ) 
+		{
+			if( strcmp(user, github->user[user_index].login) == 0 )
+			{
+				/// Found User
+				github->issues->issue[user_index].user = &github->user[user_index];
+				break;
+			}
+		}
+	}
+	
+	/// Couldn't find user
+	if(user_index == github->num_of_users)
+		return -1;
+
+	return user_index;
+}
+
+/// @todo rename json_github_user_object TO json_object
+void npGithubAddUserFromIssue(pNPgithub github, pNPjsonObject json_github_user_object, int issueIndex, void* dataRef)
+{
+	pData data = (pData) dataRef;
+	pNPgithubIssues github_issues = github->issues;
+	pNPgithubUser issueUser = NULL;
+	int user_login_key_index = -1;
+	int user_key_index = -1;
+	char* login = NULL;
+
+	user_login_key_index = npJSONgetObjectKeyIndex(json_github_user_object, "login", dataRef);
+	if(user_login_key_index == -1)
+	{
+		// Could not find user login
+		return;
+	}
+
+	login = json_github_user_object->jsonValue[user_login_key_index].c_value;
+	if( github_issues->issue[issueIndex].user == NULL)
+	{
+		github_issues->issue[issueIndex].user = &data->io.github.user[data->io.github.num_of_users];
+		issueUser = github_issues->issue[issueIndex].user;
+		
+		data->io.github.num_of_users++;
+	//	printf("\nnum_of_users : %d", data->io.github.num_of_users);
+		if(data->io.github.num_of_users >= kNPgithubMaxUsers)
+		{
+			printf("\nkNPgithubMaxUsers Exceeded");
+			getchar();
+		}
+		issueUser->login = json_github_user_object->jsonValue[user_login_key_index].c_value;
+	//	printf("\nUser Login : %s", issueUser->login);
+
+		user_key_index = npGithubGetUserKeyIndex(json_github_user_object, "id", dataRef);
+		issueUser->id = ((pNPjsonInteger)json_github_user_object->jsonValue[user_key_index].c_value)->j_int;
+
+		user_key_index = npGithubGetUserKeyIndex(json_github_user_object, "avatar_url", dataRef);
+		issueUser->avatar_url = json_github_user_object->jsonValue[user_key_index].c_value;
+
+		user_key_index = npGithubGetUserKeyIndex(json_github_user_object, "gravatar_id", dataRef);
+		issueUser->gravatar_id = json_github_user_object->jsonValue[user_key_index].c_value;
+
+		user_key_index = npGithubGetUserKeyIndex(json_github_user_object, "url", dataRef);
+		issueUser->url = json_github_user_object->jsonValue[user_key_index].c_value;
+
+		user_key_index = npGithubGetUserKeyIndex(json_github_user_object, "html_url", dataRef);
+		issueUser->html_url = json_github_user_object->jsonValue[user_key_index].c_value;
+
+		user_key_index = npGithubGetUserKeyIndex(json_github_user_object, "followers_url", dataRef);
+		issueUser->followers_url = json_github_user_object->jsonValue[user_key_index].c_value;
+
+/*
+		user_key_index = npGithubGetUserKeyIndex(json_github_user_object, "following_url", dataRef);
+		github_issues->issue[index].user->following_url = json_github_user_object->jsonValue[user_key_index];
+*/
+		user_key_index = npGithubGetUserKeyIndex(json_github_user_object, "gists_url", dataRef);
+		issueUser->gists_url = json_github_user_object->jsonValue[user_key_index].c_value;
+
+		user_key_index = npGithubGetUserKeyIndex(json_github_user_object, "starred_url", dataRef);
+		issueUser->starred_url = json_github_user_object->jsonValue[user_key_index].c_value;
+
+		user_key_index = npGithubGetUserKeyIndex(json_github_user_object, "subscriptions_url", dataRef);
+		issueUser->subscriptions_url = json_github_user_object->jsonValue[user_key_index].c_value;
+
+		user_key_index = npGithubGetUserKeyIndex(json_github_user_object, "organizations_url", dataRef);
+		issueUser->organizations_url = json_github_user_object->jsonValue[user_key_index].c_value;
+
+		user_key_index = npGithubGetUserKeyIndex(json_github_user_object, "repos_url", dataRef);
+		issueUser->repos_url = json_github_user_object->jsonValue[user_key_index].c_value;
+
+		user_key_index = npGithubGetUserKeyIndex(json_github_user_object, "events_url", dataRef);
+		issueUser->events_url = json_github_user_object->jsonValue[user_key_index].c_value;
+
+		user_key_index = npGithubGetUserKeyIndex(json_github_user_object, "received_events_url", dataRef);
+		issueUser->received_events_url = json_github_user_object->jsonValue[user_key_index].c_value;
+
+		user_key_index = npGithubGetUserKeyIndex(json_github_user_object, "type", dataRef);
+		issueUser->type = json_github_user_object->jsonValue[user_key_index].c_value;
+
+		user_key_index = npGithubGetUserKeyIndex(json_github_user_object, "site_admin", dataRef);
+		issueUser->site_admin = ((pNPjsonBoolean)json_github_user_object->jsonValue[user_key_index].c_value)->j_bool;
+
+//		npGithubPrintUserData(issueUser, dataRef);
+	}
+
+}
+
+void npGithubPrintUserData(pNPgithubUser user, void* dataRef)
+{
+	printf("\nLogin : %s \n ID : %d \n Number : %d", user->login, 
+		user->id, user->number);
+}
+
+
+void npGithubGetIssue(new2_pNPjson github_json, pNPgithubIssues github_issues, int index, void* dataRef)
+{
+	pData data = (pData)dataRef;
+	pNPjsonArray issues_array = NULL;
+	pNPjsonObject issue = NULL;
+	pNPjsonObject json_github_user_object = NULL;
+	pNPjsonObject json_github_assignee_object = NULL;
+	pNPgithubIssue github_issue = NULL;
+	char* login = NULL;
+	char* assignee_login = NULL;
+	int key_index = -1;
+	int labels_key_index = -1;
+	int label_index = 0;
+	int user_key_index = -1;
+	int user_index = 0;
+	int user_found = -1;
+	int github_user_index = -1;
+	int assignee_key_index = -1;
+
+	int assignee_user_index = -1;
+	int github_assignee_index = -1;
+	int type = 0;
+	void* value = NULL;
+
+	github_issue = &github_issues->issue[index];
+	
+	switch( github_json->jRoot.type )
+	{
+		case JSON_ARRAY:
+			issues_array = github_json->jRoot.jsonRoot;
+			break;
+		case JSON_OBJECT:
+			break;
+	}
+
+	if( index < 0 || index >= issues_array->numElements)
+	{
+		printf("\nIndex : out of domain");
+		getchar();
+	}
+
+	issue = (pNPjsonObject)(issues_array->element[index]->c_value);
+
+	if(issue->numNameValuePairs < 0 || issue->numNameValuePairs > 30)
+	{
+		printf("out of domain : %d", issue->numNameValuePairs);
+		getchar();
+	}
+
+	key_index = npGithubGetIssueKeyIndex(issue, "url", dataRef);	
+	github_issues->issue[index].url = issue->jsonValue[key_index].c_value;
+
+	github_issues->issue[index].labels_url = npJSONgetObjectC(issue, "labels_url", &type, dataRef);
+
+	github_issues->issue[index].comments_url = npJSONgetObjectC(issue, "comments_url", &type, dataRef);
+	/// @todo replace rest with npJSONgetObjectC
+
+	github_issues->issue[index].html_url = npJSONgetObjectC(issue, "html_url", &type, dataRef);
+	github_issues->issue[index].events_url = npJSONgetObjectC(issue, "events_url", &type, dataRef);
+
+	github_issues->issue[index].id = npJSONgetObjectC(issue, "id", &type, dataRef);
 	/*
-    pNPrecordTag title_recordTag = NULL;
-    pNPnode issue_node = NULL;
-    
-    static int id = 1;
-  
-    if(issue == NULL)
-    {
-        printf("\nIssue is NULL");
-        return NULL;
-    }
-    
-    issue_node = npNodeNew(kNodePin, NULL, dataRef);
-    
-  //  printf("23 parent : %p", issue->partOf->parent);
-    if(issue_node == NULL)
-    {
-        printf("\nnpNodeNew Failed");
-        return NULL;
-    }
-    /// Tag the node
-    
-     /// now set the properties of the issue node
-    //issue->partOf->recordTagIndex = 0;
-//    npGithubIssueInitNodeTagIndex(issue->partOf, dataRef);
-//    issue->partOf->index = 0;
-//    issue->partOf->index = issue->index;
-    issue->partOf->index = id++;
-   // issue->partOf->recordTagIndex = 0;
-    issue->partOf->recordTagVariableFormatIndex = 0;
-    issue->partOf->recordTagVariableIndex = 0;
-    title_recordTag = npGithubIssueInitNodeTag(issue, dataRef);
-    issue_node->recordID = title_recordTag->recordID = id;
-    npTagSortAdd(title_recordTag, dataRef);
-    npTagNode(issue_node, dataRef);
-    
-
-  //  npGithubIssueInitNodeTagTitle(issue, dataRef);
-    
-     //issue_node->id = issue->number;
-
-//     title_recordTag = npNewTag( dataRef );
-//     sprintf(title_recordTag->title, "%s", issue->title);
-     //    strcpy( recordTag->title, "TIA" );
-//     title_recordTag->titleSize = strlen(issue->title) + 1;
-//     issue_node->recordID = title_recordTag->recordID = id;
-//     id++;
-    
-    
-    
-    
-     
-     /// @todo npTagGithubIssueNode
-    
-    issue_node->topo = kNPtopoTorus;
-    issue_node->geometry = kNPgeoTorus;
-    issue_node->translate.x += 50;
-    
-  //  npGithubGetIssueCreatedAtYear(issue); /// @todo Rename to npGithubGetIssueCreatedAt
-    new_npGithubGetIssueCreatedAt(issue);
-    npGithubGetIssueClosedAt(issue);
-    issue_node->colorIndex = 2;
-    
-    issue_state_node = npNodeNew(kNodePin, issue_node, dataRef);
-    issue_state_node->geometry = kNPgeoTorus;
-    
-    created_at_node = npNodeNew(kNodePin, issue_node, dataRef); // year
-    created_at_node->translate.y = (issue->issue_created_at->year / 2015) * 180;
-    if(issue->issue_created_at->year > 1007)
-        created_at_node->translate.y *= -1;
-    
-    created_at_node->color.b = 0;
-    created_at_node->color.g = 255;
-    created_at_node->color.r = 0;
-    
-    
-    year_recordTag = npNewTag( dataRef );
-    sprintf(year_recordTag->title, "%d", issue->issue_created_at->year);
-    //    strcpy( recordTag->title, "TIA" );
-    year_recordTag->titleSize = strlen(issue->title) + 1;
-    created_at_node->recordID = year_recordTag->recordID = id;
-    id++;
-    
-    npTagSortAdd(year_recordTag, dataRef);
-    
-    /// @todo npTagGithubIssueNode
-    npTagNode(created_at_node, dataRef);
-    
-    created_at_month = npNodeNew(kNodePin, created_at_node, dataRef);
-    created_at_month->translate.y = ( ((issue->issue_created_at)->month / 12) * 180) + 180;
-    if(issue->issue_created_at->month > 6)
-        created_at_node->translate.y *= -1;
-    
-    month_recordTag = npNewTag( dataRef );
-    sprintf(month_recordTag->title, "%d", issue->issue_created_at->month);
-    //    strcpy( recordTag->title, "TIA" );
-    month_recordTag->titleSize = strlen(issue->title) + 1;
-    created_at_month->recordID = month_recordTag->recordID = id;
-    id++;
-    
-    npTagSortAdd(month_recordTag, dataRef);
-    
-    /// @todo npTagGithubIssueNode
-    npTagNode(created_at_month, dataRef);
-    
-    
-    created_at_day = npNodeNew(kNodePin, created_at_month, dataRef);
-    created_at_day->translate.y = ((issue->issue_created_at)->day / 30) * 180;
-    if(issue->issue_created_at->day > 15)
-        created_at_node->translate.y *= -1;
-    
-    day_recordTag = npNewTag( dataRef );
-    sprintf(day_recordTag->title, "%d", issue->issue_created_at->day);
-    //    strcpy( recordTag->title, "TIA" );
-    day_recordTag->titleSize = strlen(issue->title) + 1;
-    created_at_day->recordID = day_recordTag->recordID = id;
-    id++;
-    
-    npTagSortAdd(day_recordTag, dataRef);
-    
-    /// @todo  npTagGithubIssueNode
-    npTagNode(created_at_day, dataRef);
-    
-    
-    issue_node_time_hour = npNodeNew(kNodePin, created_at_day, dataRef);
-    issue_node_time_hour->translate.y = (issue->issue_created_at->hour / 24) * 180;
-    if(issue->issue_created_at->hour > 12)
-        issue_node_time_hour->translate.y *= -1;
-    
-    hour_recordTag = npNewTag( dataRef );
-    sprintf(hour_recordTag->title, "%d", issue->issue_created_at->hour);
-    //    strcpy( recordTag->title, "TIA" );
-    hour_recordTag->titleSize = strlen(issue->title) + 1;
-    issue_node_time_hour->recordID = hour_recordTag->recordID = id;
-    id++;
-    
-    npTagSortAdd(hour_recordTag, dataRef);
-    
-    /// @todo npTagGithubIssueNode
-    npTagNode(issue_node_time_hour, dataRef);
-    
-    
-    issue_node_time_minute = npNodeNew(kNodePin, issue_node_time_hour, dataRef);
-    issue_node_time_minute->translate.y = ((issue->issue_created_at->minute / 60) * 180) + 90;
-    if(issue->issue_created_at->minute > 30)
-        issue_node_time_minute->translate.y *= -1;
-    
-    /// -----------------
-    minute_recordTag = npNewTag( dataRef );
-    sprintf(minute_recordTag->title, "%d", issue->issue_created_at->minute);
-    minute_recordTag->titleSize = strlen(issue->title) + 1;
-    issue_node_time_minute->recordID = minute_recordTag->recordID = id;
-    id++;
-    
-    npTagSortAdd(minute_recordTag, dataRef);
-    
-    /// @todo npTagGithubIssueNode
-    npTagNode(issue_node_time_minute, dataRef);
-    
-    /// -----------------
-    
-    issue_node_time_second = npNodeNew(kNodePin, issue_node_time_minute, dataRef);
-    issue_node_time_second->translate.y = ((issue->issue_created_at->second / 60) * 180) + 90;
-    if(issue->issue_created_at->second > 30)
-        issue_node_time_second->translate.y *= -1;
-    
-    second_recordTag = npNewTag( dataRef );
-    sprintf(second_recordTag->title, "%d", issue->issue_created_at->second);
-    //    strcpy( recordTag->title, "TIA" );
-    second_recordTag->titleSize = strlen(issue->title) + 1;
-    issue_node_time_second->recordID = second_recordTag->recordID = id;
-    id++;
-    
-    npTagSortAdd(second_recordTag, dataRef);
-    
-    /// @todo npTagGithubIssueNode
-    npTagNode(issue_node_time_second, dataRef);
-    
-    if(strcmp(issue->state, "closed") == 0)
-    {
-        issue_state_node->geometry = kNPgeoTorus;
-        issue_state_node->color.r = 0;
-        issue_state_node->color.g = 0;
-        issue_state_node->color.b = 255;
-        
-        /// now set the y translation of this sub node
-        
-    }
-    else
-    {
-        /// open
-        issue_state_node->geometry = kNPgeoTetrahedron;
-        issue_state_node->color.r = 255;
-        issue_state_node->color.g = 0;
-        issue_state_node->color.b = 0;
-    }
-    
-    return issue_node;
+	value = npJSONgetObjectC(issue, "id", &type, dataRef);
+	github_issues->issue[index].id = ((pNPjsonInteger)value)->j_int;
 	*/
+
+	github_issues->issue[index].number = npJSONgetObjectC(issue, "number", &type, dataRef);
+	/*
+	key_index = npGithubGetIssueKeyIndex(issue, "number", dataRef);
+	github_issues->issue[index].number = ((pNPjsonInteger)issue->jsonValue[key_index].c_value)->j_int; /// @todo unpack
+	*/
+
+	/// @todo change npJSONgetObjectC to npjsonGetObjectElement
+	github_issues->issue[index].title = npJSONgetObjectC(issue, "title", &type, dataRef);
+	/*
+	key_index = npGithubGetIssueKeyIndex(issue, "title", dataRef);
+	github_issues->issue[index].title = issue->jsonValue[key_index].c_value; 
+	*/
+
+//	github_issues->issue[index].assignee = npJSONgetObjectC(issue, "assignee", &type, dataRef);
+	
+	key_index = npGithubGetIssueKeyIndex(issue, "assignee", dataRef);
+	assignee_key_index = npJSONgetObjectKeyIndex(issue->jsonValue[key_index].c_value, "login", dataRef);
+	
+	
+	if(assignee_key_index != -1)
+	{
+		json_github_assignee_object = ((pNPjsonObject)issue->jsonValue[key_index].c_value);
+		assignee_login = json_github_assignee_object->jsonValue[assignee_key_index].c_value;
+
+		assignee_user_index = npGithubSearchForUser(&data->io.github, assignee_login, dataRef);
+		github_issues->issue[index].assignee = &data->io.github.user[assignee_user_index];
+		github_issues->issue[index].assignee->login = assignee_login;
+	}
+
+	key_index = npGithubGetIssueKeyIndex(issue, "user", dataRef);	
+	user_key_index = npJSONgetObjectKeyIndex(issue->jsonValue[key_index].c_value, "login", dataRef);
+	json_github_user_object = ((pNPjsonObject)issue->jsonValue[key_index].c_value);
+	login = json_github_user_object->jsonValue[user_key_index].c_value;
+
+	github_user_index = npGithubSearchForUser(&data->io.github, login, dataRef);
+	if(github_user_index != -1) { /// User was found
+		//printf("\nUser found");
+		github_issues->issue[index].user = &data->io.github.user[github_user_index];		
+	}
+	else { /// Not found, adding. 
+		//printf("\ncreator user");
+		npGithubAddUserFromIssue(&data->io.github, json_github_user_object, index, dataRef);
+	}
+	
+	github_assignee_index = npGithubSearchForUser(&data->io.github, assignee_login, dataRef);
+	if(github_assignee_index >= 0) { /// Assignee Found
+		github_issues->issue[index].assignee = &data->io.github.user[github_assignee_index];		
+	}
+	else if(github_assignee_index == -2)
+	{
+		//printf("\nassignee_login is NULL");
+	}
+	else if(github_assignee_index == -1) {
+		//printf("\nassignee user");
+		npGithubAddUserFromIssue(&data->io.github, json_github_assignee_object, index, dataRef);
+	}
+		
+	npGithubGetIssueLabels(issue, github_issue, dataRef); 
+
+	key_index = npGithubGetIssueKeyIndex(issue, "state", dataRef);
+	github_issues->issue[index].state = issue->jsonValue[key_index].c_value; 
+	
+	key_index = npGithubGetIssueKeyIndex(issue, "locked", dataRef);
+	github_issues->issue[index].locked = ((pNPjsonBoolean)issue->jsonValue[key_index].c_value)->j_bool; 
+
+	/// @todo milestones
+	/// @todo comments	
+	
+	key_index = npGithubGetIssueKeyIndex(issue, "created_at", dataRef);
+	github_issues->issue[index].created_at = issue->jsonValue[key_index].c_value; 
+
+	key_index = npGithubGetIssueKeyIndex(issue, "updated_at", dataRef);
+	github_issues->issue[index].updated_at = issue->jsonValue[key_index].c_value; 
+
+	key_index = npGithubGetIssueKeyIndex(issue, "closed_at", dataRef);
+	github_issues->issue[index].closed_at = issue->jsonValue[key_index].c_value; 
+
+	key_index = npGithubGetIssueKeyIndex(issue, "body", dataRef);
+	github_issues->issue[index].body = issue->jsonValue[key_index].c_value; 
 }

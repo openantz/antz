@@ -26,6 +26,7 @@
 #define NPJSON_H_
 
 #include <jansson.h>	
+#include "../net/npgithub.h" /// @todo temp
 #include "../../data/nptypes.h"
 
 /*
@@ -41,13 +42,24 @@ typedef NPjson* pNPjson;
 */
 
 //------------------------------------------------------------------------------
-void npInitJSON (pNPjson json, void* dataRef);
+void npInitJSON (new2_pNPjson json, void* dataRef);
 void npCloseJSON (void* dataRef);
 
 
 void npJSON_loads(pNPjson json ,char* input, void* dataRef);
+void new_npJSON_loads(new2_pNPjson json, char* input, void* dataRef);
+void npJSONprocessArray(new2_pNPjson json, json_t* jArray, void* dataRef);
 void npJSON_arrayExtend(pNPjson json, json_t* other, void* dataRef);
-
-
+void npJSONprocess(new2_pNPjson json, json_t* toProcess, void* dataRef);
+pNPjsonObject npJSONprocessObject(new2_pNPjson json, json_t* toProcess, void* dataRef);
+int npJSONunpackObject(new2_pNPjson json, pNPjsonObject jsonObject, json_t* jObject_t, void* dataRef);
+int npjsonSetInput(new2_pNPjson json, char* input, int index, void* dataRef);
+int npjsonLoadInput(new2_pNPjson json, void* dataRef);
+int npjsonUnpackRoot(new2_pNPjson json, void* dataRef);
+pNPjsonArray npjsonArrayInit(void* parent, void* dataRef);
+int npJSONgetObjectKeyIndex(pNPjsonObject object, char* key, void* dataRef);
+pNPjsonObject npjsonObjectInit(void* parent, int parentType, void* dataRef);
+int npJSONunpackArray(new2_pNPjson json, pNPjsonArray jsonArray, json_t* jArray_t, void* dataRef);
+void* npJSONgetObjectC(pNPjsonObject object, char* key, int* type, void* dataRef);
 #endif
 
