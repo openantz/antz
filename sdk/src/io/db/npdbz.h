@@ -89,7 +89,7 @@ struct dbFunction {
 struct database {
 	char dbType[kNPurlMax];   // "mysql" "oracle" "postgresql", etc...
 	//int id;     // Might be better for this to be void*
-	void* id;
+	int id;
 	int port;       // Default for MySQL is 3306
 
 	char hostIP[kNPurlMax];   // This could be static

@@ -25,6 +25,8 @@
 #include "npdb.h"
 #include "../file/npcsv.h" // lde
 #include "../../data/npmapfile.h" // lde
+#include "../npfile.h"
+#include "../gl/nptags.h"
 
 #include "npmysql.h"			/// @todo move these to npdbz	
 #include "npostgresql.h"
@@ -444,14 +446,12 @@ void npUpdateDB (void* dataRef)							//add to ctrl loop, debug zz
 //------------------------------------------------------------------------------
 int npdbLoadUpdate( void* dataRef )							//add to ctrl loop, debug zz
 {
-	char msg[kNPurlMax *2];
 	char* dbName;//[kNPurlMax];
-	char host[50] = {'\0'};
+	char host[256] = {'\0'};
 
 	pData data = (pData) dataRef;
 
-	npdbActiveHost( &host, data );
-	//printf("\nnpdbLoadUpdate host is %s", host);
+	npdbActiveHost( host, data );
 	dbName = npdbActiveDB( data );
 
 	if( !dbName || !host )
@@ -2349,7 +2349,7 @@ pNPdbTable npdbFindTagTbl( pNPdatabase db, int* err, void* dataRef)
 	//node_tbl_fields = npMysqlGetTableFields(kNPnode, dataRef); // Make this npdbGetTableFields
 	tag_tbl_fields = db->host->hostFuncSet->getTableFields(kNPtag, dataRef); // shorten, lde @todo
 	//tag_tbl_fields = tolower(tag_tbl_fields);
-	for( i = 0; i < strlen(tag_tbl_fields); i++ )
+	for( i = 0; i < (int)strlen(tag_tbl_fields); i++ )
 	{
 		tag_tbl_fields[i] = tolower(tag_tbl_fields[i]);
 	}
@@ -2368,7 +2368,7 @@ pNPdbTable npdbFindTagTbl( pNPdatabase db, int* err, void* dataRef)
 	{
 		test_tbl_fields = npdbGetFieldList(db->tableList[i], err ,dataRef);
 	//	test_tbl_fields = tolower(test_tbl_fields);
-		for( x = 0; x < strlen(test_tbl_fields); x++ )
+		for( x = 0; x < (int)strlen(test_tbl_fields); x++ )
 		{
 			test_tbl_fields[x] = tolower(test_tbl_fields[x]);
 		}
@@ -2585,7 +2585,7 @@ int npdbAddField(pNPdbTable tbl, char* name, char* typeStr)
 
 int npdbFetchRow( pNPdbFuncSet func, pNPdbTable tbl )
 {
-	void* result;
+	void* result = NULL;
 	char** row = NULL;
 /*
 	char* name    = NULL; // Warning, lde
@@ -3080,7 +3080,7 @@ char** npdbBuildQuery(char* item, int* num)
 	
 	// Then return an array of keywords that can be applied afterward
 //	item = tolower(item);
-	char** newPtr;
+	char** newPtr = NULL;
 //	int i = 0;
 	
 	if( strcmp(item, "create") == 0 )
@@ -3372,13 +3372,13 @@ void npdbSelectTableByName( pNPdatabase dbItem, char* tableName, int* err, void*
 	printf("\nnpdbSelectTable");
 	
 	err = (int*)0;
-	if( npdbItemErr(dbItem)) return 1;	/// ascert valid DB and connection
+	if( npdbItemErr(dbItem)) return;	/// ascert valid DB and connection
 	
 	func = dbItem->host->hostFuncSet;
 	conn = dbItem->host->conn;
 	
 	statement = func->StatementSelect(tableName);
-	if( !statement ) return 2;
+	if( !statement ) return;
 	
 	printf("query: %s\n",statement);
 	

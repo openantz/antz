@@ -24,9 +24,10 @@
 #include "npgitviz.h"
 #include "../../data/npmap.h"
 #include "../gl/nptags.h"
-//#include "npGithub.h"
-#include <time.h>
-#include <soil.h>
+
+#include "SOIL.h"			//zz switch to nptexmap.c		
+
+#include <time.h>			//zz remove this and use npos.h
 /// @todo npCreateTimeDayViz2 should be npInitTimeDayViz2
 
 char* dumpTill(char* dump_from, char* dump_to, char* till)

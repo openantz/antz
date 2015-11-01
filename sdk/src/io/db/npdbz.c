@@ -452,7 +452,7 @@ struct newChunksObj* npNewInitChunksObj(struct newChunksObj *chunks, int totalOb
 
 struct newChunksObj* npTestEvenNewerAllChunk(void* dataRef)
 {
-	struct newChunksObj *chunks;
+	struct newChunksObj *chunks = NULL;
 	
 	printf("\nnpNewInitChunksObj");
 //temp	chunks = npNewInitChunksObj(chunks, csvObjects->totalCsvStrObjectsSize, 65535, dataRef);
