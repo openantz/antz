@@ -764,8 +764,9 @@ void npMapTypeInit (void* dataRef)
 	// 3rd part is the column field element name
 	// plus a type tag to desribe parameter value types
 	//--------------------------------------------------------------------------
+	/// @todo loading procedure currently only uses the elementA and not the mapPath, these means that all element names must be unique
 	NPmapLink mapGlobals[] = {								//zz swap id <--> element
-		//	data struct ptr			elementTypeID	element		direction	mapPath		index	elementA,  id	element				type_tag
+		//	data struct ptr			elementTypeID	element		direction	mapPath		index	elementA,		type_tag	title
 		{ (void*)NULL,				kNPint,			kNPgNull,			0,	"np",			0,	"null",				"i",	"null" },
 
 //		{ &data->io,				kNPstrList,		kNPmainArgcArgv,	0,	"globals",		0,	"main_argc_argv",	"is",	},
@@ -812,10 +813,10 @@ void npMapTypeInit (void* dataRef)
 		{ &data->io.osc.list[0].rxPort,	kNPint,			kNPrxPort,	0,	"np_osc",	1,	"rx_port",				"i",	"RX Port" },
 
 		// URL for external Browser record retrieval
-		{ data->io.url,				kNPcstrPtr,		kNPgBrowserURL,		0, "np_browser",	1,	"url",				"s",	"Browser URL" },
-		{ data->io.urlGitviz,		kNPcstrPtr,		kNPgGitvizURL,		0, "np_gitviz",		1,	"url",				"s",	"Gitviz URL" },
+		{ data->io.url,				kNPcstrPtr,		kNPgBrowserURL,	0, "np_browser",	1,	"url",				"s",	"Browser URL" },
+		{ data->io.gitvizURL,		kNPcstrPtr,		kNPgitvizURL,	0, "np_git",		1,	"repo",				"s",	"GitViz User/Repo Name" },
 
-		{ &data->map.globalsCount,	kNPint,			kNPitemCount,		1, "np_globals",	1,	"item_count",		"i",	"Item count for this table"}	//end
+		{ &data->map.globalsCount,	kNPint,			kNPitemCount,	1, "np_globals",	1,	"item_count",		"i",	"Item count for this table"}	//end
 	};
 
 	// antz native csv table field 'elementB' name matches the 'elementA' name

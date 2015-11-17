@@ -1044,8 +1044,10 @@ void DrawGrid (pNPnode node, void* dataRef)
 	glPushMatrix();				//restore after calling child nodes
 
 	//used to calculate grid center based on segment count and spacing
-	length.x = grid->spacing.x * node->segments.x;
-	length.y = grid->spacing.y * node->segments.y;
+//	length.x = grid->spacing.x * node->segments.x;
+//	length.y = grid->spacing.y * node->segments.y;
+	length.x = node->auxA.x * node->segments.x;
+	length.y = node->auxA.y * node->segments.y;
 
 	//position, rotate and scale node
 	glTranslatef (node->translate.x, node->translate.y, node->translate.z);
@@ -1162,18 +1164,18 @@ void DrawGrid (pNPnode node, void* dataRef)
 				{
 					glVertex3f (x, 0.0f, z);
 					glVertex3f (x, length.y, z);
-					x += grid->spacing.x;
+					x += node->auxA.x;
 				}
 				for (j=0; j <= node->segments.y; j++)
 				{
 					glVertex3f (0.0f, y, z);
 					glVertex3f (length.x, y, z);
-					y += grid->spacing.y;
+					y += node->auxA.y;
 				}
 
 				x = 0.0f;						//reset x and y
 				y = 0.0f;
-				z += grid->spacing.z;			//set the z for 3D stacked grids
+				z += node->auxA.z;			//set the z for 3D stacked grids
 			}
 		glEnd();
 

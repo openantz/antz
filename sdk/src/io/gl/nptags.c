@@ -24,6 +24,7 @@
 
 #include "nptags.h"
 
+/// @todo remove this dependency, use freetype instead
 
 #ifdef NP_MSW_
 	#include <freeglut.h>
@@ -66,7 +67,7 @@ void npImportTagsFromCSV (char* buffer, int size, int wordSize, void* dataRef)
 
 
 //allocates buffer and fills with CSV formatted tags, includes header
-//------------------------------------------------------------------------------ lde @todo
+//------------------------------------------------------------------------------ lde
 void npExportTagsToCSV (char* buffer, int* size, int* wordSize, void* dataRef)
 {
 //	pNPtags tags = &dataRef->io.gl.hud.tags;
@@ -126,12 +127,12 @@ void npSetNodeTag (pNPnode node, void* dataRef)
 	pNPrecordTag recordTag = NULL;
 	pNPtags tags = &data->io.gl.hud.tags;
 
-	//printf("\n----npSetNodeTag----"); // temp, lde
-	//using a simple loop for now, replace with HASH method or presort,		//zz debug, was i=0
-	//starts searching at the last location accessed, rolls over if not found
-	//this procedure is fast when nodes processed in order of record_id
-	//and tags are pre-sorted by record_id and rouped by table_id
-	//method is very slow for missing tags... loops entire list looking	//zz debug
+	// printf("----npSetNodeTag----/n"); // temp, lde
+	// using a simple loop for now, replace with HASH method or presort,		//zz debug, was i=0
+	// starts searching at the last location accessed, rolls over if not found
+	// this procedure is fast when nodes processed in order of record_id
+	// and tags are pre-sorted by record_id and rouped by table_id
+	// method is very slow for missing tags... loops entire list looking	//zz debug
 	for (i = 0; i < tags->recordCount; i++)
 //	for (i = tagsIndex; i < tags->recordCount; i++)
 	//	for (i=count; i < data->io.gl.hud.tags.recordCount; i++)
@@ -143,7 +144,7 @@ void npSetNodeTag (pNPnode node, void* dataRef)
 			continue;
 		}
 
-		//if we find a matching record and table then replace contents
+		// if we find a matching record and table then replace contents
 		if ( node->recordID == recordTag->recordID
 			&& node->tableID == recordTag->tableID )
 		{
@@ -152,7 +153,7 @@ void npSetNodeTag (pNPnode node, void* dataRef)
 			node->tag->titleSize = recordTag->titleSize;
 			node->tag->descSize = recordTag->descSize;
 
-			i = tags->recordCount;	//exit loop
+			i = tags->recordCount;	// exit loop
 		}
 		else
 		{
@@ -165,7 +166,7 @@ void npSetNodeTag (pNPnode node, void* dataRef)
 	}
 
 /*
-	//if not found in last half of list then check first half
+	// if not found in last half of list then check first half
 	if (recordTag == NULL)
 	{
 		for (i=0; i < lastCount; i++)
@@ -246,18 +247,44 @@ void npNodeTraverseTree ( void (*nodeFunc)(pNPnode node, void* dataRef),
 //------------------------------------------------------------------------------
 void npUpdateTag (pNPtag tag)
 {
-	int lineCount = 1;
+	int lineCount = 1;			///< @todo add procedures for multi-linem tags
 	float charWidth = 9.0f;		//add procedure based on font type
 	float charHeight = 15.0f;
+	int curs = 9;
+				
+	/// calculate the tag-label character count
+	tag->title[kNPtagTitleMax] = '\0';
+	tag->titleSize = strlen(tag->title);
 
-//	if(tag->titleSize == 0)											//zz debug
-	//tag->titleSize = strnlen(tag->title, kNPtagTitleMax); // lde
-	(tag->titleSize) = strlen(tag->title); // lde
+	/// If tag title is an HTML hyperlink then trim to the text portion
+	if( tag->title[0] == '<' )
+	{
+		if( strncmp("<a href=\"", tag->title, 9) == 0 )
+		{
+			/// Search for the end of the href URL
+			while( tag->title[curs] != '\"' && curs < kNPtagTitleMax )
+			{curs++;}
 
-	//add procedure to count lines and width length
-	//strlen(tag->desc);
-	tag->boxSize.x = 10.0f + charWidth * (float)tag->titleSize;
-	tag->boxSize.y = 6.0f + charHeight * (float)lineCount;
+			/// Advance to beginning of text content
+			curs += 2;
+			tag->labelHead = curs;
+
+			while( tag->title[curs] != '<' && curs < kNPtagTitleMax )
+			{curs++;}
+
+			tag->labelTail = curs - 1;
+		
+			tag->labelSize = tag->labelTail - tag->labelHead + 1;
+		}
+		else
+			tag->labelSize = tag->titleSize;
+	}
+	else
+		tag->labelSize = tag->titleSize;
+
+	/// calculate the tag box size	
+	tag->boxSize.x = 10.0f + charWidth * (float)tag->labelSize;
+	tag->boxSize.y = 6.0f + charHeight * (float)lineCount;	
 }
 
 //------------------------------------------------------------------------------
@@ -387,6 +414,7 @@ void npSyncTags (void* dataRef)
 }
 
 
+/// @todo remove npDrawTextTag and replace with npDrawNodeTextTag
 //draws the text and optional background box with outline
 //------------------------------------------------------------------------------
 void npDrawTextTag (pNPtag tag, void* dataRef)
@@ -413,6 +441,7 @@ void npDrawTextTag (pNPtag tag, void* dataRef)
 
 	//offset for text margin inside the background box
 	glRasterPos2f (5.0f, 6.0f);
+
 	npGlutDrawString (GLUT_BITMAP_9_BY_15, tag->title);
 }
 
@@ -483,7 +512,16 @@ void npDrawNodeTextTag (pNPnode node, void* dataRef)
 	//offset for text margin inside the background box
 	glRasterPos2f (5.0f, 6.0f);
 	
-	npGlutDrawString (GLUT_BITMAP_9_BY_15, tag->title);
+	/// @todo workaround for dealing with hyperlink tags
+	if( tag->titleSize != tag->labelSize )
+	{
+		char* labelText = &tag->title[tag->labelHead];
+		tag->title[tag->labelTail + 1] = '\0';
+		npGlutDrawString (GLUT_BITMAP_9_BY_15, labelText);
+		tag->title[tag->labelTail + 1] = '<';
+	}
+	else
+		npGlutDrawString (GLUT_BITMAP_9_BY_15, tag->title);
 }
 
 //Draw the Text Labels (Simple Ring now)

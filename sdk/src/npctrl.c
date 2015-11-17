@@ -2032,5 +2032,3 @@ void npCmdOpen( char* filePath, void* dataRef)
 	result += npFileOpenAuto( filePath, NULL, data );
 }
 
-
-

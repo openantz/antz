@@ -25,13 +25,9 @@
 #ifndef NPJSON_H_
 #define NPJSON_H_
 
-#include <jansson.h>	
-
+#include "jansson.h"	
+#include "../net/npgithub.h" /// @todo temp
 #include "../../data/nptypes.h"
-
-#ifdef NP_PLUGIN_CURL
-	#include "../net/npgithub.h" /// @todo temp
-#endif
 
 /*
 struct NPjson {
@@ -64,6 +60,6 @@ pNPjsonArray npjsonArrayInit(void* parent, void* dataRef);
 int npJSONgetObjectKeyIndex(pNPjsonObject object, char* key, void* dataRef);
 pNPjsonObject npjsonObjectInit(void* parent, int parentType, void* dataRef);
 int npJSONunpackArray(new2_pNPjson json, pNPjsonArray jsonArray, json_t* jArray_t, void* dataRef);
-
+void* npJSONgetObjectC(pNPjsonObject object, char* key, int* type, void* dataRef);
 #endif
 

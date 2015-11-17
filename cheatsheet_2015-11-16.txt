@@ -1,4 +1,4 @@
-antz_cheatsheet_2015-02-16.txt                           http://openantz.com
+antz_cheatsheet_2015-11-16.txt                           http://openantz.com
 
                    see the 'docs' folder for more info
 ----------------------------------------------------------------------------
@@ -172,7 +172,7 @@ P - Loads and Plays channels data (ANTzCh0001.csv & ANTzChMap0001.csv)
 ... Pause and Play animation
 
 --- Browser URL & record_id Retrieval ---
-U - Opens Tag title URL in the system browser.
+U - Opens Tag title URL in the system browser, supports HTML href="...".
     If no URL in title, then uses default URL with record_id appended.
 
 --- GUI Console ---

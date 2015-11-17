@@ -21,8 +21,7 @@
 *  http://creativecommons.org/publicdomain/zero/1.0/
 *
 * --------------------------------------------------------------------------- */
-
-#include "../../npdata.h"
+#include "../../data/nptypes.h"
 #include "npcurl.h"
 
 void npGithubGetIssue(new2_pNPjson github_json, pNPgithubIssues github_issues, int index, void* dataRef);

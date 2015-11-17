@@ -158,6 +158,9 @@ void npInitTextTag (pNPtag tag, void* dataRef)
 	
 	tag->titleSize = 0;
 	tag->descSize = 0;
+	tag->labelHead = 0;
+	tag->labelTail = 0;
+	tag->labelSize = 0;
 
 	tag->font = kNP_GLUT_BITMAP_9_BY_15;
 	
@@ -515,7 +518,7 @@ void npInitDataChannel (void* dataRef)
 	pNPch ch = &data->io.ch;
 
 
-	memset (&ch->xref, 0, sizeof(NPxref) * kNPmaxUcharProperties);
+	memset (ch->xref, 0, sizeof(NPxref) * kNPmaxUcharProperties);
 	ch->xrefIndex = 0;
 	
 	// data source for the tracks
@@ -557,11 +560,11 @@ void npInitDataFile (pNPfile file, void* dataRef)
 	file->loading = false;
 	file->saveSelect = false;
 
-	memset (&file->appPath, '\0', kNPmaxPath);
-	memset (&file->csvPath, '\0', kNPmaxPath);
-	memset (&file->mapPath, '\0', kNPmaxPath);
-	memset (&file->userSelectedPath, '\0', kNPmaxPath);
-	memset (&file->currentOpenPath, '\0', kNPmaxPath);
+	memset (file->appPath, '\0', kNPmaxPath);
+	memset (file->csvPath, '\0', kNPmaxPath);
+	memset (file->mapPath, '\0', kNPmaxPath);
+	memset (file->userSelectedPath, '\0', kNPmaxPath);
+	memset (file->currentOpenPath, '\0', kNPmaxPath);
 
 	/// @todo move nposGetAppPath to npInitIO branch
 	nposGetAppPath (file->appPath, &length);
@@ -829,12 +832,12 @@ void npInitDataIO(int argc, char** argv, void* dataRef)
 	io->write = NULL;
 
 	// setup the default URL
-	memset (&io->url, '\0', kNPurlMax);
-	sprintf (io->url, "http://openantz.com/docs/id.html?id=");
+	memset( io->url, '\0', kNPurlMax );
+	sprintf( io->url, "http://openantz.com/docs/id.html?id=" );
 
-	// setup the default URL
-	memset (&io->urlGitviz, '\0', kNPurlMax);
-	sprintf (io->urlGitviz, "https://github.com/openantz/antz");
+	// setup the default GitViz Repo URL sub-path
+	memset( io->gitvizURL, '\0', kNPurlMax );
+	sprintf( io->gitvizURL, "openantz/antz" );
 
 	npInitKey (data);					///< setup key command assignments	
 	npInitDataGL (data);
@@ -1343,6 +1346,7 @@ void npPostMsg (char* message, int type, void* dataRef)
 	pData data = (pData) dataRef;
 	//add handling for type filtering, perhaps create a msg struct with type, debug zz
 
+	/// @todo using NDEBUG this way is not wise, perhaps create our own flag
 #ifdef NDEBUG																//zz debug
 	if (type == kNPmsgDebug)		//discard debug messages if NOT Debug build
 		return;
