@@ -367,62 +367,40 @@ bool npSetFileAttrib ( char* pathName, int attrib, void* dataRef)
 }
 
 //-----------------------------------------------------------------------------
+/// Open the URL using the OS 'start' command.
+/// We recognize tag formats for both local files and remote websites.
+/// Tag can be HTML 'href=' format or start with either www or http.
 void npOpenURL (const char* command, void* dataRef)
 {
-	int i = 0, j = 0;
+	int i = 0;
 
 	pData data = (pData) dataRef;
 
 	pNPnode node = data->map.currentNode;
-	char* title = &node->tag->title[0];
+	pNPtag tag = node->tag;
+	char* title = tag->title;
 
-	char sysCmd[kNPurlMax];	//generally 2048 is max URL length
-	char url[kNPurlMax];
-//	char msg[kNPurlMax];
+	char sysCmd[kNPurlMax] = {"start \0"};	//generally 2048 is max URL length
 
-	// compose string using the recordID & URL passed in from the command line
-	// or the hard coded default in npdata.c,
-	// MSW uses 'start' to call browser
-	if( strncmp( title, "www", 3 ) == 0 )
+
+	/// First check for local files and custom web URL formatting.
+	/// If no custom URL then open default webpage using the node record_id.
+	if ( !strncmp( title, "<a href=\"", 9 ) )
 	{
-		i = 7;		//skip over '=' to first quote "
-		while ( title[i] != '\"' && i < kNPtagTitleMax ) i++;	//zz debug add proper html href parsing
+		i = 9;		/// Find endpoint of URL text between double quotes
+		while ( title[i] != '\"' && i < kNPtagTitleMax ) i++;
 		
-		j = ++i; 
-		while ( title[j] != '\"' && j < kNPtagTitleMax ) j++;
-
-		printf( "TEST i: %d  j: %d", i, j );
-	//	j=i=9;
-	}
-	if ( strncmp( title, "<a href", 7 ) == 0 )
+		strncat( sysCmd, &title[9], i - 9 );
+	}	
+	else if( !strncmp( title, "www.", 4 ) || !strncmp( title, "http", 4 ) )
+		strcat( sysCmd, title );
+	else						
 	{
-		i = 7;							//skip over '=' to first quote "
-		while ( title[i] != '\"' && i < kNPtagTitleMax ) i++;	//zz debug add proper html href parsing
-		
-		j = ++i;
-		while ( title[j] != '\"' && j < kNPtagTitleMax ) j++;
-
-	//	printf( "TEST i: %d  j: %d", i, j );
-	}
-
-	//look for 'http' after 'href'
-	if ( strncmp( &title[i], "http", 4 ) == 0 )
-	{
-		if( !j )
-			while ( title[j] != ' ' && j < kNPtagTitleMax ) j++;	//zz debug needs to detect end line, tab, etc.	
-	//	npNextWhiteSpace( node->tag->title[j], kNPtagTitleMax - j );
-	
-		strncpy( url, &title[i], j - i );
-		url[j - i] = '\0';
-
-		sprintf( sysCmd, "start %s", url ); //&node->tag->title[9] );//url );
-	}
-	else
-	{
-		//strncpy( url, data->io.url, kNPurlMax );
-		sprintf( sysCmd, "start %s%d", data->io.url, 
-				data->map.currentNode->recordID );
-		//return;
+		if( node->tableID >= kNPgitvizTableID )
+			sprintf( sysCmd, "start https://github.com/%s/issues/%d", 
+						data->io.gitvizURL, node->recordID );
+		else
+			sprintf( sysCmd, "start %s%d", data->io.url, node->recordID );
 	}
 
 	/// system call with 'start' to open browser with the composed URL

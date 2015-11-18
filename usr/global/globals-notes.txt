@@ -1,0 +1,20 @@
+2015-11-13
+
+Dataset Organization
+
+Globals folder structure is a proposed format for organizing datasets.
+
+Each dataset has a root folder that is named for that dataset.
+
+All of the enclosed contents of the folder belong to the dataset, 
+and any shared resources, such as texture maps are placed in the
+globals sub-directories.
+
+The globals folder would also hold the presets (1,2,3).
+
+When saving a new dataset a new directory would be created that has
+sub-directories for each data type, (ie: csv, images, models, etc....)
+
+Datasets could also support embedding, where if you place a dataset
+folder into another datasets sub-directories, then it would load with
+the dataset, while using localized resources to that dataset.

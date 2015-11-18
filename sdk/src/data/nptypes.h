@@ -4,7 +4,7 @@
 *
 *  ANTz - realtime 3D data visualization tools for the real-world, based on NPE.
 *
-*  ANTz is hosted at http://!<openantz.com and NPE at http://!<neuralphysics.org
+*  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
 *  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
 *
@@ -25,47 +25,42 @@
 #ifndef NPTYPES_H_
 #define NPTYPES_H_
 
-#define kNPappVer "0.199.1"
+#define kNPappVer "0.199.3"
 
-#include "jansson.h"					//! @todo zz remove this dependency
-#include "curl.h"						//! @todo zz remove this dependency
-	
+#include "jansson.h"
+#include "curl.h"
 
 #include "stdbool.h"
-#include "npdbTypes.h"
+#include "npdbtypes.h"
 
 #include "../io/net/nposcpack.h"  //JJ	//! @todo zz remove this dependency
 
+//#include "../io/npkey.h"				//! @todo zz move key codes to npkey.h
 
-//! define NP_API_C to build dynamic libraries either as .dll or .ro
-//----------------------------------------------------------------------------
-//! #define NP_C_API_DLL		// build MSW dynamic libraries .dll
-//! #define NP_C_API_RO			// build X11 resource object lib .ro
 
 //! Choose app framework OR use NP_API_C to build dynamic lib .dll or .ro
 //----------------------------------------------------------------------------
-//! #define NP_APP_CONSOLE		// console app works without drawing = no GL
-#define NP_APP_FREEGLUT			// freeglut app framework on MSW and linux
-//! #define NP_APP_APPLE_GLUT	// Apple GLUT app framework for OSX
-//! #define NP_APP_SDL			// SDL app on Linux, MSW, OSX, iOS & Android //zz v2
+//! #define NP_APP_CONSOLE		///< console app works without drawing = no GL
+#define NP_APP_FREEGLUT			///< freeglut app framework on MSW and linux
+//! #define NP_APP_APPLE_GLUT	///< Apple GLUT app framework for OSX
+//! #define NP_APP_SDL			///< SDL app on Linux, MSW, OSX, iOS & Android
 
 //!> OPTIONAL 3rd party freeware (library) plugins
 //!---------------------------------------------------------------------------
-//! #define NP_PLUGIN_ASSIMP	// 3D model load and save, non-KML
-//! #define NP_PLUGIN_CJSON		// JSON parser, lightweight
-#define NP_PLUGIN_CURL			// network with ftp, http, smtp, ssh, etc...
-//! #define NP_PLUGIN_DEVIL		// texture map image load and save library
-#define NP_PLUGIN_JANNSON		// JSON parser
-//! #define NP_PLUGIN_FREETYPE	// GL friendly font library
-//! #define NP_PLUGIN_MINIZ		// ZIP file compression
-#define NP_PLUGIN_MYSQL			// MySQL database access
-#define NP_PLUGIN_OSCPACK		// OSC network communication
-//! #define NP_PLUGIN_POSTGRESQL	// PostgreSQL DB access
-#define NP_PLUGIN_SOIL			// texture map image load and save library
+//! #define NP_PLUGIN_ASSIMP	///< 3D model load and save, non-KML
+#define NP_PLUGIN_CURL			///< network with ftp, http, smtp, ssh, etc...
+//! #define NP_PLUGIN_DEVIL		///< texture map image load and save library
+#define NP_PLUGIN_JANNSON		///< JSON parser
+//! #define NP_PLUGIN_FREETYPE	///< GL friendly font library
+//! #define NP_PLUGIN_MINIZ		///< ZIP file compression
+#define NP_PLUGIN_MYSQL			///< MySQL database access
+#define NP_PLUGIN_OSCPACK		///< OSC network communication
+//! #define NP_PLUGIN_POSTGRESQL	///< PostgreSQL DB access
+#define NP_PLUGIN_SOIL			///< texture map image load and save library
 
 
 //---------------------------------------------------------------------------
-//! Globals
+//! Global Constants
 //---------------------------------------------------------------------------
 #define	kNPtextureCountMax	2000
 #define kNPpaletteMax		65535			//!< max number of color palettes
@@ -120,6 +115,8 @@
 #define kNPmaxName			266				//!< name portion of the filePath
 #define	kNPmaxPath			4096			//!< max file path, msw supports 260
 #define	kNPurlMax			4096			//!< maximum length of URL accepted
+
+#define kNPgitvizTableID	42424242		//!< gitviz table_id hack
 
 #define kNPdataTypeMax		4096			//!< used for CSV header field names
 #define kNPbaseItemCount	18
@@ -176,6 +173,7 @@
 #define kNPwindowPositionX 40
 #define kNPwindowPositionY 40
 
+#define kNPhideLevelMax			3			//!< Hide nodes upper branch level
 
 //------------------------------------------------------------------------------
 //! Base Types - designed to be directly compatible with OpenGL
@@ -568,6 +566,10 @@ struct NPtag
 	int			titleSize;		//!<number of characters in title
 	int			descSize;		//!<number of characters in description
 
+	int			labelHead;		//!< start of the link label text
+	int			labelTail;		//!< end of the link label text
+	int			labelSize;		//!< labelSize = labelTail - labelHead + 1
+
 	void*		font;
 
 	int			mode;			//!<2D, 3D billboard, fixed in model space
@@ -616,8 +618,8 @@ struct NPnode
 	int			average;					//!<averaging type applied to data
 	int			interval;					//!<the interval to be averaged
 
-	NPintXYZ	auxA;						//!<reserved for future use
-	NPintXYZ	auxB;						//!<reserved for future use
+	NPfloatXYZ	auxA;						//!< topo type specific params
+	NPfloatXYZ	auxB;						//!< reserved for future use
 
 	float		colorShift;					//!<pseudo Hue shift, -180 to 180
 
@@ -1318,6 +1320,8 @@ struct NPmap {
 	int			globalsCount;
 	int			oscCount;
 
+	char		loadMsg[kNPurlMax];
+
 	int			size;					//!< memory used, add/del should modify this, debug zz
 };
 typedef struct NPmap NPmap;
@@ -1651,14 +1655,14 @@ struct NPgithubIssue {
     char* closed_at;
     char* body;
     char* closed_by;
-    int issueNodeType; //kNPpin
+    int issueNodeType; //kNodePin
     int issueGeoType;
     int issueTopoType;
 };
 typedef struct NPgithubIssue NPgithubIssue;
 typedef NPgithubIssue* pNPgithubIssue;
 
-#define kNPgithubMaxIssues 500
+#define kNPgithubMaxIssues 2000
 
 struct NPgithubIssues {
     pNPnode parent;
@@ -1869,8 +1873,10 @@ struct NPjsonSchema {
 typedef struct NPjsonSchema NPjsonSchema;
 typedef struct NPjsonSchema* pNPjsonSchema;
 
+#define kNPjsonInputMax 30
+
 struct new2_NPjson {
-	char* input[30];
+	char* input[kNPjsonInputMax];
 	char* input_current; /// Tracks
 	int   input_index;
 	json_t* root;
@@ -1964,6 +1970,51 @@ struct MemoryStruct2 {
 typedef struct MemoryStruct2 MemoryStruct2;
 typedef MemoryStruct2* pMemoryStruct2;
 
+
+struct NPcurlFuncSet{
+	int			id;						///< the function set ID
+	
+	char		hostType[kNPdbNameMax];	///< content type, antz or 3rd party
+	void*		libHandle;					///< library handle
+	
+	/// curl uses cdecl as their calling convention
+	/// mysql uses stdcall
+	CURLcode (__cdecl *global_init)		(long flags);
+	void* (__cdecl *easy_init)		();
+	int   (__cdecl *easy_perform)		();
+	char* (__cdecl *easy_strerror)    ();
+	CURLcode (__cdecl *easy_setopt)   ();
+	
+
+	///< error and errno use 'db_' prefix to prevent name conflict
+	
+	int   (*InitConnOptions)		();
+	void* (*GetTableFields)			();	///creates the table fields descrisptor
+	void* (*getNodeTableFields)  ();
+	
+	void* (*StatementInsert)		();
+	void* (*StatementCreate)		();
+	void* (*StatementCreateTable)	();
+	void* (*StatementCreateNodeTable) ();
+	void* (*StatementUse)			();
+	void* (*StatementShow)			();
+	void* (*StatementDrop)			();
+	void* (*StatementSelect)		();
+	void* (*StatementTruncate)		();
+	void* (*StatementUpdate)		();
+	void* (*StatementDBshow)		();
+	void* (*StatementDatabases)     ();
+	void* (*getFuncsFromHost)    ();
+	
+	int   (*showDatabases)          (); // I might pass this a fcn ptr and change it to (*show), lde @todo
+	char* (*getTableFields)			();
+	
+	int size;
+};
+typedef struct NPcurlFuncSet NPcurlFuncSet;
+typedef struct NPcurlFuncSet *pNPcurlFuncSet;
+
+
 struct NPcurl
 {
 	CURL* curl_handle;
@@ -1971,6 +2022,7 @@ struct NPcurl
 	char* urlPtr;
 	int urlSize;
 	int numArgs;
+	int funcSetCount;
 	const char* errorStr;
 	int globalInitFlag;
 	int easySetOptFlag;
@@ -1978,6 +2030,8 @@ struct NPcurl
 	MemoryStruct2 mem[10];
 	int numMem;
 	int memIndex;
+	//pNPcurlFuncSet	funcSetList[kNPdbFuncSetMax]; ///< host type specific
+	pNPcurlFuncSet funcSetList; ///< host type specific
 };
 typedef struct NPcurl NPcurl;
 typedef NPcurl* pNPcurl;
@@ -2001,10 +2055,11 @@ struct NPgithubRequestResponse {
 typedef struct NPgithubRequestResponse NPgithubRequestResponse;
 typedef NPgithubRequestResponse* pNPgithubRequestResponse;
 
+#define kNPgithubMaxUsers 1000
 struct NPgithub {
 	char* repo_name;
 	pNPgithubIssues issues;
-	NPgithubUser user[200];
+	NPgithubUser user[kNPgithubMaxUsers];
 	int num_of_users;
 	int err;
 //	pNPgithubRequest request;
@@ -2045,8 +2100,6 @@ struct NPio {
 //	new_NPjson json2;
 	new2_NPjson json2;
 
-	char		urlGitviz[kNPurlMax];	//!< URL for gitviz
-
 	int			connectCount;
 	NPosc		osc;				//!<OSC stuff uses io que for thread safety
 
@@ -2074,8 +2127,11 @@ struct NPio {
 	char*		write;
 
 	char		url[kNPurlMax];
+	char		gitvizURL[kNPurlMax];
 
 //!<	databases	dbs;
+
+	int			hideLevel;
 
 	int			refCount;			// Reference Counter, lde @todo
 	int			size;
@@ -2697,11 +2753,10 @@ enum kNP_COMMAND_TRIGGER {
 	kNPcmdFileMapTwo,
 	kNPcmdFileMapThree,
 
-	kNPcmdVizCode,
+	kNPcmdVizCode,			//zz vizsrc.com
 	kNPcmdFileViz,
 	kNPcmdGitViz,
 	kNPcmdWebViz,
-	kNPcmdDotViz,
 
 	//!< launch external app
 	kNPcmdOpenURL,
@@ -3024,8 +3079,8 @@ enum kNP_NATIVE_DATA_TYPES
 	kNPnodeData,
 	kNPcamera,
 	kNPgrid,
-	kNPpin,			//!<zz remove this, too easily confused with kNodePin
-	kNPchMap,		//!<remove this, should not be here //!<zzsql 
+	kNPpin,			//!< @todo zz remove this, too easily confused with kNodePin
+	kNPchMap,		//!< @todo remove this, should not be here //!<zzsql 
 
 	//!< fundamental C types
 	kNPfloat,
@@ -3218,7 +3273,7 @@ enum kNP_NATIVE_DATA_TYPES
 	kNPtxPort,
 	kNPrxPort,
 	kNPgBrowserURL,
-	kNPgGitvizURL,
+	kNPgitvizURL,
 
 	kNPmousePickMode,
 	kNPmouseCamMode,

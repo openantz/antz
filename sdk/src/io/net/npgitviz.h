@@ -94,7 +94,7 @@ struct NPgithubIssue2 {
     char* closed_at;
     char* body;
     char* closed_by;
-    int issueNodeType; //kNPpin
+    int issueNodeType; //kNodePin
     int issueGeoType; /// @todo issueCreationNodeGeoType issueClosedNodeGeoType
     int issueTopoType; /// @todo issueCreationNodeTopoType issueClosedNodeTopoType
 };
@@ -135,3 +135,4 @@ void theNew_npGitViz(pNPgithub github, void* dataRef);
 void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef);
 void new_npGithubGetIssueCreatedAt2(pNPgithubIssue issue);
 void test_npGithubGetIssueCreatedAt(pNPgithubIssue issue, void* dataRef);
+

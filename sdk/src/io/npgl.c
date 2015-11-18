@@ -92,9 +92,10 @@ void npGLResizeScene (int width, int height)
 		sprintf(msg, "Resize: %dx%d", width, height);
 		npPostMsg(msg, kNPmsgGL, data);
 	}
-	else if (resizeCount == 2)			//startup message
-		npPostMsg("hint: click the Indicators to change XYZ Axes, Mode or Tool (also Mouse Wheel)",
-					kNPmsgCtrl, data);
+	//else if (resizeCount == 2)			//startup message
+	//	npPostMsg("hint: press '1' key to get help", kNPmsgCtrl, data);
+		//npPostMsg("hint: click the Indicators to change XYZ Axes, Mode or Tool (also Mouse Wheel)", kNPmsgCtrl, data);
+		
 
 	if (height > 0)							//prevent divide by zero
 		camData->aspectRatio = (GLfloat)width / (GLfloat)height;

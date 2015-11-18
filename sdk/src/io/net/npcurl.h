@@ -21,29 +21,59 @@
 *  http://creativecommons.org/publicdomain/zero/1.0/
 *
 * --------------------------------------------------------------------------- */
+#include "../../data/nptypes.h"
 
-#include "../../npdata.h"
+/*
+struct MemoryStruct2 {
+    char *memory;
+    size_t size;
+};
+typedef struct MemoryStruct2 MemoryStruct2;
+typedef MemoryStruct2* pMemoryStruct2;
+*/
+/*
+struct NPcurl
+{
+	CURL* curl_handle;
+	char* url;
+	char* urlPtr;
+	int urlSize;
+	int numArgs;
+	int errorStr;
+	int globalInitFlag;
+	int easySetOptFlag;
+	CURLcode res;
+	pMemoryStruct2 mem;
+};
+typedef struct NPcurl NPcurl;
+typedef NPcurl* pNPcurl;
+*/
 
-void npCURL_globalInit( pNPcurl curl, void* dataRef);
-void npCURL_setGlobalInitFlag( pNPcurl curl, int flag, void* dataRef);
+//json_t* npCURLgetJSONgithubIssues2(pNPgithubIssues issues);
 
-void npCURL_globalCleanup( pNPcurl curl, void* dataRef);
+void npCURL_globalInit(pNPcurl curl, void* dataRef);
+void npCURL_setGlobalInitFlag(pNPcurl curl, int flag, void* dataRef);
 
-void npCURL_easyInit( pNPcurl curl, void* dataRef);
-void npCURL_easyCleanup( pNPcurl curl, void* dataRef);
+void npCURL_globalCleanup(pNPcurl curl, void* dataRef);
 
-void npCURL_easySetOpt( pNPcurl curl, void* dataRef);
-void npCURL_easySetOptFlag( pNPcurl curl, int flag, void* dataRef);
+void npCURL_easyInit(pNPcurl curl, void* dataRef);
+void npCURL_easyCleanup(pNPcurl curl, void* dataRef);
 
-int npCURL_easyPerform( pNPcurl curl, void* dataRef);
+void npCURL_easySetOpt(pNPcurl curl, void* dataRef);
+void npCURL_easySetOptFlag(pNPcurl curl, int flag, void* dataRef);
 
-void npCURLsetGithubRequest (pNPgithubRequest request, int page, int per_page, char* state, void* dataRef);
-const char* npCURL_easyStrError( pNPcurl curl, void* dataRef);
-void npCURL_easySetOptWriteFunction( pNPcurl curl, size_t (*func)(void* contents, size_t size, size_t nmemb, void *userp), void* dataRef);
-int npCURLgetImage( pNPcurl curl, char* url, void* dataRef);
+int npCURL_easyPerform(pNPcurl curl, void* dataRef);
 
-int npCURLgetUrl( pNPcurl curl, char* url, int memory_index, void* dataRef);
+void npCURLsetGithubRequest(pNPgithubRequest request, int page, int per_page, char* state, void* dataRef);
+const char* npCURL_easyStrError(pNPcurl curl, void* dataRef);
+void npCURL_easySetOptWriteFunction(pNPcurl curl, size_t (*func)(void* contents, size_t size, size_t nmemb, void *userp), void* dataRef);
+int npCURLgetImage(pNPcurl curl, char* url, void* dataRef);
 
-void npCurlInit( void* dataRef);
-void npcurlEasySetOptUrl( pNPcurl curl, char* url, void* dataRef);
+int npCURLgetUrl(pNPcurl curl, char* url, int memory_index, void* dataRef);
+
+void npCurlInit(void* dataRef);
+void npcurlEasySetOptUrl(pNPcurl curl, char* url, void* dataRef);
+
+pNPcurlFuncSet npcurlNewFuncSet( pNPcurl curl );
+int npCurlHook( pNPcurl curl, void* libcurl);
 

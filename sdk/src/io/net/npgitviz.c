@@ -22,12 +22,13 @@
 *
 * --------------------------------------------------------------------------- */
 #include "npgitviz.h"
+
 #include "../../data/npmap.h"
 #include "../gl/nptags.h"
+//#include "npGithub.h"
 
-#include "SOIL.h"			//zz switch to nptexmap.c		
-
-#include <time.h>			//zz remove this and use npos.h
+#include <time.h>
+#include "soil.h"
 /// @todo npCreateTimeDayViz2 should be npInitTimeDayViz2
 
 char* dumpTill(char* dump_from, char* dump_to, char* till)
@@ -480,7 +481,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	time_closed  = *localtime(&now);
 
 //	printf("\nissue index : %d", issueIndex);
-	if(issueIndex < 0 || issueIndex >= 500)
+	if(issueIndex < 0 || issueIndex >= kNPgithubMaxIssues)
 	{
 		printf("\nissue index : out of domain");
 		getchar();
@@ -497,7 +498,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	durationTag = npNewTag(dataRef);
 
 	durationTag->recordID = current_issue->number;
-	durationTag->tableID = 3;
+	durationTag->tableID = kNPgitvizTableID + 1; //zz 3;
 
 		
 	// ---------------------------------------------------------------------------
@@ -561,7 +562,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	durationTag->titleSize = strlen(durationTag->title) + 1;
 	npTagSortAdd(durationTag, dataRef);
 	current_issue->issue_node->recordID = durationTag->recordID;
-	current_issue->issue_node->tableID  = 3;
+	current_issue->issue_node->tableID  = kNPgitvizTableID + 1; //zz 3;
 	npTagNode(current_issue->issue_node, dataRef);
 
 	/// Set the Title as text tag	
@@ -577,7 +578,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	enhancementTag->titleSize = strlen("enhancement") + 1;
 
 	enhancementTag->recordID = current_issue->number;
-	enhancementTag->tableID = 6;
+	enhancementTag->tableID = kNPgitvizTableID + 6; //zz 6;
 
 	npTagSortAdd(enhancementTag, dataRef);
 		
@@ -588,7 +589,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	bugTag->titleSize = strlen("bug") + 1;
 
 	bugTag->recordID = current_issue->number;
-	bugTag->tableID = 5;
+	bugTag->tableID = kNPgitvizTableID + 5; //zz 5;
 
 	npTagSortAdd(bugTag, dataRef);
 	
@@ -603,7 +604,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	issueCreatorTag->titleSize = strlen(issueCreatorTag->title) + 1;
 
 	issueCreatorTag->recordID = current_issue->number;
-	issueCreatorTag->tableID = 4;
+	issueCreatorTag->tableID = kNPgitvizTableID + 4; //zz 4;
 
 	npTagSortAdd(issueCreatorTag, dataRef);
 	
@@ -614,7 +615,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	firstPriorityTag->titleSize = strlen(firstPriorityTag->title) + 1;
 
 	firstPriorityTag->recordID = current_issue->number;
-	firstPriorityTag->tableID = 8;
+	firstPriorityTag->tableID = kNPgitvizTableID + 8; //zz 8;
 
 	// ---------------------------------------------------------------------------
 
@@ -623,7 +624,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	secondPriorityTag->titleSize = strlen(secondPriorityTag->title) + 1;
 
 	secondPriorityTag->recordID = current_issue->number;
-	secondPriorityTag->tableID = 9;
+	secondPriorityTag->tableID = kNPgitvizTableID + 9; //zz 9;
 
 	npTagSortAdd(secondPriorityTag, dataRef);
 
@@ -631,8 +632,9 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 
 	npTagSortAdd(issueCreatorTag, dataRef);
 	///	Set the recordId to the issue number
+	/// @todo create a method to auto-generate the table_id
 	current_issue->issue_node->recordID = (issueTitleTag->recordID = current_issue->number);
-	current_issue->issue_node->tableID =  (issueTitleTag->tableID = 2);
+	current_issue->issue_node->tableID =  (issueTitleTag->tableID = kNPgitvizTableID + 2); //zz 2);
 	
 	/// Tag title text tag to node
 	npTagSortAdd(issueTitleTag, dataRef);
@@ -692,7 +694,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 			issueAssigneeTag->titleSize = strlen(issueAssigneeTag->title) + 1;
 
 			issueAssigneeTag->recordID = current_issue->number;
-			issueAssigneeTag->tableID = 7;
+			issueAssigneeTag->tableID = kNPgitvizTableID + 7; //zz 7;
 
 //			printf("\nbefore npTagSortAdd");
 			npTagSortAdd(issueAssigneeTag, dataRef);
@@ -711,7 +713,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	npNodeNew(kNodePin, current_issue->issue_node, dataRef);
 	current_issue->issue_node->child[2]->translate.x -= 20;
 	current_issue->issue_node->child[2]->recordID = (issueTitleTag->recordID = current_issue->number);
-	current_issue->issue_node->child[2]->tableID = (issueTitleTag->tableID = 2);
+	current_issue->issue_node->child[2]->tableID = (issueTitleTag->tableID = kNPgitvizTableID + 2); //zz 2);
 		
 	npTagNode(current_issue->issue_node->child[2], dataRef);
 	
@@ -746,7 +748,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 			current_issue->issue_node->child[2]->child[index]->color.a = 1;
 			*/
 			current_issue->issue_node->child[2]->child[index]->recordID = current_issue->number;
-			current_issue->issue_node->child[2]->child[index]->tableID = 6;
+			current_issue->issue_node->child[2]->child[index]->tableID = kNPgitvizTableID + 6; //zz 6;
 		}
 
 		if( strcmp(current_issue->label[index].name, "bug") == 0 )
@@ -756,7 +758,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 			current_issue->issue_node->child[2]->child[index]->color.b = 0;
 //			current_issue->issue_node->child[2]->child[index]->color.a = 1;
 			current_issue->issue_node->child[2]->child[index]->recordID = current_issue->number;
-			current_issue->issue_node->child[2]->child[index]->tableID = 5;
+			current_issue->issue_node->child[2]->child[index]->tableID = kNPgitvizTableID + 7; //zz 5;
 		}
 
 		if( strcmp(current_issue->label[index].name, "1st priority") == 0 )
@@ -766,7 +768,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 			current_issue->issue_node->child[2]->child[index]->color.b = 0;
 //			current_issue->issue_node->child[2]->child[index]->color.a = 1;
 			current_issue->issue_node->child[2]->child[index]->recordID = current_issue->number;
-			current_issue->issue_node->child[2]->child[index]->tableID = 8;
+			current_issue->issue_node->child[2]->child[index]->tableID = kNPgitvizTableID + 8; //zz 8;
 		}
 
 		if( strcmp(current_issue->label[index].name, "2nd priority") == 0 )
@@ -776,7 +778,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 			current_issue->issue_node->child[2]->child[index]->color.b = 102;
 //			current_issue->issue_node->child[2]->child[index]->color.a = 1;
 			current_issue->issue_node->child[2]->child[index]->recordID = current_issue->number;
-			current_issue->issue_node->child[2]->child[index]->tableID = 9;
+			current_issue->issue_node->child[2]->child[index]->tableID = kNPgitvizTableID + 9; //zz 9;
 		}
 		
 		if( strcmp(current_issue->label[index].name, "help wanted") == 0 )
@@ -785,6 +787,8 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 			current_issue->issue_node->child[2]->child[index]->color.g = 152;
 			current_issue->issue_node->child[2]->child[index]->color.b = 24;
 			current_issue->issue_node->child[2]->child[index]->color.a = 1;
+			current_issue->issue_node->child[2]->child[index]->recordID = current_issue->number;
+			current_issue->issue_node->child[2]->child[index]->tableID = kNPgitvizTableID + 10; //zz 9;
 		}
 
 		if( strcmp(current_issue->label[index].name, "question") == 0 )
@@ -793,6 +797,8 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 			current_issue->issue_node->child[2]->child[index]->color.g = 0;
 			current_issue->issue_node->child[2]->child[index]->color.b = 204;
 			current_issue->issue_node->child[2]->child[index]->color.a = 0;
+		current_issue->issue_node->child[2]->child[index]->recordID = current_issue->number;
+			current_issue->issue_node->child[2]->child[index]->tableID = kNPgitvizTableID + 11; //zz 9;
 		}
 
 		if( strcmp(current_issue->label[index].name, "wontfix") == 0 )
@@ -801,6 +807,8 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 			current_issue->issue_node->child[2]->child[index]->color.g = 51;
 			current_issue->issue_node->child[2]->child[index]->color.b = 51;
 			current_issue->issue_node->child[2]->child[index]->color.a = 0;
+			current_issue->issue_node->child[2]->child[index]->recordID = current_issue->number;
+			current_issue->issue_node->child[2]->child[index]->tableID = kNPgitvizTableID + 12; //zz 9;
 		}
 		
 		npTagNode(current_issue->issue_node->child[2]->child[index], dataRef);
@@ -810,8 +818,8 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 
 		if(current_issue->user == NULL) /// user should never be null
 		{
-			printf("\nuser is null : %d", issueIndex);
-			printf("\ntitle is %s", current_issue->title);
+			printf("user is null : %d\n", issueIndex);
+			printf("title is %s\n", current_issue->title);
 //			////getchar();
 			return;
 		}
@@ -838,7 +846,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	                
 	        if(current_issue->user->avatar_image_textureID == 0)
 	        {
-				printf("\n2309 Soil loading error : %s", SOIL_last_result());         
+				printf("err 2309 - SOIL error: %s\n", SOIL_last_result());         
 	        }
 	        else
 	        {
@@ -876,7 +884,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	        
 				if(current_issue->assignee->avatar_image_textureID == 0)
 				{
-					printf("\n2309 Soil loading error : %s", SOIL_last_result());         
+					printf("err 2310 - SOIL error: %s\n", SOIL_last_result());
 				}
 				else
 				{
@@ -1093,3 +1101,4 @@ void npGitViz(pNPgithub github, void* dataRef)
 
 }
 */
+

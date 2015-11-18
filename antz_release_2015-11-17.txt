@@ -1,15 +1,40 @@
 ﻿- Release Notes -                                        http://openantz.com
 
-         latest code, issues and Wiki on https://github.com/openantz/
+         latest code, issues and Wiki at https://github.com/openantz/
+----------------------------------------------------------------------------
+2015-11-17 ANTz v0.199.3
+
+Enhanced:
+#198 Tilda '~' key behavior change for Select All, Hide and Tag mode
+ a) Tilda '~' key default is now to toggle on/off selection of all nodes
+ b) With 'Hide' tool the '~' key will progressively hide by branch level
+ c) Text Tag tool and press 'Esc' then '~' Tilda to hide all tags
+
+----------------------------------------------------------------------------
+2015-11-16 ANTz v0.199.2
+
+Enhanced:
+#196 Set grid spacing using aux_a_x / y / z in the node table
+#195 HTML style URL or file path for nodes with custom tag (label) text
+#169 GitViz URL added to npglobals.csv so you can set to any github repo
+
+Fixed:
+#187 Master branch fails to build debug version of the app
+#180 Loading CSV preset crashes if the files don't exist
+
+Bugs Reported:
+#190 GitViz tags fail to save to MySQL database
+#185 Loading node table crashes if a link node has a missing parent
+
 ----------------------------------------------------------------------------
 ANTz v0.199.1 - 2015-10-28
 
 Enhanced:
 #169 GitViz now displays tags and stores icons in 'usr/gitviz/images/'
-a) Usage - Press '6' key or enter 'gitviz' in the GUI command console.
+ a) Usage - Press '6' key or enter 'gitviz' in the GUI command console.
 
 Fixed:
-#183 File (X-Tree) Viz is not working
+#183 FileViz not working, press'5' key to create scene
 #168 OpenAntz MSW 2014-09-13 will not load saved pins for me
 #134 Save selected region does not save tags
 

@@ -201,7 +201,7 @@ void npInitGlut (int argc, char **argv, void* dataRef)
 	data->ctrl.startup = false;
 	npPostMsg ("www.openANTz.com", kNPmsgCtrl, dataRef);
 	npPostMsg ("System Ready...", kNPmsgCtrl, dataRef);
-	
+	npPostMsg(data->map.loadMsg, kNPmsgCtrl, data);
 	//glGetIntegerv (GL_TEXTURE_STACK_DEPTH, &depth); // GL_MODELVIEW_STACK_DEPTH
 }
 

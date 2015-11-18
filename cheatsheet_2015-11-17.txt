@@ -1,4 +1,4 @@
-antz_cheatsheet_2015-02-16.txt                           http://openantz.com
+antz_cheatsheet_2015-11-17.txt                           http://openantz.com
 
                    see the 'docs' folder for more info
 ----------------------------------------------------------------------------
@@ -35,14 +35,15 @@ ALT+H - toggle 'Hide Tool'
 R - Click to Hide ALL sub-branches of selected node
 L - Click to Show ALL sub-branches of selected node
 
-'~' (Tilda) - Key to Hide ALL nodes with branchlevel > 1
+'~' (Tilda) Default behavior is to toggle on/off selection of all nodes.
+    With 'Hide' tool active it will progressively hide by branch level.
+    With 'Text Tag' tool active it will hide all tags.
+     (For tags, you may first need to press 'Esc' then '~' tilda.)
 
 ALT+I - toggle 'Info Tool'
 
 Right - Click to Hide Text Tag title
 Left - Click to Show tag title, additional clicks change display mode
-
-'~' (Tilda) - key to Show or Hide ALL Tags
 
 ---
 A.2 - Keyboard
@@ -81,7 +82,6 @@ Down arrow - select parent, down a branch level (SHIFT jumps to root)
 C - pick Camera, repeat to select next camera
 G - pick Grid, repeat to iterate through grids
 
-~ (tilda)	un-select ALL nodes
 spacebar - select or unselect currently active object
 
 --- Move Camera or Objects ---
@@ -172,8 +172,9 @@ P - Loads and Plays channels data (ANTzCh0001.csv & ANTzChMap0001.csv)
 ... Pause and Play animation
 
 --- Browser URL & record_id Retrieval ---
-U - Opens Tag title URL in the system browser.
+U - Opens Tag title URL in the system browser, supports HTML href="...".
     If no URL in title, then uses default URL with record_id appended.
+    Will also open applications and files based on OS default mime type.
 
 --- GUI Console ---
 M - Menu display mode (1, 3, or 40 lines, then off)
