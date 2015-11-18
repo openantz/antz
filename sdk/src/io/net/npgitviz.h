@@ -94,7 +94,7 @@ struct NPgithubIssue2 {
     char* closed_at;
     char* body;
     char* closed_by;
-    int issueNodeType; //kNPpin
+    int issueNodeType; //kNodePin
     int issueGeoType; /// @todo issueCreationNodeGeoType issueClosedNodeGeoType
     int issueTopoType; /// @todo issueCreationNodeTopoType issueClosedNodeTopoType
 };

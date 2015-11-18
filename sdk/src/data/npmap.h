@@ -42,10 +42,19 @@ void npGetMapIO (void* dataRef); //Ports, GL (Sort Visible, Sort-Z, screen 1/2/3
 void npGetMapNPE (void* dataRef); // collision, rotation, translation...
 
 int npGetRootIndex (pNPnode node, void* dataRef);
-void npSelectNode (pNPnode node, void* dataRef);
 
 void* npGetNodeByID (int id, void* dataRef);
 void npSelectNodeByID (int id, void* dataRef);
+
+void npNodeSelectionOn( pNPnode node, void* dataRef);
+void npNodeSelectionOff( pNPnode node, void* dataRef);
+void npNodeHideLevel( pNPnode node, void* dataRef);
+void npNodeTagModeOff( pNPnode node, void* dataRef);
+
+void npSelectNode (pNPnode node, void* dataRef);
+void npSelectAll (int nodeType, void* dataRef);
+void npSelectNone (int nodeType, void* dataRef);
+void npSelectInvert (int nodeType, void* dataRef);
 
 void npTraverseTree (void (*nodeFunc)(pNPnode node, void* dataRef), 
 					 pNPnode node, void* dataRef);

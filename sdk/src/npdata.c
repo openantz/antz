@@ -824,6 +824,8 @@ void npInitDataIO(int argc, char** argv, void* dataRef)
 	io->clear.a = 1.0f;
 
 	io->drawMenu = false;
+	io->hideLevel = -1;		///< Set hideLevel to -1 for off.
+	
 
 	io->axes.x = true;
 	io->axes.y = true;

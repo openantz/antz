@@ -379,6 +379,8 @@ void npInitMap (void* dataRef)
 	data->map.sortCount = 0;					//zzhp
 	data->map.sortCountA = 0;					//zzhp
 	data->map.sortCountB = 0;					//zzhp
+
+	strcpy( data->map.loadMsg, "Press '1' key to get hints!!!\0" );
 }
 
 //------------------------------------------------------------------------------
@@ -480,6 +482,101 @@ void npSelectNode (pNPnode node, void* dataRef)
 	}
 }
 
+//------------------------------------------------------------------------------
+void npNodeSelection( pNPnode node, void* dataRef)
+{
+	if( node->type != kNodePin )
+		return;
+
+	node->selected = true;
+}
+
+//------------------------------------------------------------------------------
+void npNodeSelectionOff( pNPnode node, void* dataRef)
+{
+	node->selected = false;
+}
+
+//------------------------------------------------------------------------------
+void npNodeHideLevel( pNPnode node, void* dataRef)
+{
+	pData data = (pData) dataRef;
+
+	if( node->type != kNodePin )
+		return;
+
+	if( data->io.hideLevel < 0)
+		node->hide = false;
+	else if( node->branchLevel < data->io.hideLevel )
+		node->hide = false;
+	else
+		node->hide = true;
+}
+
+//------------------------------------------------------------------------------
+void npNodeTagModeOff( pNPnode node, void* dataRef)
+{
+	if( node->type == kNodePin ) //prevents hiding the HUD tags
+		node->tagMode = 0;
+}
+
+/// Select ALL nodes for given node type.
+//------------------------------------------------------------------------------
+void npSelectAll (int nodeType, void* dataRef)
+{
+	int i = 0;
+	int commandTemp = 0;
+
+	pData data = (pData) dataRef;
+	pNPnode node = data->map.currentNode;
+
+
+	/// @todo implement selecting nodes by type
+	if( nodeType == kNodeCamera )
+	{
+		npPostMsg( "err 0000 - npSelectAll camera not implemented", 0, data);
+		return;
+	}
+	else if( nodeType == kNodeGrid )
+	{
+		npPostMsg( "err 0000 - npSelectAll grid not implemented", 0, data);
+		return;
+	}
+
+	if( data->io.mouse.tool == kNPtoolHide ) 
+	{
+		data->io.hideLevel--;
+		if( data->io.hideLevel < -1 )
+			data->io.hideLevel = kNPhideLevelMax;
+
+		npTraverseMap (npNodeHideLevel, dataRef);
+	}
+	else if( data->io.mouse.tool == kNPtoolTag )
+		npTraverseMap (npNodeTagModeOff, dataRef);
+	else	
+	{	/// select or clear all nodes
+		data->map.selectAll = 1 - data->map.selectAll; //toggle selectAll
+
+		if( data->map.selectAll )
+			npTraverseMap (npNodeSelection, dataRef);
+		else
+			npTraverseMap (npNodeSelectionOff, dataRef);
+	}
+}
+
+/// Clear node selection for given node type.
+//------------------------------------------------------------------------------
+void npSelectNone (int nodeType, void* dataRef)
+{
+
+}
+
+/// Invert node selection for given node type.
+//------------------------------------------------------------------------------
+void npSelectInvert (int nodeType, void* dataRef)
+{
+
+}
 
 //------------------------------------------------------------------------------
 pNPnode npMapNodeNext (void* dataRef){return NULL;}			//select next sibling node

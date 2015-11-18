@@ -1243,11 +1243,14 @@ void npCtrlSelect (int command, void* dataRef)
 		case kNPcmdSelectToggle : node->selected = 1 - node->selected; break;
 
 		case kNPcmdSelectAll :
-			if( data->map.selectAll == true )	//zz move to kNPcmdSelectToggle
+			npSelectAll (kNodePin, data);
+/*			if( data->map.selectAll == true )	//zz move to kNPcmdSelectToggle
 			{
 				npCtrlSelect( kNPcmdSelectNone, data );
+				data->map.selectAll == false;
 				break;
 			}
+			data->map.selectAll == true;
 			
 			if (data->io.mouse.tool == kNPtoolHide 
 				|| data->io.mouse.tool == kNPtoolTag )	//add more tool handling //zz debug
@@ -1265,7 +1268,7 @@ void npCtrlSelect (int command, void* dataRef)
 				TraverseTree (commandTemp, data->map.node[i], data);
 			
 			npSelectNode (node, data);		//restore currentNode
-
+*/
 			if (data->io.mouse.tool == kNPtoolHide)
 				npPostMsg("Hide ALL nodes with level > 1",kNPmsgCtrl,data);
 			else if (data->io.mouse.tool == kNPtoolTag)

@@ -25,7 +25,7 @@
 #ifndef NPTYPES_H_
 #define NPTYPES_H_
 
-#define kNPappVer "0.199.2"
+#define kNPappVer "0.199.3"
 
 #include "jansson.h"
 #include "curl.h"
@@ -173,6 +173,7 @@
 #define kNPwindowPositionX 40
 #define kNPwindowPositionY 40
 
+#define kNPhideLevelMax			3			//!< Hide nodes upper branch level
 
 //------------------------------------------------------------------------------
 //! Base Types - designed to be directly compatible with OpenGL
@@ -1319,6 +1320,8 @@ struct NPmap {
 	int			globalsCount;
 	int			oscCount;
 
+	char		loadMsg[kNPurlMax];
+
 	int			size;					//!< memory used, add/del should modify this, debug zz
 };
 typedef struct NPmap NPmap;
@@ -1652,7 +1655,7 @@ struct NPgithubIssue {
     char* closed_at;
     char* body;
     char* closed_by;
-    int issueNodeType; //kNPpin
+    int issueNodeType; //kNodePin
     int issueGeoType;
     int issueTopoType;
 };
@@ -2127,6 +2130,8 @@ struct NPio {
 	char		gitvizURL[kNPurlMax];
 
 //!<	databases	dbs;
+
+	int			hideLevel;
 
 	int			refCount;			// Reference Counter, lde @todo
 	int			size;
@@ -3074,8 +3079,8 @@ enum kNP_NATIVE_DATA_TYPES
 	kNPnodeData,
 	kNPcamera,
 	kNPgrid,
-	kNPpin,			//!<zz remove this, too easily confused with kNodePin
-	kNPchMap,		//!<remove this, should not be here //!<zzsql 
+	kNPpin,			//!< @todo zz remove this, too easily confused with kNodePin
+	kNPchMap,		//!< @todo remove this, should not be here //!<zzsql 
 
 	//!< fundamental C types
 	kNPfloat,

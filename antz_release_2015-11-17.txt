@@ -2,6 +2,15 @@
 
          latest code, issues and Wiki at https://github.com/openantz/
 ----------------------------------------------------------------------------
+2015-11-17 ANTz v0.199.3
+
+Enhanced:
+#198 Tilda '~' key behavior change for Select All, Hide and Tag mode
+ a) Tilda '~' key default is now to toggle on/off selection of all nodes
+ b) With 'Hide' tool the '~' key will progressively hide by branch level
+ c) Text Tag tool and press 'Esc' then '~' Tilda to hide all tags
+
+----------------------------------------------------------------------------
 2015-11-16 ANTz v0.199.2
 
 Enhanced:
