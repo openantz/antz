@@ -566,9 +566,9 @@ struct NPtag
 	int			titleSize;		//!<number of characters in title
 	int			descSize;		//!<number of characters in description
 
-	int			labelHead;		//!< start of the link label text
-	int			labelTail;		//!< end of the link label text
-	int			labelSize;		//!< labelSize = labelTail - labelHead + 1
+	int			labelHead;		//!< start of the link label text			//zz html
+	int			labelTail;		//!< end of the link label text				//zz html
+	int			labelSize;		//!< labelSize = labelTail - labelHead + 1	//zz html
 
 	void*		font;
 
@@ -618,8 +618,8 @@ struct NPnode
 	int			average;					//!<averaging type applied to data
 	int			interval;					//!<the interval to be averaged
 
-	NPfloatXYZ	auxA;						//!< topo type specific params
-	NPfloatXYZ	auxB;						//!< reserved for future use
+	NPfloatXYZ	auxA;	//zz grid			//!< topo type specific params
+	NPfloatXYZ	auxB;	//zz grid			//!< reserved for future use
 
 	float		colorShift;					//!<pseudo Hue shift, -180 to 180
 

@@ -392,9 +392,9 @@ void npMapCSVvOne(pNPnode node)
 		node->scale.y = 1.0f;
 		node->scale.z = 1.0f;			//original grid had z = 1.5
 
-		node->auxA.x	= 10.0f;
+		node->auxA.x	= 10.0f;		//zz grid
 		node->auxA.y	= 10.0f;
-		node->auxA.z	= 15.0f;	//original grid had z = 1.5
+		node->auxA.z	= 15.0f;		//zz grid end	//original had z = 1.5
 	}
 	
 	node->rotateVec.x = 0.0f;			//cam default is assigned to all
@@ -498,12 +498,12 @@ void* npReadMapNodeCSV (const char* buffer, int wordSize, int size,
 	node->average			= npstrtoi(&cursor);
 	node->interval			= npstrtoi(&cursor);
 	
-	node->auxA.x			= npstrtof(&cursor);
+	node->auxA.x			= npstrtof(&cursor);		//zz grid
 	node->auxA.y			= npstrtof(&cursor);
 	node->auxA.z			= npstrtof(&cursor);
 	node->auxB.x			= npstrtof(&cursor);
 	node->auxB.y			= npstrtof(&cursor);
-	node->auxB.z			= npstrtof(&cursor);
+	node->auxB.z			= npstrtof(&cursor);		//zz grid end
 
 	node->colorShift		= npstrtof(&cursor);
 
@@ -650,12 +650,12 @@ void* npReadMapNodeCSV (const char* buffer, int wordSize, int size,
 
 	if( node->type == kNodeGrid )
 	{
-		if( node->auxA.x == 0.0f)
+		if( node->auxA.x == 0.0f)				//zz grid
 			node->auxA.x = kNPgridSpacing;
 		if( node->auxA.y == 0.0f)
 			node->auxA.y = kNPgridSpacing;
 		if( node->auxA.z == 0.0f)
-			node->auxA.z = kNPgridSpacing;
+			node->auxA.z = kNPgridSpacing;		//zz grid end
 	}
 
 	return node;
@@ -2154,7 +2154,7 @@ int npWriteNode (const char* buffer, pNPnode node, int format, void* dataRef)
 		childID = node->child[0]->id;	//link-B node ptr stored at child[0]
 
 	//format as CSV and fill the buffer, broken into groups for readability
-	n += sprintf ((nodePtr + n), "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%f,%f,%f,%f,%f,%f",
+	n += sprintf ((nodePtr + n), "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%f,%f,%f,%f,%f,%f",		//zz grid
 		node->id,					//id is unique to this node
 		node->type,		
 		node->id,					// node->data->id uses this node id
@@ -2173,13 +2173,13 @@ int npWriteNode (const char* buffer, pNPnode node, int format, void* dataRef)
 		node->average,
 		node->interval,
 
-		node->auxA.x,
+		node->auxA.x,		//zz grid
 		node->auxA.y,
 		node->auxA.z,
 
 		node->auxB.x,
 		node->auxB.y,
-		node->auxB.z
+		node->auxB.z		//zz grid end
 	);
 
 	//  next group

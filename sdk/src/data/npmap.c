@@ -102,8 +102,8 @@ void npInitMap (void* dataRef)
 //zzsql could also have sample be samples...
 
 /// @todo change kNPintXYZ to kNPfloatXYZ for both aux_a and aux_b
-	{ kNPauxA,				kNPintXYZ,		"aux_a",			"node type specific parameters" },
-	{ kNPauxB,				kNPintXYZ,		"aux_b",			"reserved for future use" },
+	{ kNPauxA,				kNPintXYZ,		"aux_a",			"node type specific parameters" },	//zz grid NO change
+	{ kNPauxB,				kNPintXYZ,		"aux_b",			"reserved for future use" },		//zz grid NO change
 
 	{ kNPcolorShift,		kNPfloat,		"color_shift",		"color shift is akin to hue" },
 	
