@@ -565,6 +565,11 @@ struct NPtag
 	
 	int			titleSize;		//!<number of characters in title
 	int			descSize;		//!<number of characters in description
+// zz html start
+	int			labelHead;		//!<start of the link label text
+	int			labelTail;		//!<end of the link label text
+	int			labelSize;		//!<labelSize = labelTail - labelHead + 1 
+// zz html end
 
 	void*		font;
 
@@ -614,8 +619,8 @@ struct NPnode
 	int			average;					//!<averaging type applied to data
 	int			interval;					//!<the interval to be averaged
 
-	NPintXYZ	auxA;						//!<reserved for future use
-	NPintXYZ	auxB;						//!<reserved for future use
+	NPfloatXYZ	auxA;	//zz grid , osx					//!<reserved for future use
+	NPfloatXYZ	auxB;   //zz grid , osx						//!<reserved for future use
 
 	float		colorShift;					//!<pseudo Hue shift, -180 to 180
 

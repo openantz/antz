@@ -152,40 +152,43 @@ void npInitDataRecordTag (pNPrecordTag recordTag, void* dataRef)
 void npInitTextTag (pNPtag tag, void* dataRef)
 {
 	int i = 0;
-
+    
 	tag->tableID = 0;
 	tag->recordID = 0;
 	
 	tag->titleSize = 0;
 	tag->descSize = 0;
-
+	tag->labelHead = 0;		//zz html
+	tag->labelTail = 0;		//zz html
+	tag->labelSize = 0;		//zz html
+    
 	tag->font = kNP_GLUT_BITMAP_9_BY_15;
 	
 	tag->mode = kNPtagModeBoxOutlineHUD;
 	tag->lineWidth = 1.0f;
-
+    
 	tag->boxSize.x = 0.0f;
 	tag->boxSize.y = 0.0f;
-
+    
 	tag->color.r = 255;			//white text
 	tag->color.g = 255;
 	tag->color.b = 255;
 	tag->color.a = 180;			//70% opacity
-
+    
 	tag->boxColor.r = 0;		//black background box
 	tag->boxColor.g = 0;
 	tag->boxColor.b = 0;
 	tag->boxColor.a = 85;		//33% opacity
-
+    
 	tag->lineColor.r = 255;		//white outline
 	tag->lineColor.g = 255;
 	tag->lineColor.b = 255;
 	tag->lineColor.a = 64;		//70% opacity
-
+    
 	//note <= since the buffer is (kNPtagTitleMax + 1) for the null terminator
 	for (i = 0; i <= kNPtagTitleMax; i++)
 		tag->title[i] = '\0';
-
+    
 	for (i = 0; i <= kNPtagDescMax; i++)
 		tag->desc[i] = '\0';
 }

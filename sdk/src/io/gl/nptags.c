@@ -244,21 +244,49 @@ void npNodeTraverseTree ( void (*nodeFunc)(pNPnode node, void* dataRef),
 //upgrade to calculate live values such as channel mapped attributes, zz
 //for example coordinates of a moving object
 //------------------------------------------------------------------------------
-void npUpdateTag (pNPtag tag)
+void npUpdateTag (pNPtag tag)													//zz html replace entire function
 {
-	int lineCount = 1;
+	int lineCount = 1;			///< @todo add procedures for multi-linem tags
 	float charWidth = 9.0f;		//add procedure based on font type
 	float charHeight = 15.0f;
-
-//	if(tag->titleSize == 0)											//zz debug
-	//tag->titleSize = strnlen(tag->title, kNPtagTitleMax); // lde
-	(tag->titleSize) = strlen(tag->title); // lde
-
-	//add procedure to count lines and width length
-	//strlen(tag->desc);
-	tag->boxSize.x = 10.0f + charWidth * (float)tag->titleSize;
-	tag->boxSize.y = 6.0f + charHeight * (float)lineCount;
+	int curs = 9;
+    
+	/// calculate the tag-label character count
+	tag->title[kNPtagTitleMax] = '\0';
+	tag->titleSize = strlen(tag->title);
+    
+	/// If tag title is an HTML hyperlink then trim to the text portion
+	if( tag->title[0] == '<' )
+	{
+		if( strncmp("<a href=\"", tag->title, 9) == 0 )
+		{
+			/// Search for the end of the href URL
+			while( tag->title[curs] != '\"' && curs < kNPtagTitleMax )
+			{curs++;}
+            
+			/// Advance to beginning of text content
+			curs += 2;
+			tag->labelHead = curs;
+            
+			while( tag->title[curs] != '<' && curs < kNPtagTitleMax )
+			{curs++;}
+            
+			tag->labelTail = curs - 1;
+            
+			tag->labelSize = tag->labelTail - tag->labelHead + 1;
+		}
+		else
+			tag->labelSize = tag->titleSize;
+	}
+	else
+		tag->labelSize = tag->titleSize;
+    
+	/// calculate the tag box size
+	tag->boxSize.x = 10.0f + charWidth * (float)tag->labelSize;
+	tag->boxSize.y = 6.0f + charHeight * (float)lineCount;					//zz html end
 }
+
+
 
 //------------------------------------------------------------------------------
 int npCompareNodes (const void* a, const void* b)
@@ -483,7 +511,16 @@ void npDrawNodeTextTag (pNPnode node, void* dataRef)
 	//offset for text margin inside the background box
 	glRasterPos2f (5.0f, 6.0f);
 	
-	npGlutDrawString (GLUT_BITMAP_9_BY_15, tag->title);
+    /// @todo workaround for dealing with hyperlink tags		//zz html
+	if( tag->titleSize != tag->labelSize )
+	{
+		char* labelText = &tag->title[tag->labelHead];
+		tag->title[tag->labelTail + 1] = '\0';
+		npGlutDrawString (GLUT_BITMAP_9_BY_15, labelText);
+		tag->title[tag->labelTail + 1] = '<';
+	}
+	else
+		npGlutDrawString (GLUT_BITMAP_9_BY_15, tag->title);		//zz html end
 }
 
 //Draw the Text Labels (Simple Ring now)

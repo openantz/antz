@@ -3651,12 +3651,12 @@ void npdbRowToNode( pNPnode node, char** row )
 	node->average		= npatoi(row[12]);
 	node->interval		= npatoi(row[13]); // Samples???
 		
-	node->auxA.x		= npatoi(row[14]);
-	node->auxA.y		= npatoi(row[15]);
-	node->auxA.z		= npatoi(row[16]);
-	node->auxB.x		= npatoi(row[17]);
-	node->auxB.y		= npatoi(row[18]);
-	node->auxB.z		= npatoi(row[19]);
+	node->auxA.x		= npatof(row[14]);		//zz grid
+	node->auxA.y		= npatof(row[15]);
+	node->auxA.z		= npatof(row[16]);
+	node->auxB.x		= npatof(row[17]);
+	node->auxB.y		= npatof(row[18]);
+	node->auxB.z		= npatof(row[19]);		//zz grid end
 		
 	node->colorShift	= npatof(row[20]);
 		
@@ -3776,6 +3776,16 @@ void npdbRowToNode( pNPnode node, char** row )
 				node->topo = kNPtopoPin;
 		}	
 	}
+
+	if( node->type == kNodeGrid )				//zz grid
+	{
+		if( node->auxA.x == 0.0f)
+			node->auxA.x = kNPgridSpacing;
+		if( node->auxA.y == 0.0f)
+			node->auxA.y = kNPgridSpacing;
+		if( node->auxA.z == 0.0f)
+			node->auxA.z = kNPgridSpacing;
+	}							//zz grid end
 }
 
 /// @todo Create function : npdbUpdateTagFromRow
