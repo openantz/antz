@@ -112,6 +112,7 @@ struct NPdbFuncSet{
 	void* (NPDB_CALLCONV *db_error)		();
 	void* (NPDB_CALLCONV *db_errno)		();
 	void* (NPDB_CALLCONV *conn_thread_id) ();
+    unsigned int (NPDB_CALLCONV *escape_string) ();
 	
 	///< error and errno use 'db_' prefix to prevent name conflict
 	

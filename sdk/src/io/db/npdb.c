@@ -4288,10 +4288,14 @@ pNPtag npGetTagFromNode(pNPnode node, void* dataRef)
 
  
 void npGetCSVtagFromNode(char** buffer, int *index ,pNPnode node, void* dataRef)
-{	 
-	pNPtag tag = NULL;
-	tag = npGetTagFromNode(node, dataRef); 
+{
+    pData data = (pData)dataRef;
+	pNPdbFuncSet func = data->io.db.funcSetList[0];
+    pNPtag tag = NULL;
+	char escapedTagTitle[256] = {'\0'};
+    tag = npGetTagFromNode(node, dataRef);
 
+    
 	if( tag )
 	{
 		if( strncmp(tag->title, "id: ", 4) )
@@ -4301,8 +4305,13 @@ void npGetCSVtagFromNode(char** buffer, int *index ,pNPnode node, void* dataRef)
 			{
 				return;
 			}
-			
+			/*
 			sprintf(buffer[*index], "%i,%i,%i,\"%s\",\"%s\"", (*index)+1, node->recordID, tag->tableID, tag->title, tag->desc );
+            */
+            func->escape_string(escapedTagTitle, tag->title, strlen(tag->title));
+//            sprintf(buffer[*index], "%i,%i,%i,\"%s\",\"%s\"", (*index)+1, node->recordID, tag->tableID, tag->title, tag->desc );
+            sprintf(buffer[*index], "%i,%i,%i,\"%s\",\"%s\"", (*index)+1, node->recordID, tag->tableID, escapedTagTitle, tag->desc );
+
 			//printf("\nbuffer[%d] : %s\n", (*index), buffer[*index] );
 			(*index)++;
 		}
@@ -4519,6 +4528,7 @@ int npdbSaveTags(pNPdatabase dbItem, pNPdbFuncSet func, char* table, void* dataR
 	int i = 0;
 	char line[421] = {'\0'}; // 421 is arbritrary, lde @todo
 	char* statement = NULL;
+    char escapedStr[256] = {'\0'};
 	char** buffer = malloc(sizeof(char*) * data->map.nodeCount);
 	int index = 0;
 	
@@ -4534,7 +4544,7 @@ int npdbSaveTags(pNPdatabase dbItem, pNPdbFuncSet func, char* table, void* dataR
 	for(i = 0; i < index; i++)
 	{
 		statement = func->StatementInsert("tag_tbl", buffer[i]);
-		
+        
 		new_npdbQuery_safe(dbItem, statement); // add error handling, lde @todo
 		free(statement);
 		free(buffer[i]);
