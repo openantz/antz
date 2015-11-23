@@ -198,15 +198,15 @@ void assignNodePropertiesFromArray(char** row, pNPnode node)
 	//printf("8");
 	//printf("\n");
 
-	if( node->type == kNodeGrid )
+	if( node->type == kNodeGrid )				//zz grid
 	{
-		if( node->auxA.x == 0.0f)				//zz grid
+		if( node->auxA.x == 0.0f)
 			node->auxA.x = kNPgridSpacing;
 		if( node->auxA.y == 0.0f)
 			node->auxA.y = kNPgridSpacing;
 		if( node->auxA.z == 0.0f)
-			node->auxA.z = kNPgridSpacing;		//zz grid end
-	}
+			node->auxA.z = kNPgridSpacing;
+	}											//zz grid end
 }
 
 void updateNodeFromMysqlRow (MYSQL_ROW *row, void* dataRef) // Generalize here

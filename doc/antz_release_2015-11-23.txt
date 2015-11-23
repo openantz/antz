@@ -2,7 +2,7 @@
 
          latest code, issues and Wiki at https://github.com/openantz/
 ----------------------------------------------------------------------------
-2015-11-17 ANTz v0.199.3
+2015-11-23 ANTz v0.199.4
 
 Enhanced:
 #198 Tilda '~' key behavior change for Select All, Hide and Tag mode

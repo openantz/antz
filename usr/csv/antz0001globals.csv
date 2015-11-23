@@ -1,9 +1,9 @@
 np_globals_id,map_path,item_id,element,type,permisions,name,desc,value
 1,"np_gl",1,"alpha_mode","i",0,"","","1"
-2,"np_gl",1,"background_rgba","ffff",0,"","","0.000000,0.000000,0.000000,1.000000"
+2,"np_gl",1,"background_rgba","ffff",0,"","","0.000000,0.000000,0.000000,0.000000"
 3,"np_gl",1,"fullscreen","i",0,"","","0"
 4,"np_gl",1,"window_size_xy","ii",0,"","","800,510"
-5,"np_gl",1,"position_xy","ii",0,"","","248,86"
+5,"np_gl",1,"position_xy","ii",0,"","","260,155"
 6,"np_gl",1,"hud_level","i",0,"","","2"
 7,"np_gl",1,"subsample","i",0,"","","1"
 8,"np_mouse",1,"tool","i",0,"","","4"

@@ -24,7 +24,7 @@
 #include "../../data/nptypes.h"
 #include "npcurl.h"
 
-void npGithubGetIssue(new2_pNPjson github_json, pNPgithubIssues github_issues, int index, void* dataRef);
+void npGithubGetIssue(pNPjson github_json, pNPgithubIssues github_issues, int index, void* dataRef);
 int npGithubGetIssueKeyIndex(pNPjsonObject json_issue, char* key, void* dataRef);
 int npGithubGetIssueLabels(pNPjsonObject json_issue, pNPgithubIssue github_issue, void* dataRef);
 int npGithubSearchForUser(pNPgithub github, char* user, void* dataRef);

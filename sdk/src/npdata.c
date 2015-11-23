@@ -158,6 +158,7 @@ void npInitTextTag (pNPtag tag, void* dataRef)
 	
 	tag->titleSize = 0;
 	tag->descSize = 0;
+
 	tag->labelHead = 0;		//zz html
 	tag->labelTail = 0;		//zz html
 	tag->labelSize = 0;		//zz html

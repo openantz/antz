@@ -648,15 +648,15 @@ void* npReadMapNodeCSV (const char* buffer, int wordSize, int size,
 	//for sorting orphan nodes
 	nodeCount = ++data->map.sortCount;
 
-	if( node->type == kNodeGrid )
+	if( node->type == kNodeGrid )				//zz grid
 	{
-		if( node->auxA.x == 0.0f)				//zz grid
+		if( node->auxA.x == 0.0f)
 			node->auxA.x = kNPgridSpacing;
 		if( node->auxA.y == 0.0f)
 			node->auxA.y = kNPgridSpacing;
 		if( node->auxA.z == 0.0f)
-			node->auxA.z = kNPgridSpacing;		//zz grid end
-	}
+			node->auxA.z = kNPgridSpacing;
+	}											//zz grid end
 
 	return node;
 }

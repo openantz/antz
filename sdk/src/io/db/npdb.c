@@ -4626,34 +4626,31 @@ void npGetTags(void* dataRef)
 
 
 void npGetCSVtagFromNode(char** buffer, int *index ,pNPnode node, void* dataRef)
-{	 
-	pNPtag tag = NULL;
-	//printf("\nBefore npGetTagFromNode :: %p", tag);
-	tag = npGetTagFromNode(node, dataRef); 
-	//printf("\nAfter npGetTagFromNode :: %p", tag);
+{
+    pData data = (pData)dataRef;
+	pNPdbFuncSet func = data->io.db.funcSetList[0];
+    pNPtag tag = NULL;
+	char escapedTagTitle[kNPtagTitleMax+16] = {'\0'}; ///< add 16 for \" chars
+    tag = npGetTagFromNode(node, dataRef);
 
+    
 	if( tag )
 	{
-		//printf("\ntag->title : %s", tag->title);
-		//if(1) // temp new, lde @todo
 		if( strncmp(tag->title, "id: ", 4) )
 		{
 			buffer[*index] = malloc(sizeof(char) * 4096); // 4096 is arbritary, lde @todo
-			
 			if(buffer[*index] == NULL)
 			{
-				printf("\nRETURNING");
 				return;
 			}
-			//memset(buffer[*index], '\0', sizeof(char)*4096);
-
-			//printf("\nbefore sprintf");
+			/*
 			sprintf(buffer[*index], "%i,%i,%i,\"%s\",\"%s\"", (*index)+1, node->recordID, tag->tableID, tag->title, tag->desc );
-			//printf("\nafter sprintf");
-			
-			//printf("\nBefore printf");
+            */
+            func->escape_string(escapedTagTitle, tag->title, strlen(tag->title));
+//            sprintf(buffer[*index], "%i,%i,%i,\"%s\",\"%s\"", (*index)+1, node->recordID, tag->tableID, tag->title, tag->desc );
+            sprintf(buffer[*index], "%i,%i,%i,\"%s\",\"%s\"", (*index)+1, node->recordID, tag->tableID, escapedTagTitle, tag->desc );
+
 			//printf("\nbuffer[%d] : %s\n", (*index), buffer[*index] );
-			//printf("\nAfter printf");
 			(*index)++;
 		}
 	//	else if ( (*index) != 0 )

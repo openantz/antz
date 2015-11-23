@@ -32,11 +32,11 @@
 
 #include "io/db/npdb.h"
 
-#ifdef NP_PLUGIN_JANNSON
+#ifdef NP_ADDON_JANNSON
 	#include "io/file/npjson.h"
 #endif
 
-#ifdef NP_PLUGIN_CURL
+#ifdef NP_ADDON_CURL
 	#include "io/net/npcurl.h"
 	#include "io/net/npgithub.h"
 #endif
@@ -84,13 +84,13 @@ void npInitIO( void* dataRef )
 	npInitDB( dataRef );
 
 	
-#ifdef NP_PLUGIN_JANNSON
+#ifdef NP_ADDON_JANNSON
 	printf("Init JSON\n");
 	//npInitJSON( &data->io.json, dataRef);
-	npInitJSON( &data->io.json2, dataRef);
+	npInitJSON( &data->io.json, dataRef);
 #endif
 
-#ifdef NP_PLUGIN_CURL
+#ifdef NP_ADDON_CURL
 	printf("Init CURL\n");
 	npCurlInit( dataRef );
 
@@ -195,7 +195,7 @@ void npUpdateIO (void* dataRef)
 
 	npUpdateDB( dataRef );			//zzd
 
-#ifdef NP_PLUGIN_CURL
+#ifdef NP_ADDON_CURL
 	npGithubRun( dataRef );
 #endif
 }

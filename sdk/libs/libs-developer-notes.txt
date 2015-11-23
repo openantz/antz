@@ -1,0 +1,108 @@
+﻿libs-dev-notes.txt 
+
+updated 2015-11-20
+
+Latest app ver and up-to-date docs at - https://github.com/openantz/
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Development Environment
+----------------------------------------------------------------------------
+
+ W7-64bit VS2008 project
+ OSX 10.6.x with Xcode project
+ Linux CentOS 5.5 makefile
+ *Android and/or iOS
+ *Various Linux/Unix
+ *Jetson TK1 - ARM with Linux
+
+Most libraries located in '/sdk/libs' folder, zSpace SDK is an exception.
+
+*Planned platforms.
+**ANTz is currently 32-bit, but has been compiled for 64bit at times.
+
+
+----------------------------------------------------------------------------
+Platform Specific Libraries
+----------------------------------------------------------------------------
+
+- freeglut - MSW & Linux
+- GLUT - OSX uses Apple GLUT
+
+----------------------------------------------------------------------------
+Cross-platform Libraries (MSW, OSX & Linux)
+----------------------------------------------------------------------------
+
+- SOIL - Texture loading and saves DDS files
+- MySQL - Database access
+- OSCPACK - Open Sound Control (OSC) networking
+- ASSIMP - 3D model import and export
+- CURL - Internet based network protocals
+- JANNSON - JSON parser
+- zSpace - Supported by the antz-vr branch
+  
+*Note that you can comment out libraries in 'sdk/src/data/nptypes.h'
+
+
+----------------------------------------------------------------------------
+MSW Libraries
+----------------------------------------------------------------------------
+
+copy any .DLL files from the antz app folder to './sdk/vs/vs2008/Debug'
+
+
+freeglut is included in the antz lib\ folder and does not require install.
+But, some useful VS project install instructions are at:
+http://blog.thegabrielflores.com/2008/02/installing-freeglut-on-visual-studio.html
+
+
+----------------------------------------------------------------------------
+zSpace VR desktop
+----------------------------------------------------------------------------
+
+There is a separate 'antz-vr' branch for the zSpace.
+
+To compile, you will need to install the zSpace sdk which you download from:
+http://zspace.com
+
+
+----------------------------------------------------------------------------
+Libraries under consideration
+----------------------------------------------------------------------------
+
+VIDEO streaming (also consider plugin and GLib object model.)
+http://gstreamer.freedesktop.org
+http://gstreamer.freedesktop.org/features/ 
+
+http://developer.gnome.org/gobject/stable/
+https://developer.gnome.org
+
+http://glew.sourceforge.net
+
+SGI based tesselator
+https://github.com/memononen/libtess2
+
+RtAudio
+http://www.music.mcgill.ca/~gary/rtaudio/
+
+FFT
+http://kissfft.sourceforge.net
+
+Audio
+http://www.portaudio.com
+http://www.openal.org
+
+
+Video Standard Def, Firewire
+https://github.com/ofTheo/videoInput
+
+ODBC (DB middleware)
+https://en.wikipedia.org/wiki/Open_Database_Connectivity
+https://dev.mysql.com/downloads/connector/odbc/
+
+XML
+SQLite
+poco - C++ internet lib's JSON, XML, ODBC, SMTP, Sockets, ZIP, TCP
+
+http://opencv.org - computer vision
+
