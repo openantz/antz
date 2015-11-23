@@ -1,6 +1,9 @@
-ANTz - realtime 3D data visualization
+DOWNLOAD the MSW version by clicking 'Download ZIP' button (upper right.)
 
-'master' branch is MSW only.
+For Mac you need to select 'Branch: osx' (upper left.)
 
-The 'osx' branch contains files needed for Mac, including compiled app and dylibs.
-https://github.com/openantz/antz/tree/osx
+Command overview file named 'cheatsheet.txt' is found in the 'doc' folder.
+
+Doc folder also contains release notes, LICENSE.txt and links to other docs.
+
+Additional resources are the ANTz homepage http://openantz.com

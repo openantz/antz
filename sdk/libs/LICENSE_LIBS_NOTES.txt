@@ -1,0 +1,25 @@
+﻿LICENSE_LIBS_NOTES.txt 
+
+updated 2015-11-20
+
+Latest app ver and up-to-date docs at - https://github.com/openantz/
+
+----------------------------------------------------------------------------
+3RD PARTY LIBRARY LICENSING
+----------------------------------------------------------------------------
+
+3rd party libraries have their own licenses. In general we attempt to only
+include libraries that are compatible with open source projects.
+
+However, some libraries have restricted licensing:
+
+- zSpace -
+Permission was granted to distribute code that calls the zSpace library,
+but you will need to download and install the SDK separately.
+ http://zspace.com
+
+- MySQL -
+MySQL allows for open source projects to distribute under the GPL, but other
+commercial projects generally require an agreement with Oracle.
+ http://www.mysql.com/about/legal/licensing/oem/
+

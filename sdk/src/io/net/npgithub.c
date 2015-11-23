@@ -162,7 +162,7 @@ void npGithubGetIssues(void* dataRef)
 	int   err      = -1;
 
 //	pNPjson json = &data->io.json; 
-	new2_pNPjson json = &data->io.json2; /// @todo change json2 to json
+	pNPjson json = &data->io.json; /// @todo change json2 to json
 	json->jRoot.jsonRoot = NULL; /// @todo npjsonInit
 //	github->jsonGithub = json;
 
@@ -190,8 +190,8 @@ void npGithubGetIssues(void* dataRef)
 
 	for(github->requestResponse_index = 0; github->requestResponse_index < github->num_of_RequestResponses; github->requestResponse_index++)
 	{ // include npjson.h
-		npjsonSetInput(&data->io.json2, github->rR[github->requestResponse_index].response, github->requestResponse_index, dataRef);	
-		npjsonLoadInput(&data->io.json2, dataRef);
+		npjsonSetInput(&data->io.json, github->rR[github->requestResponse_index].response, github->requestResponse_index, dataRef);	
+		npjsonLoadInput(&data->io.json, dataRef);
 	}
 	
 	if(json->jRoot.jsonRoot == NULL)
@@ -222,7 +222,7 @@ void npGithubGetIssues(void* dataRef)
 
 		for(index = 0; index < data->io.github.issues->count; index++)
 		{
-			npGithubGetIssue(&data->io.json2, data->io.github.issues, index, dataRef); /// @todo This should just take pNPgithub
+			npGithubGetIssue(&data->io.json, data->io.github.issues, index, dataRef); /// @todo This should just take pNPgithub
 		}
 	}
 
@@ -572,7 +572,7 @@ void npGithubPrintUserData(pNPgithubUser user, void* dataRef)
 }
 
 
-void npGithubGetIssue(new2_pNPjson github_json, pNPgithubIssues github_issues, int index, void* dataRef)
+void npGithubGetIssue(pNPjson github_json, pNPgithubIssues github_issues, int index, void* dataRef)
 {
 	pData data = (pData)dataRef;
 	pNPjsonArray issues_array = NULL;

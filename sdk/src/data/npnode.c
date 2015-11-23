@@ -665,12 +665,12 @@ void npInitNodeDefault (pNPnode node)
 	node->average		= kAverageNull;		//averaging type applied to data
 	node->interval		= 1;				//the interval to be averaged
 
-	node->auxA.x		= 0.0f;
+	node->auxA.x		= 0.0f;				//zz grid
 	node->auxA.y		= 0.0f;
 	node->auxA.z		= 0.0f;
 	node->auxB.x		= 0.0f;
 	node->auxB.y		= 0.0f;
-	node->auxB.z		= 0.0f;
+	node->auxB.z		= 0.0f;				//zz grid end
 
 	node->colorShift	= 0.0f;
 
@@ -1029,9 +1029,9 @@ void InitNodeGrid (pNPnode node)
 	node->segments.y = kNPgridSegmentsY;
 	node->segments.z = 0;
 
-	node->auxA.x			= kNPgridSpacing;
+	node->auxA.x			= kNPgridSpacing;		//zz grid
 	node->auxA.y			= kNPgridSpacing;
-	node->auxA.z			= kNPgridSpacing;
+	node->auxA.z			= kNPgridSpacing;		//zz grid end
 
 //	gridData->spacing.x		= kNPgridSpacing;
 //	gridData->spacing.y		= kNPgridSpacing;

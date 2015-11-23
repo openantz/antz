@@ -70,12 +70,12 @@ void assignNodePropertiesFromArray(char** row, pNPnode node)
 	node->average		= npatoi(row[12]);
 	node->interval		= npatoi(row[13]); // Samples???
 		
-	node->auxA.x		= npatof(row[14]);		//zz
+	node->auxA.x		= npatof(row[14]);		//zz grid
 	node->auxA.y		= npatof(row[15]);
 	node->auxA.z		= npatof(row[16]);
 	node->auxB.x		= npatof(row[17]);
 	node->auxB.y		= npatof(row[18]);
-	node->auxB.z		= npatof(row[19]);
+	node->auxB.z		= npatof(row[19]);		//zz grid end
 	//printf("2");
 	node->colorShift	= npatof(row[20]);
 		
@@ -198,7 +198,7 @@ void assignNodePropertiesFromArray(char** row, pNPnode node)
 	//printf("8");
 	//printf("\n");
 
-	if( node->type == kNodeGrid )
+	if( node->type == kNodeGrid )				//zz grid
 	{
 		if( node->auxA.x == 0.0f)
 			node->auxA.x = kNPgridSpacing;
@@ -206,7 +206,7 @@ void assignNodePropertiesFromArray(char** row, pNPnode node)
 			node->auxA.y = kNPgridSpacing;
 		if( node->auxA.z == 0.0f)
 			node->auxA.z = kNPgridSpacing;
-	}
+	}											//zz grid end
 }
 
 void updateNodeFromMysqlRow (MYSQL_ROW *row, void* dataRef) // Generalize here

@@ -25,7 +25,7 @@
 #ifndef NPDBTYPES_H_
 #define NPDBTYPES_H_
 
-//#define NPDB_CALLCONV __stdcall
+#include "stdbool.h"
 
 
 #ifdef WIN32
@@ -128,6 +128,7 @@ struct NPdbFuncSet{
 	void* (NPDB_CALLCONV *db_error)		();
 	void* (NPDB_CALLCONV *db_errno)		();
 	void* (NPDB_CALLCONV *conn_thread_id) ();
+    unsigned int (NPDB_CALLCONV *escape_string) ();
 	
 	///< error and errno use 'db_' prefix to prevent name conflict
 	
@@ -324,7 +325,7 @@ struct NPdbs { // Should this be renamed to NPdbServer, lde @todo
 	int				dbCount;			///< number of databases
 	
 	pNPdatabase		activeDB;			///< points to active DB in list
-	char				inUseDB2[64];        ///< Name of currently in use database, lde
+	char			inUseDB2[64];        ///< Name of currently in use database, lde
 	
 	float			saveUpdateRate;		///< auto save update rate, 0 is off
 	float			loadUpdateRate;		///< auto load update rate, 0 is off
@@ -357,3 +358,4 @@ typedef struct NPtables NPtables;
 typedef struct NPtables *pNPtables;
 
 #endif
+

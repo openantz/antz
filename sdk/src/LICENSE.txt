@@ -1,4 +1,13 @@
-* -----------------------------------------------------------------------------
+DISCLAIMER: THIS LICENSE DOES NOT APPLY TO 3RD PARTY LIBRARIES.
+
+We strive to only use libraries that are compatible with open source projects.
+But this is not a promise and you are responsible for determining the licensing
+for your project. For example, commercial projects likely require an agreement
+with the MySQL vendor or removing the dependency.
+
+See '../sdk/libs/antz-libs-notes.txt' for more info on 3rd party licenses.
+
+/* ----------------------------------------------------------------------------
 *
 * LICENSE.txt
 *
@@ -9,11 +18,6 @@
 * Written in 2010-2015 by Shane Saxon - saxon@openantz.com
 *
 * Please see main.c for a complete list of additional code contributors.
-*
-* This license does NOT apply to 3rd party libraries. You can find the 3rd
-* party library licenses in the sdk/libs/ subfolders. Generally we only 
-* include libraries that are free for commercial use. Though some versions may
-* include proprietary libraries to support things such as video or VR hardware.
 *
 * To the extent possible under law, the author(s) have dedicated all copyright
 * and related and neighboring rights to this software to the public domain

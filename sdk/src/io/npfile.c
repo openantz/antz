@@ -370,7 +370,7 @@ bool npSetFileAttrib ( char* pathName, int attrib, void* dataRef)
 /// Open the URL using the OS 'start' command.
 /// We recognize tag formats for both local files and remote websites.
 /// Tag can be HTML 'href=' format or start with either www or http.
-void npOpenURL (const char* command, void* dataRef)
+void npOpenURL (const char* command, void* dataRef)							//zz html replace entire function
 {
 	int i = 0;
 
@@ -396,16 +396,16 @@ void npOpenURL (const char* command, void* dataRef)
 		strcat( sysCmd, title );
 	else						
 	{
-		if( node->tableID >= kNPgitvizTableID )
+		if( node->tableID >= kNPgitvizTableID )								//zz html comment out this
 			sprintf( sysCmd, "start https://github.com/%s/issues/%d", 
 						data->io.gitvizURL, node->recordID );
-		else
-			sprintf( sysCmd, "start %s%d", data->io.url, node->recordID );
+		else																//zz html comment out this - end
+			sprintf( sysCmd, "start %s%d", data->io.url, node->recordID );	//zz html leave this
 	}
 
 	/// system call with 'start' to open browser with the composed URL
 	system( sysCmd );
-	npPostMsg( sysCmd, kNPmsgCtrl, data );
+	npPostMsg( sysCmd, kNPmsgCtrl, data );									//zz html end
 }
 
 //-----------------------------------------------------------------------------

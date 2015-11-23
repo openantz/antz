@@ -158,9 +158,10 @@ void npInitTextTag (pNPtag tag, void* dataRef)
 	
 	tag->titleSize = 0;
 	tag->descSize = 0;
-	tag->labelHead = 0;
-	tag->labelTail = 0;
-	tag->labelSize = 0;
+
+	tag->labelHead = 0;		//zz html
+	tag->labelTail = 0;		//zz html
+	tag->labelSize = 0;		//zz html
 
 	tag->font = kNP_GLUT_BITMAP_9_BY_15;
 	

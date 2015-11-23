@@ -26,11 +26,11 @@
 *
 * --------------------------------------------------------------------------- */
 
-#include "npdata.h"					/* scene graph and other data structures  */
-#include "npio.h"					/* file IO, MySQL, OSC-UDP, OpenGL        */
-#include "npctrl.h"					/* command logic with physics             */
+#include "npdata.h"					///< scene graph and other data structures
+#include "npio.h"					///< file IO, MySQL, OSC-UDP, OpenGL
+#include "npctrl.h"					///< command logic with physics
 
-//! using doxygen with graphviz for inline code docs
+//! Using doxygen with graphviz for inline code docs.
 /*!
  @param argc is the command line argument count.
  @param argv is a list of the tokenized arguments that can be used to load
@@ -61,15 +61,15 @@ int main (int argc, char **argv)
 	int err = 0;
 	void* data = NULL;	
 
-	data = npInitData (argc, argv);			/* Model named - map   */
-	npInitIO (data);						/* View called - io    */
-	npInitCtrl (data);						/* Control is  - ctrl  */
+	data = npInitData (argc, argv);			///< Model named - map
+	npInitIO (data);						///< View called - io
+	npInitCtrl (data);						///< Control is  - ctrl
 
-	err = npAppLoop (data);					/* enter main app loop */
+	err = npAppLoop (data);					///< enter main app loop
 
-	npCloseCtrl (data);						/* halt all activity   */
-	npCloseIO (data);						/* close connections   */
-	npCloseData (data);						/* data map destructor */
+	npCloseCtrl (data);						///< halt all activity
+	npCloseIO (data);						///< close connections
+	npCloseData (data);						///< data map destructor
 
 	return err;
 }

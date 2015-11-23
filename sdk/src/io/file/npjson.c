@@ -26,7 +26,7 @@
 
 
 //-----------------------------------------------------------------------------
-void npInitJSON (new2_pNPjson json, void* dataRef)
+void npInitJSON (pNPjson json, void* dataRef)
 {
 	int index = 0;
 
@@ -47,35 +47,38 @@ void npCloseJSON (void* dataRef)
 {
 	return;
 }
-
-void npJSON_loads(pNPjson json, char* input, void* dataRef){
+/*
+void npJSON_loads(pNPjson json, char* input, void* dataRef)
+{
 	json->root = json_loads(input, 0, json->error);
 	if(json->root == NULL)
 	{
-		printf("\nnpJSON_loads returned NULL");
+		printf("err 8300 - npJSON_loads returned NULL\n");
 		json->array_size = 0;
 	}
 
 	json->array_size = json_array_size(json->root);
 
 }
-
-int npjsonArrayExtend(new2_pNPjson json, json_t* to_extend, void* dataRef)
+*/
+int npjsonArrayExtend(pNPjson json, json_t* to_extend, void* dataRef)
 {
 	int err = -1;
 	err = json_array_extend(json->jRoot.root, to_extend); 
 	return err; 
 }
 
-void npJSON_arrayExtend(pNPjson json, json_t* other, void* dataRef){
+/*
+void npJSON_arrayExtend(pNPjson json, json_t* other, void* dataRef)
+{
 	int error = -1;
 	error = json_array_extend(json->root, other);
 	if(error == -1)
-		printf("\njson_array_extend returned an error");
+		printf("err 8301 - json_array_extend returned -1\n");
 
 }
-
-void npJSONcustom(new2_pNPjson json, pNPjsonArray jsonArray, json_t* jArray_t, void* dataRef)
+*/
+void npJSONcustom(pNPjson json, pNPjsonArray jsonArray, json_t* jArray_t, void* dataRef)
 {
 	
 }
@@ -143,7 +146,7 @@ pNPjsonArray npjsonArrayInit(void* parent, void* dataRef)
 #define kNPjsonArrayIndexOutOfRange -12
 
 
-int npJSONunpackArray(new2_pNPjson json, pNPjsonArray jsonArray, json_t* jArray_t, void* dataRef)
+int npJSONunpackArray(pNPjson json, pNPjsonArray jsonArray, json_t* jArray_t, void* dataRef)
 {
 	int arraySize = 0;
 	int index = 0;
@@ -165,7 +168,7 @@ int npJSONunpackArray(new2_pNPjson json, pNPjsonArray jsonArray, json_t* jArray_
 		jsonArray->element[index] = malloc(sizeof(NPjsonValue));
 		if(jsonArray->element[index] == NULL)
 		{
-			printf("\nnpJSONunpackArray :: malloc failed");
+			printf("err 8302 - npJSONunpackArray malloc failed\n");
 			return kNPmallocFailed;
 		}
 
@@ -186,7 +189,7 @@ int npJSONunpackArray(new2_pNPjson json, pNPjsonArray jsonArray, json_t* jArray_
 				jsonArray->element[index]->c_value = npjsonArrayInit(jsonArray, dataRef);
 				if( jsonArray->element[index]->c_value == NULL )
 				{
-					printf("\nnpJSONunpackArray :: malloc failed");
+					printf("err 8303 - npJSONunpackArray malloc failed\n");
 					return kNPmallocFailed;
 				}
 
@@ -203,7 +206,7 @@ int npJSONunpackArray(new2_pNPjson json, pNPjsonArray jsonArray, json_t* jArray_
 				jsonArray->element[index]->c_value = npjsonObjectInit(jsonArray, kNPjsonArray, dataRef);
 				if(jsonArray->element[index]->c_value == NULL)
 				{
-					printf("\nnpJSONunpackArray :: malloc failed");
+					printf("err 8304 - npJSONunpackArray malloc failed\n");
 					return kNPmallocFailed;
 				}
 				err = -1; /// @todo what is this about?
@@ -211,7 +214,7 @@ int npJSONunpackArray(new2_pNPjson json, pNPjsonArray jsonArray, json_t* jArray_
 				err = npJSONunpackObject(json, jsonArray->element[index]->c_value, jsonArray->element[index]->j_value, dataRef);
 				if(err != 0)
 				{
-					printf("\nnpJSONunpackObject Failed");
+					printf("err 8305 - npJSONunpackObject failed\n");
 					getchar();
 				}
 
@@ -224,7 +227,7 @@ int npJSONunpackArray(new2_pNPjson json, pNPjsonArray jsonArray, json_t* jArray_
 				jsonArray->element[index]->c_value = malloc(sizeof(NPjsonInteger));
 				if(jsonArray->element[index]->c_value == NULL)
 				{
-					printf("\nnpJSONunpackArray :: malloc failed");
+					printf("err 8306 - npJSONunpackArray malloc failed\n");
 					return kNPmallocFailed ;
 				}
 
@@ -234,7 +237,7 @@ int npJSONunpackArray(new2_pNPjson json, pNPjsonArray jsonArray, json_t* jArray_
 				jsonArray->element[index]->c_value = malloc(sizeof(NPjsonReal));
 				if(jsonArray->element[index]->c_value == NULL)
 				{
-					printf("\nnpJSONunpackArray :: malloc failed");
+					printf("err 8307 - npJSONunpackArray malloc failed\n");
 					return kNPmallocFailed;
 				}
 
@@ -244,7 +247,7 @@ int npJSONunpackArray(new2_pNPjson json, pNPjsonArray jsonArray, json_t* jArray_
 				jsonArray->element[index]->c_value = malloc(sizeof(NPjsonBoolean));
 				if(jsonArray->element[index]->c_value == NULL)
 				{
-					printf("\nnpJSONunpackArray :: malloc failed");
+					printf("err 8308 - npJSONunpackArray malloc failed\n");
 					return kNPmallocFailed;
 				}
 
@@ -254,7 +257,7 @@ int npJSONunpackArray(new2_pNPjson json, pNPjsonArray jsonArray, json_t* jArray_
 				jsonArray->element[index]->c_value = malloc(sizeof(NPjsonBoolean));
 				if(jsonArray->element[index]->c_value == NULL)
 				{
-					printf("\nnpJSONunpackArray :: malloc failed");
+					printf("err 8309 - npJSONunpackArray malloc failed\n");
 					return kNPmallocFailed;
 				}
 
@@ -266,7 +269,7 @@ int npJSONunpackArray(new2_pNPjson json, pNPjsonArray jsonArray, json_t* jArray_
 				jsonArray->element[index]->j_value = NULL;
 				break;
 			default:
-				printf("Error: Impossible Case");
+				printf("err 8310 - invalid json_type\n");
 				return -1;
 				break;
 		}
@@ -291,7 +294,7 @@ void npjsonObjectAdd(pNPjsonObject jsonObject, json_t* jObject_t , void* dataRef
 }
 */
 
-int npJSONunpackObject(new2_pNPjson json, pNPjsonObject jsonObject, json_t* jObject_t, void* dataRef)
+int npJSONunpackObject(pNPjson json, pNPjsonObject jsonObject, json_t* jObject_t, void* dataRef)
 {
 	int index = 0;
 	char* key = NULL;
@@ -300,7 +303,7 @@ int npJSONunpackObject(new2_pNPjson json, pNPjsonObject jsonObject, json_t* jObj
 	
 	if(json == NULL || jsonObject == NULL || jObject_t == NULL)
 	{
-		printf("error : NULL ptr passed as argument");
+		printf("err 8311 - npJSONunpackObject passed NULL argument\n");
 		getchar();
 	}
 
@@ -316,7 +319,7 @@ int npJSONunpackObject(new2_pNPjson json, pNPjsonObject jsonObject, json_t* jObj
 				jsonObject->jsonValue[index].c_value = npjsonObjectInit(NULL, kNPjsonNull, dataRef); 
 				if(jsonObject->jsonValue[index].c_value == NULL)
 				{
-					printf("\nnpJSONunpackObject :: malloc failed");
+					printf("err 8312 - npJSONunpackObject malloc failed\n");
 					return -1;
 				}
 
@@ -326,7 +329,7 @@ int npJSONunpackObject(new2_pNPjson json, pNPjsonObject jsonObject, json_t* jObj
 				jsonObject->jsonValue[index].c_value = npjsonArrayInit(NULL, dataRef);
 				if(jsonObject->jsonValue[index].c_value == NULL)
 				{
-					printf("\nnpJSONunpackObject :: malloc failed");
+					printf("err 8313 - npJSONunpackObject malloc failed\n");
 					return -1;
 				}
 
@@ -340,7 +343,7 @@ int npJSONunpackObject(new2_pNPjson json, pNPjsonObject jsonObject, json_t* jObj
 				jsonObject->jsonValue[index].c_value = malloc(sizeof(NPjsonInteger)); 
 				if(jsonObject->jsonValue[index].c_value == NULL)
 				{
-					printf("\nnpJSONunpackObject :: malloc failed");
+					printf("err 8314 - npJSONunpackObject malloc failed\n");
 					return -1;
 				}
 
@@ -351,19 +354,19 @@ int npJSONunpackObject(new2_pNPjson json, pNPjsonObject jsonObject, json_t* jObj
 				jsonObject->jsonValue[index].c_value = (char*)json_string_value(jsonObject->jsonValue[index].j_value);	
 				if(jsonObject->jsonValue[index].c_value == NULL)
 				{
-					printf("\nnpJSONunpackObject :: malloc failed");
+					printf("err 8315 - npJSONunpackObject malloc failed\n");
 					return -1;
 				}
 
 				jsonObject->jsonValue[index].j_type = JSON_STRING;
 				break;
 			case JSON_REAL:
-				printf("\nJSON_REAL not yet supported");
+				printf("warn 8316 - JSON_REAL not yet supported\n");
 				return -1; // remove this when supported
 				jsonObject->jsonValue[index].c_value = malloc(sizeof(NPjsonReal)); 
 				if(jsonObject->jsonValue[index].c_value == NULL)
 				{
-					printf("\nnpJSONunpackObject :: malloc failed");
+					printf("err 8317 - npJSONunpackObject malloc failed\n");
 					return -1;
 				}
 
@@ -374,7 +377,7 @@ int npJSONunpackObject(new2_pNPjson json, pNPjsonObject jsonObject, json_t* jObj
 				jsonObject->jsonValue[index].c_value = malloc(sizeof(NPjsonBoolean));
 				if(jsonObject->jsonValue[index].c_value == NULL)
 				{
-					printf("\nnpJSONunpackObject :: malloc failed");
+					printf("err 8318 - npJSONunpackObject malloc failed\n");
 					return -1;
 				}
 
@@ -384,7 +387,7 @@ int npJSONunpackObject(new2_pNPjson json, pNPjsonObject jsonObject, json_t* jObj
 				jsonObject->jsonValue[index].c_value = malloc(sizeof(NPjsonBoolean));
 				if(jsonObject->jsonValue[index].c_value == NULL)
 				{
-					printf("\nnpJSONunpackObject :: malloc failed");
+					printf("err 8319 - npJSONunpackObject malloc failed\n");
 					return -1;
 				}
 				
@@ -401,7 +404,7 @@ int npJSONunpackObject(new2_pNPjson json, pNPjsonObject jsonObject, json_t* jObj
 	return 0;
 }
 
-int npjsonClearInput(new2_pNPjson json, int index, void* dataRef)
+int npjsonClearInput(pNPjson json, int index, void* dataRef)
 {
 	char* input = json->input[index];							//zz debug, is this legal
 	
@@ -410,7 +413,7 @@ int npjsonClearInput(new2_pNPjson json, int index, void* dataRef)
 	return 0;
 }
 
-int npjsonSetInput(new2_pNPjson json, char* input, int index, void* dataRef)
+int npjsonSetInput(pNPjson json, char* input, int index, void* dataRef)
 {
 	json->input[index] = input;
 	json->input_index = index;
@@ -418,7 +421,7 @@ int npjsonSetInput(new2_pNPjson json, char* input, int index, void* dataRef)
 	return 0;
 }
 
-int npjsonLoadInput(new2_pNPjson json, void* dataRef)
+int npjsonLoadInput(pNPjson json, void* dataRef)
 {
 	pData data = (pData) dataRef;
 	json_t* to_extend = NULL;
@@ -444,7 +447,7 @@ int npjsonLoadInput(new2_pNPjson json, void* dataRef)
 }
 
 
-int npjsonUnpackRoot(new2_pNPjson json, void* dataRef)
+int npjsonUnpackRoot(pNPjson json, void* dataRef)
 {
 	int err = 0;
 
@@ -454,7 +457,7 @@ int npjsonUnpackRoot(new2_pNPjson json, void* dataRef)
 			json->jRoot.jsonRoot = npjsonObjectInit(NULL, kNPjsonNull, dataRef);
 			if(json->jRoot.jsonRoot == NULL)
 			{
-				printf("\nnpjsonUnpackRoot :: malloc failed");
+				printf("err 8320 - npjsonUnpackRoot malloc failed\n");
 				return -1;
 			}
 
@@ -465,7 +468,7 @@ int npjsonUnpackRoot(new2_pNPjson json, void* dataRef)
 			json->jRoot.jsonRoot = npjsonArrayInit(NULL, dataRef);
 			if(json->jRoot.jsonRoot == NULL)
 			{
-				printf("\nnpjsonUnpackRoot :: malloc failed");
+				printf("err 8321 - npjsonUnpackRoot malloc failed\n");
 				return -1;
 			}
 
@@ -515,7 +518,7 @@ int npJSONgetObjectKeyIndex(pNPjsonObject object, char* key, void* dataRef)
 
 	if(object->numNameValuePairs >= 30) /// @todo add define kNPmaxNumNameValuePairs
 	{
-		printf("\nnumNameValuePairs exceeds max");
+		printf("err 8322 - numNameValuePairs exceeds max\n");
 		return -10;
 	}
 
@@ -531,19 +534,19 @@ int npJSONgetObjectKeyIndex(pNPjsonObject object, char* key, void* dataRef)
 	return -1;
 }
 
-json_t* npjsonGetRoot(new2_pNPjson json, void* dataRef)
+json_t* npjsonGetRoot(pNPjson json, void* dataRef)
 {
 	return json->jRoot.root;
 }
 
-void new_npJSON_loads(new2_pNPjson json, char* input, void* dataRef)
+void new_npJSON_loads(pNPjson json, char* input, void* dataRef)
 {
 	pData data = (pData) dataRef;
 	int index = 0;
 	json->jRoot.root = json_loads(input, 0, &json->error);
 	if(json->jRoot.root == NULL)
 	{
-		printf("\nnpJSON_loads returned NULL");
+		printf("err 8323 - npJSON_loads returned NULL\n");
 		return;
 	}
 	

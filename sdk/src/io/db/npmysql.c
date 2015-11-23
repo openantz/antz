@@ -247,7 +247,8 @@ int npMysqlHook( pNPdbFuncSet func, void* dbLib)
 	func->db_error		= (void*)nposGetLibSymbol( dbLib, "mysql_error"		    );
 	func->db_errno		= (void*)nposGetLibSymbol( dbLib, "mysql_errno"	        );
 	func->conn_thread_id= (void*)nposGetLibSymbol( dbLib, "mysql_thread_id"		);	
-	
+    func->escape_string = (void*)nposGetLibSymbol( dbLib, "mysql_escape_string" );
+
 	func->InitConnOptions		= npMysqlInitConnOptions;
 	func->GetTableFields		= (void*)npMysqlGetTableFields;
 

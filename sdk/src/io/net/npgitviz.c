@@ -133,10 +133,12 @@ return year_node;
 
 void npGitVizSetIssueCreationNodeState2(pNPgithubIssue issue, void* dataRef)
 {
-	issue->issue_creation_node->geometry = kNPgeoTorus;
-	issue->issue_creation_node->color.r  = 255;
-	issue->issue_creation_node->color.g  = 0;
-	issue->issue_creation_node->color.b  = 0;	
+	pNPnode node = (pNPnode)issue->issue_creation_node;
+
+	node->geometry = kNPgeoTorus;
+	node->color.r  = 255;
+	node->color.g  = 0;
+	node->color.b  = 0;	
 }
 
 void test_npGithubGetIssueCreatedAt(pNPgithubIssue issue, void* dataRef)
@@ -467,6 +469,8 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	pNPrecordTag firstPriorityTag;
 	pNPrecordTag secondPriorityTag;
 
+	pNPnode node = NULL;
+
 	struct tm time_created;
 	struct tm time_closed;
 	double seconds;
@@ -502,9 +506,8 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 
 		
 	// ---------------------------------------------------------------------------
-
-	current_issue->issue_node = npNodeNew(kNodePin, NULL, dataRef);
-	current_issue->issue_node->geometry = kNPgeoCube;
+	current_issue->issue_node = node = npNodeNew(kNodePin, NULL, dataRef);
+	node->geometry = kNPgeoCube;
 
 //	old_npGithubGetIssueCreatedAt2(current_issue, dataRef);
 //	new_npGithubGetIssueCreatedAt2(current_issue);	
@@ -523,24 +526,24 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 		sprintf(durationTag->title, "Creation Date : %s", current_issue->created_at);
 		
 		/// Set to red
-		current_issue->issue_node->color.r = 255;
-		current_issue->issue_node->color.g = 0;
-		current_issue->issue_node->color.b = 0;
+		node->color.r = 255;
+		node->color.g = 0;
+		node->color.b = 0;
 		
 		seconds = difftime(now, mktime(&time_created));
 //		printf("%.f seconds have passed since the issue was created \n", seconds);
 	//	seconds += 10000;
 //		current_issue->issue_node->scale.z = seconds / 12500000;
-		current_issue->issue_node->scale.z = (float)(seconds / 10000000);
+		node->scale.z = (float)(seconds / 10000000);
 //		printf("\ncurrent_issue->issue_node->scale.z :: %f", current_issue->issue_node->scale.z);  	
 	}
 	else if( strcmp(current_issue->state, "closed") == 0 )
 	{
 		sprintf(durationTag->title, "Creation Date : %s || Closed Date : %s", current_issue->created_at, current_issue->closed_at);
 		/// Set to blue
-		current_issue->issue_node->color.r = 0;
-		current_issue->issue_node->color.g = 0;
-		current_issue->issue_node->color.b = 255;
+		node->color.r = 0;
+		node->color.g = 0;
+		node->color.b = 255;
 		
 	//	new_npGithubGetIssueClosedAt2(current_issue);
 		npGithubGetIssueClosedAt(current_issue);
@@ -556,14 +559,14 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	//	////getchar();
 	//	seconds += 10000;
 		//current_issue->issue_node->scale.z = seconds / 12500000;
-		current_issue->issue_node->scale.z = (float)(seconds / 10000000);
+		node->scale.z = (float)(seconds / 10000000);
 	}
 	
-	durationTag->titleSize = strlen(durationTag->title) + 1;
-	npTagSortAdd(durationTag, dataRef);
-	current_issue->issue_node->recordID = durationTag->recordID;
-	current_issue->issue_node->tableID  = kNPgitvizTableID + 1; //zz 3;
-	npTagNode(current_issue->issue_node, dataRef);
+	durationTag->titleSize = strlen (durationTag->title) + 1;
+	npTagSortAdd (durationTag, dataRef);
+	node->recordID = durationTag->recordID;
+	node->tableID  = kNPgitvizTableID + 1; //zz 3;
+	npTagNode (node, dataRef);
 
 	/// Set the Title as text tag	
 //	printf("\nTag");
@@ -633,8 +636,8 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	npTagSortAdd(issueCreatorTag, dataRef);
 	///	Set the recordId to the issue number
 	/// @todo create a method to auto-generate the table_id
-	current_issue->issue_node->recordID = (issueTitleTag->recordID = current_issue->number);
-	current_issue->issue_node->tableID =  (issueTitleTag->tableID = kNPgitvizTableID + 2); //zz 2);
+	node->recordID = (issueTitleTag->recordID = current_issue->number);
+	node->tableID =  (issueTitleTag->tableID = kNPgitvizTableID + 2); //zz 2);
 	
 	/// Tag title text tag to node
 	npTagSortAdd(issueTitleTag, dataRef);
@@ -643,7 +646,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 
 	
 	/// Add sub-node that indicates user that created the issue
-	issue_user = npNodeNew(kNodePin, current_issue->issue_node, dataRef);
+	issue_user = npNodeNew(kNodePin, node, dataRef);
 	issue_user->geometry = kNPgeoCube;
 	issue_user->recordID = issueCreatorTag->recordID;
 	issue_user->tableID = issueCreatorTag->tableID;
@@ -659,14 +662,14 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 
 
 	/// Add sub-node that indicates user that is assigned the issue (the assignee)
-	npNodeNew(kNodePin, current_issue->issue_node, dataRef);
-	current_issue->issue_node->child[1]->translate.x -= 100;
-	current_issue->issue_node->child[1]->geometry = kNPgeoSphere;
+	npNodeNew(kNodePin, node, dataRef);
+	node->child[1]->translate.x -= 100;
+	node->child[1]->geometry = kNPgeoSphere;
 
 	/// if no assignee exists, use wireframe geometry 
 	if(current_issue->assignee == NULL)
 	{
-		current_issue->issue_node->child[1]->geometry = kNPgeoSphereWire;
+		node->child[1]->geometry = kNPgeoSphereWire;
 	}
 	else
 	{
@@ -700,35 +703,35 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 			npTagSortAdd(issueAssigneeTag, dataRef);
 //			printf("\nafter npTagSortAdd");
 
-			current_issue->issue_node->child[1]->recordID = issueAssigneeTag->recordID; 
-			current_issue->issue_node->child[1]->tableID = issueAssigneeTag->tableID;
+			node->child[1]->recordID = issueAssigneeTag->recordID; 
+			node->child[1]->tableID = issueAssigneeTag->tableID;
 
-			npTagNode(current_issue->issue_node->child[1], dataRef);
+			npTagNode(node->child[1], dataRef);
 //			printf("\nAfter npTagNode");
 		}
 
 	}
 
 	/// Add sub-node that for labels
-	npNodeNew(kNodePin, current_issue->issue_node, dataRef);
-	current_issue->issue_node->child[2]->translate.x -= 20;
-	current_issue->issue_node->child[2]->recordID = (issueTitleTag->recordID = current_issue->number);
-	current_issue->issue_node->child[2]->tableID = (issueTitleTag->tableID = kNPgitvizTableID + 2); //zz 2);
+	npNodeNew(kNodePin, node, dataRef);
+	node->child[2]->translate.x -= 20;
+	node->child[2]->recordID = (issueTitleTag->recordID = current_issue->number);
+	node->child[2]->tableID = (issueTitleTag->tableID = kNPgitvizTableID + 2); //zz 2);
 		
-	npTagNode(current_issue->issue_node->child[2], dataRef);
+	npTagNode(node->child[2], dataRef);
 	
 	///=============================================================
 	titlePtr = issueTitleTag->title;
 //	numLettersInTitle (spaces count)
 	numLettersInTitle = strlen(issueTitleTag->title);
-	current_issue->issue_node->child[2]->geometry = kNPgeoTorus;
+	node->child[2]->geometry = kNPgeoTorus;
 
 	///=============================================================
 
 //	printf("\ncurrent_issue->num_of_labels : %d", current_issue->num_of_labels);
 	for(index = 0; index < current_issue->num_of_labels; index++)
 	{
-		npNodeNew(kNodePin, current_issue->issue_node->child[2], dataRef);	
+		npNodeNew(kNodePin, node->child[2], dataRef);	
 
 /*
 		current_issue->issue_node->child[2]->child[index]->recordID = (issueTitleTag->recordID = current_issue->number);
@@ -737,9 +740,9 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 
 		if( strcmp(current_issue->label[index].name, "enhancement") == 0 )
 		{
-			current_issue->issue_node->child[2]->child[index]->color.r = 0; 
-			current_issue->issue_node->child[2]->child[index]->color.g = 255;
-			current_issue->issue_node->child[2]->child[index]->color.b = 0;
+			node->child[2]->child[index]->color.r = 0; 
+			node->child[2]->child[index]->color.g = 255;
+			node->child[2]->child[index]->color.b = 0;
 			
 			/*
 			current_issue->issue_node->child[2]->child[index]->color.r = 132; 
@@ -747,71 +750,71 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 			current_issue->issue_node->child[2]->child[index]->color.b = 235;
 			current_issue->issue_node->child[2]->child[index]->color.a = 1;
 			*/
-			current_issue->issue_node->child[2]->child[index]->recordID = current_issue->number;
-			current_issue->issue_node->child[2]->child[index]->tableID = kNPgitvizTableID + 6; //zz 6;
+			node->child[2]->child[index]->recordID = current_issue->number;
+			node->child[2]->child[index]->tableID = kNPgitvizTableID + 6; //zz 6;
 		}
 
 		if( strcmp(current_issue->label[index].name, "bug") == 0 )
 		{
-			current_issue->issue_node->child[2]->child[index]->color.r = 255; 
-			current_issue->issue_node->child[2]->child[index]->color.g = 0;
-			current_issue->issue_node->child[2]->child[index]->color.b = 0;
+			node->child[2]->child[index]->color.r = 255; 
+			node->child[2]->child[index]->color.g = 0;
+			node->child[2]->child[index]->color.b = 0;
 //			current_issue->issue_node->child[2]->child[index]->color.a = 1;
-			current_issue->issue_node->child[2]->child[index]->recordID = current_issue->number;
-			current_issue->issue_node->child[2]->child[index]->tableID = kNPgitvizTableID + 7; //zz 5;
+			node->child[2]->child[index]->recordID = current_issue->number;
+			node->child[2]->child[index]->tableID = kNPgitvizTableID + 7; //zz 5;
 		}
 
 		if( strcmp(current_issue->label[index].name, "1st priority") == 0 )
 		{
-			current_issue->issue_node->child[2]->child[index]->color.r = 255; 
-			current_issue->issue_node->child[2]->child[index]->color.g = 255;
-			current_issue->issue_node->child[2]->child[index]->color.b = 0;
+			node->child[2]->child[index]->color.r = 255; 
+			node->child[2]->child[index]->color.g = 255;
+			node->child[2]->child[index]->color.b = 0;
 //			current_issue->issue_node->child[2]->child[index]->color.a = 1;
-			current_issue->issue_node->child[2]->child[index]->recordID = current_issue->number;
-			current_issue->issue_node->child[2]->child[index]->tableID = kNPgitvizTableID + 8; //zz 8;
+			node->child[2]->child[index]->recordID = current_issue->number;
+			node->child[2]->child[index]->tableID = kNPgitvizTableID + 8; //zz 8;
 		}
 
 		if( strcmp(current_issue->label[index].name, "2nd priority") == 0 )
 		{
-			current_issue->issue_node->child[2]->child[index]->color.r = 255; 
-			current_issue->issue_node->child[2]->child[index]->color.g = 255;
-			current_issue->issue_node->child[2]->child[index]->color.b = 102;
+			node->child[2]->child[index]->color.r = 255; 
+			node->child[2]->child[index]->color.g = 255;
+			node->child[2]->child[index]->color.b = 102;
 //			current_issue->issue_node->child[2]->child[index]->color.a = 1;
-			current_issue->issue_node->child[2]->child[index]->recordID = current_issue->number;
-			current_issue->issue_node->child[2]->child[index]->tableID = kNPgitvizTableID + 9; //zz 9;
+			node->child[2]->child[index]->recordID = current_issue->number;
+			node->child[2]->child[index]->tableID = kNPgitvizTableID + 9; //zz 9;
 		}
 		
 		if( strcmp(current_issue->label[index].name, "help wanted") == 0 )
 		{
-			current_issue->issue_node->child[2]->child[index]->color.r = 21; 
-			current_issue->issue_node->child[2]->child[index]->color.g = 152;
-			current_issue->issue_node->child[2]->child[index]->color.b = 24;
-			current_issue->issue_node->child[2]->child[index]->color.a = 1;
-			current_issue->issue_node->child[2]->child[index]->recordID = current_issue->number;
-			current_issue->issue_node->child[2]->child[index]->tableID = kNPgitvizTableID + 10; //zz 9;
+			node->child[2]->child[index]->color.r = 21; 
+			node->child[2]->child[index]->color.g = 152;
+			node->child[2]->child[index]->color.b = 24;
+			node->child[2]->child[index]->color.a = 1;
+			node->child[2]->child[index]->recordID = current_issue->number;
+			node->child[2]->child[index]->tableID = kNPgitvizTableID + 10; //zz 9;
 		}
 
 		if( strcmp(current_issue->label[index].name, "question") == 0 )
 		{
-			current_issue->issue_node->child[2]->child[index]->color.r = 153; 
-			current_issue->issue_node->child[2]->child[index]->color.g = 0;
-			current_issue->issue_node->child[2]->child[index]->color.b = 204;
-			current_issue->issue_node->child[2]->child[index]->color.a = 0;
-		current_issue->issue_node->child[2]->child[index]->recordID = current_issue->number;
-			current_issue->issue_node->child[2]->child[index]->tableID = kNPgitvizTableID + 11; //zz 9;
+			node->child[2]->child[index]->color.r = 153; 
+			node->child[2]->child[index]->color.g = 0;
+			node->child[2]->child[index]->color.b = 204;
+			node->child[2]->child[index]->color.a = 0;
+			node->child[2]->child[index]->recordID = current_issue->number;
+			node->child[2]->child[index]->tableID = kNPgitvizTableID + 11; //zz 9;
 		}
 
 		if( strcmp(current_issue->label[index].name, "wontfix") == 0 )
 		{
-			current_issue->issue_node->child[2]->child[index]->color.r = 0; 
-			current_issue->issue_node->child[2]->child[index]->color.g = 51;
-			current_issue->issue_node->child[2]->child[index]->color.b = 51;
-			current_issue->issue_node->child[2]->child[index]->color.a = 0;
-			current_issue->issue_node->child[2]->child[index]->recordID = current_issue->number;
-			current_issue->issue_node->child[2]->child[index]->tableID = kNPgitvizTableID + 12; //zz 9;
+			node->child[2]->child[index]->color.r = 0; 
+			node->child[2]->child[index]->color.g = 51;
+			node->child[2]->child[index]->color.b = 51;
+			node->child[2]->child[index]->color.a = 0;
+			node->child[2]->child[index]->recordID = current_issue->number;
+			node->child[2]->child[index]->tableID = kNPgitvizTableID + 12; //zz 9;
 		}
 		
-		npTagNode(current_issue->issue_node->child[2]->child[index], dataRef);
+		npTagNode(node->child[2]->child[index], dataRef);
 	}
 
 //		printf("\n user ptr : %p", current_issue->user);
@@ -891,14 +894,14 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 				    data->io.gl.textureCount = current_issue->assignee->avatar_image_textureID;
 		//			current_issue->issue_node->child[1]->textureID = current_issue->assignee->avatar_image_textureID;
 		//			issue_assignee->textureID = current_issue->assignee->avatar_image_textureID;
-					current_issue->issue_node->child[1]->textureID = current_issue->assignee->avatar_image_textureID;
+					node->child[1]->textureID = current_issue->assignee->avatar_image_textureID;
 		        }
 			}
 			else
 			{
 			//	printf(" Texture already exists %d\n", current_issue->assignee->avatar_image_textureID);  
 			    data->io.gl.textureCount = current_issue->assignee->avatar_image_textureID;
-				current_issue->issue_node->child[1]->textureID = current_issue->assignee->avatar_image_textureID;
+				node->child[1]->textureID = current_issue->assignee->avatar_image_textureID;
 			}
 		}
 		else
@@ -953,52 +956,62 @@ void npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 
 void npHideIssueClosedNode2(pNPgithubIssue issue, void* dataRef)
 {
-	issue->issue_closed_node->hide = true;
+	pNPnode node = (pNPnode) issue->issue_closed_node;
+	node->hide = true;
 }
 
 void npShowIssueClosedNode2(pNPgithubIssue issue, void* dataRef)
 {
-	issue->issue_closed_node->hide = false;
+	pNPnode node = (pNPnode) issue->issue_closed_node;
+	node->hide = false;
 }
 
 void npSetIssueClosedNodeParent2(pNPgithubIssue issue, pNPnode nodeParent, void* dataRef)
 {
-	issue->issue_closed_node->parent = nodeParent;	
+	pNPnode node = (pNPnode) issue->issue_closed_node;
+	node->parent = nodeParent;	
 }
 
 void npSetIssueClosedNodeGeometry2(pNPgithubIssue issue, int geometry, void* dataRef)
 {
-	issue->issue_closed_node->geometry = geometry;
+	pNPnode node = (pNPnode) issue->issue_closed_node;
+	node->geometry = geometry;
 }
 
 void npSetIssueClosedNodeTopo2(pNPgithubIssue issue, int topo, void* dataRef)
 {
-	issue->issue_closed_node->topo = topo;
+	pNPnode node = (pNPnode) issue->issue_closed_node;
+	node->topo = topo;
 }
 
 void npHideIssueCreationNode2(pNPgithubIssue issue, void* dataRef)
 {
-		issue->issue_creation_node->hide = true;
+	pNPnode node = (pNPnode) issue->issue_creation_node;
+	node->hide = true;
 }
 
 void npShowIssueCreationNode2(pNPgithubIssue issue, void* dataRef)
 {
-	issue->issue_creation_node->hide = false;
+	pNPnode node = (pNPnode) issue->issue_creation_node;
+	node->hide = false;
 }
 
 void npSetIssueCreationNodeParent2(pNPgithubIssue issue, pNPnode nodeParent, void* dataRef)
 {
-	issue->issue_creation_node->parent = nodeParent;
+	pNPnode node = (pNPnode) issue->issue_creation_node;
+	node->parent = nodeParent;
 }
 
 void npSetIssueCreationNodeGeometry2(pNPgithubIssue issue, int geometry, void* dataRef)
 {
-	issue->issue_creation_node->geometry = geometry;
+	pNPnode node = (pNPnode) issue->issue_creation_node;
+	node->geometry = geometry;
 }
 
 void npSetIssueCreationNodeTopo2(pNPgithubIssue issue, int topo, void* dataRef)
 {
-	issue->issue_creation_node->topo = topo;
+	pNPnode node = (pNPnode) issue->issue_creation_node;
+	node->topo = topo;
 }
 
 

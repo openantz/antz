@@ -401,7 +401,19 @@
 				Name="data"
 				>
 				<File
+					RelativePath="..\..\src\data\npdbtypes.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\data\npdbtypes.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\data\npgitviztypes.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\data\npgitviztypes.h"
 					>
 				</File>
 				<File
@@ -442,6 +454,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\data\npstr.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\data\nptypes.c"
 					>
 				</File>
 				<File

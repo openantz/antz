@@ -25,38 +25,76 @@
 #ifndef NPTYPES_H_
 #define NPTYPES_H_
 
-#define kNPappVer "0.199.3"
+#define kNPappVer "0.199.4"
 
-#include "jansson.h"
-#include "curl.h"
 
 #include "stdbool.h"
-#include "npdbtypes.h"
-
-#include "../io/net/nposcpack.h"  //JJ	//! @todo zz remove this dependency
-
-//#include "../io/npkey.h"				//! @todo zz move key codes to npkey.h
+//#include "../io/npkey.h"			///< @todo zz move key codes to npkey.h
 
 
-//! Choose app framework OR use NP_API_C to build dynamic lib .dll or .ro
+//! App framework OR use NP_API_C to build dynamic lib .dll or .ro
 //----------------------------------------------------------------------------
 //! #define NP_APP_CONSOLE		///< console app works without drawing = no GL
 #define NP_APP_FREEGLUT			///< freeglut app framework on MSW and linux
 //! #define NP_APP_APPLE_GLUT	///< Apple GLUT app framework for OSX
 //! #define NP_APP_SDL			///< SDL app on Linux, MSW, OSX, iOS & Android
+//! #define NP_APP_OFX			///< Openframeworks
 
-//!> OPTIONAL 3rd party freeware (library) plugins
-//!---------------------------------------------------------------------------
-//! #define NP_PLUGIN_ASSIMP	///< 3D model load and save, non-KML
-#define NP_PLUGIN_CURL			///< network with ftp, http, smtp, ssh, etc...
-//! #define NP_PLUGIN_DEVIL		///< texture map image load and save library
-#define NP_PLUGIN_JANNSON		///< JSON parser
-//! #define NP_PLUGIN_FREETYPE	///< GL friendly font library
-//! #define NP_PLUGIN_MINIZ		///< ZIP file compression
-#define NP_PLUGIN_MYSQL			///< MySQL database access
-#define NP_PLUGIN_OSCPACK		///< OSC network communication
-//! #define NP_PLUGIN_POSTGRESQL	///< PostgreSQL DB access
-#define NP_PLUGIN_SOIL			///< texture map image load and save library
+/*! We support addons and (have future plans for) plugins
+    Addons are compiled with the app, where as plugins are found at runtime.
+    To activate an addon you uncomment its #define macro.
+    To de-activiate (reduces package size) simply comment out the macro.
+//------------------------------------------------------------------------ */
+
+/// OpenGL utility library addons
+#define NP_ADDON_SOIL				///< texture image load and save DDS
+//! #define NP_ADDON_ASSIMP			///< 3D model load and save, non-KML
+//! #define NP_ADDON_FREEIMAGE		///< texture map image load and save
+//! #define NP_ADDON_FREETYPE		///< multi-language font support for GL
+//! #define NP_ADDON_LIBTESS		///< SGI based tesselator
+//! #define NP_ADDON_GLEW			///< OpenGL extension manager
+
+/// Video library addons
+//! #define NP_ADDON_GSTREAMER		///< Video files and streaming
+//! #define NP_ADDON_VLC			///< Video files, streaming and IO
+//! #define NP_ADDON_BLACKMAGIC		///< Blackmagic video IO hardware
+
+/// VR library addons
+//! #define NP_ADDON_EQUALIZER		///< Cluster Rendering for CAVE's
+//! #define NP_ADDON_ZSPACE			///< Desktop VR
+//! #define NP_ADDON_VRPN			///< Virtual Reality Peripherial Network
+
+/// Network library addons
+#define NP_ADDON_CURL				///< network ftp, http, smtp, ssh, etc...
+#define NP_ADDON_JANNSON			///< JSON parser
+#define NP_ADDON_OSCPACK			///< OSC network communication
+//! #define NP_ADDON_XML			///< XML parsing
+//! #define NP_ADDON_SNMP			///< SNMP tree graph of network hardware
+
+/// Database library addons
+#define NP_ADDON_MYSQL				///< MySQL database access
+//! #define NP_ADDON_POSTGRESQL		///< PostgreSQL DB access
+//! #define NP_ADDON_SQLITE			///< SQLite in memory DB
+
+/// Miscellaneous library addons
+//! #define NP_ADDON_DOT			///< GraphViz DOT graphing language
+#define NP_ADDON_GITVIZ				///< GitViz requires CURL and JANNSON
+//! #define NP_ADDON_KISSFFT		///< FFT analysis for int and float
+//! #define NP_ADDON_MINIZ			///< ZIP file compression
+
+//!> Additional type defines in the following addon headers
+//---------------------------------------------------------------------------
+#ifdef NP_ADDON_GITVIZ
+#include "npgitviztypes.h"			///< Types for GitViz, CURL and JSON
+#endif
+
+#ifdef NP_ADDON_OSCPACK
+#include "../io/net/nposcpack.h"	///< @todo zz remove this dependency
+#endif
+
+#ifdef NP_ADDON_MYSQL
+#include "npdbtypes.h"				///< Types for DB structs and MySQL
+#endif
 
 
 //---------------------------------------------------------------------------
@@ -566,9 +604,9 @@ struct NPtag
 	int			titleSize;		//!<number of characters in title
 	int			descSize;		//!<number of characters in description
 
-	int			labelHead;		//!< start of the link label text
-	int			labelTail;		//!< end of the link label text
-	int			labelSize;		//!< labelSize = labelTail - labelHead + 1
+	int			labelHead;		//!< start of the link label text			//zz html
+	int			labelTail;		//!< end of the link label text				//zz html
+	int			labelSize;		//!< labelSize = labelTail - labelHead + 1	//zz html
 
 	void*		font;
 
@@ -618,8 +656,8 @@ struct NPnode
 	int			average;					//!<averaging type applied to data
 	int			interval;					//!<the interval to be averaged
 
-	NPfloatXYZ	auxA;						//!< topo type specific params
-	NPfloatXYZ	auxB;						//!< reserved for future use
+	NPfloatXYZ	auxA;	//zz grid			//!< topo type specific params
+	NPfloatXYZ	auxB;	//zz grid			//!< reserved for future use
 
 	float		colorShift;					//!<pseudo Hue shift, -180 to 180
 
@@ -836,250 +874,7 @@ struct NPnodeList {
 };
 typedef struct NPnodeList NPnodeList;
 typedef struct NPnodeList * pNPnodeList;
-/*
-//#define kNPdbHostMax	512		///< max number of DB host servers
-//#define kNPdbMax		4096	///< max number of databases
-//#define kNPtblMax		128		///< max number of tables, new lde
-//#define kNPpwdMax		256		///< max password length
-//#define kNPuserNameMax	256		///< max user name length
-//#define kNPdbNameMax	64		///< @todo make sure 64 is good for non-MySQL DBs
-//#define kNPdbFuncSetMax 64		///< max number DB function sets
 
-enum NP_DATABASE {
-	kNPdbHostMax	= 512,		///< max number of DB host servers
-	kNPdbMax		= 4096,		///< max number of databases
-	kNPtblMax		= 128,		///< max number of tables, new lde
-	kNPpwdMax		= 256,		///< max password length
-	kNPuserNameMax	= 256,		///< max user name length
-	kNPdbNameMax	= 64,		///< @todo make sure 64 is good for non-MySQL DBs
-	kNPdbFuncSetMax	= 64		///< max number DB function sets
-};
-
-struct NPdbFunction{
-	int			type;					///< function protype index
-	void*		funcPtr;				///< pointer to the function
-
-	char		name[kNPdbNameMax];		///< function UI name
-	char*		desc;					///< function description
-};
-typedef struct NPdbFunction NPdbFunction;
-typedef struct NPdbFunction *pNPdbFunction;
-
-struct NPdbFuncSet{
-	int			id;						///< the function set ID
-	char		hostType[kNPdbNameMax];	///< content type, antz or 3rd party
-	void*		dbLib;					///< library handle
-
-	//pNPdbFunction*	funcList;
-	//int				funcCount;
-
-	///  abstract our database server type specific methods
-	void* (__stdcall *init)			();
-	void* (__stdcall *connect)		();
-	int   (__stdcall *options)		();
-	void* (__stdcall *ping)			();
-	void* (__stdcall *close)		    ();
-
-	void* (__stdcall *show)			();
-	void* (__stdcall *query)		    ();
-	void* (__stdcall *store_result)	();
-	void* (__stdcall *free_result)	();
-
-	void* (__stdcall *use)			();
-	void* (__stdcall *select)		    ();
-	void* (__stdcall *alter)		    ();
-	void* (__stdcall *insert)		    ();
-	void* (__stdcall *fetch_row)	    ();
-	void* (__stdcall *fetch_lengths)  ();
-	void* (__stdcall *num_fields)	    ();
-	void* (__stdcall *num_rows)		();
-	void* (__stdcall *db_error)		();
-	void* (__stdcall *db_errno)		();
-	void* (__stdcall *conn_thread_id) ();
-	///< error and errno use 'db_' prefix to prevent name conflict
-
-	int   (*InitConnOptions)		();
-	void* (*GetTableFields)			();	///creates the table fields descrisptor
-
-	void* (*StatementInsert)		();
-	void* (*StatementCreate)		();
-	void* (*StatementCreateTable)	();
-	void* (*StatementUse)			();
-	void* (*StatementShow)			();
-	void* (*StatementDrop)			();
-	void* (*StatementSelect)		();
-	void* (*StatementTruncate)		();
-	void* (*StatementUpdate)		();
-
-	int size;
-};
-typedef struct NPdbFuncSet NPdbFuncSet;
-typedef struct NPdbFuncSet *pNPdbFuncSet;
-
-/// Host id unique to the session, ip is generally more permanent.
-/// Note that the list of databases is not stored with the host.
-/// The name of the current database in USE is stored with the host.
-struct NPdbHost{
-	int			id;				///< local host ID unique to this session only
-	void*		conn;			///< host connection handle
-	bool		connected;
-	unsigned long conn_id;		///< Host's database thread id, lde
-	
-	char		type[64];		///< server type 'mysql', 'postgresql', etc.
-
-	int			port;					///< port address
-	char		ip[kNPurlMax];			///< IP address or URL
-
-	char		user[kNPuserNameMax];	///< this hosts user name
-	char		password[kNPpwdMax];	///< this hosts password
-
-	char		inUseDB[kNPdbNameMax];	///< name of DB currently in USE
-	int			dbCount;				///< number of databases for this host
-
-	//char		currentTable[];
-		
-	pNPdbFuncSet hostFuncSet;			///< function calls for this host type
-}; //@todo: hosts need an active server, lde
-typedef struct NPdbHost NPdbHost;
-typedef struct NPdbHost * pNPdbHost;
-
-
-struct NPdbFields{
-	char*		name;		///< field name
-	char*		typeStr;	///< field type as DB string format
-	char*		params;		///< any additional field params, limits, etc.
-	int *		type;		///< field type constant
-	int			count;		///< number of field columns
-};
-typedef struct NPdbFields NPdbFields;
-typedef struct NPdbFields * pNPdbFields;
-
-/// holds a pair of lists that correspond an external id to local node pointer
-/// nextID index is used for fast search processing when using an ordered list
-struct NPmapID{
-	int		nextID;		///< index used for accelerated search of ordered list
-	int*	recID;		///< list of external table record id's to map
-	int*	nodeID;		///< matching list of local scene node id's
-	int		count;		///< number of item pairs in the lists
-};
-typedef struct NPmapID NPmapID;
-typedef struct NPmapID * pNPmapID;	
-
-#define kNPmaxFields 4096
-struct NPdbTable{
-	int			id;							///< local table ID for this database
-	int			type;						///< table type: node, tag, chmap, etc.
-	char*		name;
-	
-	int			rows;						///< number of rows in this table
-	
-	pNPdbFields	fields[100];				///< field descriptor
-	int			fieldCount;					///< number of fields in this table, init to 0 , @todo, lde
-	
-	pNPmapID	mapID;						///< maps the row id to local data ptr
-	
-	void*		owner;						///< Database this table is attached to, lde pNPdatabase
-	
-	int			size;						///< size of this table in bytes
-};
-typedef struct NPdbTable NPdbTable;
-typedef struct NPdbTable * pNPdbTable;
-
-struct NPdbCSVwrite
-{
-	char*	   csvName;
-	int		   running;
-	pNPdbTable table;
-	void*	   dataRef;
-};
-typedef struct NPdbCSVwrite NPdbCSVwrite;
-typedef struct NPdbCSVwrite *pNPdbCSVwrite;
-
-
-enum NP_DB_CONTENT_TYPES 
-{
-	kNPdbTypeNull = 0,
-	kNPdbTypeNative,		///< native dataset with nodes, tags, etc.
-	kNPdbTypePlugin,		///< DB plugin type for 3rd party support
-	kNPdbTypeUnknown,		///< unknown DB content structure
-	kNPdbTypeCount
-};
-
-struct NPdatabase{
-	int			id;						///< this databases ID // Connection structure
-	int*		idMap;
-	int			format;					///< content format, antz or 3rd party
-	int*		refCount;				///< memory reference counter, lde
-	
-	char		name[kNPdbNameMax +1];	///< database name +1 for '\0'
-
-//	pNPdbTable* tables;					///< contains row count		// old, lde
-	pNPdbTable	tableList[kNPtblMax];	///< list of tables			// new, lde
-	pNPdbTable	tableInUse;				///< current table in use
-	int			tableCount;				///< total number of tables
-
-	int			nodeCount;				///< if exists, node table row count // @todo, include nodeCount on dbMenu, lde
-	
-	float		saveUpdateRate;			///< auto save update rate, 0 is off
-	float		loadUpdateRate;			///< auto load update rate, 0 is off
-
-	pNPdbHost	host;		///< references this databases host
-
-};
-typedef struct NPdatabase NPdatabase;
-typedef struct NPdatabase * pNPdatabase;
-
-
-
-
-/// holds list of databases and there hosts
-struct NPdbs {
-	void* coreNode; ///< core nodes tie global structures to the scene graph
-
-	bool			running;				///< true if hosts are connected
-
-	pNPdbHost		hosts[kNPdbHostMax];	///< list of database hosts
-	int				hostCount;				///< number of DB host servers
-
-	pNPdbFuncSet	funcSetList[kNPdbFuncSetMax]; ///< host type specific
-	int				funcSetCount;				  ///< function set count
-
-	pNPdatabase		dbList[kNPdbMax];	///< list of databases
-	int				dbCount;			///< number of databases
-	
-	pNPdatabase		activeDB;			///< points to active DB in list
-
-	float			saveUpdateRate;		///< auto save update rate, 0 is off
-	float			loadUpdateRate;		///< auto load update rate, 0 is off
-
-	bool			loadUpdate;			///< flag a single update this cycle
-	bool			saveUpdate;			///< flag a single update this cycle
-
-	int				size;				///< size in RAM of all db elements
-};
-typedef struct NPdbs NPdbs;
-typedef struct NPdbs *pNPdbs;
-
-//!<struct pNPdatabases { //!<zzsql
-struct NPdatabases {
-	void* coreNode; ///< core nodes tie global structures to the scene graph
-						//!< each global struct has a corresponding base node.
-
-	char** list;		//!< list of databases by name
-	int size;			//!< number of items in the list
-};
-typedef struct NPdatabases NPdatabases;
-typedef struct NPdatabases *pNPdatabases;
-
-// new struct, lde 
-struct NPtables {
-	char** list;		//!< list of tables by name
-	int size;			//!< number of items in the list
-};
-typedef struct NPtables NPtables;
-typedef struct NPtables *pNPtables;
-*/
- 
 struct NPmenu {
 	void* coreNode; ///< core nodes tie global structures to the scene graph
 						//!< each global struct has a corresponding base node.
@@ -1505,571 +1300,6 @@ struct NPos {
 typedef struct NPos NPos;
 typedef struct NPos* pNPos;
 
-typedef struct NPgithubIssue NPgithubIssue;
-typedef NPgithubIssue* pNPgithubIssue;
-
-//typedef NPgithubIssue* pNPgithubIssue;
-typedef int NPgithubIssueIndex;
-typedef int NPgithubIssueCount;
-//typedef pNPgithubNode pNPgithubCurrentNode;
-
-typedef char NPurl;
-typedef NPurl* pNPurl;
-//typedef int NPgithubIssueID;
-typedef long long NPgithubIssueID;
-typedef int NPgithubIssueNumber;
-//typedef long long NPgithubIssueNumber;
-
-typedef int NPgithubErrValue;
-typedef void Nothing;
-typedef pNPurl pNPissueUrl;
-typedef pNPissueUrl pNPgithubIssueUrl;
-//typedef pNPnode pNPgithubIssueNode;
-
-struct NPgithubUser {
-    char* login;
-    int id;
-	int number;
-    char* avatar_url;
-    char* avatar_image_file;
-    char* avatar_image_file_path;
-    int avatar_image_textureID;
-    char* gravatar_id;
-    char* url;
-    char* html_url;
-    char* followers_url;
-    char* gists_url;
-    char* starred_url;
-    char* subscriptions_url;
-    char* organizations_url;
-    char* repos_url;
-    char* events_url;
-    char* received_events_url;
-    char* type;
-    bool site_admin;
-};
-typedef struct NPgithubUser NPgithubUser;
-typedef struct NPgithubUser* pNPgithubUser;
-
-struct NPgithubIssueTime {
-    int hour;
-    int minute;
-    int second;
-};
-typedef struct NPgithubIssueTime NPgithubIssueTime;
-typedef struct NPgithubIssueTime* pNPgithubIssueTime;
-
-struct NPgithubIssueDate {
-    int year;
-    int month;
-    int day;
-};
-typedef struct NPgithubIssueDate NPgithubIssueDate;
-typedef struct NPgithubIssueDate* pNPgithubIssueDate;
-
-struct NPgithubIssueDates {
-    pNPgithubIssueDate date;
-    pNPgithubIssueTime time;
-};
-typedef struct NPgithubIssueDates NPgithubIssueDates;
-typedef struct NPgithubIssueDates* pNPgithubIssueDates;
-
-typedef NPgithubIssueDates NPgithubIssueCreation;
-
-
-
-
-typedef int pNPjsonIndex;
-
-/// "raw" json
-
-struct NPgithubIssueFunctions {
-    char* variable[10];
-    char* IssueFunctions[50][50];
-    int*  functionUniqueId[50];
-    void* (*npGithubIssueFunction[50])(void*);
-    int* executionLock[50]; /// @todo Locks functions not to be called 1 == Locked && 0 == Unlocked
-    int* loopStartIndex[50]; /// One for each
-    int* loopEndIndex[50];
-    int* currentPositionInLoop[50];
-};
-typedef struct NPgithubIssueFunctions NPgithubIssueFunctions;
-typedef struct NPgithubIssueFunctions* pNPgithubIssueFunctions;
-
-struct NPgithubIssueCreatedAt {
-    int year;
-    int month;
-    int day;
-    int hour;
-    int minute;
-    int second;
-};
-typedef struct NPgithubIssueCreatedAt NPgithubIssueCreatedAt;
-typedef NPgithubIssueCreatedAt* pNPgithubIssueCreatedAt;
-
-struct NPgithubIssueLabel {
-	char* url;
-	char* name;
-	char* color;
-};
-typedef struct NPgithubIssueLabel NPgithubIssueLabel;
-typedef NPgithubIssueLabel* pNPgithubIssueLabel;
-
-struct NPgithubIssue {
-	NPgithubIssueLabel label[4];
-	int num_of_labels;
-    int recordId;
-    pNPrecordTag recordTag;
-//    pNPgithubIssues partOf; /// temporarily commented out
-    pNPgithubIssue this_issue;
-    pNPnode issue_node;
-	pNPnode issue_creation_node; /// @todo new
-	pNPnode issue_closed_node;   /// @todo new
-    pNPgithubIssueUrl url;
-    char* labels_url;
-    char* comments_url;
-    char* events_url;
-    char* html_url;
-//    NPgithubIssueID id;
-	int id;
-    NPgithubIssueNumber index;
-    char* title;
-	pNPtag titleTag;
-    int numOfWordsInIssueTitle;
-    pNPgithubUser user;	
-	pNPgithubUser assignee;
-	int userId;
-	int number;
-    char* state;
-    bool locked;
-//    char* assignee;
-    char* milestone; 
-    int num_comments;
-    pNPgithubIssueDates dates;
-    char* created_at;
-    NPgithubIssueCreatedAt issue_created_at;
-    pNPgithubIssueCreatedAt issue_closed_at;
- //   pNPgithubIssueCreatedAt issue_created_at;
- //   pNPgithubIssueCreatedAt issue_closed_at;
-    char* updated_at;
-    char* closed_at;
-    char* body;
-    char* closed_by;
-    int issueNodeType; //kNodePin
-    int issueGeoType;
-    int issueTopoType;
-};
-typedef struct NPgithubIssue NPgithubIssue;
-typedef NPgithubIssue* pNPgithubIssue;
-
-#define kNPgithubMaxIssues 2000
-
-struct NPgithubIssues {
-    pNPnode parent;
-    NPgithubIssueIndex index;
-    pNPgithubIssue current;
-    pNPnode node;
-    NPgithubIssue issue[kNPgithubMaxIssues];
-//    NPgithubUser user[10];    
-//	int num_of_users;
-//    int userIndex;
-//    int userCount;
-    int recordTagVariableIndex;
-    char* recordTagVariable[20];
-    char* recordTagVariableFormat[20];
-    int recordTagVariableFormatIndex;
-    char* recordTagFormat[300];
-    pNPrecordTag recordTag[300];
-    int recordTagIndex;
-    int recordTagCount;
-    int issueVariableIndex;
-    NPgithubIssueCount count;
-    pNPgithubIssueFunctions issueFunctions;
-    bool loadAvatarTextures;
-    bool running;
-};
-typedef struct NPgithubIssues NPgithubIssues;
-typedef NPgithubIssues* pNPgithubIssues;
-
-
-
-
-
-
-struct NPgithubRequest {
-	char url[100];
-	int urlSize;
-	char* state;
-	int per_page;
-	int page;
-};
-typedef struct NPgithubRequest NPgithubRequest;
-typedef NPgithubRequest* pNPgithubRequest;
-
-
-struct NPjsonCtrl {
-    int index;
-};
-typedef struct NPjsonCtrl NPjsonCtrl;
-typedef struct NPjsonCtrl* pNPjsonCtrl;
-
-/*
-struct NPjson {
-    struct NPjsonCtrl jsonCtrl;
-    json_t *root;
-    json_t *issue[300];
-    int issueIndex;
-    int numOfIssues;
-    size_t array_size;
-};
-typedef struct NPjson NPjson;
-typedef struct NPjson* pNPjson;
-*/
-/*
-struct NPgithub {
-	char* repo_name;
-	pNPgithubIssues issues;
-	NPgithubUser user[200];
-	int num_of_users;
-	pNPgithubRequest request;
-	new2_pNPjson jsonGithub;
-};
-typedef struct NPgithub NPgithub;
-typedef NPgithub* pNPgithub;
-*/
-
-/*
-struct NPjsonGithubIssue {
-	json_t *url;
-	json_t *title;
-	json_t *id;
-	json_t *number;
-	json_t *state;
-	json_t *created_at;
-	json_t *updated_at;
-	json_t *closed_at;
-};
-typedef struct NPjsonGithubIssue NPjsonGithubIssue;
-typedef NPjsonGithubIssue* pNPjsonGithubIssue; 
-*/
-
-struct NPjson {
-    json_t *root;
-    json_t *data, *url, *commit, *message;
-    json_t *id;
-    json_t *number;
-    json_error_t* error;
-	int array_size;
-	NPjsonCtrl jsonCtrl;
-};
-typedef struct NPjson NPjson;
-typedef NPjson* pNPjson;
-
-/// @todo: implement selectors
-struct NPjsonKeyList {
-	char key[30]; 
-	json_t* value;
-	int index;
-};
-typedef struct NPjsonKeyList NPjsonKeyList;
-typedef NPjsonKeyList* pNPjsonKeyList;
-
-struct NPjsonKey {
-	char* key;
-//	char key[30];
-};
-typedef struct NPjsonKey NPjsonKey;
-typedef NPjsonKey pNPjsonKey;
-
-/*
-type (enum)
-----
-kNPjsonString
-kNPjsonNumber
-kNPjsonObject
-kNPjsonArray
-kNPjsonTrue
-kNPjsonFalse
-kNPjsonNull
-*/
-struct NPjsonValue {
-	int j_type; /// result of json_t* j_value;
-	json_t* j_value; 
-	int c_type; /// could be: pNPjsonObject, pNPjsonArray
-	void* c_value;
-};
-typedef struct NPjsonValue NPjsonValue;
-typedef NPjsonValue* pNPjsonValue;
-
-#define kNPjsonMaxKeyValuePairs 30
-
-/// An object is an unordered set of name/value pairs
-struct NPjsonObject {
-	void* parent; /// can be pNPjsonArray, pNPjsonObject, if null then no parent
-	int parentType;
-	int numNameValuePairs;	
-	NPjsonKey jsonKey[kNPjsonMaxKeyValuePairs];
-	NPjsonValue jsonValue[kNPjsonMaxKeyValuePairs];
-};
-typedef struct NPjsonObject NPjsonObject;
-typedef NPjsonObject* pNPjsonObject;
-
-//#define kNPjsonArrayMaxElements 200
-#define kNPjsonArrayMaxElements 1500
-
-struct NPjsonArray {
-	void* parent; /// can be pNPjsonArray, pNPjsonObject, if null then no parent
-	int numElements;
-	pNPjsonValue element[kNPjsonArrayMaxElements];
-};
-typedef struct NPjsonArray NPjsonArray;
-typedef NPjsonArray* pNPjsonArray;
-
-struct NPjsonInteger {
-	int j_int;
-//	json_int_t j_int;
-};
-typedef struct NPjsonInteger NPjsonInteger;
-typedef NPjsonInteger* pNPjsonInteger;
-
-struct NPjsonReal {
-	double j_real;
-};
-typedef struct NPjsonReal NPjsonReal;
-typedef NPjsonReal* pNPjsonReal;
-
-struct NPjsonBoolean {
-	bool j_bool; 
-};
-typedef struct NPjsonBoolean NPjsonBoolean;
-typedef NPjsonBoolean* pNPjsonBoolean;
-
-/*
-struct new_NPjson {
-	json_t *root;
-	json_t *jsonArray[300];
-	int jsonArrayIndex;
-	json_t *currentArray;
-	int numOfJsonArrays;
-	NPjsonKeyList Key[30];
-	int error;
-};
-typedef struct new_NPjson new_NPjson;
-typedef new_NPjson* new_pNPjson;
-*/
-
-struct NPjsonRoot {
-	json_t* root;
-	int type; /// can be either kNPjsonArray, or kNPjsonObject
-	void* jsonRoot;
-};
-typedef struct NPjsonRoot NPjsonRoot;
-typedef NPjsonRoot* pNPjsonRoot;
-
-struct NPjsonSchema {
-	json_t* s_root;
-	NPjsonRoot schemaRoot;
-};
-typedef struct NPjsonSchema NPjsonSchema;
-typedef struct NPjsonSchema* pNPjsonSchema;
-
-#define kNPjsonInputMax 30
-
-struct new2_NPjson {
-	char* input[kNPjsonInputMax];
-	char* input_current; /// Tracks
-	int   input_index;
-	json_t* root;
-	NPjsonRoot jRoot;
-	NPjsonValue all_values;
-	pNPjsonValue latest;
-//	int error;
-	json_error_t error; 
-};
-typedef struct new2_NPjson new2_NPjson;
-typedef new2_NPjson* new2_pNPjson;
-
-
-struct NPgithubJSONuser {
-	json_t* login;
-	json_t* id;
-	json_t* avatar_url;
-	json_t* gravatar_id;
-	json_t* url;
-	json_t* number;
-	json_t* html_url;
-	json_t* followers_url;
-	json_t* following_url;
-	json_t* gists_url;
-	json_t* starred_url;
-	json_t* subscriptions_url;
-	json_t* organizations_url;
-	json_t* repos_url;
-	json_t* events_url;
-	json_t* received_events_url;
-	json_t* type;
-	json_t* site_admin;
-};
-typedef struct NPgithubJSONuser NPgithubJSONuser;
-typedef NPgithubJSONuser* pNPgithubJSONuser;
-
-struct NPjsonGithubIssueLabel {
-	json_t* url;
-	json_t* name;
-	json_t* color;
-};
-typedef struct NPjsonGithubIssueLabel NPjsonGithubIssueLabel;
-typedef NPjsonGithubIssueLabel* pNPjsonGithubIssueLabel;
-
-//struct NPgithubJSONissue {
-struct NPjsonGithubIssue {
-	json_t* temp_label;
-	json_t* json_labels;
-	NPjsonGithubIssueLabel labels[5];
-	int num_of_labels;
-	json_t* url; 
-	json_t* labels_url; 
-	json_t* comments_url; 
-	json_t* events_url; 
-	json_t* html_url; 
-	json_t* id; 
-	json_t* number; 
-	json_t* title; 
-
-	json_t* state; 
-	json_t* locked; 
-	
-	json_t* milestone; 
-	json_t* comments; 
-	json_t* created_at; 
-	json_t* updated_at; 
-	json_t* closed_at; 
-	json_t* body;
-
-	json_t* temp_user;
-	NPgithubJSONuser user;
-
-	json_t* temp_assignee;
-	pNPgithubJSONuser assignee;
-};
-typedef struct NPjsonGithubIssue NPjsonGithubIssue;
-typedef NPjsonGithubIssue* pNPjsonGithubIssue;
-
-
-struct NPjsonGithub {
-	pNPjsonGithubIssue issues[200];
-	int numOfIssues;
-};
-typedef struct NPjsonGithub NPjsonGithub;
-typedef NPjsonGithub* pNPjsonGithub;
-
-struct MemoryStruct2 {
-    char *memory;
-    size_t size;
-};
-typedef struct MemoryStruct2 MemoryStruct2;
-typedef MemoryStruct2* pMemoryStruct2;
-
-
-struct NPcurlFuncSet{
-	int			id;						///< the function set ID
-	
-	char		hostType[kNPdbNameMax];	///< content type, antz or 3rd party
-	void*		libHandle;					///< library handle
-	
-	/// curl uses cdecl as their calling convention
-	/// mysql uses stdcall
-	CURLcode (__cdecl *global_init)		(long flags);
-	void* (__cdecl *easy_init)		();
-	int   (__cdecl *easy_perform)		();
-	char* (__cdecl *easy_strerror)    ();
-	CURLcode (__cdecl *easy_setopt)   ();
-	
-
-	///< error and errno use 'db_' prefix to prevent name conflict
-	
-	int   (*InitConnOptions)		();
-	void* (*GetTableFields)			();	///creates the table fields descrisptor
-	void* (*getNodeTableFields)  ();
-	
-	void* (*StatementInsert)		();
-	void* (*StatementCreate)		();
-	void* (*StatementCreateTable)	();
-	void* (*StatementCreateNodeTable) ();
-	void* (*StatementUse)			();
-	void* (*StatementShow)			();
-	void* (*StatementDrop)			();
-	void* (*StatementSelect)		();
-	void* (*StatementTruncate)		();
-	void* (*StatementUpdate)		();
-	void* (*StatementDBshow)		();
-	void* (*StatementDatabases)     ();
-	void* (*getFuncsFromHost)    ();
-	
-	int   (*showDatabases)          (); // I might pass this a fcn ptr and change it to (*show), lde @todo
-	char* (*getTableFields)			();
-	
-	int size;
-};
-typedef struct NPcurlFuncSet NPcurlFuncSet;
-typedef struct NPcurlFuncSet *pNPcurlFuncSet;
-
-
-struct NPcurl
-{
-	CURL* curl_handle;
-	char url[100];
-	char* urlPtr;
-	int urlSize;
-	int numArgs;
-	int funcSetCount;
-	const char* errorStr;
-	int globalInitFlag;
-	int easySetOptFlag;
-	CURLcode res;
-	MemoryStruct2 mem[10];
-	int numMem;
-	int memIndex;
-	//pNPcurlFuncSet	funcSetList[kNPdbFuncSetMax]; ///< host type specific
-	pNPcurlFuncSet funcSetList; ///< host type specific
-};
-typedef struct NPcurl NPcurl;
-typedef NPcurl* pNPcurl;
-
-struct NPgithubResponse {
-	int fnord;	
-	void* response;
-};
-typedef struct NPgithubResponse NPgithubResponse;
-typedef NPgithubResponse* pNPgithubResponse;
-
-struct NPgithubRequestResponse {
-	char requestUrl[100];
-	int urlSize;
-	char* state;
-	char* per_page;
-	int page;
-	char* response;
-	int responseSize;
-};
-typedef struct NPgithubRequestResponse NPgithubRequestResponse;
-typedef NPgithubRequestResponse* pNPgithubRequestResponse;
-
-#define kNPgithubMaxUsers 1000
-struct NPgithub {
-	char* repo_name;
-	pNPgithubIssues issues;
-	NPgithubUser user[kNPgithubMaxUsers];
-	int num_of_users;
-	int err;
-//	pNPgithubRequest request;
-	NPgithubRequestResponse rR[50];
-	int requestResponse_index;
-	int num_of_RequestResponses;
-	new2_pNPjson jsonGithub;
-};
-typedef struct NPgithub NPgithub;
-typedef NPgithub* pNPgithub;
 
 struct NPio {
 	void* coreNode; ///< core nodes tie global structures to the scene graph
@@ -2090,15 +1320,13 @@ struct NPio {
 //!<	struct	dbNewConnect *connect;	//!<zzsql							//!<zz debug	//!<zz dbz
 //	struct databases *dbs;			//!<zz dbz
 	NPdbs		db;
-	NPgithub    github;
-//	NPgithubIssues issues;
-
+	
 //!<	NPoscPackListener oscListener;		//!<JJ-zz
 	pNPconnect	connect[kNPmaxConnect];	//!<zz osc
-	NPcurl     curl;
-//	NPjson     json;
-//	new_NPjson json2;
-	new2_NPjson json2;
+
+	NPgithub	github;
+	NPcurl		curl;
+	NPjson		json;
 
 	int			connectCount;
 	NPosc		osc;				//!<OSC stuff uses io que for thread safety
@@ -2602,6 +1830,9 @@ enum kNP_CAMERA_SENSOR_TYPE
 	kCameraSensorDepthCCD					//!<BW or color with Z depth data
 };
 
+/// We are defining a subset of the large number of video and film resolutions.
+/// Film uses many others http://www.celco.com/formatresolutiontable4k.asp
+/// This table does not define the FPS (vertical frequency).
 enum kNP_VIDEO_FORMAT										//!<add DPX format support, zz
 {
 	kVideoFormatNull = 0,
@@ -2610,15 +1841,15 @@ enum kNP_VIDEO_FORMAT										//!<add DPX format support, zz
 	kVideoFormat720p,
 	kVideoFormat1080i,
 	kVideoFormat1080p,
-	kVideoFormat2K,
-	kVideoFormat4k,
-	kVideoFormat8k,
-	kVideoFormat12k,
-	kVideoFormat16k,
-	kVideoFormat24k,
-	kVideoFormat32k,
-	kVideoFormat48k,
-	kVideoFormat64k
+	kVideoFormat2K,				///< 2048x1536 is 35MM FULL SCREEN
+	kVideoFormat4K_UHD,			///< UHD is 3840x2160
+	kVideoFormat4K_DCI,			///< 4K DCI is 4096x2160
+	kVideoFormat8K_UHD,			///< 8K UHD is 7680x4320
+	kVideoFormat8K_DCI,			///< 8K DCI 8192x4320
+	kVideoFormat8K_fulldome,	///< 8192x8192 used for dome projection
+	kVideoFormat16K,
+	kVideoFormat32K,
+	kVideoFormat64K,
 };
 
 enum kNP_VIDEO_HZ									//!<add DPX format support, zz
@@ -2651,6 +1882,8 @@ enum kNP_VIDEO_STEREO_3D
 	kVideoStereoSequential
 };
 
+/// Color Space bit depth
+/// @todo add XYZ color space, such as used by DCI JPEG2000
 enum kNP_COLOR_SPACE
 {
 	kColorSpaceNull = 0,
@@ -3603,6 +2836,7 @@ enum kNP_TAG_MODE
 //!<	kNPtagModeBillboard,		//!<text in 3D scene oriented towards cam
 	kNPtagModeCount
 };
+
 
 enum kNP_CONSOLE_COMMAND_LINE_FLAG
 {
