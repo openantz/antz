@@ -25,7 +25,7 @@
 #ifndef NPTYPES_H_
 #define NPTYPES_H_
 
-#define kNPappVer "0.199.4"
+#define kNPappVer "0.199.5"
 
 
 #include "stdbool.h"
@@ -55,14 +55,15 @@
 //! #define NP_ADDON_GLEW			///< OpenGL extension manager
 
 /// Video library addons
-//! #define NP_ADDON_GSTREAMER		///< Video files and streaming
-//! #define NP_ADDON_VLC			///< Video files, streaming and IO
 //! #define NP_ADDON_BLACKMAGIC		///< Blackmagic video IO hardware
+//! #define NP_ADDON_VLC			///< Video files, streaming and IO
+//! #define NP_ADDON_GSTREAMER		///< Video files and streaming
+///< http://gstreamer.freedesktop.org/data/doc/gstreamer/head/pwg/pwg.pdf
 
 /// VR library addons
 //! #define NP_ADDON_EQUALIZER		///< Cluster Rendering for CAVE's
-//! #define NP_ADDON_ZSPACE			///< Desktop VR
 //! #define NP_ADDON_VRPN			///< Virtual Reality Peripherial Network
+//! #define NP_ADDON_ZSPACE			///< Desktop VR
 
 /// Network library addons
 #define NP_ADDON_CURL				///< network ftp, http, smtp, ssh, etc...
@@ -72,15 +73,24 @@
 //! #define NP_ADDON_SNMP			///< SNMP tree graph of network hardware
 
 /// Database library addons
-#define NP_ADDON_MYSQL				///< MySQL database access
+#define NP_ADDON_MYSQL				///< MySQL client database access
+//! #define NP_ADDON_MARIADB		///< MySQL compatible LGPL client
 //! #define NP_ADDON_POSTGRESQL		///< PostgreSQL DB access
 //! #define NP_ADDON_SQLITE			///< SQLite in memory DB
 
-/// Miscellaneous library addons
+/// Misc library addons
 //! #define NP_ADDON_DOT			///< GraphViz DOT graphing language
 #define NP_ADDON_GITVIZ				///< GitViz requires CURL and JANNSON
 //! #define NP_ADDON_KISSFFT		///< FFT analysis for int and float
 //! #define NP_ADDON_MINIZ			///< ZIP file compression
+
+/// Addons to support Python and C Plugins based on (GLib) GObjects 
+//! #define NP_ADDON_GLib			///< Provides GObject data structures
+//! #define NP_ADDON_LIBPEAS		///< GObject based plugins engine
+
+/// Plugins 
+//! #define NP_PLUGINS_PYTHON		///< Python scripting and plugins
+
 
 //!> Additional type defines in the following addon headers
 //---------------------------------------------------------------------------
@@ -96,12 +106,13 @@
 #include "npdbtypes.h"				///< Types for DB structs and MySQL
 #endif
 
+// possibly switch data structures to GTK.org and/or GObject
 
 //---------------------------------------------------------------------------
 //! Global Constants
 //---------------------------------------------------------------------------
 #define	kNPtextureCountMax	2000
-#define kNPpaletteMax		65535			//!< max number of color palettes
+#define kNPpaletteMax		4096			//!< max number of color palettes
 
 #define kNPkeyMapSize		256				//!< keyboard map
 #define kNPkeyEventTypeSize 8				//!< SHIFT, CTRL and ALT combos
@@ -113,7 +124,7 @@
 #define kNPnodeRootMax		2097152			//!< 1048576 4MB with 32bit ptr, 8MB if 64bit	//!<zzhp 262144
 #define kNPnodeChildMax		512				//!< 512 uses 2KB per node	//zz hpc
 											//!< C99 max fixed array size is 16383
-											//!< 266 fills a sphere at 15 deg, possibly switch data structure to GTK.org zz
+											//!< 266 fills a sphere at 15 deg
 
 #define kNPbranchLevelMax	28				//!< max branch depth for child nodes, zz debug add error handling
 											//!< limit of GL matrix stack max 32
@@ -171,8 +182,8 @@
 #define kNPconsoleCharPerLine	80
 #define kNPconsoleHistoryMax	800			//!< max entries to store in RAM
 #define kNPconsoleInputMax		4096		//!< max user input string
-#define kNPmessageQueMax		500			//!< max messages stored in que
-#define kNPmessageLengthMax		127			//!< max message length
+#define kNPmsgQueMax			250			//!< max messages stored in que
+#define kNPmsgLengthMax			255			//!< max message length
 											
 											//! link to journal article LENGTH statistics for title and abstract
 											//! http://!<www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0049476
@@ -851,9 +862,10 @@ struct NPmessage
 	void* coreNode; ///< core nodes tie global structures to the scene graph
 						//!< each global struct has a corresponding base node.
 
-	int			queIndex;					//!<the most recent message
+	int			queIndex;				//!< most recent message
+	bool		rateExceeded;			//!< flow rate err flag
 
-	char		que[kNPmessageQueMax][kNPmessageLengthMax + 1]; //!<+1 for null
+	char		que[kNPmsgQueMax][kNPmsgLengthMax + 1]; //!<+1 for null
 
 	int			size;
 };
@@ -2733,17 +2745,18 @@ enum kNP_HUD_ELEMENT
 enum kNP_TOPOLOGY_TYPE
 {
 	kNPtopoNull = 0,		//!< linear 3D euclidean space
-	kNPtopoCube,			//!<six facet coord system for each side of cube
-	kNPtopoSphere,			//!<spherical coords compatible with KML
-	kNPtopoTorus,			//!<default branchLevel = 1 attached to pin
-	kNPtopoCylinder,
-	kNPtopoPin,				//!<default root pin shaped as icecream cone
-	kNPtopoRod,
-	kNPtopoPoint,			//!<zero origin offset with spherical coords
+	kNPtopoCube,			//!< six facet coord system for each side of cube
+	kNPtopoSphere,			//!< spherical coords compatible with KML
+	kNPtopoTorus,			//!< default branchLevel = 1 attached to pin
+	kNPtopoCylinder,		//!< cylindrical coords
+	kNPtopoPin,				//!< default root pin shaped as icecream cone
+	kNPtopoRod,				//!< similar to cylinder but longer
+	kNPtopoPoint,			//!< no offset, spherical coords
+	kNPtopoGrid,			//!< no offset, no scale, cartesian coords
 	kNPtopoCount,
-	kNPtopoCone,
-	kNPtopoPlot,			//!<perhaps call it a plot and not a graph
-	kNPtopoSurface,			//!<deformable grid, FFT, color ball, sound sphere
+	kNPtopoCone,			//!< cylindrical coords
+	kNPtopoPlot,			//!< 1D, 2D or 3D line plot, GPS, Oscillscope
+	kNPtopoSurface,			//!< deformable grid, FFT, LIDAR, sound sphere
 	kNPtopoMesh			//!<3D mesh model mapped as surface terrain
 //!<	kNPtopoCount
 };
@@ -2859,18 +2872,19 @@ enum kNP_FILE_TYPE
 
 	kNPfileDir,		//!<file directory
 
-	kNPfileTIFF,	//!<image formats
-	kNPfileRAW,
-	kNPfileJ2K,		//!<JPEG 2000
-	kNPfileJPG,
+	kNPfileH,
+	kNPfileC,
+	kNPfileCPP,
 
 	kNPfileCSV,		//!<data table formats
 	kNPfileTXT,
 	kNPfileXML,
 	kNPfileJSON,	//!<data tree schema
 
-	kNPfileKML,		//!<GIS standard
+	kNPfile3DS,
 	kNPfileCollada,	//!<3D model inter-change
+	kNPfileKML,		//!<GIS standard
+	kNPfileOBJ,
 
 	kNPfileAIFF,	//!<audio
 	kNPfileWAV,
@@ -2880,6 +2894,16 @@ enum kNP_FILE_TYPE
 
 	kNPfileMPG,		//!<MPEG 1 and 2 video
 	kNPfileMP4,		//!<MPEG 4
+	
+	kNPfileBMP,
+	kNPfileDDS,		//!< Native GPU compressed image format
+	kNPfileGIF,
+	kNPfileJ2K,		//!<JPEG 2000
+	kNPfileJPG,
+	kNPfilePNG,
+	kNPfileRAW,
+	kNPfileTGA,
+	kNPfileTIFF,	//!<image formats
 
 	kNPfileMJ2,		//!<Motion JPEG 2000
 	kNPfileDCP,		//!<Digital Cinema Package

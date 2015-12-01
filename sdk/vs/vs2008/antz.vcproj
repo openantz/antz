@@ -604,6 +604,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\src\io\file\npfileviz.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\file\npfileviz.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\io\file\npgdal.c"
 						>
 					</File>

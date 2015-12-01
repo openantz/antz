@@ -431,8 +431,9 @@ void npCtrlFile (int command, void* dataRef)
 			npPostMsg( "Oops... Select ALL now '~' Tilda key", kNPmsgCtrl, data );
 			break;
 		case kNPcmdFileViz :
-			npPostMsg( "Loading FileViz Directory Tree", kNPmsgCtrl, data );
-			npNewDirTree( data->io.file.appPath, NULL, dataRef );		//zz file tree
+			npPostMsg( "Building FileViz Directory Tree", kNPmsgCtrl, data );
+			npNewDirTree( data->io.file.appPath, NULL, 0, dataRef );		//zz file tree
+			npPostMsg( "FileViz Done!", kNPmsgCtrl, data );
 			break;
 		case kNPcmdGitViz :
 			npPostMsg( "Fetching GitViz Issues", kNPmsgCtrl, data );
@@ -535,7 +536,7 @@ void npCtrlVector (int command, void* dataRef)
 
 	//zz debug, temp workaround for ALTernate key mapping
 	if( data->io.key.modAlt )
-	{		  printf("text alt-rotate id: %d\n", node->id);
+	{
 	  switch( command )
 	  {	
 
@@ -1408,6 +1409,10 @@ void npUpdateTopo (pNPnode node, void* dataRef)
 			node->geometry = kNPgeoOctahedron;
 			sprintf(msg, "topo: %d point", node->topo);
 			break;
+		case kNPtopoGrid : 
+			node->geometry = kNPgeoTetrahedron;
+			sprintf(msg, "topo: %d grid", node->topo);
+			break;
 		case kNPtopoCone :
 			node->geometry = kNPgeoCone;
 			sprintf(msg, "topo: %d cone", node->topo);
@@ -1938,7 +1943,7 @@ void npDispatchMessages (void* dataRef)
 		msg = &data->io.message.que[index++][0];	//[index].msg;			//zz debug
 
 		//print to system console, adds newline at end of each msg	
-		printf("%s\n", msg);
+//		printf("%s\n", msg); //this is now down in npPostMsg
 
 		if (1)//console->mode != kNPconsoleMenu || type == kNPmsgView)		//zzf debug
 		{
@@ -1960,6 +1965,7 @@ void npDispatchMessages (void* dataRef)
 	//log file, adds newline at end of each msg
 
 	data->io.message.queIndex = 0;	//add que locking... for thread safety, debug zz
+	data->io.message.rateExceeded = false;
 
 	return;								//move this to control or maybe data...
 }

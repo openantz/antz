@@ -2,6 +2,16 @@
 
          latest code, issues and Wiki at https://github.com/openantz/
 ----------------------------------------------------------------------------
+2015-12-01 ANTz v0.199.5
+
+Enhanced:
+FileViz updated with HTML style tags so that 'U' key will open the files
+#161 Cartesian Coordinate System Topology
+
+Fixed:
+#195 HTML... added MySQL support for double quotes using escape slash \"
+
+----------------------------------------------------------------------------
 2015-11-23 ANTz v0.199.4
 
 Enhanced:

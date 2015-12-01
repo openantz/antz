@@ -349,7 +349,8 @@ void UpdateNodeDefault (pNPnode node, pData dataRef)
 			if (node->translate.y < -90.0f)
 				node->translate.y += 180.0f;
 		}
-		else if (node->topo == kNPtopoSphere || parent->topo == kNPtopoPoint
+		else if (node->topo == kNPtopoSphere
+				|| parent->topo == kNPtopoPoint
 				|| node->topo == kNPtopoTorus
 				|| parent->topo == kNPtopoPin
 				|| parent->topo == kNPtopoRod )
@@ -764,20 +765,17 @@ void UpdateNodeWithMouse (pNPnode node, pData dataRef)
 		dZ = data->io.mouse.delta.y * -0.022f;		//invert the axis
 	else
 		dY = data->io.mouse.delta.y * 0.022f;
-	
-	//data->io.mouse.camMode
-	//parent->topo && node->branchLevel
 
 	//Combo tool is also used by create during drag operations
 	if (data->io.mouse.tool == kNPtoolCombo || data->io.mouse.tool == kNPtoolCreate)
 	{
-		if (node->branchLevel == 0)			//default
+		if (node->branchLevel == 0 || parent->topo == kNPtopoGrid )			//default
 		{
 			distFactor = cam->proximity.x * 0.1f; // movement scaled by distance to cam
 		
 			if (data->io.mouse.buttonR)
 				node->translate.z += dZ * distFactor;
-			else 
+			else
 			{
 				if (!(data->io.axes.x && data->io.axes.y))
 				{
@@ -805,33 +803,13 @@ void UpdateNodeWithMouse (pNPnode node, pData dataRef)
 		}
 		else
 		{
-			if (parent == NULL)
+			if (parent == NULL)	//zz debug should not be necessary
 			{
 				printf ("err 2458 - id: %d parent node is NULL\n", node->id);
 				return;
 			}
-	/*
-			switch (parent->topo)
-			{
-	//			case kNPtopoNull : break;	//topo based on geometery type, default
-				case kNPtopoCube : break;
-				case kNPtopoSphere : break;
-				case kNPtopoTorus : break;
-				case kNPtopoSurface : break;
-				case kNPtopoPin : break;
-				case kNPtopoGrid : break;
 
-				default : 
-					distFactor = cam->proximity.x * 0.1f; // movement scaled by distance to cam
-					// update the translateVec for selected objects
-					// optimize by calculating once (at camera?) and use for all nodes, debug, zz
-					node->translate.x += ( cosY * dX - sinY * dY ) * distFactor;			
-					node->translate.y += ( -sinY * dX - cosY * dY ) * distFactor;
-					node->translate.z += dZ * distFactor;
-					break;			//topo based on geometery type, default
-			}
-		*/																	   //zz debug
-			if (node->branchLevel >= 1)	//perhaps set root pins at branchLevel == 1 
+			if (node->branchLevel >= 1 )	//perhaps set root pins at branchLevel == 1 
 										//and have parent topo be a grid and treat all nodes the same
 			{
 				distFactor = cam->proximity.x; // movement scaled by distance to cam
@@ -944,7 +922,7 @@ void UpdateNodeWithMouse (pNPnode node, pData dataRef)
 		switch (data->io.mouse.tool)
 		{
 			case kNPtoolMove :
-				if (node->branchLevel == 0)
+				if (node->branchLevel == 0 || parent->topo == kNPtopoGrid )
 				{
 					distFactor = cam->proximity.x * 0.1f; // movement scaled by distance to cam
 				

@@ -1340,12 +1340,12 @@ void npConsolePrompt(pNPconsole console, void* dataRef)
 	if( console->mode == kNPconsoleTag )
 	{
 /*
-		char msg[kNPmessageLengthMax + 1];
+		char msg[kNPmsgLengthMax + 1];
 		msg[0] = '>';
 		msg[1] = '\0';
-		// strncpy( &msg[1], tag->title, kNPmessageLengthMax);
-		if ( kNPmessageLengthMax < kNPtagTitleMax )
-			strncat( &msg[1], tag->title, kNPmessageLengthMax - 1);
+		// strncpy( &msg[1], tag->title, kNPmsgLengthMax);
+		if ( kNPmsgLengthMax < kNPtagTitleMax )
+			strncat( &msg[1], tag->title, kNPmsgLengthMax - 1);
 		else
 			strncat( &msg[1], tag->title, kNPtagTitleMax - 1);
 		npPostMsg( msg, kNPmsgView, data );
@@ -1981,15 +1981,15 @@ void npPostNodeID( pNPnode node, void* dataRef )
 	msgPart[0] = '\0';
 
 	if( node->type == kNodeLink )
-		strcpy( msg, "edge  " );
+		strcpy( msg, "edge   " );
 	else if( node->branchLevel && !node->childCount )
-		strcpy( msg, "leaf  " );
+		strcpy( msg, "leaf   " );
 	else if( !node->childCount )
-		strcpy( msg, "solo  " );				//tree with only root node
+		strcpy( msg, "solo   " );				//tree with only root node
 	else if ( !node->branchLevel )
-		strcpy( msg, "root  " );
+		strcpy( msg, "root   " );
 	else
-		strcpy( msg, "nexus " );				//internal node that is neither root nor leaf
+		strcpy( msg, "branch " );				//internal node that is neither root nor leaf
 	
 
 	if (node->type == kNodeCamera)
@@ -2003,8 +2003,11 @@ void npPostNodeID( pNPnode node, void* dataRef )
 
 		//display id level and tag							//zz add subspace grid_id?
 		if (node->recordID)									
+		{
 			sprintf( msg, "%s level: %-3d id: %-6d rec: %-6d tag: %s", msgPart,
-				node->branchLevel + 1, node->id, node->recordID, node->tag->title );
+					node->branchLevel + 1, node->id, node->recordID, 
+					&node->tag->title[node->tag->labelHead] );
+		}
 		else
 			sprintf( msg, "%s level: %-3d id: %-6d", msgPart,
 				node->branchLevel + 1, node->id );

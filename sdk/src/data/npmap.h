@@ -89,7 +89,7 @@ void npSetMapItem( char* mapPath, char* item, char* element, char* typeTag,
 
 //zz note that we use slightly different terminology for our tree/graph
 //
-// 'Internal nodes' we call 'nexus' nodes
+// 'Internal nodes' we call 'branch' nodes
 //
 // 'Edge' is called 'link' and is a type of node, (but perhaps should not be a node?)
 // the 'link' (Edge) nodes allow for any graph type, acyclic, etc.. (non-tree types)
