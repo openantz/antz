@@ -167,27 +167,21 @@ void DrawPin (int selectedRootNode, pNPnode node, void* dataRef)
 {
 	int i = 0;
 	int idRed = 0, idGrn = 0, idBlu = 0;
-
-	//zzhp can comment out the modelview if links not used
-	GLfloat modelView[16];													//zz-link
+	GLfloat modelView[16];	//zz-link  //zzhp can comment out if links not used
 
 	pData data = (pData) dataRef;
-
 	pNPnode nodeChild = data->map.currentNode;
 	pNPnode rootGrid = data->map.node[kNPnodeRootGrid];
-
-	//for calculating world coordinates
-	NPcameraPtr camData = data->map.currentCam->data;
-	//	GLfloat modelView[16];	//zzhp
+	NPcameraPtr camData = data->map.currentCam->data;  // for world coordinates
 
 	//if pickPass render scene with node ID encoded as color	//MB//
 	if( data->io.gl.pickPass )
-	{											//Convert nodeID to RGB triplet
+	{							// Convert nodeID to RGB triplet range is 2^24
 		npIDtoRGB( node->id, &idRed, &idGrn, &idBlu );
-		glColor4ub( idRed, idGrn, idBlu, 255 );	//ID of Node is encoded on the Pixel! In RGB Triplet   (Range: 0-  16.7 Million)
+		glColor4ub( idRed, idGrn, idBlu, 255 );
 	}
 	else
-		glColor4ub (node->color.r, node->color.g, node->color.b, node->color.a); //-
+		glColor4ub (node->color.r, node->color.g, node->color.b, node->color.a);
 
 
 	glPushMatrix();
@@ -202,90 +196,32 @@ void DrawPin (int selectedRootNode, pNPnode node, void* dataRef)
 	glRotatef (node->rotate.x, -1.0f, 0.0f, 0.0f);		//roll
 	glRotatef (node->rotate.z, 0.0f, 0.0f, -1.0f);		//heading
 
-	//set node scale, unless a rod topo
-	if ( node->topo != kNPtopoRod )
+	glLineWidth (node->lineWidth);	//zz move this out to npglDrawGeo
+
+	// rod topo has unique scaling and offset
+	if ( node->topo == kNPtopoRod )
+	{					//width uses ratio, length uses scale 2 * 5 = 10
+		glPushMatrix();
+			glScalef (	node->ratio * 2.0f,
+						node->ratio * 2.0f,
+						node->scale.z * kNPoffsetRod * 0.5f );
+			glTranslatef (0.0f, 0.0f, kNPoffsetUnit);
+			npGLSurface (true, node, data);
+		glPopMatrix();
+	}
+	else
+	{
 		glScalef (node->scale.x, node->scale.y, node->scale.z);
+		npGLSurface (true, node, data);
+	}
 
-	glLineWidth (node->lineWidth);
-
-//zzoff
-	if ( node->topo == kNPtopoRod )	//special handling for rod
-	{					//width uses ratio, length uses scale 2 * 5 = 10
-		glPushMatrix();	
-			glScalef (	node->ratio * 2.0f, 
-						node->ratio * 2.0f, 
-						node->scale.z * kNPoffsetRod * 0.5f );
-			glTranslatef (0.0f, 0.0f, kNPoffsetUnit);
-			npGLSurface (true, node, data);
-		glPopMatrix();
-	}
-	else
-		npGLSurface (true, node, data);
-/*
-	//draw node
-	if (node->topo == kNPtopoPin)
-	{
-		if (node->geometry == kNPgeoPin || node->geometry == kNPgeoPinWire)
-		{
-			npGLSurface (true, node, data);	
-			glTranslatef (0.0f, 0.0f, kNPoffsetPin);			//should this be here, debug, zz
-		}
-		else
-		{
-			glTranslatef (0.0f, 0.0f, kNPoffsetPin);			//should this be here, debug, zz
-			npGLSurface (true, node, data);	
-		}
-	}
-	else if ( node->topo == kNPtopoRod )	//special handling for rod
-	{					//width uses ratio, length uses scale 2 * 5 = 10
-		glPushMatrix();	
-			glScalef (	node->ratio * 2.0f, 
-						node->ratio * 2.0f, 
-						node->scale.z * kNPoffsetRod * 0.5f );
-			glTranslatef (0.0f, 0.0f, kNPoffsetUnit);
-			npGLSurface (true, node, data);
-		glPopMatrix();
-	}
-	else if ( node->topo == kNPtopoTorus)
-	{
-		glTranslatef (0.0f, 0.0f, kNPoffsetTorus);
-		npGLSurface (true, node, data);
-	}
-	else if ( node->topo == kNPtopoCube)
-	{
-		glTranslatef (0.0f, 0.0f, kNPoffsetCube);
-		npGLSurface (true, node, data);
-	}
-	else if ( node->topo == kNPtopoPoint)
-		npGLSurface (true, node, data);
-	else
-	{
-		glTranslatef (0.0f, 0.0f, kNPoffsetUnit);
-		npGLSurface (true, node, data);
-	}
-*/
-//zzoff
-
+	// topo ground level offsets removed via user request, ie: kNPoffsetPin
+	// check pre 2015 ver for methods (commented out)
 
 	//perhaps add logic to only calculate origin coordinates when needed, zz debug
 	//typically only need if cam target or connected by a link topo
-//	glGetFloatv (GL_MODELVIEW_MATRIX, modelView);
-/*	if (node->topo == kNPtopoRod)
-	{
-		glPushMatrix();
-			glTranslatef (0.0f, 0.0f, kNPoffsetRod * node->scale.z);
-			glGetFloatv (GL_MODELVIEW_MATRIX, modelView);
-			npLocalToWorld (&node->world, camData->inverseMatrix, modelView);
-		glPopMatrix();
-	}
-	else
-	{
-		glGetFloatv (GL_MODELVIEW_MATRIX, modelView);
-		npLocalToWorld (&node->world, camData->inverseMatrix, modelView);
-	}
-*/  
-	//zzhp root local translate coordinates = world coordinates
 
+	//zzhp root local translate coordinates = world coordinates
 	//does not properly compute root nodes rotated about x axis,	//zz debug
 
 	//update the world coordinates of the node
@@ -314,25 +250,6 @@ void DrawPin (int selectedRootNode, pNPnode node, void* dataRef)
 		node->world.y = node->translate.y * rootGrid->scale.y;
 		node->world.z = node->translate.z * rootGrid->scale.z;
 	}
-		
-//zzoff
-/*
-	if (node->topo == kNPtopoPin)
-		node->world.z = node->translate.z * rootGrid->scale.z
-						+ kNPoffsetPin * node->scale.z;
-	else if (node->topo == kNPtopoRod)
-		node->world.z = node->translate.z * rootGrid->scale.z
-						+ kNPoffsetRod * node->scale.z;
-	else if (node->topo == kNPtopoPoint)
-		node->world.z = node->translate.z * rootGrid->scale.z;
-	else
-		node->world.z = node->translate.z * rootGrid->scale.z
-						+ kNPoffsetUnit * node->scale.z;
-*/
-
-//	mouse->targetDest.z = node->translate.z * rootGrid->scale.z 
-//zzoff					  + kNPoffsetPin * node->scale.z;
-
 
 	//draw selection outline as wireframes
 	if (data->io.mouse.pickMode == kNPmodePin
@@ -380,10 +297,7 @@ void DrawPin (int selectedRootNode, pNPnode node, void* dataRef)
 				glScalef (1.0f, 1.0f, 0.66666667f / (2.0f * node->scale.z));	// squish z height
 			}
 			else
-			{
-//zzoff				glTranslatef (0.0f, 0.0f, kNPoffsetPin);
 				glScalef (1.0f, 1.0f, 0.66666667f);			// squish z height
-			}
 
 			npGLPrimitive (kNPgeoPinWire, 0.0f);		// 2nd one is above node
 		}
@@ -404,17 +318,11 @@ void DrawPin (int selectedRootNode, pNPnode node, void* dataRef)
 	//if tagMode then calculate screen position and add to tags draw list
 	if (node->tagMode)
 	{
-//		glPushMatrix();
-//zzoff			glTranslatef (0.0f, 0.0f, -kNPoffsetPin);
-		if (1)// node->topo == kNPtopoPin || node->topo == kNPtopoCylinder || node->topo == kNPtopoRod )
-		{
-			node->tagOffset.x = 0.0f;
-			node->tagOffset.y = 0.0f;
-			node->tagOffset.z = 0.0f;
-		}
-//zzoff
-			npAddTagToDraw (node, data);
-//		glPopMatrix();
+		node->tagOffset.x = 0.0f;
+		node->tagOffset.y = 0.0f;
+		node->tagOffset.z = 0.0f;
+
+		npAddTagToDraw (node, data);
 	}
 	else	//zz select
 		node->screen = npProjectWorldToScreen (&node->tagOffset);
@@ -423,7 +331,6 @@ void DrawPin (int selectedRootNode, pNPnode node, void* dataRef)
 	// recursively
 	for (i=0; i < node->childCount; i++)
 		DrawPinChild (node->child[i], dataRef);
-
 
 	glPopMatrix();
 }
@@ -471,7 +378,19 @@ void DrawPinChild (pNPnode node, void* dataRef)
 		glColor4ub (node->color.r, node->color.g, node->color.b, node->color.a);
 
 	// position based on parent topo type
-	if (parent->topo == kNPtopoCube)
+	if (parent->topo == kNPtopoGrid)
+	{
+		// topo grid type has cartesian coordinates, does not effect child
+		glTranslatef (node->translate.x, node->translate.y, node->translate.z);
+
+		glRotatef (node->rotate.y, 0.0f, 0.0f, -1.0f);
+		glRotatef (node->rotate.x, -1.0f, 0.0f, 0.0f);
+		glRotatef (node->rotate.z, 0.0f, 0.0f, -1.0f);
+
+		if (node->topo != kNPtopoRod)		 //rod is scaled at draw time and does not pass along scale to children
+			glScalef (node->scale.x, node->scale.y, node->scale.z);	//node scale
+	}
+	else if (parent->topo == kNPtopoCube)
 	{
 		//if zero then calculate using id/6 + 1		//update to use parent->childIndex, debug zz
 		if (node->facet == 0)
@@ -536,10 +455,10 @@ void DrawPinChild (pNPnode node, void* dataRef)
 		glRotatef (node->translate.y - 90.f, -1.0f, 0.0f, 0.0f);	//latitude
 
 		//translate 1 unit to surface for sphere, convert node z local units
-		if (parent->topo == kNPtopoPoint)
-			glTranslatef ( 0.0f, 0.0f, node->translate.z); //point has no offset
-		else
+		if (parent->topo == kNPtopoSphere)
 			glTranslatef ( 0.0f, 0.0f, 1.0f + node->translate.z / (4.0f*kRADtoDEG));
+		else
+			glTranslatef ( 0.0f, 0.0f, node->translate.z); //point has no offset
 
 		//orientation
 		glRotatef (node->rotate.y, 0.0f, 0.0f, -1.0f);
@@ -721,7 +640,9 @@ void DrawPinChild (pNPnode node, void* dataRef)
 			if ( parent->topo != kNPtopoTorus )
 				glTranslatef (0.0f, 0.0f, kNPoffsetTorus);
 		}
-		else if ( node->topo != kNPtopoPin && node->topo != kNPtopoRod )
+		else if (	node->topo != kNPtopoPin
+				 && node->topo != kNPtopoRod
+				 && node->topo != kNPtopoGrid )
 			glTranslatef (0.0f, 0.0f, kNPoffsetUnit);
 	}
 

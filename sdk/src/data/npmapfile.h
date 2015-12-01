@@ -93,5 +93,7 @@ int npMapTraverseTreeLL(char* buffer, int* index, pNPnode node, int format, void
 
 void npPreLoadInit(pNPrecordSet recSet, void* dataRef);
 
+int npGetFileType(const char* filePath, void* dataRef);
+
 #endif
 

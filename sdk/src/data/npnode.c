@@ -290,22 +290,21 @@ pNPnode npNodeNew (int nodeType, pNPnode nodeParent, void* dataRef)
 			if( InitNodePin (node) )	/// if init fails then return NULL
 				return NULL;		
 			// position node based on branchLevel and sibling count
-			if (node->branchLevel == 0)
+			if( node->branchLevel == 0 )
 			{
 				// distributes 264 root nodes to fill a 24x12 grid at 15 unit spacing
 				xy = npGridSpiralXY(49, 25, 7.5f, 7.5f, data->map.nodeRootCount - kNPnodeRootPin - 1);
 
 				node->translate.x = xy.x;
 				node->translate.y = xy.y;
+			}
+			else if( node->parent->topo == kNPtopoGrid)
+			{
+				// distributes 264 root nodes to fill a 24x12 grid at 15 unit spacing
+				xy = npGridSpiralXY(49, 25, 1.0f, 1.0f, node->parent->childCount );
 
-		/*		node->translate.x = -15.0f * (float)(data->map.nodeRootCount - 5);
-				if ( data->map.nodeRootCount <= 172 )		// northern hemisphere
-					node->translate.y = 15.0f * ((data->map.nodeRootCount - 5) / 24);
-				else if ( data->map.nodeRootCount <= 316 )	// southern hemisphere
-					node->translate.y = 90.0f - 15.0f * ((data->map.nodeRootCount - 5) / 24);
-				else		// after grid filled place additional nodes on x axis
-					node->translate.y = 0.0f;
-		*/
+				node->translate.x = xy.x;
+				node->translate.y = xy.y;
 			}
 			else
 			{

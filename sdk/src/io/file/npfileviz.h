@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------------------
 *
-*  nptexmap.h
+*  npfileviz.h
 *
 *  ANTz - realtime 3D data visualization tools for the real-world, based on NPE.
 *
@@ -22,25 +22,13 @@
 *
 * --------------------------------------------------------------------------- */
 
-#ifndef NPTEXMAP_H_
-#define NPTEXMAP_H_
+#ifndef NPFILEVIZ_H_
+#define NPFILEVIZ_H_
 
+#include "../../npdata.h"
 
-//------------------------------------------------------------------------------
-void npInitTexMap (void* dataRef);
-
-void npCloseTexMap (void* dataRef);
-
-void npUpdateTexMap (void* dataRef);
-
-void npLoadTextures(void* dataRef);
-
-/// Load texture file to the GPU, return the texture_id 
-int npLoadTexture( char* filePath, void* dataRef);
-
-int npScreenGrab( char* filePath, int type, int x, int y, int w, int h, void* dataRef);
-
-int npScreenGrabThumb( char* name, int type, int x, int y, int w, int h, void* dataRef );
+//builds a node tree of the file directory structure
+int npNewDirTree (const char *basePath, pNPnode parent, int i, void* dataRef);
 
 #endif
 

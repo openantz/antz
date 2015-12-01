@@ -34,6 +34,7 @@
 #include "gl/npgeometry.h"
 #include "gl/npcolor.h"
 #include "gl/nptexmap.h"
+#include "gl/nptags.h"
 
 
 //--- Functions ----------------------------------------------------------------

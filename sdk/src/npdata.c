@@ -117,9 +117,10 @@ void npInitMessage (void* dataRef)
 	pData data = (pData) dataRef;
 
 	data->io.message.queIndex = 0;
+	data->io.message.rateExceeded = false;
 
-	for (i=0; i < kNPmessageQueMax; i++)
-		for (j=0; j <= kNPmessageLengthMax; j++)  //write 257 chars, 256 +1 null
+	for (i=0; i < kNPmsgQueMax; i++)
+		for (j=0; j <= kNPmsgLengthMax; j++)  //write 257 chars, 256 +1 null
 			data->io.message.que[i][j] = '\0';
 
 	data->io.message.size = sizeof(NPmessage);
@@ -1347,6 +1348,7 @@ void npDataCameraPreset (int preset, pNPnode node, void* dataRef)
 void npPostMsg (char* message, int type, void* dataRef)
 {
 	pData data = (pData) dataRef;
+	pNPmessage msg = &data->io.message;
 	//add handling for type filtering, perhaps create a msg struct with type, debug zz
 
 	/// @todo using NDEBUG this way is not wise, perhaps create our own flag
@@ -1360,20 +1362,29 @@ void npPostMsg (char* message, int type, void* dataRef)
 		printf( "%s\n", message );
 		return;					//zz debug, update to store messages elsewhere
 	}
-	
+
+	msg->queIndex++;
+	if (msg->queIndex >= kNPmsgQueMax)
+	{
+		printf("WARNING 8888 - kNPmsgQueMax discarding messages\n");
+		msg->queIndex = 1;		//queIndex = 0 for no messages
+		msg->rateExceeded = true;
+	}
+	else if( !data->ctrl.startup )
+		printf( "%s\n", message ); // print message to system console
+
+	// exit if a console menu is active to prevent messing up the menu
 	if ( data->io.gl.hud.console.mode == kNPconsoleMenu && type != kNPmsgView )
 		return;
 
-	data->io.message.queIndex++;
-	if (data->io.message.queIndex >= kNPmessageQueMax)
+	// err reporting of messages that are too long
+	if( strnlen( message, kNPmsgLengthMax ) >= kNPmsgLengthMax )
 	{
-		printf("warning 8888 - message que max exceeded, messages lost\n");
-		data->io.message.queIndex = 1;		//queIndex = 0 for no messages
+		printf("err 8888 - kNPmsgLengthMax exceeded: %0.30s\n", message);
+		message[kNPmsgLengthMax] = '\0';	// trim the message
 	}
 
-	strncpy (&data->io.message.que[data->io.message.queIndex][0], 
-				message, kNPmessageLengthMax);
-
-	//add err reporting of messages that are too long, debug zz
+	// copy the message to the message que buffer
+	strncpy (&msg->que[msg->queIndex][0], message, kNPmsgLengthMax);
 }
 

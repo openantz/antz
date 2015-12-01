@@ -31,7 +31,7 @@
 #include "../io/npfile.h"
 #include "../io/npch.h"
 
-#include "../io/gl/nptags.h"	//move the necessary functions to npdata, debug zz
+//#include "../io/gl/nptags.h"	//move the necessary functions to npdata, debug zz
 #include "../io/npgl.h"			//zz debug, added for npPostTool()
 
 void npLoadChannelFile (char* buffer, int wordSize, int size, void* dataRef);
@@ -720,7 +720,7 @@ void npLoadMapFile (char* buffer, int wordSize, int size, void* dataRef)
 			//print part of the first few lines of data
 			if ( nodeCount <= 3)
 			{
-				printf("id: %d   type: %d   level: %d   colorIndex: %d   recordID: %d\n", 
+				printf("node_id: %d  type: %d  level: %d  color_id: %d  record_id: %d\n", 
 					node->id, node->type, node->branchLevel,  node->colorIndex, node->recordID);
 	
 				if ( nodeCount == 3)
@@ -737,8 +737,8 @@ void npLoadMapFile (char* buffer, int wordSize, int size, void* dataRef)
 	// print last node info
 	if (node != NULL )
 	{
-		printf("\nid: %d   type: %d   level: %d   colorIndex: %d   recordID: %d\n", 
-			node->id, node->type, node->branchLevel,  node->colorIndex, node->recordID);
+		printf("\nnode_id: %d  type: %d  level: %d  color_id: %d  record_id: %d\n", 
+				node->id, node->type, node->branchLevel,  node->colorIndex, node->recordID);
 	}
 	else
 		npPostMsg("err 2350 - last node loaded from file is NULL", kNPmsgErr, data);
@@ -1213,7 +1213,7 @@ int npLoadNodesCSV (const char* buffer, int size, int type, void* dataRef)
 			if ( nodeCount <= 3)
 			{
 //				printf("count: %d   size: %d\n",count,size);				//zzhp
-				printf("id: %d   type: %d   level: %d   colorIndex: %d   recordID: %d\n", 
+				printf("node_id: %d  type: %d  level: %d  color_id: %d  record_id: %d\n", 
 					node->id, node->type, node->branchLevel,  node->colorIndex, node->recordID);
 	
 				if ( nodeCount == 3)
@@ -1234,8 +1234,8 @@ int npLoadNodesCSV (const char* buffer, int size, int type, void* dataRef)
 	if (node != NULL)
 	{
 		if(nodeCount > 3)
-			printf("\nid: %d   type: %d   level: %d   colorIndex: %d   recordID: %d\n", 
-				node->id, node->type, node->branchLevel,  node->colorIndex, node->recordID);
+			printf("\nnode_id: %d  type: %d  level: %d  color_id: %d  record_id: %d\n", 
+					node->id, node->type, node->branchLevel,  node->colorIndex, node->recordID);
 	}
 	else
 		npPostMsg("err 2350 - last node loaded from file is NULL", kNPmsgErr, data);
@@ -1340,62 +1340,81 @@ int npLoadTags (const char* buffer, int size, void* dataRef)
 //-----------------------------------------------------------------------------
 
 
-//currently based soley on extension name
-//zz debug, add checking header contents
+/// Get file type based on filename extension
 //------------------------------------------------------------------------------
 int npGetFileType(const char* filePath, void* dataRef)
 {
-	int i = 0;
-	int period = 0;
-	char ext[256];
+	int i = 0, j = 0;
+	int filePathSize = 0;
+	char ext[kNPmaxName] = {'\0'};
 
-	//get extension, CSV, XML, JSON...
-	while (filePath[i] != '\0')
+	filePathSize = strnlen( filePath, kNPmaxPath );
+
+	if( filePathSize >= kNPmaxPath )
 	{
-		i++;
-		if (filePath[i] == '.')
-			period = i + 1;
-		if (period)
-			ext[i - period] = filePath[i];
+		npPostMsg( "err 2341 - kNPmaxPath exceeded", kNPmsgErr, dataRef );
+		return 0;
 	}
 
-	//null terminate the ext string
-	ext[i - period + 1] = '\0';
-	
-	//force the file extension to be all lower case
-	while (ext[i] != '\0')
+	// find the last period in the path
+	i = filePathSize;
+	while( filePath[i] != '.' && i >= 0 )
+		i--;
+
+	// if no file extension then return 0
+	if( i <= 0 && filePath[0] != '.' )
+		return 0;
+
+	i++;	// increment past the period
+
+	// force the file extension to be all lower case
+	while( filePath[i] != '\0' )
 	{
-		if (ext[i] >= 'A' && ext[i] <= 'Z')
-			ext[i] += 33;			//ASCII ('a' - 'A') = 33
-		i++;
+		ext[j] = filePath[i];
+		if (ext[j] >= 'A' && ext[j] <= 'Z')
+			ext[j] += 33;			//ASCII 'a' - 'A' = 33
+		i++; j++;
 	}
 
-
+	/// @todo upgrade file type identification with a hash table
 	//return the extension type
-//	if (strncmp(ext, "tiff", 4)) return kNPfileTIFF;	//redundant
-	if (strncmp(ext, "tif", 3)) return kNPfileTIFF;		//catches .tif and .tiff
-	if (strncmp(ext, "raw", 3)) return kNPfileRAW;
-
-	if (strncmp(ext, "jp2", 3)) return kNPfileJ2K;
-	if (strncmp(ext, "jpg", 3)) return kNPfileJPG;
-	if (strncmp(ext, "jpeg", 4)) return kNPfileJPG;
+	if( !strcmp(ext, "h")) return kNPfileH;
+	if( !strcmp(ext, "c")) return kNPfileC;
+	if( !strcmp(ext, "cpp")) return kNPfileCPP;
 	
-	if (strncmp(ext, "csv", 3)) return kNPfileCSV;
-	if (strncmp(ext, "txt", 3)) return kNPfileTXT;
-	if (strncmp(ext, "xml", 3)) return kNPfileXML;
-	if (strncmp(ext, "json", 4)) return kNPfileJSON;
+	if (!strcmp(ext, "bmp")) return kNPfileBMP;
+	if (!strcmp(ext, "dds")) return kNPfileDDS;
+	if (!strcmp(ext, "gif")) return kNPfileGIF;
+	if (!strcmp(ext, "jp2")) return kNPfileJ2K;
+	if (!strcmp(ext, "jpg")) return kNPfileJPG;
+	if (!strcmp(ext, "jpeg")) return kNPfileJPG;
+	if (!strcmp(ext, "png")) return kNPfilePNG;
+	if (!strcmp(ext, "raw")) return kNPfileRAW;
+	if (!strcmp(ext, "tga")) return kNPfileTGA;
+	if (!strcmp(ext, "tif")) return kNPfileTIFF;
+	if (!strcmp(ext, "tiff")) return kNPfileTIFF;
 
-	if (strncmp(ext, "kml", 3)) return kNPfileKML;
-	if (strncmp(ext, "dae", 4)) return kNPfileCollada;
+	if (!strcmp(ext, "csv")) return kNPfileCSV;
+	if (!strcmp(ext, "txt")) return kNPfileTXT;
+	if (!strcmp(ext, "xml")) return kNPfileXML;
+	if (!strcmp(ext, "json")) return kNPfileJSON;
 
-//	if (strncmp(ext, "aiff", 4)) return kNPfileAIFF;
-	if (strncmp(ext, "aif", 3)) return kNPfileAIFF;
+	if (!strcmp(ext, "3ds")) return kNPfile3DS;
+	if (!strcmp(ext, "dae")) return kNPfileCollada;
+	if (!strcmp(ext, "kml")) return kNPfileKML;
+	if (!strcmp(ext, "obj")) return kNPfileOBJ;
 
-	if (strncmp(ext, "mxf", 3)) return kNPfileMXF;
+	if (!strcmp(ext, "aif")) return kNPfileAIFF;
+	if (!strcmp(ext, "aiff")) return kNPfileAIFF;
 
-	return 0;	//unknown file type
+	if (!strcmp(ext, "mxf")) return kNPfileMXF;
+
+	// printf( "undefined file extension: %s\n", ext );
+
+	return 0;	///< unknown file extension type
 }
 
+/// determines file format based on buffer contents
 int npGetFileFormat(const char* buffer, void* dataRef)
 {
 	int format = kNPformatNull;

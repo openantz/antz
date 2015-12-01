@@ -24,8 +24,6 @@
 
 #include "npgl.h"
 
-#include "gl/nptags.h"
-
 #include "../npio.h"
 #include "../npctrl.h"
 #include "../os/npos.h"

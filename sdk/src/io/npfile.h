@@ -29,6 +29,7 @@
 #include "../npdata.h"
 #include "../data/npmapfile.h"
 #include "file/npcsv.h"
+#include "file/npfileviz.h"
 
 #define kNPfileMax 4096
 
@@ -107,9 +108,6 @@ int	npLoadScene( int format, char* datasetName, void* dataRef);
 
 bool npOpenNodeFile( pNPnode node, void* dataRef );
 bool npOpenNode( pNPnode node, void* dataRef );
-
-//builds a node tree of the file directory structure
-bool npNewDirTree(const char *basePath, pNPnode parent, void* dataRef);
 
 #endif
 
