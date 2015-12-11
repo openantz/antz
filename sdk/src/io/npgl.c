@@ -252,11 +252,16 @@ void npGLDrawScene (void* dataRef)
 	rot.angle = 0.0f;
 	//MB-END
 	
-	if (data->io.mouse.tool == kNPtoolSelect)		//zz select
-		glutSetCursor(GLUT_CURSOR_CROSSHAIR);
-	else
-		glutSetCursor(GLUT_CURSOR_RIGHT_ARROW);
-
+	/// Set the cursor if inside the GL context area, fixes issue #112
+	if( data->io.mouse.entry )
+	{
+		if (data->io.mouse.tool == kNPtoolSelect)		//zz select
+			glutSetCursor(GLUT_CURSOR_CROSSHAIR);
+		else
+			glutSetCursor(GLUT_CURSOR_INHERIT); //GLUT_CURSOR_RIGHT_ARROW);
+	
+		data->io.mouse.entry = false;	// reset the entry flag
+	}
 
 #define BUGFIX_MATRIX 0.0000000001	//prevents 0 vector issue
 
@@ -510,20 +515,21 @@ void npPostTool (pNPnode node, void* dataRef)
 	npPostMsg (msg, kNPmsgCtrl, dataRef);
 }
 
-//update the GUI tool type indicator when NULL
+//update the primary left-menu GUI tool type indicator when hud is NULL
 //------------------------------------------------------------------------------
 void npMenuRefresh( pNPhud hud, void* dataRef )
 {
 	pNPnode node = NULL;
 	pData data = (pData) dataRef;
 
-//	if (hud == NULL)
+	if (hud == NULL)
 	{
 		node = data->map.node[kNPnodeRootHUD];	//select Root HUD node
 		node = node->child[kNPhudTool];			//select Tool node
 	}
-	sprintf( node->tag->title, "tool:         " );
-	npUpdateTag (node->tag);
+
+	/// @todo remove redundant npPostTool throughout the code
+	npPostTool( node, data );
 }
 
 //------------------------------------------------------------------------------
@@ -717,22 +723,15 @@ void npPickHUD (pNPnode node, void* dataRef)
 			npPostTool(NULL, data);
 			break;
 		case kNPhudSave :										//zzf
-			if (data->io.mouse.pickMode != kNPmodeCamera)
-			{
-				npPostMsg("Save Selected Items", kNPmsgCtrl, data);
-				temp = data->io.key.modAlt;
-				data->io.key.modAlt = true;
-				data->io.file.saveSelect = true;
-		//		node->color.r = 255;
-				npCtrlCommand(kNPcmdFileSave, data);
-				data->io.key.modAlt = temp;
-		//		data->io.file.saveSelect = false;
-		//		node->color.r = 127;
-	//			npPostMsg("Drag Mouse to Select Region", kNPmsgCtrl, data);
-	//			npPostTool (node, data);
-			}
+			npPostMsg("Save Selected Items", kNPmsgCtrl, data);
+			temp = data->io.key.modAlt;
+			data->io.key.modAlt = true;
+			data->io.file.saveSelect = true;
+			// node->color.r = 255;					// highlight the button
+			npCtrlCommand(kNPcmdFileSave, data);
+			data->io.key.modAlt = temp;
+			// node->color.r = 127;
 			break;												//zzf end
-	
 		case kNPhudCreate :									//zz select
 			if (data->io.mouse.pickMode != kNPmodePin)
 				npSetMode( kNPmodePin, data );

@@ -53,6 +53,11 @@
 //#include "wglext.h"
 //#include "winbase.h"
 
+
+void npInitFileRef( pNPfileRef fileRef );
+
+
+//------------------------------------------------------------------------------
 void* nposLoadLibrary( char* filePath )
 {
 	void* library = LoadLibrary( filePath );
@@ -176,17 +181,6 @@ void nposSetOpenFilePath (char* buffer, void* dataRef)
 
 
 /*
-//-----------------------------------------------------------------------------
-FILE* nposFileDialog (const char* fileName, int dialogType, void* dataRef)
-{
-
-}
-*/
-
-
-
-
-/*
 Todo :
 XML Formatting
 Delete Directory
@@ -214,7 +208,7 @@ void importFile(char *filename)
 
 }
 */
-FILE* SaveFileDialog()
+FILE* SaveFileDialog( char* fileChosen, const char* initialDir )
 {
 	FILE* filePtr;
 	OPENFILENAME tmpOfn;
@@ -283,124 +277,104 @@ enum
 };
 */
 
-//zz debug make this return the fileName (includes path) instead of opening the FILE*
+int OpenFileDialog( char* fileChosen, const char* initialDir, 
+					int dialogType, void* dataRef );
 //------------------------------------------------------------------------------
-// temp, lde
-FILE* OpenFileDialog (const char* fileName, int kNPfileDialogOpen, void* dataRef)
+int OpenFileDialog( char* fileChosen, const char* initialDir, 
+					int dialogType, void* dataRef )
 {
 	FILE* filePtr = NULL;
 	int h = 0;
 	int pathSize = 0;
-	char msg[kNPmaxPath + 64];
+	char msg[kNPmaxPath];
 	
-	OPENFILENAME ofn;			// common dialog box structure
-	char szFile[MAX_PATH];		// buffer for file name
-//	char dirPath[MAX_PATH];		// buffer for file name
+	OPENFILENAME ofn;					// common dialog box structure
+	char szFile[MAX_PATH] = {'\0'};		// buffer for file name
+
 	HWND hwnd = NULL;			// owner window
-	HANDLE hf;					// file handle
+//	HANDLE hf;					// file handle
 
-
-	szFile[0] = '\0';
-
-//	nposSetCWD ("C:\\data\\");					//zz debug
-//	GetCurrentDirectory (pathSize, dirPath);
-
-//	nposGetCWD (dirPath, &pathSize);
-//	strcat (dirPath, "antzcsv\\");
+//  initialDir does not work properly on Win 7
+//	Windows 7 behavior is to only use this first time the dialog is opened
+//  http://stackoverflow.com/questions/16164637/initial-directory-is-not-working
 
 	// Initialize OPENFILENAME
 	ZeroMemory(&ofn, sizeof(ofn));
 	ofn.lStructSize = sizeof(ofn);
 	ofn.hwndOwner = hwnd;		//hf
 	ofn.lpstrFile = (LPSTR)szFile;
-	// Set lpstrFile[0] to '\0' so that GetOpenFileName does not	//zz ???
-	// use the contents of szFile to initialize itself.
-//	ofn.lpstrFile[0] = '\0';
 	ofn.nMaxFile = sizeof(szFile);
-	ofn.lpstrFilter = NULL;// "All\0*.*\0Text\0*.TXT\0";
+	ofn.lpstrFilter = NULL;			// "All\0*.*\0Text\0*.TXT\0";
 	ofn.nFilterIndex = 1;
 	ofn.lpstrFileTitle = NULL;
 	ofn.nMaxFileTitle = 0;
-	ofn.lpstrInitialDir = (LPCSTR)fileName;
+	ofn.lpstrInitialDir = (LPCSTR)initialDir;
 	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 	
-	// Display the Open dialog box.
-	if (GetOpenFileName(&ofn) == TRUE)
-		hf = CreateFile(ofn.lpstrFile,
-						GENERIC_READ,
-						0,
-						(LPSECURITY_ATTRIBUTES) NULL,
-						OPEN_EXISTING,
-						FILE_ATTRIBUTE_NORMAL,
-						(HANDLE) NULL);
-	else
-	{
-		npPostMsg ("File Open Dialog Cancelled", kNPmsgCtrl, dataRef);
-		return NULL;
-	}
+	/// Display the Open dialog box.
+	if( GetOpenFileName(&ofn) != TRUE )
+		return false;
 
-	//prevents crash if app exited while dialog is open
-	if (hf == INVALID_HANDLE_VALUE)	
-	{
-		npPostMsg ("err 2794 - File Invalid", kNPmsgErr, dataRef);
-		return NULL;
-	}
+	sprintf( msg, "Open: %s", szFile );
+	npPostMsg( msg, kNPmsgCtrl, dataRef );
+	strcpy( fileChosen, szFile );
 
-	h = _open_osfhandle((long) hf, 0);
+	return true;	// success
 
-	filePtr = _fdopen(h, "r");
-
-	if (filePtr != NULL)
-	{
-		sprintf (msg, "File Open: %s", &szFile);
-		npPostMsg (msg, kNPmsgCtrl, dataRef);
-	}
-	else
-		npPostMsg ("err 2795 - File Pointer is NULL", kNPmsgErr, dataRef);
-
-	return filePtr;
+	// previous code returned FILE*
+	//	hf = CreateFile(ofn.lpstrFile, GENERIC_READ, 0, 
+	//					(LPSECURITY_ATTRIBUTES) NULL, OPEN_EXISTING,
+	//					FILE_ATTRIBUTE_NORMAL, (HANDLE) NULL);			
+	 //prevents crash if app exited while dialog is open
+	//	hf = CreateFile(ofn.lpstrFile, GENERIC_READ, 0, (LPSECURITY_ATTRIBUTES)
+	//			NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, (HANDLE) NULL);
+	//	if (hf == INVALID_HANDLE_VALUE) return NULL;
+	//	h = _open_osfhandle((long) hf, 0);
+	//	filePtr = _fdopen(h, "r");
+	//	fclose(filePtr);
 }
 
 
 //-----------------------------------------------------------------------------
 // Take file path returned from microsoft createFile, put into fopen and return File Pointer
-FILE* nposFileDialog (const char* fileName, int dialogType, void* dataRef)
+int nposFileDialog( char* fileChosen, const char* initialDir,
+					  int dialogType, void* dataRef )
 {	
-	FILE *filePtr;
+	int i = 0;
 
 	switch (dialogType)
 	{
 		case kNPfileDialogNew :
-			nposFileDialog (fileName, kNPfileDialogOpen, dataRef);
+			i = nposFileDialog (fileChosen, initialDir, kNPfileDialogOpen, dataRef);
 			break;
 
 		case kNPfileDialogOpen : 
-			filePtr = OpenFileDialog (fileName, kNPfileDialogOpen, dataRef); 
+			i = OpenFileDialog (fileChosen, initialDir, kNPfileDialogOpen, dataRef); 
 			break;
 
 		case kNPfileDialogClose : 
-			nposFileDialog (fileName, kNPfileDialogSaveAs, dataRef);
+			i = nposFileDialog (fileChosen, initialDir, kNPfileDialogSaveAs, dataRef);
 			break;
 
 		case kNPfileDialogSave : 
-			nposFileDialog (fileName, kNPfileDialogSaveAs, dataRef); 
+			i = nposFileDialog (fileChosen, initialDir, kNPfileDialogSaveAs, dataRef); 
 			break;
 
 		case kNPfileDialogSaveAs : 
-			filePtr = SaveFileDialog(fileName); 
+			SaveFileDialog(fileChosen, initialDir); /// @todo make this return int
 			break;
 
 		case kNPfileDialogImport : 
-			nposFileDialog (fileName, kNPfileDialogOpen, dataRef);
+			i = nposFileDialog (fileChosen, initialDir, kNPfileDialogOpen, dataRef);
 			break;
 		case kNPfileDialogExport : 
-			nposFileDialog (fileName, kNPfileDialogSaveAs, dataRef); 
+			i = nposFileDialog (fileChosen, initialDir, kNPfileDialogSaveAs, dataRef); 
 			break;
 
 		default : break;
 	}
 
-	return filePtr;
+	return i;
 }
 
 //-----------------------------------------------------------------------------
@@ -496,13 +470,16 @@ void nposTimeStampName (char* fileName)
 bool WGLExtensionSupported (const char *extension_name)
 {
 /*  
-	http://stackoverflow.com/questions/589064/how-to-enable-vertical-sync-in-opengl
-	
-	// this is pointer to function which returns pointer to string with list of all wgl extensions
-    PFNWGLGETEXTENSIONSSTRINGEXTPROC _wglGetExtensionsStringEXT = NULL;
+Note that we will probably add GLEW lib to handle our extensions
 
-    // determine pointer to wglGetExtensionsStringEXT function
-    _wglGetExtensionsStringEXT = (PFNWGLGETEXTENSIONSSTRINGEXTPROC) wglGetProcAddress("wglGetExtensionsStringEXT");
+ http://stackoverflow.com/questions/589064/how-to-enable-vertical-sync-in-opengl
+	
+ pointer to a function that returns pointer to a string with all wgl extensions
+  PFNWGLGETEXTENSIONSSTRINGEXTPROC _wglGetExtensionsStringEXT = NULL;
+
+ // determine pointer to wglGetExtensionsStringEXT function
+ _wglGetExtensionsStringEXT =
+(PFNWGLGETEXTENSIONSSTRINGEXTPROC) wglGetProcAddress("wglGetExtensionsStringEXT");
 
     if (strstr(_wglGetExtensionsString(), extension_name) == NULL)
     {
@@ -514,14 +491,14 @@ bool WGLExtensionSupported (const char *extension_name)
 	return true;
 }
 
-//zz-JJ---------------------------------------------------------------------------
+//zz-JJ-------------------------------------------------------------------------
 void nposBeginThread (voidFnPtr vfp, void *dataRef)
 {
 	_beginthread (vfp, 0, dataRef);
 }
 
 
-//zz-JJ---------------------------------------------------------------------------
+//zz-JJ-------------------------------------------------------------------------
 void nposEndThread (void)
 {
 	_endthread();
@@ -531,9 +508,160 @@ bool nposSupportsAntzThreads (void)
 {
 	return 1;
 }
-
 //JJ-end
 
-#endif
+//------------------------------------------------------------------------------
+void npInitFileRef( pNPfileRef fileRef )
+{
+	if( fileRef == NULL )
+		return;
 
+	fileRef->handle = NULL;
+	fileRef->name = NULL;
+	
+	fileRef->isDir = false;
+	fileRef->sizeHi = 0;
+	fileRef->sizeLo = 0;
+}
+
+//------------------------------------------------------------------------------
+pNPfileRef nposNewFileRef( void* dataRef)
+{
+	pNPfileRef fileRef = NULL;
+	
+	fileRef = npMalloc( 0, sizeof(NPfileRef), dataRef );
+
+	npInitFileRef( fileRef );
+
+	return fileRef;
+}
+
+//------------------------------------------------------------------------------
+int nposFindNextFile( pNPfileRef fileRef )
+{
+	int result = 0;
+	
+	result = FindNextFile( fileRef->handle, &fileRef->fdFile );
+	if( !result )
+		return 0;
+
+	// FindFirstFile will return '.' and '..' as first two dir items.
+	if( strcmp( fileRef->fdFile.cFileName, ".") == 0 )
+		result = FindNextFile( fileRef->handle, &fileRef->fdFile );
+	if( !result )
+		return 0;
+
+	if( strcmp( fileRef->fdFile.cFileName, "..") == 0 )
+		result = FindNextFile( fileRef->handle, &fileRef->fdFile );
+	if( !result )
+		return 0;
+
+	fileRef->name = fileRef->fdFile.cFileName;
+	fileRef->isDir = fileRef->fdFile.dwFileAttributes &FILE_ATTRIBUTE_DIRECTORY;
+	fileRef->sizeHi = fileRef->fdFile.nFileSizeLow;
+	fileRef->sizeLo = fileRef->fdFile.nFileSizeHigh;
+
+	return result;
+}
+
+//------------------------------------------------------------------------------
+void nposFindClose( pNPfileRef fileRef, void* dataRef )
+{
+	FindClose( fileRef->handle );
+
+	npFree( fileRef, dataRef );
+}
+
+/// Takes a base directory path as argument and returns a handle to the first file
+//------------------------------------------------------------------------------
+int nposFindFirstFile( pNPfileRef fileRef, const char* dirPath, 
+					   const char* fileFilter, void* dataRef )
+{
+	int result = 0;
+    char sPath[kNPmaxPath];
+
+	// Specify the file mask as *.* to get everything!
+	sprintf( sPath, "%s/%s", dirPath, fileFilter );
+
+	fileRef->handle = FindFirstFile( sPath, &fileRef->fdFile);
+	if( fileRef->handle == INVALID_HANDLE_VALUE )
+    {
+        printf("err 7357 - Path not found: [%s]\n", dirPath);
+        return -1;
+    }
+
+	// FindFirstFile will return '.' and '..' as first two items.
+	if( strcmp( fileRef->fdFile.cFileName, ".") == 0 )
+	{	result = FindNextFile( fileRef->handle, &fileRef->fdFile );
+		if( !result )
+		{
+			printf("err 7358 - nposFindFirstFile nonsense: %s\n", dirPath);
+			return -1;
+		}
+	}
+
+	if( strcmp( fileRef->fdFile.cFileName, "..") == 0 )
+	{	result = FindNextFile( fileRef->handle, &fileRef->fdFile );
+		if( !result )
+			return 0;	//empty directory
+	}
+
+	fileRef->name = fileRef->fdFile.cFileName;
+	fileRef->isDir = fileRef->fdFile.dwFileAttributes &FILE_ATTRIBUTE_DIRECTORY;
+	fileRef->sizeHi = fileRef->fdFile.nFileSizeLow;
+	fileRef->sizeLo = fileRef->fdFile.nFileSizeHigh;
+
+	return 1;
+}
+
+
+//MSW file attributes
+/*
+
+ Use FileTimeToSystemTime() to convert FILETIME
+
+	DWORD dwFileAttributes;	
+    FILETIME ftCreationTime;
+    FILETIME ftLastAccessTime;
+    FILETIME ftLastWriteTime;
+    DWORD nFileSizeHigh;
+    DWORD nFileSizeLow;
+    DWORD dwReserved0;
+    DWORD dwReserved1;
+    CHAR   cFileName[ MAX_PATH ];
+    CHAR   cAlternateFileName[ 14 ];
+
+	#define FILE_SHARE_READ                 0x00000001  
+	#define FILE_SHARE_WRITE                0x00000002  
+	#define FILE_SHARE_DELETE               0x00000004  
+	#define FILE_ATTRIBUTE_READONLY             0x00000001  
+	#define FILE_ATTRIBUTE_HIDDEN               0x00000002  
+	#define FILE_ATTRIBUTE_SYSTEM               0x00000004  
+	#define FILE_ATTRIBUTE_DIRECTORY            0x00000010  
+	#define FILE_ATTRIBUTE_ARCHIVE              0x00000020  
+	#define FILE_ATTRIBUTE_DEVICE               0x00000040  
+	#define FILE_ATTRIBUTE_NORMAL               0x00000080  
+	#define FILE_ATTRIBUTE_TEMPORARY            0x00000100  
+	#define FILE_ATTRIBUTE_SPARSE_FILE          0x00000200  
+	#define FILE_ATTRIBUTE_REPARSE_POINT        0x00000400  
+	#define FILE_ATTRIBUTE_COMPRESSED           0x00000800  
+	#define FILE_ATTRIBUTE_OFFLINE              0x00001000  
+	#define FILE_ATTRIBUTE_NOT_CONTENT_INDEXED  0x00002000  
+	#define FILE_ATTRIBUTE_ENCRYPTED            0x00004000  
+	#define FILE_ATTRIBUTE_VIRTUAL              0x00010000  
+
+	HANDLE WINAPI FindFirstChangeNotification(
+							 _In_  LPCTSTR lpPathName,
+							 _In_  BOOL bWatchSubtree,
+							 _In_  DWORD dwNotifyFilter );
+
+	#define FILE_NOTIFY_CHANGE_FILE_NAME    0x00000001   
+	#define FILE_NOTIFY_CHANGE_DIR_NAME     0x00000002   
+	#define FILE_NOTIFY_CHANGE_ATTRIBUTES   0x00000004   
+	#define FILE_NOTIFY_CHANGE_SIZE         0x00000008   
+	#define FILE_NOTIFY_CHANGE_LAST_WRITE   0x00000010   
+*/
+
+
+#endif
 

@@ -47,6 +47,8 @@ void npNodeRemove (bool freeNode, pNPnode node, void* dataRef);
 
 void npSetTagOffset (pNPnode node);
 
+bool npSetSelectedNodes( int element, void* value, void* dataRef );
+
 pNPnode npGetActiveCam (void* dataRef);
 
 //void Spiral( int X, int Y);

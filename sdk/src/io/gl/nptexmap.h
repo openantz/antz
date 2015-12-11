@@ -35,8 +35,9 @@ void npUpdateTexMap (void* dataRef);
 
 void npLoadTextures(void* dataRef);
 
-/// Load texture file to the GPU, return the texture_id 
-int npLoadTexture( char* filePath, void* dataRef);
+int npLoadTexture( const char* filePath, int fileType, void* dataRef);
+
+int npSetTexture( int textureID, void* dataRef);
 
 int npScreenGrab( char* filePath, int type, int x, int y, int w, int h, void* dataRef);
 

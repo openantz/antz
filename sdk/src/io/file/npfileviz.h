@@ -28,7 +28,7 @@
 #include "../../npdata.h"
 
 //builds a node tree of the file directory structure
-int npNewDirTree (const char *basePath, pNPnode parent, int i, void* dataRef);
+int npNewFileViz (const char *basePath, pNPnode parent, int i, void* dataRef);
 
 #endif
 

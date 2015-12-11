@@ -1342,10 +1342,11 @@ int npLoadTags (const char* buffer, int size, void* dataRef)
 
 /// Get file type based on filename extension
 //------------------------------------------------------------------------------
-int npGetFileType(const char* filePath, void* dataRef)
+int npGetFileTypeCat( int* fileCategory, const char* filePath, void* dataRef )
 {
 	int i = 0, j = 0;
 	int filePathSize = 0;
+	int fileCatNull = 0;			/// dummy location to point to if NULL
 	char ext[kNPmaxName] = {'\0'};
 
 	filePathSize = strnlen( filePath, kNPmaxPath );
@@ -1355,6 +1356,9 @@ int npGetFileType(const char* filePath, void* dataRef)
 		npPostMsg( "err 2341 - kNPmaxPath exceeded", kNPmsgErr, dataRef );
 		return 0;
 	}
+
+	if( fileCategory == NULL )
+		fileCategory = &fileCatNull; // need to point to something
 
 	// find the last period in the path
 	i = filePathSize;
@@ -1372,46 +1376,142 @@ int npGetFileType(const char* filePath, void* dataRef)
 	{
 		ext[j] = filePath[i];
 		if (ext[j] >= 'A' && ext[j] <= 'Z')
-			ext[j] += 33;			//ASCII 'a' - 'A' = 33
+			ext[j] += 32;			//ASCII 'a' - 'A' = 32
 		i++; j++;
 	}
 
 	/// @todo upgrade file type identification with a hash table
-	//return the extension type
-	if( !strcmp(ext, "h")) return kNPfileH;
-	if( !strcmp(ext, "c")) return kNPfileC;
-	if( !strcmp(ext, "cpp")) return kNPfileCPP;
-	
+	// most (not all) filename extensions have 4 or less chars = could use int
+	// set the fileCategory and return the extension type
+	*fileCategory = kNPfileCatImage;
+	if (!strcmp(ext, "dds")) return kNPfileDDS; // these types here for speed
 	if (!strcmp(ext, "bmp")) return kNPfileBMP;
-	if (!strcmp(ext, "dds")) return kNPfileDDS;
 	if (!strcmp(ext, "gif")) return kNPfileGIF;
-	if (!strcmp(ext, "jp2")) return kNPfileJ2K;
 	if (!strcmp(ext, "jpg")) return kNPfileJPG;
 	if (!strcmp(ext, "jpeg")) return kNPfileJPG;
 	if (!strcmp(ext, "png")) return kNPfilePNG;
+
+	*fileCategory = kNPfileCatTable;
+	if (!strcmp(ext, "csv")) return kNPfileCSV;
+
+	*fileCategory = kNPfileCatCode;
+	if( !strcmp(ext, "h")) return kNPfileH;
+	if( !strcmp(ext, "c")) return kNPfileC;
+	if( !strcmp(ext, "cpp")) return kNPfileCPP;
+	if( !strcmp(ext, "py")) return kNPfilePY;
+	if( !strcmp(ext, "pyc")) return kNPfilePYC;
+	if( !strcmp(ext, "pyd")) return kNPfilePYC;
+	if( !strcmp(ext, "pyo")) return kNPfilePYC;
+	
+	*fileCategory = kNPfileCatText;
+	if (!strcmp(ext, "txt")) return kNPfileTXT;
+
+	*fileCategory = kNPfileCatWeb;
+	if (!strcmp(ext, "xml")) return kNPfileXML;
+	if (!strcmp(ext, "json")) return kNPfileJSON;
+	
+	*fileCategory = kNPfileCatBin;				// Executable binaries
+	if (!strcmp(ext, "exe")) return kNPfileEXE;
+	if (!strcmp(ext, "dll")) return kNPfileDLL;
+
+	*fileCategory = kNPfileCatImage;			// texture map images
+//	if (!strcmp(ext, "bmp")) return kNPfileBMP;
+//	if (!strcmp(ext, "dds")) return kNPfileDDS;
+//	if (!strcmp(ext, "gif")) return kNPfileGIF;
+	if (!strcmp(ext, "jp2")) return kNPfileJ2K;
+//	if (!strcmp(ext, "jpg")) return kNPfileJPG;
+//	if (!strcmp(ext, "jpeg")) return kNPfileJPG;
+//	if (!strcmp(ext, "png")) return kNPfilePNG;
+	if (!strcmp(ext, "psd")) return kNPfilePSD;
 	if (!strcmp(ext, "raw")) return kNPfileRAW;
 	if (!strcmp(ext, "tga")) return kNPfileTGA;
 	if (!strcmp(ext, "tif")) return kNPfileTIFF;
 	if (!strcmp(ext, "tiff")) return kNPfileTIFF;
+	if (!strcmp(ext, "cut")) return kNPfileCUT;
+	if (!strcmp(ext, "exr")) return kNPfileEXR;
+	if (!strcmp(ext, "rfg3")) return kNPfileRFG3;
+	if (!strcmp(ext, "hdr")) return kNPfileHDR;
+	if (!strcmp(ext, "ico")) return kNPfileICO;
+	if (!strcmp(ext, "iff")) return kNPfileIFF;
+	if (!strcmp(ext, "jbig")) return kNPfileJBIG;
+	if (!strcmp(ext, "jng")) return kNPfileJNG;
+	if (!strcmp(ext, "ms-photo")) return kNPfileJPGXR;
+	if (!strcmp(ext, "koa")) return kNPfileKOA;
+	if (!strcmp(ext, "ipe")) return kNPfileIPE;
+	if (!strcmp(ext, "mng")) return kNPfileMNG;
+	if (!strcmp(ext, "pcx")) return kNPfilePCX;
+	if (!strcmp(ext, "pbm")) return kNPfilePBM;
+	if (!strcmp(ext, "pgm")) return kNPfilePBM;
+	if (!strcmp(ext, "ppm")) return kNPfilePBM;
+	if (!strcmp(ext, "pict")) return kNPfilePICT;
+	if (!strcmp(ext, "ras")) return kNPfileRAS;
+	if (!strcmp(ext, "sgi")) return kNPfileSGI;
+	if (!strcmp(ext, "wbmp")) return kNPfileWBMP;
+	if (!strcmp(ext, "webp")) return kNPfileWEBP;
+	if (!strcmp(ext, "xbm")) return kNPfileXBM;
+	if (!strcmp(ext, "xpm")) return kNPfileXPM;
 
-	if (!strcmp(ext, "csv")) return kNPfileCSV;
-	if (!strcmp(ext, "txt")) return kNPfileTXT;
-	if (!strcmp(ext, "xml")) return kNPfileXML;
-	if (!strcmp(ext, "json")) return kNPfileJSON;
-
-	if (!strcmp(ext, "3ds")) return kNPfile3DS;
-	if (!strcmp(ext, "dae")) return kNPfileCollada;
+	*fileCategory = kNPfileCatModels;			// 3D models
 	if (!strcmp(ext, "kml")) return kNPfileKML;
+	if (!strcmp(ext, "dae")) return kNPfileDAE;
 	if (!strcmp(ext, "obj")) return kNPfileOBJ;
+	if (!strcmp(ext, "stl")) return kNPfileSTL;
+	if (!strcmp(ext, "ply")) return kNPfilePLY;
+	if (!strcmp(ext, "fbx")) return kNPfileFBX;
+	if (!strcmp(ext, "gltf")) return kNPfileGLTF;
+	if (!strcmp(ext, "glb")) return kNPfileGLTF;
+	if (!strcmp(ext, "blend")) return kNPfileBLEND;
+	if (!strcmp(ext, "3ds")) return kNPfile3DS;	
+	if (!strcmp(ext, "ase")) return kNPfileASE;
+	if (!strcmp(ext, "ifc")) return kNPfileIFC;
+	if (!strcmp(ext, "xgl")) return kNPfileXGL;
+	if (!strcmp(ext, "zgl")) return kNPfileXGL;
+	if (!strcmp(ext, "dxf")) return kNPfileDXF;
+	if (!strcmp(ext, "lwo")) return kNPfileLWO;
+	if (!strcmp(ext, "lws")) return kNPfileLWS;
+	if (!strcmp(ext, "lxo")) return kNPfileLXO;
+	if (!strcmp(ext, "x")) return kNPfileX;
+	if (!strcmp(ext, "ac")) return kNPfileAC;
+	if (!strcmp(ext, "ms3d")) return kNPfileMS3D;
+	if (!strcmp(ext, "cob")) return kNPfileCOB;
+	if (!strcmp(ext, "bvh")) return kNPfileBVH;
+	if (!strcmp(ext, "csm")) return kNPfileCSM;
+//	if (!strcmp(ext, "xml")) return kNPfileOXML;
+	if (!strcmp(ext, "irrmesh")) return kNPfileIRRMESH;
+	if (!strcmp(ext, "irr")) return kNPfileIRR;
+	if (!strcmp(ext, "mdl")) return kNPfileMDL;
+	if (!strcmp(ext, "md2")) return kNPfileMD2;
+	if (!strcmp(ext, "md3")) return kNPfileMD3;
+	if (!strcmp(ext, "pk3")) return kNPfilePK3;
+	if (!strcmp(ext, "mdc")) return kNPfileMDC;
+	if (!strcmp(ext, "md5")) return kNPfileMD5;
+	if (!strcmp(ext, "smd")) return kNPfileVTA;
+	if (!strcmp(ext, "vta")) return kNPfileVTA;
+	if (!strcmp(ext, "ogex")) return kNPfileOGEX;
+	if (!strcmp(ext, "3d")) return kNPfile3D;
+	if (!strcmp(ext, "b3d")) return kNPfileB3D;
+	if (!strcmp(ext, "q3d")) return kNPfileQ3D;
+	if (!strcmp(ext, "q3s")) return kNPfileQ3D;
+	if (!strcmp(ext, "nff")) return kNPfileNFF;
+//	if (!strcmp(ext, "nff")) return kNPfileS8NFF;
+	if (!strcmp(ext, "off")) return kNPfileOFF;
+	if (!strcmp(ext, "praw")) return kNPfilePRAW;
+	if (!strcmp(ext, "ter")) return kNPfileTER;
+	if (!strcmp(ext, "3mdl")) return kNPfile3MDL;
+	if (!strcmp(ext, "hmp")) return kNPfileHMP;
+	if (!strcmp(ext, "nod")) return kNPfileNDO;
 
+	*fileCategory = kNPfileCatAudio;				// Audio
 	if (!strcmp(ext, "aif")) return kNPfileAIFF;
 	if (!strcmp(ext, "aiff")) return kNPfileAIFF;
 
+	*fileCategory = kNPfileCatAV;					// AV (audio/video)
 	if (!strcmp(ext, "mxf")) return kNPfileMXF;
 
 	// printf( "undefined file extension: %s\n", ext );
+	*fileCategory = kNPfileCatNull;
 
-	return 0;	///< unknown file extension type
+	return kNPfileNull;	///< unknown file extension type
 }
 
 /// determines file format based on buffer contents
@@ -1567,11 +1667,14 @@ char* npGetType(int* type, int* format, const char* str, int size, void* dataRef
 
 	if (size < 40) 
 	{
-		npPostMsg("err 3459 - unknown file type, expected a CSV tag file", kNPmsgErr, dataRef);
+		npPostMsg("err 3459 - unknown file type", kNPmsgErr, dataRef);
 		*type = 0;
 		*format = 0;
 		return (char*)str;
 	}
+
+	//skip white space
+	str = npSkipWhiteSpace( str, size );
 
 	//first field should be 'id' the following fields vary
 	if( strncmp(str, "id,record_id,table_id,title,description", 39) == 0 
@@ -1582,11 +1685,11 @@ char* npGetType(int* type, int* format, const char* str, int size, void* dataRef
 		*type = kNPfileCSV;
 		*format = kNPmapTag;
 	}
-	else if (strncmp(str, "id", 2) != 0)
+	else if (0)//strncmp(str, "id", 2) != 0)/// @todo ??? shouldn't this be == 0
 	{
 		//add checking for CSV ver 1
-		curs = npNextLineLimit(str, size);
-		if (strncmp(&str[curs], "id,type,data,selected,parent_id,branch_level", 44) == 0)
+	//	curs = npNextLineLimit(str, size);
+		if( strncmp(&str[curs], "id,type,data,selected,parent", 28) == 0)
 		{
 			printf ("CSV Node File Ver: 2\n");	//add file version, debug zz
 			printf( "%.39s\n", str);
@@ -1599,9 +1702,10 @@ char* npGetType(int* type, int* format, const char* str, int size, void* dataRef
 			return (char*)str;
 		}
 	}
-	else if (strncmp(str, "id,type,data,selected,parent_id,branch_level", 44) == 0)
+	else if( strncmp( str, "id,type,data,selected,parent", 28) == 0 )  //detects ver 1 or 2
+	//	if (strncmp(str, "id,type,data,selected,parent_id,branch_level", 44) == 0) //ver 2
 	{
-		printf ("CSV Node File Ver: 2\n");
+		printf ("CSV node table\n");// Ver: 2\n");
 		printf( "%.39s\n", str);
 		*type = kNPfileCSV;
 		*format = kNPmapNode;
@@ -1620,10 +1724,16 @@ char* npGetType(int* type, int* format, const char* str, int size, void* dataRef
 		*type = kNPfileCSV;
 		*format = kNPmapTrack;
 	}
+	else if (strncmp(str,"np_globals_id,", 14) == 0)
+	{
+		printf ("CSV Globals File Ver: 1\n");
+		printf( "%.39s\n", str);
+		*type = kNPfileCSV;
+		*format = kNPmapGlobals;
+	}
 	else
 		return (char*)str;
 
-	//add kNPmapGlobals, kNPmapPathMap, kNPmap...						//zz debug
 
 	curs = npNextLineLimit(str, size);		
 	return (char*)&str[curs];
@@ -1718,6 +1828,8 @@ void npPostMap (pNPrecordSet recSet, void* dataRef)
 }
 
 //zz debug, read loop with circular buffer, separate str parsing threads
+/// @todo use multiple threads to parse and a single one to read/write
+// note that it is fastest to read one file per thread
 //thread the process
 //-----------------------------------------------------------------------------
 void npFileOpenThread (void* threadData)
@@ -1750,6 +1862,7 @@ void npFileOpenThread (void* threadData)
 
 	double startTime = nposGetTime();
 
+
 	//recordSet stores a list of the new records created
 	//used for processing the file blocks, attaching records, orphans...
 	recordSet = npMalloc(0, sizeof(NPrecordSet), data);
@@ -1763,15 +1876,15 @@ void npFileOpenThread (void* threadData)
 	splitBlock = npMalloc(kNPfileBlock, kNPfileBlockSize, data);
 	if (!splitBlock) goto postProcess;
 
-	//open file in read only mode "r"
+	// if no file ptr then open file in read only mode "r" using the path
 	if (!file)
 	{
-		sprintf(msg, "File Open: %s\n", filePath);
+		sprintf(msg, "File Open: %s", filePath);
 		npPostMsg(msg, kNPmsgCtrl, data);
 		file = npFileOpen(filePath, "r", data);
 		if (!file)
 		{
-			npPostMsg("err 4988 - cannot open file\n", kNPmsgErr, data);
+			npPostMsg("err 4988 - cannot open file", kNPmsgErr, data);
 			goto endPoint;
 		}
 	}
@@ -1784,11 +1897,27 @@ void npFileOpenThread (void* threadData)
 		goto postProcess;
 	total += count;
 
-	//identify format (CSV, JSON, XML, OSC... MySQL) and type (tag, node...)
-	npGetType(&format, &type, read, count, data);
+	//identify content type (CSV, XML, MySQL...) and table format (tag, node...)
+	npGetType( &format, &type, read, count, data );
 	recordSet->type = type;
 	
-	npPreLoadInit(recordSet, data);
+	if( !type )
+	{
+		npPostMsg( "err 4977 - unknown data type", kNPmsgErr, data );
+		goto postProcess;
+	}
+
+	/// @todo redo globals processing to be compatible with this function
+	if( type == kNPmapGlobals )
+	{
+		npFileClose( file, data);	//workaround
+		npOpenMapCSV( filePath, kNPmapGlobals, data);
+
+		goto endPoint;
+	}
+
+	// setup for reading node table
+	npPreLoadInit( recordSet, data );
 
 	if (type == kNPmapNode)												//zzhp
 		data->io.file.loading = true;
@@ -1880,7 +2009,7 @@ postProcess:
 	sprintf(msg, "sync time: %f secs", (nposGetTime() - startTime) );
 	npPostMsg(msg,kNPmsgCtrl,data);
 
-//	npPostTool( NULL, data );
+	//zz debug workaround for tag sync causing tool 'id: 19' bug
 	npMenuRefresh( NULL, data );
 
 endPoint:
@@ -1962,10 +2091,16 @@ int npTableMapUpdate (const char* filePath, FILE* file, void* dataRef)
 	return tableID;
 }
 
+
+/// @todo add methods for 3rd part tables
 //------------------------------------------------------------------------------
 int npFileOpenAuto (const char* filePath, FILE* file, void* dataRef)
 {
+	int fileType = 0, fileCat = 0;
+	int id = 0;
+
 	pData data = (pData) dataRef;
+	pNPmodels models;
 
 	//pData data = (pData) dataRef;
 	pNPthreadFile threadFile = NULL;
@@ -1977,75 +2112,31 @@ int npFileOpenAuto (const char* filePath, FILE* file, void* dataRef)
 	threadFile->file = file;
 	threadFile->dataRef = dataRef;
 
-	/* temp, lde @todo fix
-	if ( threadFile->filePath || !threadFile->file )
-	{
-		printf( "err 5558 - npdbGetMenu failed to allocate npNewStrcpy \n" );
-		return 2;
-	}
-	*/
-	
-
-	//store the filePath for the thread process to retrieve
-	//	strcpy (data->io.file.currentOpenPath, msg);
-//	while (gThreadTagFileLock) sleep(0.001);
-//	gThreadTagFileLock = true;
-//	gThreadFilePath = filePath;
-
+	fileType = npGetFileTypeCat( &fileCat, filePath, data );
 
 	//update the table_map for load, merge and/or update
 	npTableMapUpdate( filePath, file, data );
 
-	//now load the file from a new thread
-	nposBeginThread(npFileOpenThread, threadFile);
-
-	// npFileOpenThread(dataRef);
-
-// npFileOpenThread(threadFile);
-//	read->buffer = buffer;
-
-//	read->index = 0;
-//	read->lock = 0;
-//	read->size = kNPfileBufferSize;
-
-	//data->io.file.read.buffer = buffer;
-	//data->io.file.read.size = kNPfileBufferSize;
-	//
-	// data->io.file.read.index = buffer;
-	// data->io.file.read.lock = false;
-
-	//reads file blocks into buffer
-	//if file size > buffer then waits on buffer lock for processing 
-	//then overwrites un-locked region of the oldest data
-	//close file upon reaching EOF, buffer contents retained, exits thread
-//	npThread (npFileReadBlocks(file, buffer), dataRef);
-
-	//launch thread(s) to process file buffer contents
-	//sets buffer lock position based on blocks processed
-	//upon finishing buffer contents it then post-processess sorts and syncs
-//	npMultiThread (npThreadImportCSV(buffer, data), data);
-
-	//app loop continues while file processed in background
-
-//	return 1;
-
-/*
-	int format = 0;
-	format = kNPcsvTags;	//zz debug 
-	switch (format)
+	switch( fileCat )
 	{
-		case kNPformatAuto : break;
-		case kNPformatNodes : break;
-		case kNPformatTags : npMultiThread (npParseCSV(), buffer, data); break;
-		case kNPformatChMap : break;
-		case kNPformatChTracks : break;
-		case kNPformatGlobals : break;
+		case kNPfileCatImage :
+			if( id = npLoadTexture( filePath, fileType, data) )
+				npSetSelectedNodes( kNPtextureID, &id, data );
+			break;
+		case kNPfileCatTable :
+			nposBeginThread( npFileOpenThread, threadFile );
+			break;
+		case kNPfileCatModels :
+			if( models = npLoadModels( filePath, data ) )
+			{
+				npSetSelectedNodes( kNPgeometry, &models->geometryID, data );
+				npSetSelectedNodes( kNPtextureID, &models->textureID, data );
+			}
+			break;
 		default :
-			npPostMsg("err 2844 - unknown file format", kNPmsgErr, dataRef);	 
+			npPostMsg("err 4989 - File type not supported", kNPmsgErr, data);
 			break;
 	}
-*/
-
 	return 0;
 }
 

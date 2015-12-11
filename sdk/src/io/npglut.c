@@ -143,8 +143,10 @@ void npInitGlut (int argc, char **argv, void* dataRef)
 	glutSpecialUpFunc (npGlutKeyUpSpecial);
 	
 	//! register mouse events with GLUT
+	//glutEntryFunc( npMouseEntry );  //zz only works when clicking
 	glutMouseFunc (npMouseEvent);
 	glutMotionFunc (npMouseMotion);
+	glutPassiveMotionFunc( npMousePosition );
 #ifndef NP_OSX_														//zz-osx debug lde
 	glutMouseWheelFunc (npMouseWheel);
 #endif
@@ -384,8 +386,10 @@ void npglFullscreen (void* dataRef)
 
 
 			//register mouse events with GLUT
+			//glutEntryFunc( npMouseEntry );  //zz only works when clicking
 			glutMouseFunc (npMouseEvent);
 			glutMotionFunc (npMouseMotion);
+			glutPassiveMotionFunc( npMousePosition );
 
 			glutDisplayFunc (npGlutDrawGLScene);
 			glutIdleFunc (npGlutDrawGLSceneIdle);

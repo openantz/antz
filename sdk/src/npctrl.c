@@ -398,7 +398,7 @@ void npCtrlFile (int command, void* dataRef)
 	switch (command)
 	{
 		case kNPcmdFileNew :
-			npFileDialog (NULL, kNPfileDialogNew, dataRef);
+			npFileDialog( NULL, NULL, kNPfileDialogNew, dataRef);
 			break;
 
 		//navigate folders, files and DBs
@@ -432,7 +432,7 @@ void npCtrlFile (int command, void* dataRef)
 			break;
 		case kNPcmdFileViz :
 			npPostMsg( "Building FileViz Directory Tree", kNPmsgCtrl, data );
-			npNewDirTree( data->io.file.appPath, NULL, 0, dataRef );		//zz file tree
+			npNewFileViz( data->io.file.appPath, NULL, 0, dataRef );		//zz file tree
 			npPostMsg( "FileViz Done!", kNPmsgCtrl, data );
 			break;
 		case kNPcmdGitViz :
@@ -447,14 +447,14 @@ void npCtrlFile (int command, void* dataRef)
 			npFileBrowser (dataRef);
 			break;
 		case kNPcmdFileClose :
-			npFileDialog (NULL, kNPfileDialogClose, dataRef);
+			npFileDialog( NULL, NULL, kNPfileDialogClose, dataRef);
 			break;
 		case kNPcmdFileSave :
 			nposTimeStampName( name );
 			npSaveScene( kNPmapCSV, name, data );
 			break;
 		case kNPcmdFileSaveAs :
-			npFileDialog (NULL, kNPfileDialogSaveAs, dataRef);
+			npFileDialog( NULL, NULL, kNPfileDialogSaveAs, dataRef);
 			break;
 
 		case kNPcmdScreenGrab :
@@ -498,8 +498,8 @@ void npCtrlFile (int command, void* dataRef)
 				npFileOpenChSet (name, dataRef);
 			}
 			npPostTool (NULL, data);												//zz-s
-			break; //npFileDialog (NULL, kNPfileDialogImport, dataRef); break;
-		case kNPcmdFileExport : npFileDialog (NULL, kNPfileDialogExport, dataRef); break;
+			break;
+		case kNPcmdFileExport : npFileDialog( NULL, NULL, kNPfileDialogExport, dataRef); break;
 
 		case kNPcmdOpenURL : npOpenURL (NULL, dataRef); break;
 		case kNPcmdOpenNodeFile : npOpenNodeFile (NULL, dataRef); break;
@@ -826,20 +826,14 @@ void npCtrlSelect (int command, void* dataRef)
 			break;
 
 		case kNPcmdNext :
-			if (data->io.mouse.pickMode != kNPmodePin)
+			// if root camera or grid then select child
+			if( data->map.nodeRootIndex < kNPnodeRootPin
+				&& node->branchLevel == 0 )
 			{
-				data->io.mouse.pickMode = kNPmodePin;
-				npPostMsg("mode: Pin", kNPmsgCtrl, dataRef);
-				npPostTool (NULL, data);
-			}
-			if (data->map.nodeRootCount <= kNPnodeRootPin)		// if no nodes select cam
-			{
-				npSelectNode (data->map.currentCam, data);
+				npSelectNode( node->child[node->childIndex], data );
+				npSetCamTarget( data );
+				npPostNodeID( node, data );
 				break;
-			}
-			if (data->map.nodeRootIndex < kNPnodeRootPin)		//camera or grid selected
-			{
-				npSelectNode (data->map.selectedPinNode, data); //restore previous node
 			}
 			else
 			{
@@ -913,20 +907,14 @@ void npCtrlSelect (int command, void* dataRef)
 		case kNPcmdNextOff : break;
 
 		case kNPcmdPrev :
-			if (data->io.mouse.pickMode != kNPmodePin)
+			// if root camera or grid then select child
+			if( data->map.nodeRootIndex < kNPnodeRootPin
+				&& node->branchLevel == 0 )
 			{
-				data->io.mouse.pickMode = kNPmodePin;
-				npPostMsg("mode: Pin", kNPmsgCtrl, dataRef);
-				npPostTool (NULL, data);
-			}
-			if (data->map.nodeRootCount <= kNPnodeRootPin)		// if no nodes select cam
-			{
-				npSelectNode (data->map.currentCam, data);
+				npSelectNode( node->child[node->childIndex], data );
+				npSetCamTarget( data );
+				npPostNodeID( node, data );
 				break;
-			}
-			if (data->map.nodeRootIndex < kNPnodeRootPin)		//camera or grid selected
-			{
-				npSelectNode (data->map.selectedPinNode, data); //restore previous node
 			}
 			else
 			{
