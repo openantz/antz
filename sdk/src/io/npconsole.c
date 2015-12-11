@@ -1247,7 +1247,7 @@ void npConsoleCmd( pNPconsole console, void* dataRef )
 	else
 	{
 		console->selectText = true;
-		printf("TAG TEST!!!\n");
+		//printf("TAG TEST!!!\n");
 	}
 
 	npUpdateConsoleText( console, data );

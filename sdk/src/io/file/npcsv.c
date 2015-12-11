@@ -1343,7 +1343,7 @@ void* npMapItemPtr (char* mapPath, char* item, char* element, char* typeTag, voi
 }
 
 void npUpdateGlobals( void* dataRef );
-// update global states at startup and after loading datasets with globals
+/// update global states at startup and after loading datasets with globals
 //-----------------------------------------------------------------------------
 void npUpdateGlobals( void* dataRef )
 {
@@ -1351,24 +1351,24 @@ void npUpdateGlobals( void* dataRef )
 
 	pNPgl gl = &data->io.gl;
 
-	//don't sync if this is the startup load, gl context does NOT yet exist!
+	/// Don't sync if this is the startup load, GL context does NOT yet exist!
 	if ( data->ctrl.startup )
 		return;
 
-	printf( "full: %d  pos_x: %d  pos_y: %d  size_x: %d  size_y: %d\n",
-			gl->fullscreen,
-			gl->position.x,
-			gl->position.y,
-			gl->windowSize.x,
-			gl->windowSize.y );
+	printf( "fullscreen: %d  pos_x: %d  pos_y: %d  width: %d  height: %d\n",
+			gl->fullscreen, gl->position.x, gl->position.y,
+			gl->windowSize.x, gl->windowSize.y );
 
-	//queries current window mode //Removed GLUT_FULL_SCREEN replaced with 0x01FF
-	if ( glutGet( 0x01FF ) != gl->fullscreen )
+	/// Toggle fullscreen mode if does not match current state
+	if ( glutGet( GLUT_FULL_SCREEN ) != gl->fullscreen )
 	{
-	//	gl->fullscreen = 1 - gl->fullscreen;
-		npCtrlCommand( kNPcmdFullscreen, data ); // temp, lde
+		gl->fullscreen = 1 - gl->fullscreen;	 // reverse fullscreen flag
+		npCtrlCommand( kNPcmdFullscreen, data ); // command flips flag back
+		
+		return;		// exit to prevent resizing when in fullscreen mode
 	}
 	
+	/// Update window size and position if changed
 	if ( glutGet( GLUT_WINDOW_X ) != gl->position.x 
 		|| glutGet( GLUT_WINDOW_Y ) != gl->position.y
 		|| glutGet( GLUT_WINDOW_WIDTH ) != gl->windowSize.x
@@ -1385,27 +1385,6 @@ void npUpdateGlobals( void* dataRef )
 		glutReshapeWindow (gl->windowSize.x, gl->windowSize.y);
 		glutPositionWindow (gl->position.x, gl->position.y);
 	}
-
-
-/*				
-	if ( glutGet( GLUT_WINDOW_WIDTH ) != data->io.gl.width
-		 || glutGet( GLUT_WINDOW_HEIGHT ) != data->io.gl.height )
-		npGLResizeScene( data->io.gl.width, data->io.gl.height );
-*/
-
-/*
-	// if needed set fullscreen mode, size and position can be ignored
-	if ( data->io.gl.fullscreen != npGetFullscreenMode(data) )
-		npCtrlCommand( kNPcmdFullscreen, data );
-	else
-	{
-		// set window size and position, resizing also sets position
-		if ( data->io.gl.windowSize != npGetWindowSize(data) )
-			npResizeWindow(data);
-		else if ( data->io.gl.position != npGetWindowPosition(data) )
-			npMoveWindow(data);
-	}
-*/
 }
 
 /// @todo add parallel (threaded) file and database parsing routines

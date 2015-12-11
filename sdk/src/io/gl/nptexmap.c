@@ -25,12 +25,12 @@
 #include "nptexmap.h"
 
 #include "../../npdata.h"
-
 #include "../../os/npos.h"
-
 #include "../npglut.h"
+#include "../../data/npmapfile.h"
+#include "../file/npfreeimage.h"	// needs to be after other includes
 
-#include "SOIL.h"					//zz debug should just be SOIL.h
+#include "SOIL.h"					// used for DDS files and screengrab
 
 
 //------------------------------------------------------------------------------
@@ -51,75 +51,160 @@ void npUpdateTexMap (void* dataRef)							//add to ctrl loop, debug zz
 	return;
 }
 
-/// Load a texture map from the specified file path.
-int npLoadTexture( char* filePath, void* dataRef)
+/// Load a texture map from the specified file path of specified image type.
+/// If fileType = 0 then image type determined by the file extension.
+//------------------------------------------------------------------------------
+int npLoadTexture( const char* filePath, int fileType, void* dataRef)
 {
-	return 0;
+	int textureID = 0;
+	pData data = (pData) dataRef;
+
+	// determine the file type
+	if( !fileType )
+		fileType = npGetFileTypeCat( NULL, filePath, dataRef );
+
+	/// Using SOIL for efficient direct memory DDS file loading.
+	if( fileType == kNPfileDDS ) 
+	{
+		textureID = SOIL_load_OGL_texture ( filePath,
+			SOIL_LOAD_AUTO,
+			SOIL_CREATE_NEW_ID,
+			SOIL_FLAG_INVERT_Y |
+			SOIL_FLAG_MIPMAPS );	//disabling breaks RGBA textures
+	}
+	else	
+	{	/// Using FreeImage (addon) for all other image types.
+#ifdef NP_ADDON_FREEIMAGE
+	textureID = npfiLoadTexture( filePath, data );
+#else
+	textureID = SOIL_load_OGL_texture
+	(
+		filePath,
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_INVERT_Y |
+		SOIL_FLAG_MIPMAPS //|			//disabling breaks RGBA textures
+		// | SOIL_FLAG_NTSC_SAFE_RGB	//we want the entire RGB spectrum
+		// | SOIL_FLAG_COMPRESS_TO_DXT	//no lossy compression, faster too
+	);
+#endif
+	}
+
+	//the last texture loaded is the texture count, non-loads return a texture=0
+	if( textureID )
+		data->io.gl.textureCount = textureID;
+	else
+		printf ("err 4301 - failed to load image: %s\n", filePath);
+
+	return textureID;
 }
 
 //Textures, fonts, display lists, etc... can all be shared provided that:
 //All rendering contexts of a shared display list must use an identical pixel format.
 //http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=79299&page=1
 //wglShareLists() supports texture sharing across GL contexts
+/// @ todo update legacy support to use texture table to match map*.jpg to id
 //------------------------------------------------------------------------------
 void npLoadTextures(void* dataRef) 
 {
+	int i = 0;
+	int result = 0;
+	int fileType = 0;
 	int textureSize = 0;
 	int fileNumber = 1;
+
+	pNPfileRef fRef = NULL;
+
 	char* filename = (char*)malloc(4096);
 
-	unsigned int textureID;									// texture, debug zz
-
-											//zz debug, allow loading textures at runtime, 
-											//use data->io.file.mapPath
+	unsigned int textureID;		//zz debug, allow loading textures at runtime
+									//detect changes to data->io.file.mapPath
 	pData data = (pData) dataRef;
 
+
 	glGetIntegerv (GL_MAX_TEXTURE_SIZE, &textureSize);
+	data->io.gl.maxTextureSize = textureSize;
 	printf ("\nMax Texture Size: %dx%d\n", textureSize, textureSize);
-	printf ("Larger textures down converted\n", textureSize);
+	printf ("Loading Textures...\n");
+	//	printf ("Larger textures down converted\n", textureSize);
 
-	printf ("\nSearching For Textures\n");
-	// load our texture		// texture, debug zz
-	for (fileNumber = 1; fileNumber <= kNPtextureCountMax; fileNumber++)
-	{
-		//append the file number, deals with the leading zeros
-		if (fileNumber < 10)
-			sprintf (filename, "usr/images/map0000%d.jpg", fileNumber);
-		else if (fileNumber < 100)
-			sprintf (filename, "usr/images/map000%d.jpg", fileNumber);
-		else if (fileNumber < 1000)
-			sprintf (filename, "usr/images/map00%d.jpg", fileNumber);
-		else if (fileNumber < 10000)
-			sprintf (filename, "usr/images/map0%d.jpg", fileNumber);
+	fRef = nposNewFileRef( data );
 
-		textureID = SOIL_load_OGL_texture
-		(
-			filename,
-			SOIL_LOAD_AUTO,
-			SOIL_CREATE_NEW_ID,
-			SOIL_FLAG_INVERT_Y |
-			SOIL_FLAG_MIPMAPS //|			//disabling breaks RGBA textures
-			// | SOIL_FLAG_NTSC_SAFE_RGB	//we want the entire RGB spectrum
-			// | SOIL_FLAG_COMPRESS_TO_DXT	//no lossy compression, faster too
-		);																// texture, debug zz
-		
-		//the last texture loaded is the texture count, non-loads return a texture=0
-		if (textureID)
+	/// Legacy support where we first load map*.jpg files then all others
+	result = nposFindFirstFile( fRef, "usr/images/", "map*.jpg", data );
+	if( result != 1 )
+		return;		// err or empty folder
+
+	do
+    {
+		i++;
+
+		// print a few of the filenames then dots for every 100 files
+		if( i <= 5 )
+			printf( "%.70s\n", fRef->name );
+		else if( i < 100 || i % 100 == 0 )
+			printf( "." );
+
+		sprintf(filename, "%s/%s", "usr/images/", fRef->name );
+
+		// if Folder (not a file) then recursively call to create dir tree
+		if( fRef->isDir )
 		{
-			data->io.gl.textureCount = textureID;
-			printf ("Loaded textureID: %d\n", textureID);
+		//	npLoadTextures( sPath, data );			// recursion
 		}
-	}
+		else
+			textureID = npLoadTexture( filename, 0, data );
+    }
+	while( nposFindNextFile( fRef ) );	// next file within limits
 
-	if (data->io.gl.textureCount)
-		printf ("Done Loading Textures\n\n");
+	/// Now we load all other textures
+	result = nposFindFirstFile( fRef, "usr/images/", "*.*", data );
+	if( result != 1 )
+		return;		// err or empty folder
+
+	do
+    {
+		// handle legacy support by skipping the ones we just laoded
+		if( strncmp(fRef->name, "map", 3) == 0
+			&& npGetFileTypeCat(NULL, fRef->name, data) == kNPfileJPG )
+			continue;
+
+		i++;
+
+		// append current file/dir item to the basePath (parent dir)
+ //       sprintf(sPath, "%s/%s", basePath, fRef->fdFile.cFileName);
+
+		// print a few of the filenames then dots for every 100 files
+		if( i <= 5 )
+			printf( "%.70s\n", fRef->name );
+		else if(  i < 100 || i % 100 == 0 )
+			printf( "." );
+
+		sprintf(filename, "%s/%s", "usr/images/", fRef->name );
+
+		// if Folder (not a file) then recursively call to create dir tree
+		if( fRef->isDir )
+		{
+		//	npLoadTextures( sPath, data );			// recursion
+		}
+		else
+			textureID = npLoadTexture( filename, 0, data );
+    }
+	while( nposFindNextFile( fRef ) );	// next file within limits
+
+    nposFindClose( fRef, data );		// always clean up!
+
+	if( data->io.gl.textureCount )
+		printf ("\nDone Loading Textures\n\n");
 	else
-		printf ("Could Not Find Textures\n\n");
-
-	//zz debug, move this out to external thread worker wrapper function, zz debug
-//	nposEndThread();
+		printf ("No Textures Found!!!\n\n");
 }
 
+//------------------------------------------------------------------------------
+int npSetTexture( int textureID, void* dataRef)
+{
+	return 0;
+}
 
 /// grabs back buffer from current OpenGL context
 /// this function needs to be called just before glSwapBuffers()

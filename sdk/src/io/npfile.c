@@ -32,14 +32,11 @@
 #include "../io/gl/nptags.h"
 #include "file/npdot.h"		   //<! parses DOT files from doxygen with graphviz
 
-//-----------------------------------------------------------------------------
-FILE* npGetFileRef (int index)
-{
-	static FILE* file[kNPfileMax];
-	static FILE* fileCount = 0;
 
-	return file[index];
-}
+bool npValidateURL( const char* urlASCII, void* dataRef );
+bool npNodeFilePath( char* buildPath, pNPnode node, void* dataRef );
+bool npOpenNodeFile( pNPnode node, void* dataRef );
+bool npOpenNode( pNPnode node, void* dataRef );
 
 
 //-----------------------------------------------------------------------------
@@ -92,6 +89,15 @@ void npCloseFile (void* dataRef)
 //	terminate all file io threads gracefully then kill if needed
 //	iterate through and close all open files
 	return;
+}
+
+//-----------------------------------------------------------------------------
+FILE* npGetFileRef (int index)
+{
+	static FILE* file[kNPfileMax];
+	static FILE* fileCount = 0;
+
+	return file[index];
 }
 
 //-----------------------------------------------------------------------------
@@ -156,36 +162,43 @@ FILE* npFileNew (const char* fileName, const char* mode, void* dataRef)
 
 //zz replace the OS file dialog with custom in GL
 //-----------------------------------------------------------------------------
-FILE* npFileDialog (const char* fileName, int dialogType, void* dataRef)
+int npFileDialog( char* fileChosen, const char* initialDir, 
+					int dialogType, void* dataRef )
 {	
-	FILE* file = NULL;
+	int i = 0;
+	char nullStr[kNPmaxPath] = {'\0'};
+	char* filePath = nullStr;
+
+	// points to dummy nullStr if no fileChosen otherwise point to fileChosen
+	if( fileChosen != NULL )
+		filePath = fileChosen;
 
 	switch (dialogType)
 	{
 		case kNPfileDialogNew : 
-			file = nposFileDialog (fileName, dialogType, dataRef); break;
+			i = nposFileDialog (filePath, initialDir, dialogType, dataRef); break;
 
 		case kNPfileDialogOpen : 
-			file = nposFileDialog (fileName, dialogType, dataRef); break; // temp, lde
-			//file = OpenFileDialog(fileName, dialogType, dataRef); break;
+			i = nposFileDialog (filePath, initialDir, dialogType, dataRef); break;
 		case kNPfileDialogClose : 
-			file = nposFileDialog (fileName, dialogType, dataRef); break;
+			i = nposFileDialog (filePath, initialDir, dialogType, dataRef); break;
 
 		case kNPfileDialogSave : 
-			file = nposFileDialog (fileName, dialogType, dataRef); break;
+			i = nposFileDialog (filePath, initialDir, dialogType, dataRef); break;
 		case kNPfileDialogSaveAs : 
-			file = nposFileDialog (fileName, dialogType, dataRef); break;
+			i = nposFileDialog (filePath, initialDir, dialogType, dataRef); break;
 
 		case kNPfileDialogImport : 
-			file = nposFileDialog (fileName, dialogType, dataRef); break;
+			i = nposFileDialog (filePath, initialDir, dialogType, dataRef); break;
 		case kNPfileDialogExport : 
-			file = nposFileDialog (fileName, dialogType, dataRef); break;
+			i = nposFileDialog (filePath, initialDir, dialogType, dataRef); break;
 
 		// pass through unknown dialog types to the os file handler
-		default : file = nposFileDialog (fileName, dialogType, dataRef); break;
+		default :
+			i = nposFileDialog (filePath, initialDir, dialogType, dataRef); break;
 	}
 
-	return file;
+	return i;
 }
 
 //-----------------------------------------------------------------------------
@@ -285,7 +298,6 @@ void npSave (FILE* file, void* dataRef)
 }
 
 
-
 //-----------------------------------------------------------------------------
 void npSaveAs (int size, void* dataRef)
 {
@@ -295,7 +307,7 @@ void npSaveAs (int size, void* dataRef)
 
 //	file = npGetOpenFilePath(file, size, dataRef);
 
-	npFileDialog (NULL, kNPfileDialogSaveAs, dataRef);
+	npFileDialog( NULL, NULL, kNPfileDialogSaveAs, dataRef);
 
 	// if file invalid call err dialog
 	// save current state to file named by user
@@ -423,7 +435,6 @@ void npOpenAntz (const char* command, void* dataRef)
 
 //url str in ASCII text, must be null terminated '\0' cstr
 //returns true if starts with 'http' or '<a '		  //zz debug build this out
-bool npValidateURL( const char* urlASCII, void* dataRef );
 //-----------------------------------------------------------------------------
 bool npValidateURL( const char* urlASCII, void* dataRef )
 {
@@ -436,7 +447,6 @@ bool npValidateURL( const char* urlASCII, void* dataRef )
 }
 
 #define kNPmaxFolderDepth 128
-bool npNodeFilePath( char* buildPath, pNPnode node, void* dataRef );
 //-----------------------------------------------------------------------------
 bool npNodeFilePath( char* buildPath, pNPnode node, void* dataRef )
 {
@@ -473,49 +483,51 @@ bool npNodeFilePath( char* buildPath, pNPnode node, void* dataRef )
 	return true;
 }
 
-bool npOpenNodeFile( pNPnode node, void* dataRef );
+/// Open native file types in the app, others opened with OS default handler.
+/// URL paths are opened using the OS default browser.
+/// The OSX 'open' or MSW 'start' command opens a file (or a directory or URL),
+/// just as if you had double-clicked the file's icon. If no application name
+/// is specified, the default application as determined via LaunchServices is
+/// used to open the specified files.
 //-----------------------------------------------------------------------------
 bool npOpenNodeFile( pNPnode node, void* dataRef )
 {
-	int result = false;
+	int fileType = 0, fileCat = 0;
 
-	char sysCmd[kNPurlMax + 8];	//+8 for 'start '...url
-	char buildPath[kNPurlMax];
+	char nodePath[kNPurlMax];
+	char browserURL[kNPurlMax + 9];	// +9 for 'xdg-open ' followed by URL
 
-	if ( npNodeFilePath( buildPath, node, dataRef ) )
+	if ( npNodeFilePath( nodePath, node, dataRef ) )
 	{
-		//tell the user
-		npPostMsg( buildPath, kNPmsgFile, dataRef );
+		npPostMsg( nodePath, kNPmsgFile, dataRef );	//tell the user
 
-		// lde, @todo generalize this to be os independent
-		//open with antz or open using system default app for file type
-		if(0) // ".csv" || ".CSV"
-		{}
-		else
-		{		// call system to open file using default app
-			printf( "%s\n", &buildPath[strlen(buildPath) - 4] == 0 );
+		fileType = npGetFileTypeCat( &fileCat, nodePath, dataRef );
 
-			if( strncmp( ".exe", &buildPath[strlen(buildPath) - 4], 4 ) == 0
-			  || strncmp( ".bat", &buildPath[strlen(buildPath) - 4], 4 ) == 0 )
-			{
-				sprintf( sysCmd, "%s", buildPath );
-			}
-			else if ( strncmp( ".csv", &buildPath[strlen(buildPath) - 4], 4 ) == 0 )
-			{
-				return npFileOpenAuto( buildPath, NULL, dataRef );
-			}
-			else
-				sprintf( sysCmd, "start %s", buildPath );
-			
-			system ( sysCmd );
-			return true;
-		}
-	}
+		switch( fileCat )
+		{
+			case kNPfileCatBin :	///< Run executable files directly.
+				system( nodePath );
+				break;
+			case kNPfileCatTable :	///< Open CSV tables within app.
+				npFileOpenAuto( nodePath, NULL, dataRef );
+				break;
+			default :	///< URL and other files opened with default OS handler
+#ifdef NP_MSW_				
+				sprintf( browserURL, "start %s", nodePath );
+#endif
+#ifdef NP_OSX_				
+				sprintf( browserURL, "open %s", nodePath );
+#endif
+#ifdef NP_LINUX_				
+				sprintf( browserURL, "xdg-open %s", nodePath );
+#endif 
+				system ( browserURL );
+				break;
+	}	}
 
-	return false;
+	return true;
 }
 
-bool npOpenNode( pNPnode node, void* dataRef );
 //-----------------------------------------------------------------------------
 bool npOpenNode( pNPnode node, void* dataRef )
 {
@@ -542,33 +554,37 @@ bool npOpenNode( pNPnode node, void* dataRef )
 //------------------------------------------------------------------------------
 void npFileBrowser( void* dataRef )
 {
-	FILE* file = NULL;
+	int result = false;
+	static firstTime = true;
+	char* initialDir = NULL;
+	//FILE* file = NULL;
+	char filePath[kNPmaxPath] = {'\0'};
 
 	pData data = (pData) dataRef;
 
-	//if node is a URL, DB rec or file path it will open it or run system app
-	if ( npOpenNode( data->map.currentNode, data ) )
-		return;
-
-	//leave fullscreen so the OS file dialog box isn't fighting to be on top
-	if( data->io.gl.fullscreen )										//zz debug workaround
+	/// First time we open the dialog to the 'usr/csv' folder.
+	/// After that we open the previous location chosen by the user, using NULL.
+	//zz debug, not working with W7
+	if( firstTime )
+	{
+		initialDir = data->io.file.csvPath;
+		firstTime = false;
+	}
+	
+	/// Leave fullscreen so the OS file dialog box isn't fighting to be on top.
+	if( data->io.gl.fullscreen )
 	{	
 		npCtrlCommand( kNPcmdFullscreen, data );
-		file = npFileDialog( data->io.file.csvPath, kNPfileDialogOpen, data );
+		result = npFileDialog( filePath, initialDir, kNPfileDialogOpen, data );
 		npCtrlCommand( kNPcmdFullscreen, data );
 	}
 	else
-		file = npFileDialog( NULL, kNPfileDialogOpen, data );
-
-	npFileOpenAuto( NULL, file, data );
-//	npCSVtoMap (file, kNPmapNode, dataRef);								//zz debug move this
-	npPostTool( NULL, data );											//zz-s debug, remove... or change defaults
+		result = npFileDialog( filePath, initialDir, kNPfileDialogOpen, data );
 	
-	printf( "Sync Tags...\n" );
-		npSyncTags( dataRef );											//zz debug upgrade this
-		npPostMsg( "Sync Done!", kNPmsgCtrl, dataRef );
-
-	return;
+	if( !result )
+		npPostMsg ("File Dialog Cancelled", kNPmsgCtrl, dataRef);
+	else
+		npFileOpenAuto( filePath, NULL, data );
 }
 
 //zz-JJ
@@ -628,29 +644,30 @@ void npFileOpenChSet (const char* filePath, void* dataRef)
 int npSaveScene( int format, char* datasetName, void* dataRef)
 {
 	int		result = 0;
-//	char	msg[256];
+	pData data = (pData) dataRef;
+//	char* name[kNPmaxName] = {'\0'};
 
-	pData data =(pData) dataRef;
+	/// @todo create directory file sets with tables, images and 3D models
+	// file set based on (user) selected table types
+	//	if ( data->io.file.saveMapSet[kNPmapGlobals] )
 
-	//file set based on (user) selected table types
-//	if ( data->io.file.saveMapSet[kNPmapGlobals] )
-
+	// if( !datasetName )
 //		sprintf( filePath, "%s%s%s", dirPath, name, "globals.csv" );
 //		sprintf( msg, "Saving: %s", filePath );
 //		npPostMsg( msg, kNPmsgCtrl, data );
 
-	//	data->io.gl.screenGrab = 2;	//zz debug triggers a screenGrab timestamp not synced!!!		
-		npScreenGrabThumb( datasetName, kNPformatDDS,
-							0, 0, kNPthumbWidth, kNPthumbHeight, data );
+	npScreenGrabThumb( datasetName, kNPformatDDS,
+						0, 0, kNPthumbWidth, kNPthumbHeight, data );
 
-		result += npSaveMapToCSV( datasetName, kNPmapGlobals, data );
-	
-		result += npSaveMapToCSV( datasetName, kNPmapNode, data );
+	result += npSaveMapToCSV( datasetName, kNPmapGlobals, data );
 
-		result += npSaveMapToCSV( datasetName, kNPmapTag, data );
+	result += npSaveMapToCSV( datasetName, kNPmapNode, data );
+
+	result += npSaveMapToCSV( datasetName, kNPmapTag, data );
 
 	return result;
 }
+
 /*
 int npOpenCSV( int format, char* datasetName, void* dataRef );
 //------------------------------------------------------------------------------
@@ -785,23 +802,14 @@ int npLoadScene( int format, char* datasetName, void* dataRef)
 	dirPath = data->io.file.csvPath;
 	data->io.file.loading = true;
 
- //   listdir(".", 0);
-
-//ListDirectoryContents("C:\\data\\code\\antz\\sdk", dataRef);
-//	ListDirectoryContents("C:/data/code/antz/sdk", dataRef);
-	
-// npNewDirTree("C:/data/code", NULL, dataRef);
-//	npNewDirTree(data->io.file.appPath, NULL, dataRef);
-
-	//	npSelectNode( node, data );
-
+	//zz could list directory contents and/or display dir node tree
 
 	sprintf( filePath, "%s%s%s%s", dirPath, datasetName, 
 			npMapTypeName( kNPmapGlobals, data ), ".csv" );
-	
 	sprintf( msg, "Loading: %s", filePath );
 	npPostMsg( msg, kNPmsgCtrl, data );
-	result += npOpenGlobalsCSV( filePath, 1, 15, data );
+	//result += npFileOpenAuto( filePath, NULL, data );	// fullscreen issue #111
+	result += npOpenGlobalsCSV( filePath, 1, 0, data );
 
 	sprintf( filePath, "%s%s%s%s", dirPath, datasetName, 
 			npMapTypeName( kNPmapNode, data ), ".csv" );

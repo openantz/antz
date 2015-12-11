@@ -110,6 +110,30 @@ void npSetTagOffset (pNPnode node)
 	}
 }
 
+/// 
+//-----------------------------------------------------------------------------
+bool npSetSelectedNodes( int element, void* value, void* dataRef )
+{
+	pData data = (pData) dataRef;
+	pNPnode node = data->map.currentNode;
+
+	switch( element )
+	{
+		case kNPgeometry :
+			node->geometry = *(int*)value;
+			break;
+		case kNPtextureID :
+			node->textureID = *(int*)value;
+			break;
+		default :
+			npPostMsg( "err 4486 - unknown node element", kNPmsgErr, data);
+			return false;
+			break;
+	}
+
+	return true;
+}
+
 // http://stackoverflow.com/questions/3437404/min-and-max-in-c
 // http://stackoverflow.com/questions/398299/looping-in-a-spiral
 // returns the XY coordinate of the item placed by id

@@ -44,7 +44,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../libs/curl/include/curl;../../libs/jansson/src;../../libs/freeglut/include/GL;../../libs/oscpack/src;../../libs/soil/src;../../libs/mysql/include/"
+				AdditionalIncludeDirectories="../../libs/curl/include/curl;../../libs/jansson/src;../../libs/freeglut/include/GL;../../libs/oscpack/src;../../libs/soil/src;../../libs/mysql/include/;../../libs/freeimage/x32"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;BUILDING_LIBCURL;DEBUGBUILD;USE_WINDOWS_SSPI;USE_SCHANNEL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -65,9 +65,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib SOIL.lib libmysql.lib mysqlclient.lib libcurld.lib jansson_d.lib wldap32.lib ws2_32.lib"
+				AdditionalDependencies="opengl32.lib glu32.lib SOIL.lib libmysql.lib mysqlclient.lib libcurld.lib jansson_d.lib wldap32.lib ws2_32.lib FreeImage.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;../../libs/curl/build/Win32/VC9/LIB Debug - DLL Windows SSPI&quot;;../../libs/freeglut/lib/x86;../../libs/oscpack;../../libs/mysql;../../libs/soil/lib;../../libs/jansson/make/lib/Debug"
+				AdditionalLibraryDirectories="&quot;../../libs/curl/build/Win32/VC9/LIB Debug - DLL Windows SSPI&quot;;../../libs/freeglut/lib/x86;../../libs/oscpack;../../libs/mysql;../../libs/soil/lib;../../libs/jansson/make/lib/Debug;../../libs/freeimage/x32"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
@@ -125,7 +125,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="../../libs/curl/include/curl;../../libs/jansson/src;../../libs/freeglut/include/GL;../../libs/oscpack/src;../../libs/soil/src;../../libs/mysql/include/"
+				AdditionalIncludeDirectories="../../libs/curl/include/curl;../../libs/jansson/src;../../libs/freeglut/include/GL;../../libs/oscpack/src;../../libs/soil/src;../../libs/mysql/include/;../../libs/freeimage/x32"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;CURL_STATICLIB;BUILDING_LIBCURL;USE_WINDOWS_SSPI;USE_SCHANNEL"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -145,10 +145,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib SOIL.lib libmysql.lib mysqlclient.lib ws2_32.lib libcurl.lib jansson.lib wldap32.lib"
+				AdditionalDependencies="opengl32.lib glu32.lib SOIL.lib libmysql.lib mysqlclient.lib ws2_32.lib libcurl.lib jansson.lib wldap32.lib FreeImage.lib"
 				OutputFile="$(OutDir)\..\..\..\..\$(ProjectName).exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../libs/jansson/make/lib/Release;&quot;../../libs/curl/build/Win32/VC9/LIB Release - DLL Windows SSPI&quot;;../../libs/freeglut/lib/x86;../../libs/oscpack;../../libs/soil/lib;../../libs/mysql"
+				AdditionalLibraryDirectories="../../libs/jansson/make/lib/Release;&quot;../../libs/curl/build/Win32/VC9/LIB Release - DLL Windows SSPI&quot;;../../libs/freeglut/lib/x86;../../libs/oscpack;../../libs/soil/lib;../../libs/mysql;../../libs/freeimage/x32"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				LargeAddressAware="2"
@@ -612,6 +612,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\src\io\file\npfreeimage.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\file\npfreeimage.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\io\file\npgdal.c"
 						>
 					</File>
@@ -633,6 +641,14 @@
 					</File>
 					<File
 						RelativePath="..\..\src\io\file\npkml.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\file\npmodels.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\file\npmodels.h"
 						>
 					</File>
 					<File
@@ -1379,10 +1395,54 @@
 				<Filter
 					Name="jansson"
 					>
+					<File
+						RelativePath="..\..\libs\jansson\make\include\jansson.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\jansson\make\include\jansson_config.h"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="curl"
 					>
+					<File
+						RelativePath="..\..\libs\curl\include\curl\curl.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\curl\include\curl\curlbuild.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\curl\include\curl\curlrules.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\curl\include\curl\curlver.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\curl\include\curl\easy.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\curl\include\curl\mprintf.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\curl\include\curl\multi.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\curl\include\curl\stdcheaders.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\curl\include\curl\typecheck-gcc.h"
+						>
+					</File>
 				</Filter>
 			</Filter>
 		</Filter>

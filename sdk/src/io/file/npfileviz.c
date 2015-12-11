@@ -24,88 +24,64 @@
 
 #include "npfileviz.h"
 
+#include "../../os/npos.h"
 #include "../../data/npmapfile.h"
 #include "../npgl.h"
 #include "SOIL.h"
 
 void npPathNameToTag (pNPnode node, char* path, void* dataRef );
-pNPnode npNewDirNode (pNPnode parent, char* path, int type, int view, void* dataRef);
+pNPnode npNewFileVizNode (pNPnode parent, char* path, int type, int view, void* dataRef);
 
-/// @todo separate out OS specific code and texture loading
 
-//builds a node tree of the file directory structure
-//---------------------------------------------------------------------------
-int npNewDirTree (const char *basePath, pNPnode parent, int i, void* dataRef)
+/// Recursively build node trees of the directory structure
+//------------------------------------------------------------------------------
+int npNewFileViz (const char *basePath, pNPnode parent, int i, void* dataRef)
 {
-    WIN32_FIND_DATA fdFile;
-    HANDLE hFind = NULL;
+	int result = 0;
+	pNPfileRef fRef = NULL;
 
     char sPath[kNPmaxPath];
-	bool isDir = false;
-	
-	unsigned long fileSizeHi = 0;
-	unsigned long fileSizeLo = 0;
 
-	int maxItems = 0;	//maximum total items to add
-	int depth = 0;		//how many levels deep to go
-	int breadth = 0;	//how wide (siblings) to go
-						//zz add advanced tree search/filter/query logic
-
-	int loadFamiliarFiles = 0;		//zz upgrade with filter logic
-	int viewContents = true;		//preview of file contents
+	//zz add advanced tree search/filter/query logic
+	int maxItems = kNPnodeMax;	//maximum total items to add
+	int depth = 27;				//how many directory levels deep to go
+	int breadth = 1024;			//how many items per directory to display
 
 	pData data = (pData) dataRef;
 	pNPnode node = NULL;
 
-    //Specify a file mask. *.* = We want everything!
-    sprintf(sPath, "%s/*.*", basePath);
-//	sprintf(sPath, "%s\\*.*", basePath);
+	fRef = nposNewFileRef( data );
 
-    if((hFind = FindFirstFile(sPath, &fdFile)) == INVALID_HANDLE_VALUE)
-    {
-        printf("err 7357 - Path not found: [%s]\n", basePath);
-        return false;
-    }
+	result = nposFindFirstFile( fRef, basePath, "*.*", data );
+	if( result != 1 )
+		return false;	// err or empty folder
 
-    do
+	do
     {
 		i++;
 
-		isDir = fdFile.dwFileAttributes &FILE_ATTRIBUTE_DIRECTORY;
-		fileSizeHi = fdFile.nFileSizeLow;
-		fileSizeLo = fdFile.nFileSizeHigh;
+		// append current file/dir item to the basePath (parent dir)
+        sprintf(sPath, "%s/%s", basePath, fRef->fdFile.cFileName);
 
-        //Find first file will always return "."
-        //    and ".." as the first two directories.
-        if(strcmp(fdFile.cFileName, ".") != 0
-                && strcmp(fdFile.cFileName, "..") != 0)
-        {
-            //append current file/dir item to the basePath (parent dir)
-            sprintf(sPath, "%s/%s", basePath, fdFile.cFileName);    // "%s\\%s"
-				// printf("fullPath: %s\n", sPath);
+		// create a new node with parameters based on the file attributes
+		node = npNewFileVizNode( parent, sPath, fRef->isDir, true, data );
 
-			node = npNodeNew( kNodePin, parent, dataRef );
-			node->size = (int)fileSizeLo;
-			
-			npPathNameToTag( node, sPath, dataRef );		//set the nodes tag title
-	
-			npNewDirNode( node, sPath, isDir, true, dataRef );		//apply file attrib's to node
-	
-			if( i <= 12 )
-				printf( "id: %6d level: %2d name: %.50s\n",
-						node->id, node->branchLevel,
-						&node->tag->title[node->tag->labelHead] );
-			else if( i % 100 == 0 )
-				printf( "." );			///< print a dot every 100 files
+		// print a few of the filenames then dots for every 100 files
+		if( i <= 12 )
+			printf( "id: %7d level: %2d name: %.50s\n",
+					node->id, node->branchLevel, fRef->fdFile.cFileName );
+		else if( i % 100 == 0 )
+			printf( "." );
 
-			//if Folder (not file) then recursively call to create dir tree
-			if( isDir )
-				 npNewDirTree( sPath, node, i, dataRef ); //Recursion, I love it!
-		}
+		// if Folder (not a file) then recursively call to create dir tree
+		if( fRef->isDir && node->branchLevel < depth )
+			 npNewFileViz( sPath, node, i, data );			// recursion
     }
-    while( FindNextFile( hFind, &fdFile) ); //Find the next file.
+	while( nposFindNextFile( fRef )
+			&& i < breadth
+			&& data->map.nodeCount < maxItems );	// next file within limits
 
-    FindClose( hFind); //Always, Always, clean things up!
+    nposFindClose( fRef, data );		// always clean up!
 
     return true;
 }
@@ -167,7 +143,7 @@ void npPathNameToTag( pNPnode node, char* path, void* dataRef )
 //default file type = 0 and dir = 1, app/exe = 2, file.txt = 3, csv, jpg.. 
 
 //---------------------------------------------------------------------------
-pNPnode npNewDirNode( pNPnode node, char* path, int type, int view, void* dataRef )
+pNPnode npNewFileVizNode( pNPnode parent, char* path, int type, int view, void* dataRef )
 {
 	int fileType = 0;
 	int texID = 0;
@@ -175,7 +151,17 @@ pNPnode npNewDirNode( pNPnode node, char* path, int type, int view, void* dataRe
 	char fileName[kNPmaxName] = {'\0'};
 	
 	pData data = (pData) dataRef;
-	pNPtag tag = node->tag;
+	pNPnode node = NULL;
+	pNPtag tag = NULL;
+
+	node = npNodeNew( kNodePin, parent, data );
+	tag = node->tag;
+	//node->size = (int)fRef->sizeLo;
+		
+	npPathNameToTag( node, path, data );		//set the nodes tag title
+
+//	node = parent;
+//	tag = node->tag;
 
 	//set node attrib's based on file path, name, type, size, date, content
 	if ( type )//== kNPfileDir )
@@ -214,9 +200,9 @@ pNPnode npNewDirNode( pNPnode node, char* path, int type, int view, void* dataRe
 	strncat( fileName, &tag->title[tag->labelHead], 
 			 (tag->labelTail - tag->labelHead + 1) );
 
-	fileType = npGetFileType(fileName, dataRef);
+	fileType = npGetFileTypeCat( NULL, fileName, dataRef );
 //	printf( "%d   %s\n", fileType, fileName );
-	switch( fileType )//npGetFileType(fileName, dataRef) )
+	switch( fileType )
 	{
 		case kNPfileH :
 			//tokenize #define #include and function declarations
@@ -307,49 +293,4 @@ pNPnode npNewDirNode( pNPnode node, char* path, int type, int view, void* dataRe
 	//node->color.a = (unsigned char)( 256.0f * timeSinceUpdated / timeRange );
 	return node;
 }
-
-
-//MSW file attributes
-/*
-	DWORD dwFileAttributes;	
-    FILETIME ftCreationTime;
-    FILETIME ftLastAccessTime;
-    FILETIME ftLastWriteTime;
-    DWORD nFileSizeHigh;
-    DWORD nFileSizeLow;
-    DWORD dwReserved0;
-    DWORD dwReserved1;
-    CHAR   cFileName[ MAX_PATH ];
-    CHAR   cAlternateFileName[ 14 ];
-
-	#define FILE_SHARE_READ                 0x00000001  
-	#define FILE_SHARE_WRITE                0x00000002  
-	#define FILE_SHARE_DELETE               0x00000004  
-	#define FILE_ATTRIBUTE_READONLY             0x00000001  
-	#define FILE_ATTRIBUTE_HIDDEN               0x00000002  
-	#define FILE_ATTRIBUTE_SYSTEM               0x00000004  
-	#define FILE_ATTRIBUTE_DIRECTORY            0x00000010  
-	#define FILE_ATTRIBUTE_ARCHIVE              0x00000020  
-	#define FILE_ATTRIBUTE_DEVICE               0x00000040  
-	#define FILE_ATTRIBUTE_NORMAL               0x00000080  
-	#define FILE_ATTRIBUTE_TEMPORARY            0x00000100  
-	#define FILE_ATTRIBUTE_SPARSE_FILE          0x00000200  
-	#define FILE_ATTRIBUTE_REPARSE_POINT        0x00000400  
-	#define FILE_ATTRIBUTE_COMPRESSED           0x00000800  
-	#define FILE_ATTRIBUTE_OFFLINE              0x00001000  
-	#define FILE_ATTRIBUTE_NOT_CONTENT_INDEXED  0x00002000  
-	#define FILE_ATTRIBUTE_ENCRYPTED            0x00004000  
-	#define FILE_ATTRIBUTE_VIRTUAL              0x00010000  
-
-	HANDLE WINAPI FindFirstChangeNotification(
-							 _In_  LPCTSTR lpPathName,
-							 _In_  BOOL bWatchSubtree,
-							 _In_  DWORD dwNotifyFilter );
-
-	#define FILE_NOTIFY_CHANGE_FILE_NAME    0x00000001   
-	#define FILE_NOTIFY_CHANGE_DIR_NAME     0x00000002   
-	#define FILE_NOTIFY_CHANGE_ATTRIBUTES   0x00000004   
-	#define FILE_NOTIFY_CHANGE_SIZE         0x00000008   
-	#define FILE_NOTIFY_CHANGE_LAST_WRITE   0x00000010   
-*/
 

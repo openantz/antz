@@ -203,6 +203,7 @@ void npGLTexture (pNPnode node, void* dataRef)
 
 		glTexGeni( GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR );
 		glTexGeni( GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR );
+
 			// metal appearance
 			// glTexGeni( GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP );
 			// glTexGeni( GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP );
@@ -212,6 +213,7 @@ void npGLTexture (pNPnode node, void* dataRef)
 
 		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
 		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+
 
 			//rather sharp setting, but probably best for mapping
 			//for video use GL_LINEAR_MIPMAP_NEAREST when the angle is close 
@@ -669,14 +671,20 @@ void DrawConeDL()
 	// gluDeleteQuadric(sphere);				``````````````//zz debug, should use this
 }
 
+#define kNPgeoMax 4096
 //------------------------------------------------------------------------------
 GLuint npCreatePrimitiveDL(void)
 {
 	GLuint displayList = 0, i = 0;
 
-
 	// Create the id for the list
-	i = displayList = glGenLists (kNPgeoCount);
+	i = displayList = glGenLists (kNPgeoMax);//kNPgeoCount);
+
+	if( displayList == 0 )
+	{
+		npPostMsg("err 4488 - glGenLists() failed", kNPmsgErr, NULL);
+		return 0;
+	}
 
 	// start list
 	glNewList (i++, GL_COMPILE);

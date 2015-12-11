@@ -25,7 +25,7 @@
 #ifndef NPTYPES_H_
 #define NPTYPES_H_
 
-#define kNPappVer "0.199.5"
+#define kNPappVer "0.200.0"
 
 
 #include "stdbool.h"
@@ -49,9 +49,9 @@
 /// OpenGL utility library addons
 #define NP_ADDON_SOIL				///< texture image load and save DDS
 //! #define NP_ADDON_ASSIMP			///< 3D model load and save, non-KML
-//! #define NP_ADDON_FREEIMAGE		///< texture map image load and save
+#define NP_ADDON_FREEIMAGE			///< load and save images, includes zlib
 //! #define NP_ADDON_FREETYPE		///< multi-language font support for GL
-//! #define NP_ADDON_LIBTESS		///< SGI based tesselator
+//! #define NP_ADDON_LIBTESS		///< SGI based polygon tesselator
 //! #define NP_ADDON_GLEW			///< OpenGL extension manager
 
 /// Video library addons
@@ -85,10 +85,10 @@
 //! #define NP_ADDON_MINIZ			///< ZIP file compression
 
 /// Addons to support Python and C Plugins based on (GLib) GObjects 
-//! #define NP_ADDON_GLib			///< Provides GObject data structures
+//! #define NP_ADDON_GLIB			///< Provides GObject data structures
 //! #define NP_ADDON_LIBPEAS		///< GObject based plugins engine
 
-/// Plugins 
+/// Plugins
 //! #define NP_PLUGINS_PYTHON		///< Python scripting and plugins
 
 
@@ -819,6 +819,8 @@ struct NPmouse {
 	int			y;
 	int			z;						//!<typically the scroll wheel
 
+	int			entry;					//!< move this to io.gl
+
 	int			camMode;
 	int			pickMode;				//!<locks the mouse into cam mode
 	int			tool;
@@ -1040,7 +1042,7 @@ struct NPgl {
 	int			alphaMode;
 
 	int			textureCount;
-
+	int			maxTextureSize;
 	int			subsample;		//!<zzhp
 
 	int			pickPass;
@@ -1282,23 +1284,23 @@ typedef struct NPconnect* pNPconnect;
 
 struct NPosFuncSet
 {
-	void   (*getAppPath)();
-	void   (*getCWD)();
-	void   (*setCWD)();
-	void   (*getOpenFilePath)();
-	FILE*  (*fileDialog)();
-	int    (*showCursor)();
-	int    (*setCursorPos)();
-	double (*getTime)();
-	void   (*updateTime)();
-	void   (*sleep)();
-	int    (*getKey)();
-	void   (*timeStampName)();
-	void   (*beginThread)();
-	void   (*endThread)();
-	bool   (*supportsAntzThreads)();
-	void*  (*loadLibrary)(char* filePath);
-	void*  (*getLibSymbol)();
+	void	(*getAppPath)();
+	void	(*getCWD)();
+	void	(*setCWD)();
+	void	(*getOpenFilePath)();
+	int		(*fileDialog)();
+	int		(*showCursor)();
+	int		(*setCursorPos)();
+	double	(*getTime)();
+	void	(*updateTime)();
+	void	(*sleep)();
+	int		(*getKey)();
+	void	(*timeStampName)();
+	void	(*beginThread)();
+	void	(*endThread)();
+	bool	(*supportsAntzThreads)();
+	void*	(*loadLibrary)(char* filePath);
+	void*	(*getLibSymbol)();
 };
 typedef struct NPosFuncSet NPosFuncSet;
 typedef struct NPosFuncSet* pNPosFuncSet;
@@ -2864,57 +2866,155 @@ enum kNP_CONSOLE_COMMAND_LINE_FLAG
 	kNPflagVer
 };
 
+/// File category is useful for choosing which procedure to read data with.
+enum kNP_FILE_CATEGORY
+{
+		kNPfileCatNull = 0,
+		kNPfileCatBin,
+		kNPfileCatCode,
+		kNPfileCatImage,
+		kNPfileCatTable,
+		kNPfileCatText,
+		kNPfileCatWeb,
+		kNPfileCatModels,
+		kNPfileCatAudio,
+		kNPfileCatVideo,
+		kNPfileCatAV
+};
 
-//!<zz used by npfile.h
+//!< File type identification used to dispatch file handling routines.
 enum kNP_FILE_TYPE
 {
 	kNPfileNull = 0,
 
 	kNPfileDir,		//!<file directory
 
-	kNPfileH,
-	kNPfileC,
-	kNPfileCPP,
+	/// Binary Executable Files
+	kNPfileEXE,		//!< MSW exececutable
+	kNPfileDLL,		//!< MSW exececutable
+	kNPfileAPP,		//!< Posix executable
+	kNPfileBAT,		//!< MSW BATCH
+	kNPfileCOM,		//!< MSW COM
+	kNPfileDYLIB,	//!< Posix library
 
-	kNPfileCSV,		//!<data table formats
+	/// Code Files
+	kNPfileH,		//!< Header			
+	kNPfileC,		//!< C
+	kNPfileCPP,		//!< C++ ( .cp, .cpp )
+	kNPfilePY,		//!< Python source code
+	kNPfilePYC,		//!< Python compiled file ( .pyc .pyo, .pyd ) 
+
+	kNPfileCSV,		//!< CSV table formats
 	kNPfileTXT,
 	kNPfileXML,
-	kNPfileJSON,	//!<data tree schema
+	kNPfileJSON,	//!< JSON data supports a tree schema
 
-	kNPfile3DS,
-	kNPfileCollada,	//!<3D model inter-change
-	kNPfileKML,		//!<GIS standard
-	kNPfileOBJ,
+	/// 3D model formats supported by Assimp library.
+	 /// Assimp import/export formats.
+	kNPfileDAE,		//!< Collada 3D model inter-change
+	kNPfileOBJ,		//!< Wavefront Object
+	kNPfileSTL,		//!< Stereolithography
+	kNPfilePLY,		//!< Stanford Polygon Library 
+	 /// Assimp common interchange formats, import only.
+	kNPfileFBX,		//!< Autodesk
+	kNPfileGLTF,	//!< glTF ( .gltf, .glb )
+	kNPfileBLEND,	//!< Blender 3D
+	kNPfile3DS,		//!< 3D Studio (Max)
+	kNPfileASE,		//!< 3ds Max ASE
+	kNPfileIFC,		//!< Industry Foundation Classes (IFC/Step)
+	kNPfileXGL,		//!< XGL ( .xgl,.zgl )
+	kNPfileDXF,		//!< AutoCAD DXF
+	kNPfileLWO,		//!< LightWave
+	kNPfileLWS,		//!< LightWave Scene
+	kNPfileLXO,		//!< Modo
+	kNPfileX,		//!< DirectX X
+	kNPfileAC,		//!< AC3D
+	kNPfileMS3D,	//!< Milkshape 3D
+	kNPfileCOB,		//!< TrueSpace
+	 /// Assimp MOTION CAPTURE FORMATS
+	kNPfileBVH,		//!< Biovision
+	kNPfileCSM,		//!< CharacterStudio Motion
+	 /// Assimp GRAPHICS ENGINE FORMATS
+	kNPfileOXML,	//!< Ogre XML ( .xml )	/// @todo how to identify Ogre XML.?
+	kNPfileIRRMESH,	//!< Irrlicht Mesh
+	kNPfileIRR,		//!< Irrlicht Scene
+	 /// Assimp - GAME FILE FORMATS
+	kNPfileMDL,		//!< Quake I
+	kNPfileMD2,		//!< Quake II
+	kNPfileMD3,		//!< Quake III Mesh
+	kNPfilePK3,		//!< Quake III Map/BSP
+	kNPfileMDC,		//!< Return to Castle Wolfenstein
+	kNPfileMD5,		//!< Doom 3
+	kNPfileVTA,		//!< Valve Model ( .smd, .vta )
+	kNPfileOGEX,	//!< Open Game Engine Exchange
+	kNPfile3D,		//!< Unreal
+	 /// Assimp - Other 3D model formats.
+	kNPfileB3D,		//!< BlitzBasic 3D
+	kNPfileQ3D,		//!< Quick3D ( .q3s, q3d )
+	kNPfileNFF,		//!< Neutral File Format
+	kNPfileS8NFF,	//!< Sense8 WorldToolKit	/// @todo nff vs nff
+	kNPfileOFF,		//!< Object File Format
+	kNPfilePRAW,	//!< PovRAY Raw
+	kNPfileTER,		//!< Terragen Terrain
+	kNPfile3MDL,	//!< 3D GameStudio (3DGS) ( .mdl )
+	kNPfileHMP,		//!< 3D GameStudio (3DGS) Terrain
+	kNPfileNDO,		//!< Izware Nendo
 
-	kNPfileAIFF,	//!<audio
-	kNPfileWAV,
+	/// Other 3D model formats (non-Assimp).
+	kNPfileKML,		//!< GIS 3D standard
 
-	kNPfileMP3,
-	kNPfileM4A,
+	/// Audio formats.
+	kNPfileAIFF,	//!< UNIX audio
+	kNPfileWAV,		//!< MSW audio
+	kNPfileMP3,		//!< MPEG3 audio
+	kNPfileM4A,		//!< MPEG4 audio
 
-	kNPfileMPG,		//!<MPEG 1 and 2 video
-	kNPfileMP4,		//!<MPEG 4
-	
-	kNPfileBMP,
-	kNPfileDDS,		//!< Native GPU compressed image format
-	kNPfileGIF,
-	kNPfileJ2K,		//!<JPEG 2000
-	kNPfileJPG,
-	kNPfilePNG,
-	kNPfileRAW,
-	kNPfileTGA,
-	kNPfileTIFF,	//!<image formats
+	/// Image formats (supported by FreeImage).
+	kNPfileBMP,		//!< 
+	kNPfileCUT,		//!< Dr. Halo CUT
+	kNPfileDDS,		//!< Native GPU compressed image format 
+	kNPfileEXR,		//!< 
+	kNPfileRFG3,	//!< Raw Fax G3
+	kNPfileGIF, 	//!< 
+	kNPfileHDR,		//!< 
+	kNPfileICO,		//!< 
+	kNPfileIFF,		//!< 
+	kNPfileJBIG,	//!< 
+	kNPfileJNG,		//!<
+	kNPfileJPG,		//!< JPEG / JIF ( .jpg, .jpeg )
+	kNPfileJ2K,		//!< JPEG 2000
+	kNPfileJPGXR,	//!< JPEG-XR ( .ms-photo )
+	kNPfileKOA,		//!< KOALA
+	kNPfileIPE,		//!< Kodak PhotoCD 
+	kNPfileMNG,		//!< 
+	kNPfilePCX,		//!< 
+	kNPfilePBM,		//!< ( .pbm, .pgm, .ppm )
+	kNPfilePNG, 	//!<
+	kNPfilePICT,	//!< Macintosh PICT
+	kNPfilePSD,		//!< Photoshop PSD
+	kNPfileRAW, 	//!< RAW camera
+	kNPfileRAS,		//!< Sun RAS
+	kNPfileSGI,		//!<
+	kNPfileTGA,		//!< Targa
+	kNPfileTIFF,	//!< 
+	kNPfileWBMP,	//!< 
+	kNPfileWEBP,	//!< 
+	kNPfileXBM,		//!< 
+	kNPfileXPM,		//!<
 
-	kNPfileMJ2,		//!<Motion JPEG 2000
-	kNPfileDCP,		//!<Digital Cinema Package
 
-	kNPfileMXF,		//!<AV formats, open standard and proprietary
-	kNPfileDNX,
-	kNPfileAVI,
-	kNPfileMOV
+	/// AV formats.
+	kNPfileMJ2,		//!< Motion JPEG 2000
+	kNPfileDCP,		//!< Digital Cinema Package (DCI)
+	kNPfileMPG,		//!< MPEG 1 and 2 video
+	kNPfileMP4,		//!< MPEG 4
+	kNPfileMXF,		//!< Both open standard and proprietary
+	kNPfileDNX,		//!< Avid
+	kNPfileAVI,		//!< Windows movie
+	kNPfileMOV		//!< Quicktime movie
 };
 
-
+/// Data format is the in memory format, not the file type
 //!< kNPmapOSC vs kNPformatOSC ...formatJSON ...DB ..SNMP
 //!< kNPmapOSC specifies an OSC map, A-B map pairs for mapping data and commands
 //!< kNPformatOSC specifies an OSC formatted bitstream, could be any contents

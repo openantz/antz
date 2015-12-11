@@ -1,6 +1,6 @@
-<a href="https://github.com/openantz/antz/archive/master.zip">DOWNLOAD - MSW version</a> by clicking 'Download ZIP' button (upper right.)
+<a href="https://github.com/openantz/antz/archive/master.zip">DOWNLOAD - MSW application</a> by clicking 'Download ZIP' button (upper right.)
 
-<a href="https://github.com/openantz/antz/archive/osx.zip">DOWNLOAD - OSX version</a> by selecting 'Branch: osx' (upper left.)</a>
+<a href="https://github.com/openantz/antz/archive/osx.zip">DOWNLOAD - OSX application</a> by selecting 'Branch: osx' (upper left.)</a>
 
 Command overview 'cheatsheet.txt' is in the 'doc' folder.
 
