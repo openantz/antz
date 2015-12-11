@@ -478,6 +478,7 @@ void npInitDataGL(void* dataRef)
 	gl->alphaMode = kNPalphaModeSubtractive;
 
 	gl->textureCount = 0;
+	gl->maxTextureSize = 1024;	// all GL implementations support at least 1024
 
 	gl->pickPass = false;
 	gl->pickID = 0;
@@ -1347,8 +1348,15 @@ void npDataCameraPreset (int preset, pNPnode node, void* dataRef)
 //------------------------------------------------------------------------------
 void npPostMsg (char* message, int type, void* dataRef)
 {
-	pData data = (pData) dataRef;
-	pNPmessage msg = &data->io.message;
+	pNPmessage msg = NULL;
+	pData data = NULL; 
+	
+	if( dataRef == NULL )
+		data = (pData) npGetDataRef();
+	else
+		data = (pData) dataRef;
+	
+	msg = &data->io.message;
 	//add handling for type filtering, perhaps create a msg struct with type, debug zz
 
 	/// @todo using NDEBUG this way is not wise, perhaps create our own flag

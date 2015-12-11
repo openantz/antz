@@ -25,6 +25,11 @@
 #ifndef NPOS_H_
 #define NPOS_H_
 
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 #include "../npdata.h"
 
 
@@ -44,17 +49,28 @@
 
 /* -------------------------------------------------------------------------- */
 
-//#ifdef NP_LINUX_						//zz debug may be able to remove these
-//zz	#include "linux/nplinux.h"
-//#endif
 
-//#ifdef NP_MSW_
-//zz	#include "msw/npmsw.h"
-//#endif
+#ifdef NP_LINUX_						//zz debug may be able to remove these
+//	#include "linux/nplinux.h"
+#endif
 
-//#ifdef NP_OSX_
-//zz	#include "osx/nposx.h"
-//#endif
+#ifdef NP_MSW_
+	struct NPfileRef {
+		WIN32_FIND_DATA fdFile;
+		void* handle;
+		char* name;
+		bool isDir;
+		unsigned long sizeHi;
+		unsigned long sizeLo;
+	};
+	typedef struct NPfileRef NPfileRef;
+	typedef struct NPfileRef *pNPfileRef;
+#endif
+
+#ifdef NP_OSX_
+//	#include "osx/nposx.h"
+#endif
+
 
 //------------------------------------------------------------------------------
 
@@ -66,12 +82,11 @@ void nposSetCWD (char* buffer);
 void nposGetOpenFilePath (char* buffer, int* size, void* dataRef);
 void nposSetOpenFilePath (char* buffer, void* dataRef);
 
-FILE* nposFileDialog (const char* fileName, int dialogType, void* dataRef);
+int nposFileDialog( char* fileChosen, const char* initialDir,
+					  int dialogType, void* dataRef );
 
 int nposShowCursor (int hide);
 int nposSetCursorPos (int x, int y);
-
-//int nposGetKey (void);
 
 double nposGetTime (void);
 void nposUpdateTime (void* dataRef);
@@ -90,5 +105,14 @@ void* nposGetLibSymbol(void* library, char* symbolName); // New function, lde
 
 int nposGetKey (void);
 
+pNPfileRef nposNewFileRef( void* dataRef);
+int nposFindNextFile( pNPfileRef fileRef );
+int nposFindFirstFile( pNPfileRef fileRef, const char* dirPath, 
+					   const char* fileFilter, void* dataRef );
+void nposFindClose( pNPfileRef fileRef, void* dataRef );
+
+#ifdef __cplusplus
+	}
+#endif
 #endif
 

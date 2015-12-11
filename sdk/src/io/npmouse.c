@@ -63,6 +63,8 @@ void npInitMouse (void* dataRef)
 	data->io.mouse.y = 0;
 	data->io.mouse.z = 0;						//typically the scroll wheel
 
+	data->io.mouse.entry = 0;
+
 	data->io.mouse.camMode = kNPmouseModeNull;
 //	data->io.mouse.pickMode = kNPmodeNull;
 //	data->io.mouse.pickMode = kNPmodeCamera;
@@ -192,6 +194,29 @@ void npUpdateMouse (void* dataRef)
 		count = 0;
 }
 
+void npMouseEntry (int entry)
+{
+	pData data = (pData) npGetDataRef();
+
+	//update mouse position
+	data->io.mouse.entry = entry;
+
+	//printf("entry: %d\n", data->io.mouse.entry );
+}
+
+//------------------------------------------------------------------------------
+void npMousePosition (int x, int y)
+{
+	pData data = (pData) npGetDataRef();
+
+	//update mouse position
+	data->io.mouse.x = x;
+	data->io.mouse.y = y;
+
+	data->io.mouse.entry = true; //flag to detect if mouse is in windows
+
+//	printf("x: %d   y: %d\n", data->io.mouse.x );
+}
 
 //deltaSums and stores the mouse delta coordinates
 //------------------------------------------------------------------------------

@@ -91,9 +91,9 @@ int npMapTraverseTree (char* buffer, pNPnode node, int format, void* dataRef);
 //zzsql
 int npMapTraverseTreeLL(char* buffer, int* index, pNPnode node, int format, void* dataRef);
 
-void npPreLoadInit(pNPrecordSet recSet, void* dataRef);
+void npPreLoadInit( pNPrecordSet recSet, void* dataRef);
 
-int npGetFileType(const char* filePath, void* dataRef);
+int npGetFileTypeCat( int* fileCategory, const char* filePath, void* dataRef);
 
 #endif
 

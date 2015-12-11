@@ -29,6 +29,8 @@
 #include "../npdata.h"
 #include "../data/npmapfile.h"
 #include "file/npcsv.h"
+#include "file/npmodels.h"
+#include "file/npfreeimage.h"
 #include "file/npfileviz.h"
 
 #define kNPfileMax 4096
@@ -41,7 +43,8 @@ void npCloseFile (void* dataRef);	// for init and shutdown, not closing a file
 // opens or creates the file in the specified mode "rb+" read/write binary..
 FILE* npFileOpen (const char* fileName, const char* mode, void* dataRef);
 FILE* npFileNew (const char* fileName, const char* mode, void* dataRef);
-FILE* npFileDialog (const char* fileName, int dialogType, void* dataRef);
+int npFileDialog( char* fileChosen, const char* initialDir,
+				    int dialogType, void* dataRef );
 
 
 // if not saved then opens SaveAs dialog before reseting app
