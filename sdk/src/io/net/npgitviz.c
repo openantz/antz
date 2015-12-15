@@ -136,6 +136,7 @@ void npGitVizSetIssueCreationNodeState2(pNPgithubIssue issue, void* dataRef)
 	pNPnode node = (pNPnode)issue->issue_creation_node;
 
 	node->geometry = kNPgeoTorus;
+	node->colorIndex = 1;	// red
 	node->color.r  = 255;
 	node->color.g  = 0;
 	node->color.b  = 0;	
@@ -525,7 +526,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	{
 		sprintf(durationTag->title, "Creation Date : %s", current_issue->created_at);
 		
-		/// Set to red
+		node->colorIndex = 1;	// red
 		node->color.r = 255;
 		node->color.g = 0;
 		node->color.b = 0;
@@ -540,7 +541,8 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	else if( strcmp(current_issue->state, "closed") == 0 )
 	{
 		sprintf(durationTag->title, "Creation Date : %s || Closed Date : %s", current_issue->created_at, current_issue->closed_at);
-		/// Set to blue
+		
+		node->colorIndex = 3;	// blue
 		node->color.r = 0;
 		node->color.g = 0;
 		node->color.b = 255;
@@ -648,6 +650,11 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	/// Add sub-node that indicates user that created the issue
 	issue_user = npNodeNew(kNodePin, node, dataRef);
 	issue_user->geometry = kNPgeoCube;
+	issue_user->colorIndex = 19;	// white
+	issue_user->color.r = 255;
+	issue_user->color.g = 255;
+	issue_user->color.b = 255;
+	issue_user->color.a = 220;		// mostly opaque
 	issue_user->recordID = issueCreatorTag->recordID;
 	issue_user->tableID = issueCreatorTag->tableID;
 	npTagNode(issue_user, dataRef);
@@ -665,6 +672,11 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	npNodeNew(kNodePin, node, dataRef);
 	node->child[1]->translate.x -= 100;
 	node->child[1]->geometry = kNPgeoSphere;
+	node->child[1]->colorIndex = 19;	// white
+	node->child[1]->color.r = 255;
+	node->child[1]->color.g = 255;
+	node->child[1]->color.b = 255;
+	node->child[1]->color.a = 220;		// mostly opaque
 
 	/// if no assignee exists, use wireframe geometry 
 	if(current_issue->assignee == NULL)
@@ -740,16 +752,12 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 
 		if( strcmp(current_issue->label[index].name, "enhancement") == 0 )
 		{
+			node->child[2]->child[index]->colorIndex = 2;	// green
 			node->child[2]->child[index]->color.r = 0; 
 			node->child[2]->child[index]->color.g = 255;
 			node->child[2]->child[index]->color.b = 0;
+			node->child[2]->child[index]->color.a = 220;	// mostly opaque
 			
-			/*
-			current_issue->issue_node->child[2]->child[index]->color.r = 132; 
-			current_issue->issue_node->child[2]->child[index]->color.g = 182;
-			current_issue->issue_node->child[2]->child[index]->color.b = 235;
-			current_issue->issue_node->child[2]->child[index]->color.a = 1;
-			*/
 			node->child[2]->child[index]->recordID = current_issue->number;
 			node->child[2]->child[index]->tableID = kNPgitvizTableID + 6; //zz 6;
 		}
@@ -759,6 +767,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 			node->child[2]->child[index]->color.r = 255; 
 			node->child[2]->child[index]->color.g = 0;
 			node->child[2]->child[index]->color.b = 0;
+			node->child[2]->child[index]->color.a = 220;	// mostly opaque
 //			current_issue->issue_node->child[2]->child[index]->color.a = 1;
 			node->child[2]->child[index]->recordID = current_issue->number;
 			node->child[2]->child[index]->tableID = kNPgitvizTableID + 7; //zz 5;
@@ -766,9 +775,11 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 
 		if( strcmp(current_issue->label[index].name, "1st priority") == 0 )
 		{
+			node->child[2]->child[index]->colorIndex = 1;	// red
 			node->child[2]->child[index]->color.r = 255; 
-			node->child[2]->child[index]->color.g = 255;
+			node->child[2]->child[index]->color.g = 0;
 			node->child[2]->child[index]->color.b = 0;
+			node->child[2]->child[index]->color.a = 220;	// mostly opaque
 //			current_issue->issue_node->child[2]->child[index]->color.a = 1;
 			node->child[2]->child[index]->recordID = current_issue->number;
 			node->child[2]->child[index]->tableID = kNPgitvizTableID + 8; //zz 8;
@@ -776,9 +787,23 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 
 		if( strcmp(current_issue->label[index].name, "2nd priority") == 0 )
 		{
+			node->child[2]->child[index]->colorIndex = 17;	// rust orange
+			node->child[2]->child[index]->color.r = 255; 
+			node->child[2]->child[index]->color.g = 100;
+			node->child[2]->child[index]->color.b = 0;
+			node->child[2]->child[index]->color.a = 220;	// mostly opaque
+//			current_issue->issue_node->child[2]->child[index]->color.a = 1;
+			node->child[2]->child[index]->recordID = current_issue->number;
+			node->child[2]->child[index]->tableID = kNPgitvizTableID + 9; //zz 9;
+		}
+
+		if( strcmp(current_issue->label[index].name, "3rd priority") == 0 )
+		{
+			node->child[2]->child[index]->colorIndex = 4;	// yellow
 			node->child[2]->child[index]->color.r = 255; 
 			node->child[2]->child[index]->color.g = 255;
-			node->child[2]->child[index]->color.b = 102;
+			node->child[2]->child[index]->color.b = 0;
+			node->child[2]->child[index]->color.a = 220;	// mostly opaque
 //			current_issue->issue_node->child[2]->child[index]->color.a = 1;
 			node->child[2]->child[index]->recordID = current_issue->number;
 			node->child[2]->child[index]->tableID = kNPgitvizTableID + 9; //zz 9;
@@ -786,9 +811,10 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 		
 		if( strcmp(current_issue->label[index].name, "help wanted") == 0 )
 		{
-			node->child[2]->child[index]->color.r = 21; 
-			node->child[2]->child[index]->color.g = 152;
-			node->child[2]->child[index]->color.b = 24;
+			node->child[2]->child[index]->colorIndex = 9;	// medium green
+			node->child[2]->child[index]->color.r = 0; 
+			node->child[2]->child[index]->color.g = 153;
+			node->child[2]->child[index]->color.b = 0;
 			node->child[2]->child[index]->color.a = 1;
 			node->child[2]->child[index]->recordID = current_issue->number;
 			node->child[2]->child[index]->tableID = kNPgitvizTableID + 10; //zz 9;
@@ -796,9 +822,10 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 
 		if( strcmp(current_issue->label[index].name, "question") == 0 )
 		{
-			node->child[2]->child[index]->color.r = 153; 
+			node->child[2]->child[index]->colorIndex = 5;	// magenta
+			node->child[2]->child[index]->color.r = 152; 
 			node->child[2]->child[index]->color.g = 0;
-			node->child[2]->child[index]->color.b = 204;
+			node->child[2]->child[index]->color.b = 255;
 			node->child[2]->child[index]->color.a = 0;
 			node->child[2]->child[index]->recordID = current_issue->number;
 			node->child[2]->child[index]->tableID = kNPgitvizTableID + 11; //zz 9;
@@ -806,10 +833,10 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 
 		if( strcmp(current_issue->label[index].name, "wontfix") == 0 )
 		{
-			node->child[2]->child[index]->color.r = 0; 
+			node->child[2]->child[index]->color.r = 18;		// black
 			node->child[2]->child[index]->color.g = 51;
 			node->child[2]->child[index]->color.b = 51;
-			node->child[2]->child[index]->color.a = 0;
+			node->child[2]->child[index]->color.a = 100;	// mostly transparent
 			node->child[2]->child[index]->recordID = current_issue->number;
 			node->child[2]->child[index]->tableID = kNPgitvizTableID + 12; //zz 9;
 		}

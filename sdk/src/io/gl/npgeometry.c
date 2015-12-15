@@ -62,6 +62,7 @@ static GLint pin_dl;
 static GLint pin_wire_dl;
 static GLint torus_dl;
 static GLint torus_wire_dl;
+static GLint cube_dl;
 GLint primitiveDL;
 
 GLuint CreatePinDL();
@@ -93,6 +94,8 @@ void npInitGLPrimitive (void* dataRef)
 
 	primitiveDL = npCreatePrimitiveDL();
 
+//	cube_dl = npCreateCubeDL();
+
 	return;
 }
 
@@ -100,6 +103,57 @@ void npInitGLPrimitive (void* dataRef)
 void npCloseGLPrimitive (void* dataRef)
 {
 	return;
+}
+
+#define kNPc 0.707107
+//------------------------------------------------------------------------------
+void npDrawCubeDL (void)
+{
+    glBegin(GL_QUADS);
+
+	// Top
+	glNormal3f( 0.0f, 0.0f, 1.0f );
+	glTexCoord2f( 0.0f, 0.0f ); glVertex3f( -kNPc, -kNPc, kNPc );
+	glTexCoord2f( 1.0f, 0.0f ); glVertex3f(  kNPc, -kNPc, kNPc );
+	glTexCoord2f( 1.0f, 1.0f ); glVertex3f(  kNPc,  kNPc, kNPc );
+	glTexCoord2f( 0.0f, 1.0f ); glVertex3f( -kNPc,  kNPc, kNPc );
+
+	// Bottom
+	glNormal3f( 0.0f, 0.0f, -1.0f );
+	glTexCoord2f( 0.0f, 0.0f ); glVertex3f(  kNPc, -kNPc, -kNPc );
+	glTexCoord2f( 1.0f, 0.0f ); glVertex3f( -kNPc, -kNPc, -kNPc );
+	glTexCoord2f( 1.0f, 1.0f ); glVertex3f( -kNPc,  kNPc, -kNPc );
+	glTexCoord2f( 0.0f, 1.0f ); glVertex3f(  kNPc,  kNPc, -kNPc );
+
+	// North face
+	glNormal3f( 0.0f, 1.0f, 0.0f );
+	glTexCoord2f( 0.0f, 0.0f ); glVertex3f(  kNPc,  kNPc, -kNPc );
+	glTexCoord2f( 1.0f, 0.0f ); glVertex3f( -kNPc,  kNPc, -kNPc );
+	glTexCoord2f( 1.0f, 1.0f ); glVertex3f( -kNPc,  kNPc,  kNPc );
+	glTexCoord2f( 0.0f, 1.0f ); glVertex3f(  kNPc,  kNPc,  kNPc );
+
+	// South
+	glNormal3f( 0.0f, -1.0f, 0.0f );
+	glTexCoord2f( 0.0f, 0.0f ); glVertex3f( -kNPc, -kNPc, -kNPc );
+	glTexCoord2f( 1.0f, 0.0f ); glVertex3f(  kNPc, -kNPc, -kNPc );
+	glTexCoord2f( 1.0f, 1.0f ); glVertex3f(  kNPc, -kNPc,  kNPc );
+	glTexCoord2f( 0.0f, 1.0f ); glVertex3f( -kNPc, -kNPc,  kNPc );
+
+	// East
+	glNormal3f( 1.0f, 0.0f, 0.0f );
+	glTexCoord2f( 0.0f, 0.0f ); glVertex3f( kNPc, -kNPc, -kNPc );
+	glTexCoord2f( 1.0f, 0.0f ); glVertex3f( kNPc,  kNPc, -kNPc );
+	glTexCoord2f( 1.0f, 1.0f ); glVertex3f( kNPc,  kNPc,  kNPc );
+	glTexCoord2f( 0.0f, 1.0f ); glVertex3f( kNPc, -kNPc,  kNPc );
+
+	// West
+	glNormal3f( -1.0f, 0.0f, 0.0f );
+	glTexCoord2f( 0.0f, 0.0f ); glVertex3f( -kNPc,  kNPc, -kNPc );
+	glTexCoord2f( 1.0f, 0.0f ); glVertex3f( -kNPc, -kNPc, -kNPc );
+	glTexCoord2f( 1.0f, 1.0f ); glVertex3f( -kNPc, -kNPc,  kNPc );
+	glTexCoord2f( 0.0f, 1.0f ); glVertex3f( -kNPc,  kNPc,  kNPc );
+
+    glEnd( );
 }
 
 //used only to draw outline wireframes
@@ -192,7 +246,8 @@ void npGLTexture (pNPnode node, void* dataRef)
 
 	//use different texturing for the gluSphere
 	if ( node->geometry == kNPgeoSphere // || geometry == kNPgeoSphereWire		//zz debug
-		|| node->geometry == kNPgeoCylinder ) // || geometry == kNPgeoCylinderWire
+		|| node->geometry == kNPgeoCylinder
+		|| node->geometry == kNPgeoCube ) // || geometry == kNPgeoCylinderWire
 	{
 		glDisable( GL_TEXTURE_GEN_S );	//prevents intermittent texture anomally
 		glDisable( GL_TEXTURE_GEN_T );
@@ -487,7 +542,6 @@ GLuint CreatePinDL()
 	return (displayList);
 }
 
-
 //------------------------------------------------------------------------------
 GLuint CreatePinWireDL()
 {
@@ -507,7 +561,6 @@ GLuint CreatePinWireDL()
 
 	return (displayList);
 }
-
 
 //------------------------------------------------------------------------------
 GLuint CreateTorusDL()
@@ -692,7 +745,7 @@ GLuint npCreatePrimitiveDL(void)
 	glEndList();
 
 	glNewList (i++, GL_COMPILE);
-		glutSolidCube (1.4142f);
+		npDrawCubeDL ();
 	glEndList();
 
 	glNewList (i++, GL_COMPILE);

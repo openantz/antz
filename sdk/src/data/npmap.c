@@ -149,7 +149,7 @@ void npInitMap (void* dataRef)
 
 	{ kNPtagMode,			kNPint,			"tag_mode",			"text tag display mode" },
 	{ kNPformatID,			kNPint,			"format_id",		"translates values, used for labels" },
-	{ kNPmapID,			kNPint,			"table_id",			"location of the records source table" },
+	{ kNPmapID,				kNPint,			"table_id",			"location of the records source table" },
 	{ kNPrecordID,			kNPint,			"record_id",		"record ID in the source table" },	//debug zz
 
 	{ kNPsize,				kNPint,			"size",				"node size in bytes" }
@@ -214,34 +214,55 @@ void npInitMap (void* dataRef)
 	//zzsql
 	static NPmapType tag[] = {
 
-		{ kNPid,				kNPint,			"id",				"tag ID" },
-		{ kNPrecordID,			kNPint,			"record_id",		"Record ID" },
-		{ kNPmapID,				kNPint,			"table_id",			"Table ID" },
-		{ kNPtitle,				kNPcharArray,	"title",			"Title" },
-		{ kNPdesc,				kNPcharArray,	"description",		"Description" }
+		{ kNPid,			kNPint,			"id",				"tag ID" },
+		{ kNPrecordID,		kNPint,			"record_id",		"Record ID" },
+		{ kNPmapID,			kNPint,			"table_id",			"Table ID" },
+		{ kNPtitle,			kNPcharArray,	"title",			"Title" },
+		{ kNPdesc,			kNPcharArray,	"description",		"Description" }
 	}; // debug db
 	
 	static NPmapType ChMap[] = {
 
-		{ kNPid,				kNPint,			"id",				"Channel Map ID" },
-		{ kNPchannelID,			kNPint,			"channel_id",		"Channel ID"	 },
-		{ kNPtrackID,			kNPint,			"track_id",			"Track ID"		 },
-		{ kNPattribute,			kNPcharArray,	"attribute",		"Attribute"		 },
-		{ kNPtrackTableID,		kNPint,			"track_table_id",	"Track Table ID" },
-		{ kNPchMapTableID,		kNPint,			"ch_map_table_id",	"Channel Map Table ID"},
-		{ kNPrecordID,			kNPint,			"record_id",		"Record ID"		}
+		{ kNPid,			kNPint,			"id",				"Channel Map ID" },
+		{ kNPchannelID,		kNPint,			"channel_id",		"Channel ID"	 },
+		{ kNPtrackID,		kNPint,			"track_id",			"Track ID"		 },
+		{ kNPattribute,		kNPcharArray,	"attribute",		"Attribute"		 },
+		{ kNPtrackTableID,	kNPint,			"track_table_id",	"Track Table ID" },
+		{ kNPchMapTableID,	kNPint,			"ch_map_table_id",	"Channel Map Table ID"},
+		{ kNPrecordID,		kNPint,			"record_id",		"Record ID"		}
 	}; // debug db //zzsql
 	
 	//zz color
 	static NPmapType palette[] = {
 
-		{ kNPid,				kNPint,			"id",			"Color Palette Index" },
-		{ kNPrecordID,			kNPint,			"red",			"Red" },
-		{ kNPmapID,				kNPint,			"green",		"Green" },
-		{ kNPtitle,				kNPint,			"blue",			"Blue" },
-		{ kNPdesc,				kNPint,			"alpha",		"Alpha Transparency" }
+		{ kNPid,			kNPint,			"id",				"Color Palette Index" },
+		{ kNPrecordID,		kNPint,			"red",				"Red" },
+		{ kNPmapID,			kNPint,			"green",			"Green" },
+		{ kNPtitle,			kNPint,			"blue",				"Blue" },
+		{ kNPdesc,			kNPint,			"alpha",			"Alpha Transparency" }
+	};
+/*	
+	//zz tex
+	static NPmapType texture[] = {
+
+		{ kNPid,			kNPint,			"np_texture_id",	"Texture ID" },
+		{ kNPtype,			kNPint,			"type",				"Type: 2D, 3D, Cubemap, Video" },
+		{ kNPfileName,		kNPcharArray,	"file_name",		"File Name" },
+		{ kNPpath,			kNPcharArray,	"path",				"File Path" }
 	};
 	
+	//zz mod
+	static NPmapType models[] = {
+
+		{ kNPid,			kNPint,			"np_models_id",		"3D Models ID" },
+		{ kNPid,			kNPint,			"np_geometry_id",	"Geometry ID" },
+		{ kNPid,			kNPint,			"np_texture_id",	"Texture ID" },
+		{ kNPtype,			kNPint,			"type",				"Type: Mesh, Terrain, etc." },
+		{ kNPobjName,		kNPcharArray,	"object_name",		"3D Scene Object Name" },
+		{ kNPfileName,		kNPcharArray,	"file_name",		"File Name" },
+		{ kNPpath,			kNPcharArray,	"path",				"File Path" }
+	};
+*/	
 
 	//-------
 	//-------
@@ -265,6 +286,8 @@ void npInitMap (void* dataRef)
 	data->map.typeMapChMap		= ChMap;	// debug db //zzsql
 	
 	data->map.typeMapPalette	= palette;
+//	data->map.typeMapTexture	= texture;	//zz tex
+//	data->map.typeMapModels		= models;	//zz mod
 
 	data->map.typeMapGlobals	= NULL;		//zz debug
 	

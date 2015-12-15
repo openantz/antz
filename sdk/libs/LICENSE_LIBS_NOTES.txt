@@ -1,17 +1,44 @@
 ﻿LICENSE_LIBS_NOTES.txt 
 
-updated 2015-11-20
+2015-12-13
 
 Latest app ver and up-to-date docs at - https://github.com/openantz/
+
+ANTz is Public Domain CC0, but that does not include the libraries it uses.
 
 ----------------------------------------------------------------------------
 3RD PARTY LIBRARY LICENSING
 ----------------------------------------------------------------------------
 
 3rd party libraries have their own licenses. In general we attempt to only
-include libraries that are compatible with open source projects.
+include libraries that are compatible with open source projects and 
+commercial products. However, SOME libraries have RESTRICTED licensing.
 
-However, some libraries have restricted licensing:
+These notes are for convienance and may be innacurate. You are responsible
+to verify the licensing terms of each library.
+
+----------------------------------------------------------------------------
+- Open source and commercial friendly -
+
+Assimp - BSD (3-clause)
+cURL - MIT/X derivate license
+freeglut - MIT/X Consortium license
+FreeImage - dual license, GPL or Freeimage Public License (for commercial)
+FreeType - dual license, GPL or FreeType license (similar to 3-clause BSD)
+jansson - MIT
+oscpack - MIT
+SOIL - Public Domain
+
+*Kazmath - modified BSD (2-clause)
+
+*Under consideration for inclusion.
+
+----------------------------------------------------------------------------
+- RESTRICTED -
+
+MySQL - dual license, GPL or Proprietary for commercial products
+zSpace - proprietary
+
 
 - zSpace -
 Permission was granted to distribute code that calls the zSpace library,
@@ -20,6 +47,6 @@ but you will need to download and install the SDK separately.
 
 - MySQL -
 MySQL allows for open source projects to distribute under the GPL, but other
-commercial projects generally require an agreement with Oracle.
+commercial projects require an agreement with Oracle. Alternately you could 
+replace MySQL client with the MariaDB client which is LGPL.
  http://www.mysql.com/about/legal/licensing/oem/
-

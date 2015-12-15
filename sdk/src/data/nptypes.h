@@ -18,14 +18,14 @@
 *
 *  You should have received a copy of the CC0 Public Domain Dedication along
 *  with this software (license file named LICENSE.txt). If not, see
-*  http://!<creativecommons.org/publicdomain/zero/1.0/
+*  http://creativecommons.org/publicdomain/zero/1.0/
 *
 * --------------------------------------------------------------------------- */
 
 #ifndef NPTYPES_H_
 #define NPTYPES_H_
 
-#define kNPappVer "0.200.0"
+#define kNPappVer "0.200.1"
 
 
 #include "stdbool.h"
@@ -52,6 +52,7 @@
 #define NP_ADDON_FREEIMAGE			///< load and save images, includes zlib
 //! #define NP_ADDON_FREETYPE		///< multi-language font support for GL
 //! #define NP_ADDON_LIBTESS		///< SGI based polygon tesselator
+//! #define NP_ADDON_KAZMATH		///< Matrix math, rotate, translate...
 //! #define NP_ADDON_GLEW			///< OpenGL extension manager
 
 /// Video library addons
@@ -111,7 +112,8 @@
 //---------------------------------------------------------------------------
 //! Global Constants
 //---------------------------------------------------------------------------
-#define	kNPtextureCountMax	2000
+
+#define kNPglMipmaps		true			///< Mipmaps require OpenGL 3.0+
 #define kNPpaletteMax		4096			//!< max number of color palettes
 
 #define kNPkeyMapSize		256				//!< keyboard map

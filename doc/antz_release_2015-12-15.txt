@@ -3,10 +3,19 @@
          latest code, issues and Wiki at https://github.com/openantz/
 
 ----------------------------------------------------------------------------
+2015-12-15 ANTz v0.200.1
+
+Enhanced:
+Cube texture now oriented for each face
+
+Fixed:
+#205 GIF textures do not display properly
+
+----------------------------------------------------------------------------
 2015-12-10 ANTz v0.200.0
 
 Enhanced:
-#203 New FreeImage library for improved texture map support
+#203 Add FreeImage library for improved texture map support
 #174 Texture loading for custom file names and load on user command
 
 Fixed:
