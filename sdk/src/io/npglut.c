@@ -396,7 +396,7 @@ void npglFullscreen (void* dataRef)
 
 			glutReshapeFunc (npGLResizeScene);
 			//---
-			npInitGL (data);
+			//npInitGL (data); // lv, not sure why this is here
 		}
 	
 		//exit fullscreen and restore previous window position

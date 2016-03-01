@@ -75,6 +75,9 @@
 //------------------------------------------------------------------------------
 
 void nposGetAppPath (char* buffer, int* size);
+bool nposDirExists(const char* dir, void* dataRef);
+bool nposFileExistsAtDir(const char* dir, char* filename, void* dataRef);
+bool nposFileExists(const char* filepath, void* dataRef);
 
 void nposGetCWD (char* buffer, int* size);
 void nposSetCWD (char* buffer);
@@ -110,6 +113,8 @@ int nposFindNextFile( pNPfileRef fileRef );
 int nposFindFirstFile( pNPfileRef fileRef, const char* dirPath, 
 					   const char* fileFilter, void* dataRef );
 void nposFindClose( pNPfileRef fileRef, void* dataRef );
+
+char nposGetFolderDelimit(void); ///lv model
 
 #ifdef __cplusplus
 	}

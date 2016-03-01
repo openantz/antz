@@ -241,7 +241,29 @@ void npInitMap (void* dataRef)
 		{ kNPtitle,				kNPint,			"blue",			"Blue" },
 		{ kNPdesc,				kNPint,			"alpha",		"Alpha Transparency" }
 	};
+
+	//zz tex
+	// Path is seperate from file name because path may change.
+	static NPmapType texture[] = {
+
+		{ kNPid,			kNPint,		"np_texture_id",		"Texture ID" },
+		{ kNPtype,			kNPint,		"type",				"Type: 2D, 3D, Cubemap, Video" },
+		{ kNPfile,			kNPcharArray,	"name",				"Texture name" },
+		{ kNPpath,			kNPcharArray,	"path",				"Path" } 
+	};
 	
+	//zz mod
+    	// Path is seperate from file name because path may change.
+	static NPmapType models[] = {
+
+		{ kNPid,			kNPint,				"np_geo_id",	"Geometry ID" },
+		{ kNPid,			kNPint,				"np_texture_id",	"Texture ID" },
+		{ kNPtype,			kNPint,				"type",			"Type: Mesh, Terrain, etc." },
+		{ kNPobjName,		kNPcharArray,		"object_name",		"3D Scene Object Name" },
+		{ kNPfile,			kNPcharArray,		"name",			"Texture name" },
+		{ kNPpath,			kNPcharArray,		"path",			"Path" }
+	};
+//};
 
 	//-------
 	//-------
@@ -265,6 +287,8 @@ void npInitMap (void* dataRef)
 	data->map.typeMapChMap		= ChMap;	// debug db //zzsql
 	
 	data->map.typeMapPalette	= palette;
+//	data->map.typeMapTexture	= texture;	//zz tex
+	data->map.typeMapModel		= models;	//zz mod
 
 	data->map.typeMapGlobals	= NULL;		//zz debug
 	

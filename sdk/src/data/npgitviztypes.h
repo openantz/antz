@@ -26,7 +26,8 @@
 #define NPGITVIZTYPES_H_
 
 #include "stdbool.h"
-#include "jansson.h"
+//#include "jansson.h"
+#include "../../libs/jansson/src/jansson.h"
 #include "curl.h"
 
 

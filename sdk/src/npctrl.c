@@ -1435,6 +1435,7 @@ void npCtrlProperty (int command, void* dataRef)
 	pData data = (pData) dataRef;
 	pNPnode node = data->map.currentNode;
 	pNPnode nodeParent = NULL;
+	int geoId = 0; /// lv, models
 
 
 	msgPart[0] = '\0';
@@ -1513,35 +1514,53 @@ void npCtrlProperty (int command, void* dataRef)
 
 		case kNPcmdGeometry :
 			if (data->io.key.modShift)
+			{
 				node->geometry--;
-			else
-				node->geometry++;
+				if(node->geometry < 0)
+				{				
+					//node->geometry = data->io.gl.numModels+1000-1;
 
-			printf("\ndata->io.gl.geoList.numPrimitives+1 : %d",data->io.gl.geoList.numPrimitives+1); 
-			data->io.gl.geoList.numModels = 10;
-			if (node->geometry >= data->io.gl.geoList.numPrimitives+1 )//kNPgeoPin)	//zz debug
-			{
-				if( data->io.gl.geoList.numModels == 0)
+					geoId = 2000;
+
+					while( data->io.gl.geolist[geoId].geometryId != geoId )
+						geoId--;
+
+					if(geoId == 0)
+						node->geometry = data->io.gl.numPrimitives;
+					else
+						node->geometry = geoId;
+
+
+				} 
+				else if( node->geometry > data->io.gl.numPrimitives && node->geometry < 2000)
 				{
-					node->geometry = 0;
-				}
-				else
-				{
-					//node->geometry++;	
-					if(node->geometry < 1000)
+					geoId = node->geometry;
+					while( data->io.gl.geolist[geoId].geometryId != geoId )
 					{
-						node->geometry = 1000;
+						geoId--;
 					}
-				}
-			}
-			
-			if(node->geometry > (data->io.gl.geoList.numModels+1000) )
-			{
-				node->geometry = 0;
-			}
+					node->geometry = geoId;
 
-			if (node->geometry < 0) /// make it roll back to the model geometries
-				node->geometry = data->io.gl.geoList.numPrimitives - 1;//kNPgeoPin;
+				}
+
+			}
+			else
+			{
+				node->geometry++;
+				if( node->geometry > data->io.gl.numPrimitives && node->geometry < 2000)
+				{
+					geoId = node->geometry;
+					while( data->io.gl.geolist[geoId].geometryId != geoId && geoId <= 2000 )
+						geoId++;
+
+					if(geoId > 2000)
+						node->geometry = 0;
+					else
+						node->geometry = geoId;
+
+				}
+			}	
+
 			npSetTagOffset (node);
 			sprintf(msg, "geometry: %d", node->geometry);
 			npPostMsg (msg, kNPmsgCtrl, dataRef);

@@ -572,12 +572,14 @@ void npInitDataFile (pNPfile file, void* dataRef)
 	/// @todo move nposGetAppPath to npInitIO branch
 	nposGetAppPath (file->appPath, &length);
 
+	strcat (file->modelPath, file->appPath); /// assimp lv
 	strcat (file->csvPath, file->appPath);
 	strcat (file->mapPath, file->appPath);
 
 #ifdef NP_MSW_
-	strcat (file->csvPath, "usr\\csv\\");			//default user data folders //zz debug npos.h
+	strcat (file->csvPath,   "usr\\csv\\");			//default user data folders //zz debug npos.h
 	strcat (file->mapPath, "usr\\images\\");
+	strcat (file->modelPath, "usr\\model\\"); /// @todo: lv, model folder auto loading
 #else
 	strcat (file->csvPath, "usr/csv/");
 	strcat (file->mapPath, "usr/images/");

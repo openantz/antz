@@ -23,6 +23,7 @@
 * --------------------------------------------------------------------------- */
 
 #include "npgl.h"
+#include "file/npmodels.h"
 
 #include "../npio.h"
 #include "../npctrl.h"
@@ -43,7 +44,7 @@ void npInitGL(void* dataRef)
 	npInitGLPrimitive (dataRef);
 
 	printf("before npInitGeoList(dataRef)");
-	npInitGeoList(dataRef);
+	npInitModels(dataRef);
 	printf("after npInitGeoList(dataRef)");
 
 	npInitTags (dataRef);		//do this before loading textures

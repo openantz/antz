@@ -10,7 +10,7 @@
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
-*  To the extent possible under law, the author(s) have dedicated all copyright 
+*  To the extent possible under law, the author(s) have dedicated all copyright
 *  and related and neighboring rights to this software to the public domain
 *  worldwide. This software is distributed without any warranty.
 *
@@ -23,6 +23,7 @@
 * --------------------------------------------------------------------------- */
 
 #include "npgeometry.h"
+#include "../file/npmodels.h" // lv, models
 
 #include "npgldraw.h"
 
@@ -72,7 +73,7 @@ void DrawPinWireDL();
 GLuint CreateTorusDL();
 GLuint CreateTorusWireDL();
 void DrawTorusDL();
-void DrawTorusWireDL(); 
+void DrawTorusWireDL();
 
 void npDrawTorus (int geometry, GLfloat innerRadius);
 
@@ -82,41 +83,139 @@ void DeleteCircle (NPcirclePtr circle);
 
 GLuint npCreatePrimitiveDL (void);
 
-
-void npInitGeoList(void* dataRef)
+/*
+void recursive_render (const struct aiScene *sc, const struct aiNode* nd, void* dataRef)
 {
 	pData data = (pData) dataRef;
-	pNPgeoList geoList = &data->io.gl.geoList;
-	int i = 0;
-	
-	geoList->numModels = 0;
-	geoList->numPrimitives = 0;
+	pNPassimp assimp = data->io.assimp;
+	unsigned int i;
+	unsigned int n = 0, t;
+	GLenum face_mode;
+	struct aiMatrix4x4 m = nd->mTransformation;
 
-	for(i = 0; i < kNPgeoListMax; i++)
+	printf("\nrecursive_render");
+	// update transform
+	aiTransposeMatrix4(&m);
+	glPushMatrix();
+	glMultMatrixf((float*)&m);
+
+	// draw all meshes assigned to this node
+	for (; n < nd->mNumMeshes; ++n) {
+		const struct aiMesh* mesh = assimp->scene->mMeshes[nd->mMeshes[n]];
+
+	//	apply_material(sc->mMaterials[mesh->mMaterialIndex]);
+
+		if(mesh->mNormals == NULL) {
+			glDisable(GL_LIGHTING);
+		} else {
+			glEnable(GL_LIGHTING);
+		}
+
+		for (t = 0; t < mesh->mNumFaces; ++t) {
+			const struct aiFace* face = &mesh->mFaces[t];
+		//	GLenum face_mode;
+
+			switch(face->mNumIndices) {
+				case 1: face_mode = GL_POINTS; break;
+				case 2: face_mode = GL_LINES; break;
+				case 3: face_mode = GL_TRIANGLES; break;
+				default: face_mode = GL_POLYGON; break;
+			}
+
+			glBegin(face_mode);
+
+			for(i = 0; i < face->mNumIndices; i++) {
+				int index = face->mIndices[i];
+				if(mesh->mColors[0] != NULL)
+				{
+					glColor4fv((GLfloat*)&mesh->mColors[0][index]);
+				}
+				if(mesh->mNormals != NULL)
+				{
+					glNormal3fv(&mesh->mNormals[index].x);
+				}
+				glVertex3fv(&mesh->mVertices[index].x);
+			}
+
+			glEnd();
+		}
+
+}
+*/
+// new geolist 2 func lv model
+/*
+name
+geometryId
+modelId
+modelPath
+modelFile
+textureId
+*/
+
+/*
+void npAddModelToGeoList2(char* name, unsigned int geometryId, struct aiScene* scene, int textureId, void* dataRef)
+{
+	pData data = (pData) dataRef;
+	pNPgeolist2 p_geo = &data->io.gl.geolist2[geometryId];
+	GLuint modelList = data->io.gl.dl + 1000;
+	int geoListIndex = 0;
+
+	if( (data->io.gl.numModels + 1) > (kNPgeoListMax / 2) )
 	{
-		geoList->name[i][0] = '\0';
-		geoList->DL[i] = 0;
-		geoList->textureID[i] = 0;
-	}	
-
-	// may need to be 20 and not 19
-	// 0 index is dummy
-	for(i = 1; i <= 19; i++)
-	{ 
-	/// The first 20 primitives will remain unnamed, unless they need to be.
-		geoList->DL[i] = primitiveDL + i;
-		geoList->numPrimitives = i;
+		printf("\nModel Limit Hit");
+		return;
 	}
 
-	/// Assimp Models start at index 1000
+	data->io.gl.numModels++;
+	
+//	strcpy(p_geo->name[geoListIndex], name);
+	strcpy(p_geo->name, name);
 
-	return;
+	printf("\ngeoList index %d : %d", geoListIndex ,textureId);
+	p_geo->textureId = textureId;
+	strncpy(p_geo->modelFile, name, 75); /// always use strncpy
+
+	printf("\nmodel file (%s)", p_geo->modelFile);
+	printf("\ndl id : %u", (unsigned int)(modelList + data->io.gl.numModels));
+
+	printf("\nmodelList : %d", modelList);
+	printf("\nnumModels : %d", data->io.gl.numModels-1);
+//	glNewList(modelList + (data->io.gl.numModels-1), GL_COMPILE);
+
+	printf("\ndata->io.gl.dl : %d", data->io.gl.dl);
+	printf("\ndl + 1000 : %d", data->io.gl.dl + 1000);
+	printf("\n1 gl error : %d", glGetError());
+
+	glNewList(data->io.gl.dl + 1000, GL_COMPILE);
+//	printf("\n 1 %d", glGetError());
+	npDrawAssimpModel(scene, scene->mRootNode, dataRef);
+//	printf("\n 2 %d", glGetError());
+	glEndList();
+
+	printf("\n2 gl error : %d", glGetError());
+	system("pause");
+}
+*/
+
+void npModelStoreDL(struct aiScene* scene, int dlOffset, void* dataRef)
+{
+	pData data = (pData) dataRef;
+	pNPgl gl = &data->io.gl;
+	pNPassimp assimp = (pNPassimp)data->io.assimp;
+	
+//	glNewList(gl->dl + 1000, GL_COMPILE);
+	glNewList(gl->dl + dlOffset, GL_COMPILE);
+//	npDrawAssimpModel(assimp->scene[1], assimp->scene[1]->mRootNode, dataRef);
+	npDrawAssimpModel(scene, scene->mRootNode, dataRef);
+	glEndList();
 }
 
+/*
 void npAddModelToGeoList(char* name, GLuint displayList, int textureId, void* dataRef)
 {
 	pData data = (pData) dataRef;
-	pNPgeoList geoList = &data->io.gl.geoList;
+//	pNPgeoList geoList = &data->io.gl.geoList;
+	pNPgeolist2 geolist = &data->io.gl.geolist2[
 
 	if( (geoList->numModels + 1) > (kNPgeoListMax / 2))
 	{
@@ -126,12 +225,19 @@ void npAddModelToGeoList(char* name, GLuint displayList, int textureId, void* da
 
 	geoList->numModels++;
 	strcpy(geoList->name[1000 + geoList->numModels], name);
-	geoList->DL[1000 + geoList->numModels] = displayList;
+//	geoList->DL[1000 + geoList->numModels] = displayList;
 	geoList->textureID[1000 + geoList->numModels] = textureId;
-	
+
 
 }
+*/
 
+void npAddPrimitiveAssimpModelDL(struct aiScene* scene, void* dataRef)
+{
+	
+}
+/// temp
+/*
 void npAddPrimitiveToGeoList(char* name, GLuint displayList, int textureId, void* dataRef)
 {
 	pData data = (pData) dataRef;
@@ -145,12 +251,14 @@ void npAddPrimitiveToGeoList(char* name, GLuint displayList, int textureId, void
 
 	geoList->numPrimitives++;
 	strcpy(geoList->name[geoList->numPrimitives], name);
-	geoList->DL[geoList->numPrimitives] = displayList;
+//	geoList->DL[geoList->numPrimitives] = displayList;
 	geoList->textureID[geoList->numPrimitives] = textureId;
 
 	return;
 }
+*/
 
+/*
 void npDelPrimitiveFromGeoList(int index, void* dataRef)
 {
 	pData data = (pData) dataRef;
@@ -170,17 +278,19 @@ void npDelPrimitiveFromGeoList(int index, void* dataRef)
 
 	if( (index > (kNPgeoListMax / 2)) || (index > geoList->numPrimitives) || (index == 0) )
 	{
-		printf("\nIndex %d out of primitive range : [1,%d]", index, (kNPgeoListMax/2) );	
+		printf("\nIndex %d out of primitive range : [1,%d]", index, (kNPgeoListMax/2) );
 		return;
 	}
 
-	geoList->DL[index] = 0;
+//	geoList->DL[index] = 0;
 	geoList->name[index][0] = '\0';
 	geoList->textureID[index] = 0;
 	geoList->numPrimitives--;
 
 }
+*/
 
+/*
 void npDelModelFromGeoList(int index, void* dataRef)
 {
 	pData data = (pData) dataRef;
@@ -194,17 +304,17 @@ void npDelModelFromGeoList(int index, void* dataRef)
 
 	if( ( (index+1000) > (kNPgeoListMax+1) ) || (index > geoList->numPrimitives) || ((index+1000) == 1000) )
 	{
-		printf("\nIndex %d out of primitive range : [1,%d]", index, (kNPgeoListMax/2) );	
+		printf("\nIndex %d out of primitive range : [1,%d]", index, (kNPgeoListMax/2) );
 		return;
 	}
 
-	geoList->DL[(1000+index)] = 0;
+//	geoList->DL[(1000+index)] = 0;
 	geoList->name[(1000+index)][0] = '\0';
 	geoList->textureID[(1000+index)] = 0;
 	geoList->numModels--;
 
 }
-
+*/
 
 
 
@@ -236,19 +346,78 @@ void npGLPrimitive (int geometry, float ratio)
 	pData data = (pData) npGetDataRef();
 	glPushMatrix();									//is glPushMatrix necessary, zz debug
 
-	printf("\ngeometry : %d", geometry);
+	//printf("\ngeometry : %d", geometry);
 
 	//draw the object using the primitive DL offset by geometry index
 	if (geometry == kNPgeoTorus || geometry == kNPgeoTorusWire)
 		npDrawTorus (geometry, ratio);
 	else
-		glCallList (primitiveDL + geometry);
+	{
+		glCallList(data->io.gl.dl + geometry);
+//		glCallList (geoList->DL + geometry); /// @todo: lv model
+	}
+
+	glPopMatrix();
+}
+
+void npGLSurface2 (bool texture, pNPnode node, void* dataRef)
+{
+	pData data = (pData) dataRef;
+
+	glPushMatrix();									//is glPushMatrix necessary, zz debug
+
+	glLineWidth (node->lineWidth);		//for wireframe objects
+
+	// turn on texture coordinates specific for each primitive type
+	if (texture)
+		npGLTexture (node, dataRef);
+
+	if (node->geometry == kNPgeoTorus)
+		npDrawTorus (node->geometry, node->ratio);
+	else
+	{
+		//slide down 1 unit to center cylinder								//zz debug
+		if ( ( node->geometry == kNPgeoCylinder || node->geometry == kNPgeoCylinderWire
+			   || node->geometry == kNPgeoCone || node->geometry == kNPgeoConeWire )
+	//		&& !( node->topo == kNPtopoRod || node->type == kNodeLink ) )
+				||  ( node->topo != kNPtopoPin
+						&& ( node->geometry == kNPgeoPin
+							|| node->geometry == kNPgeoPinWire ) ) )
+			glTranslatef (0.0f, 0.0f, -kNPoffsetUnit);
+	//	else if (node->geometry == kNPgeoPinWire)
+	//		glTranslatef (0.0f, 0.0f, -kNPoffsetPin);
+
+		//draw the object using the primitive DL offset by geometry index
+		if (data->io.gl.pickPass)
+		{
+			//if odd add 1 to get a solid
+			//logic forces draws wireframe as solid during pickPass
+			//also an exception for pin which is out of order in geometry list, zz debug
+			if (node->geometry == kNPgeoPinWire)
+				glCallList (data->io.gl.dl + kNPgeoPin);
+			else if (node->geometry % 2 == 0 && node->geometry != kNPgeoPin)
+				glCallList (data->io.gl.dl + node->geometry + 1);
+			else
+				glCallList (data->io.gl.dl  + node->geometry);
+		}
+		else
+		{
+		//	glCallList (primitiveDL + node->geometry);
+			glCallList (data->io.gl.dl + node->geometry);
+		}
+	}
+	// turn off texturing
+	if (texture && node->textureID)					//dual param for pickPass, debug zz
+		glDisable ( GL_TEXTURE_2D );
+
+	glLineWidth (1.0f);				//reset to default of 1.0f line thickness, zz debug
 
 	glPopMatrix();
 }
 
 //used to draw all geometry primitive types
 //------------------------------------------------------------------------------
+/*
 void npGLSurface (bool texture, pNPnode node, void* dataRef)
 {
 	pData data = (pData) dataRef;
@@ -269,8 +438,8 @@ void npGLSurface (bool texture, pNPnode node, void* dataRef)
 		if ( ( node->geometry == kNPgeoCylinder || node->geometry == kNPgeoCylinderWire
 			   || node->geometry == kNPgeoCone || node->geometry == kNPgeoConeWire )
 	//		&& !( node->topo == kNPtopoRod || node->type == kNodeLink ) )
-				||  ( node->topo != kNPtopoPin 
-						&& ( node->geometry == kNPgeoPin 
+				||  ( node->topo != kNPtopoPin
+						&& ( node->geometry == kNPgeoPin
 							|| node->geometry == kNPgeoPinWire ) ) )
 			glTranslatef (0.0f, 0.0f, -kNPoffsetUnit);
 	//	else if (node->geometry == kNPgeoPinWire)
@@ -278,7 +447,7 @@ void npGLSurface (bool texture, pNPnode node, void* dataRef)
 
 		//draw the object using the primitive DL offset by geometry index
 		if (data->io.gl.pickPass)
-		{									
+		{
 			//if odd add 1 to get a solid
 			//logic forces draws wireframe as solid during pickPass
 			//also an exception for pin which is out of order in geometry list, zz debug
@@ -300,7 +469,7 @@ void npGLSurface (bool texture, pNPnode node, void* dataRef)
 
 	glPopMatrix();
 }
-
+*/
 
 //MB-TEXTURE
 //------------------------------------------------------------------------------
@@ -321,8 +490,10 @@ void npGLTexture (pNPnode node, void* dataRef)
 	glBindTexture ( GL_TEXTURE_2D, node->textureID );
 
 	//use different texturing for the gluSphere
+//	if ( node->geometry == kNPgeoSphere // || geometry == kNPgeoSphereWire		//zz debug
+//		|| node->geometry == kNPgeoCylinder || node->geometry == kNPgeoAssimp ) // || geometry == kNPgeoCylinderWire
 	if ( node->geometry == kNPgeoSphere // || geometry == kNPgeoSphereWire		//zz debug
-		|| node->geometry == kNPgeoCylinder ) // || geometry == kNPgeoCylinderWire
+		|| node->geometry == kNPgeoCylinder || node->geometry >= 1000 ) // || geometry == kNPgeoCylinderWire
 	{
 		glDisable( GL_TEXTURE_GEN_S );	//prevents intermittent texture anomally
 		glDisable( GL_TEXTURE_GEN_T );
@@ -346,7 +517,7 @@ void npGLTexture (pNPnode node, void* dataRef)
 
 
 			//rather sharp setting, but probably best for mapping
-			//for video use GL_LINEAR_MIPMAP_NEAREST when the angle is close 
+			//for video use GL_LINEAR_MIPMAP_NEAREST when the angle is close
 			//to perpendicular less artifacts and a bit more blurry
 	//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);		//zz debug, add mipmapping...
 	//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
@@ -393,8 +564,8 @@ void InitTorus (void* dataRef)
 				case 10 : torus->slices = 48; torus->segments = 196; break;
 				case 11 : torus->slices = 64; torus->segments = 256; break;
 			}
-			
-			torus->thickness =	(GLfloat) j * 100.0f / 
+
+			torus->thickness =	(GLfloat) j * 100.0f /
 								(GLfloat) (kTorusThicknessCount - 1);
 
 			CreateTorus (torus);
@@ -445,7 +616,7 @@ void CreateTorus (NPtorusPtr torus)
 	// build the the torus polygon array
 	for (i=0; i < torus->segments; i++)
 		for (j=0; j < torus->slices; j++)
-		{	
+		{
 			if ( i == (torus->segments - 1) )		// the last torus segment
 			{
 				if ( j == (torus->slices - 1) )		// the last polygon
@@ -488,6 +659,7 @@ void CreateTorus (NPtorusPtr torus)
 }
 
 
+
 // creates a circle of specified number of points and radius
 // centered on the origin (0,0) starting at 12 o'clock going CW
 // really should be part of GL, glCircle!, lol
@@ -502,8 +674,8 @@ void CreateCircle (NPcirclePtr circle)
 
 	if (circle->segments)
 		deltaAngle = (2.0 * kPI) / circle->segments;
-	
-	// go around the circle, 
+
+	// go around the circle,
 	for (angle = 0.0f; angle <= 1.99999f * kPI; angle += deltaAngle)
 	{
 //		circle->vArray[i]->x = circle->radius * (GLfloat)sin(angle);
@@ -555,7 +727,7 @@ void npDrawTorus (int geometry, GLfloat innerRadius)
 // Draw Pin, ice-cream cone shape, width is a 10% the cone height
 // the icecream dome sticks up an additional 10% so total height is 110% height
 //------------------------------------------------------------------------------
-void DrawPinDL() 
+void DrawPinDL()
 {
 	glPushMatrix();															//zzoff
 	glTranslatef (0.0f, 0.0f, kNPoffsetPin);
@@ -570,7 +742,7 @@ void DrawPinDL()
 // Draw Pin, ice-cream cone shape, width is a 10% the cone height
 // the icecream dome sticks up an additional 10% so total height is 110% height
 //------------------------------------------------------------------------------
-void DrawPinWireDL() 
+void DrawPinWireDL()
 {
 	glPushMatrix();															//zzoff
 	glTranslatef (0.0f, 0.0f, kNPoffsetPin);
@@ -584,14 +756,14 @@ void DrawPinWireDL()
 
 
 //------------------------------------------------------------------------------
-void DrawTorusDL() 
+void DrawTorusDL()
 {
 	npGLSolidTorus (kNPtorusRadius * 0.1f, kNPtorusRadius, 7, 16); //zzhp
 }
 
 
 //------------------------------------------------------------------------------
-void DrawTorusWireDL() 
+void DrawTorusWireDL()
 {
 	npGLWireTorus (kNPtorusRadius * 0.1f, kNPtorusRadius, 7, 16);
 }
@@ -699,7 +871,7 @@ void DrawSphereWireDL()
 		gluSphere (sphere, 1.0, 24, 12);
 	glPopMatrix();
 
-	// glEndList();		
+	// glEndList();
 	// gluDeleteQuadric(sphere);				``````````````//zz debug, should use this
 }
 
@@ -840,7 +1012,7 @@ GLuint npCreatePrimitiveDL(void)
 	glNewList (i++, GL_COMPILE);
 		npGlutPrimitive (kNPgeoCone);		//GLU not very good cone tex mapping
 	glEndList();
-	
+
 	glNewList (i++, GL_COMPILE);
 		npGLWireTorus (kNPtorusRadius * 0.1f, kNPtorusRadius, 7, 16);
 	glEndList();
@@ -896,7 +1068,180 @@ GLuint npCreatePrimitiveDL(void)
 	glNewList (i++, GL_COMPILE);
 		DrawCylinderDL();
 	glEndList();
-	
+
 	return (displayList);
 }
 
+void npInitGeoListPrimitives(void* dataRef)
+{
+	pData data = (pData) dataRef;
+	pNPgl gl = &data->io.gl;
+//	pNPgeoList geoList = &data->io.gl.geoList;
+	pNPgeolist geolist = data->io.gl.geolist;
+	GLuint displayList = 0, i = 0;
+
+	gl->numPrimitives = 0;
+	//geoList->numPrimitives = 0;
+
+	// Create the id for the list
+//	i = displayList = glGenLists (4096);//kNPgeoCount);
+//	i = geoList->DL = glGenLists (4096);
+	gl->dl = 0;
+	printf("\n1a gl error : %d", glGetError());
+	i = gl->dl = glGenLists(4096); // kNPgeoCount	
+	printf("\n2a gl error : %d", glGetError());
+//	printf("geoList->DL : %u", geoList->DL);
+	printf("gl->dl (%u)", gl->dl);
+	//system("pause");
+
+	//if( geoList->DL == 0 )
+	if( gl->dl == 0 )
+	{
+		npPostMsg("err 4488 - glGenLists() failed", kNPmsgErr, NULL);
+		return;
+	}
+
+	// start list
+	glNewList (i++, GL_COMPILE);
+		glutWireCube (1.4142f);
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		glutSolidCube (1.4142f);
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		DrawSphereWireDL();					//using GLU for proper tex mapping
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		DrawSphereDL();						//using GLU for proper tex mapping
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		npGlutPrimitive (kNPgeoConeWire);
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		npGlutPrimitive (kNPgeoCone);		//GLU not very good cone tex mapping
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		npGLWireTorus (kNPtorusRadius * 0.1f, kNPtorusRadius, 7, 16);
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		npGLSolidTorus (kNPtorusRadius * 0.1f, kNPtorusRadius, 7, 16);
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		npGlutPrimitive (kNPgeoDodecahedronWire);
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		npGlutPrimitive (kNPgeoDodecahedron);
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		npGlutPrimitive (kNPgeoOctahedronWire);
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		npGlutPrimitive (kNPgeoOctahedron);
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		npGlutPrimitive (kNPgeoTetrahedronWire);
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		npGlutPrimitive (kNPgeoTetrahedron);
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		npGlutPrimitive (kNPgeoIcosahedronWire);
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		npGlutPrimitive (kNPgeoIcosahedron);
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		DrawPinDL();
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		DrawPinWireDL();
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		DrawCylinderWireDL();
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		DrawCylinderDL();
+	glEndList();
+
+	//geoList->numPrimitives = i - geoList->DL;
+	gl->numPrimitives = i - gl->dl;
+//	printf("\ndisplayList : %u", displayList);
+//	printf("geoList->numPrimitives : %d", geoList->numPrimitives);  
+	printf("\ngl->numPrimitives : %d", gl->numPrimitives); 
+		
+//	system("pause");
+	//return (displayList);
+	return;
+}
+
+// geolist 2
+/*
+void npgeolistInit(void* dataRef)
+{
+	pData data = (pData) dataRef;
+	pNPgeolist2 geolist = &data->io.gl.geolist2;
+	int i;	
+	geolist->modelFile[0] = '\0';
+	
+}
+*/
+
+void npInitGeoList(void* dataRef)
+{
+	pData data = (pData) dataRef;
+	pNPgl gl = &data->io.gl;
+//	pNPgeoList geoList = &data->io.gl.geoList;
+	pNPgeolist geolist = data->io.gl.geolist;
+	pNPgeolist p_geo = data->io.gl.geolist;
+	int i = 0;
+
+	gl->modelId = 0;
+//	gl->geoLock = true;
+	npGeolistLock(dataRef);
+	npGeolistSetLen(0, dataRef);	
+	npGeolistSetX(0, dataRef);
+	gl->numModels = 0;
+	gl->numPrimitives = 0;
+
+	npInitGeoListPrimitives(dataRef);
+
+//	geoList->DL = glGenLists(kNPgeoListMax);
+	for(i = 0; i < kNPgeoListMax; i++)
+	{
+		p_geo = &data->io.gl.geolist[i];
+		p_geo->geometryId = 0;
+		p_geo->modelFile[0] = '\0';
+		p_geo->modelId = 0;
+		p_geo->modelPath[0] = '\0';
+		p_geo->modelTextureFile[0] = '\0';
+		p_geo->modelTexturePath[0] = '\0';
+		p_geo->name[0] = '\0';
+		p_geo->textureId = 0;
+		/*
+		geolist->modelFile[0] = '\0';
+		geolist->name[i] = '\0';
+		geolist->textureId = 0;
+		*/
+	}
+
+	return;
+}

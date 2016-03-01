@@ -127,7 +127,7 @@ int npfiLoadTexture( const char* filename, void* dataRef)
 	glGenTextures( 1, &textureID );
 	glBindTexture( GL_TEXTURE_2D, textureID );
 
-	//zz debug for unkown reason, without these the glTexParam... thetexture will 
+	//zz debug for unknown reason, without these the glTexParam... thetexture will 
 	// not display on objects, unless the texture has been displayed on the grid 
 	// at which point it works on the objects too, very strange.
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

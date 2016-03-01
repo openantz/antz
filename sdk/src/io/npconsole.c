@@ -29,6 +29,8 @@
 
 #include "npconsole.h"
 #include "db/npdb.h"
+#include "file/npassimp.h"
+#include "file/npmodels.h" // lv, models
 
 #include "../npdata.h"
 #include "../npio.h"
@@ -69,6 +71,7 @@ void npCloseConsole (void* dataRef)
 //------------------------------------------------------------------------------
 void npConsoleCmdText( pNPconsole console, void* dataRef )
 {
+	int testId = 0;
 	int i = 0;
 	int id = 0;
 	int temp = 0;
@@ -81,6 +84,7 @@ void npConsoleCmdText( pNPconsole console, void* dataRef )
 
 	pNPnode node = NULL;
 	pData data = (pData) dataRef;
+	pNPassimp assimp = data->io.assimp;
 	//npStrCmdToLowerCase(console->inputStr, commandLength);
 
 	str = console->inputStr;
@@ -121,6 +125,20 @@ void npConsoleCmdText( pNPconsole console, void* dataRef )
 	else if( strncmp("gitviz", console->inputStr, 6) == 0 )
 	{
 		data->io.github.issues->running = true;
+	}
+	else if( strncmp("model", console->inputStr, 5) == 0 )
+	{
+//		printf("\nmodel : %s", console->inputStr+6);
+		if(data->io.assimp == NULL)
+		{
+			printf("\nassimp failed");
+		}
+		else
+		{
+			printf("\nassimp ptr : %p", assimp);
+			npLoadModelFromFile(console->inputStr+6, dataRef);
+		}
+//		printf("\nafter");
 	}
 	else if( strncmp ( "pick ", console->inputStr, 5 ) == 0 )
 	{

@@ -108,6 +108,62 @@ void nposGetAppPath (char* buffer, int* size)
 	*size = strlen(buffer); 
 }
 
+/// new function lv
+bool nposDirExists(const char* dir, void* dataRef)
+{
+	unsigned int attribs = 0;
+
+	if(dir[0] == '\0')
+		return false;
+
+	attribs = GetFileAttributes(dir);
+	if(attribs == INVALID_FILE_ATTRIBUTES)
+		return false; /// Invalid Path
+
+	if(attribs & FILE_ATTRIBUTE_DIRECTORY)
+		return true; /// is a directory
+
+	return false;
+}
+
+bool nposFileExists(const char* filepath, void* dataRef)
+{
+	unsigned int attribs = 0;
+
+	attribs = GetFileAttributes(filepath);
+	if( (attribs != INVALID_FILE_ATTRIBUTES) && (attribs != 0) && (attribs != FILE_ATTRIBUTE_DIRECTORY) )
+		return true;
+
+	return false;
+}
+
+bool nposFileExistsAtDir(const char* dir, char* filename, void* dataRef)
+{
+	bool dirExists = false;
+	char filepath[256] = {'\0'};
+	unsigned int attribs = 0;
+
+	dirExists = nposDirExists(dir, dataRef);
+
+	if(dirExists == true)
+	{
+		sprintf(filepath, "%s%s", dir, filename);
+		attribs = GetFileAttributes(filepath);
+		if( (attribs != INVALID_FILE_ATTRIBUTES) )
+			return true;
+
+//		if( (attribs != INVALID_FILE_ATTRIBUTES) && (attribs != 0) && (attribs != FILE_ATTRIBUTE_DIRECTORY) )
+//			return true;
+	}
+	else
+	{
+		return false;
+	}
+
+	return false;
+}
+
+
 // current working directory is OS specific
 //-----------------------------------------------------------------------------
 void nposGetCWD (char* buffer, int* size)
@@ -614,6 +670,11 @@ int nposFindFirstFile( pNPfileRef fileRef, const char* dirPath,
 	return 1;
 }
 
+char nposGetFolderDelimit(void)
+{
+	return '\\';
+//	return "\\";
+}
 
 //MSW file attributes
 /*

@@ -134,7 +134,7 @@ int npstrtoi(char** buffer)
 	//optimization for the common case of just '1'
 	if (*curs == '1')
 	{
-		curs++;
+		curs++; // lv, fix
 		if (*curs < '0')		//if not a numeral
 		{
 			value = 1;			//then it is just '1'
@@ -152,10 +152,12 @@ int npstrtoi(char** buffer)
 		if (*curs == '-')
 		{
 			//process the digits for negative number
+			curs++; // lv, fix
 			while (*curs >= '0' && *curs <= '9')
 			{
 				value = value * 10 + (*curs - '0');
 				curs++;
+				*buffer = curs;
 			}
 			return -value;	//return negative signed value
 		}
@@ -172,6 +174,10 @@ int npstrtoi(char** buffer)
 endPoint:
 
 //	while (*curs != ',' && *curs != '\r' && *curs != '\n') curs++; //debug needed?
+
+	// lv new models
+	while( ( (*curs >= 'a') && (*curs <= 'z') ) || ( (*curs >= 'A') && (*curs <= 'Z') ) )
+		curs++;
 
 	if (*curs == ',')
 		*curs++;		//if comma field separator then increment past

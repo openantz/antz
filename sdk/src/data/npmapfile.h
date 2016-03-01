@@ -95,5 +95,9 @@ void npPreLoadInit( pNPrecordSet recSet, void* dataRef);
 
 int npGetFileTypeCat( int* fileCategory, const char* filePath, void* dataRef);
 
+int npLoadModelCSV (const char* buffer, int size, void* dataRef);
+
+void npCSVtoModel(char** read, int size, int* scanNumRet, void* dataRef); /// lv, model
+
 #endif
 

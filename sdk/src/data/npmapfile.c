@@ -179,6 +179,9 @@ int npWriteMapHeader (char* bufferIndex, int count, int type, void* dataRef)
 			map = data->map.typeMapPin;
 			itemCount = kNPpinItemCount;
 			break;
+		case kNPmodel :
+			map = data->map.typeMapModel;
+			break;
 		default : 
 			printf ("err 4381 - unknown type, cant write header field names");
 			return 0;	
@@ -1029,6 +1032,9 @@ int npCSVstrncpy(char* cstrout, char** csvstr, int size)
 				if ( csvPtr[curs] == '\"' && csvPtr[curs+1] == ',' )
 					break;
 
+				if ( csvPtr[curs] == '\"' && csvPtr[curs+1] == '\n' )
+					break;
+
 				if ( csvPtr[curs] == '\n' )
 				{
 					curs++;
@@ -1091,6 +1097,29 @@ int npCSVstrncpy(char* cstrout, char** csvstr, int size)
 
 	return i;
 }
+
+/** Takes a CSV model file line, converts it to C types, and add it to the geolist 
+lv,	This is being called in a thread, don't do opengl stuff.
+*/
+void npCSVtoModel(char** read, int size, int* scanNumRet, void* dataRef)
+{
+	pData data = (pData) dataRef;	
+	pNPgeo geo = NULL;
+	int match = 0;
+	
+	geo = npModelNew(read[0], dataRef);
+
+	match = npGeolistSearchGeo(geo, dataRef);
+
+	if(match == 0)
+		npGeolistAddModel(geo->geometryId, geo->modelId, geo->name, geo->modelFile, geo->modelPath, dataRef);
+
+	
+}
+
+
+
+/// @todo lv model npGLloadGeoList()
 
 //tags->list[i] = npCSVtoTag (csvRowPtr, maxLineSize, kNPmapTag, data);
 //buffer points to the start of a CSV formatted row
@@ -1249,6 +1278,7 @@ int npCSVtoC (pNPrecordSet recSet, const char* read, int size, void* dataRef)
 {
 	pData data = (pData) dataRef;
 	int recordCount = 0;
+	int textureId = 0;
 
 	switch(recSet->type)
 	{
@@ -1259,12 +1289,74 @@ int npCSVtoC (pNPrecordSet recSet, const char* read, int size, void* dataRef)
 		case kNPmapNode :
 			recordCount = npLoadNodesCSV (read, size, recSet->type, dataRef);
 			break;
+		case kNPmapModels : // lv models
+			recordCount = npLoadModelCSV(read, size, dataRef);
+			break; 
 		default : break;
 	}
 
 	recSet->count = recordCount;
 
 	return recordCount;
+}
+
+int npLoadModelCSV (const char* buffer, int size, void* dataRef)
+{
+	pData data = (pData) dataRef;
+
+	int ver = 0;				//zz debug, replace with table specific func ptr
+	int count = 0; 
+	int curs = 0;				//Cursor position in Buffer parsing source
+
+	int scanNumRet = 0;			//sscanf return value. Number of successfuly scanned elements
+	int recordCount = 0;
+
+	pNPrecordTag tag = NULL;
+
+
+	char* read = (char*)buffer;
+
+	if (!size)
+		return 0;
+
+	if (*read == '\r' || *read == '\n')
+	{
+		count += curs = npNextLineLimit(read, size);
+		read = &read[curs];
+	}
+
+	while( count < size )
+	{		
+		//processes a single model record, one line in the CSV file
+		npCSVtoModel(&read, size - count, &scanNumRet, dataRef);
+		if (!tag)
+			printf("err 2340 - record tag is null\n");
+
+		//update count and set read ptr to beginning of next line
+		count += scanNumRet;	
+		count += curs = npNextLineLimit(read, size - count);
+		read = &read[curs];
+
+		//print part of the first few lines of data
+		recordCount++;
+		if ( recordCount <= 3)
+		{
+//			printf("id: %d  record_id: %d table_id: %d tag: %.12s \n", //desc: %.8s\n",
+//				tag->id, tag->recordID, tag->tableID, tag->title );//tag->desc);
+			//printf("countDown: %d  curs: %d  scanNumRet: %d  recordCount: %d  size: %d\n", countDown, curs, scanNumRet, recordCount, size);
+			if ( recordCount == 3) printf("... ");
+		}
+		else if ( recordCount == (recordCount / 1000) * 1000 )	//print id from file every 100 nodes
+		{
+	//		printf("%d ", tag->id);
+		}
+
+	} //end loop
+
+
+
+	return 0;
+	
 }
 
 //-----------------------------------------------------------------------------
@@ -1731,6 +1823,12 @@ char* npGetType(int* type, int* format, const char* str, int size, void* dataRef
 		*type = kNPfileCSV;
 		*format = kNPmapGlobals;
 	}
+	else if(strncmp(str,"np_geo_id,", 10) == 0) // lv models
+	{
+		printf ("\nCSV models file");
+		*type = kNPfileCSV;
+		*format = kNPmapModels;
+	}
 	else
 		return (char*)str;
 
@@ -1863,6 +1961,7 @@ void npFileOpenThread (void* threadData)
 	double startTime = nposGetTime();
 
 
+//	printf("\n1e gl error : %d", glGetError());
 	//recordSet stores a list of the new records created
 	//used for processing the file blocks, attaching records, orphans...
 	recordSet = npMalloc(0, sizeof(NPrecordSet), data);
@@ -2017,12 +2116,17 @@ endPoint:
 	if (type == kNPmapNode)												//zzhp
 		data->io.file.loading = false;
 
+	if (type == kNPmapModels)
+		data->io.file.loading = false;
+
 	//free read buffers and threadFile structure
 	npFree (splitBlock, data);
 	npFree (read, data);
 	npFree (threadFile->filePath, data);	//free the filePath str copy
 	npFree (threadFile, data);				//free the thread container
-
+	
+//	printf("\n2e gl error : %d", glGetError());
+	//recordSet stores a list of the new records created
 	//move this out to a thread worker wrapper								//zz debug
 	nposEndThread();
 }
@@ -2083,7 +2187,7 @@ int npTableMapUpdate (const char* filePath, FILE* file, void* dataRef)
 	if( !tableID )
 	{
 	//	tableID = npTableNew( filePath, file, data );
-		printf( "table_map insert: %s\n", filePath );
+//		printf( "table_map insert: %s\n", filePath ); /// lv, temp
 	}
 	else
 		printf( "table_map update: %s\n", filePath );
@@ -2096,11 +2200,17 @@ int npTableMapUpdate (const char* filePath, FILE* file, void* dataRef)
 //------------------------------------------------------------------------------
 int npFileOpenAuto (const char* filePath, FILE* file, void* dataRef)
 {
+	char fileName[50] = {'\0'};
+	char path[1024] = {'\0'};
+	char* str_ptr = filePath;
+//	char* path = NULL;
 	int fileType = 0, fileCat = 0;
+	int textureId = 0;
 	int id = 0;
 
 	pData data = (pData) dataRef;
 	pNPmodels models;
+	pNPgeolist geo = NULL;
 
 	//pData data = (pData) dataRef;
 	pNPthreadFile threadFile = NULL;
@@ -2116,6 +2226,9 @@ int npFileOpenAuto (const char* filePath, FILE* file, void* dataRef)
 
 	//update the table_map for load, merge and/or update
 	npTableMapUpdate( filePath, file, data );
+	
+//	while(str_ptr != '
+
 
 	switch( fileCat )
 	{
@@ -2124,14 +2237,28 @@ int npFileOpenAuto (const char* filePath, FILE* file, void* dataRef)
 				npSetSelectedNodes( kNPtextureID, &id, data );
 			break;
 		case kNPfileCatTable :
+			printf("1f gl error : %d", glGetError());
+			data->io.file.loading = true;
+			
 			nposBeginThread( npFileOpenThread, threadFile );
+			printf("\nloading = %d", data->io.file.loading);
+			data->io.gl.geoLock = false;
+			while(data->io.file.loading == true);
+/// @todo:	npTextureGeoModel(pNPgeo p_geo, void* dataRef);
+//			printf("\nModel CSV File Loaded : numOfScenes (%d)", ((pNPassimp)data->io.assimp)->numOfScenes);
 			break;
 		case kNPfileCatModels :
-			if( models = npLoadModels( filePath, data ) )
+//			npIsValidFilePath( filePath, data); /// Validate the file path
+#define kNPgeo 42 /// @todo fractal geos
+			geo = npLoadModelFromFile( filePath, data );
+			/// @todo:			npIsValidGeo(geo, data ); 	
+			
+			if( geo && (geo->geometryId >= 1000 && geo->geometryId <= 2000) )
 			{
-				npSetSelectedNodes( kNPgeometry, &models->geometryID, data );
-				npSetSelectedNodes( kNPtextureID, &models->textureID, data );
+				npSetSelectedNodes( kNPgeometry, &geo->geometryId, data );
+				//npSetSelectedNodes( kNPtextureID, &geo->textureId, data );
 			}
+
 			break;
 		default :
 			npPostMsg("err 4989 - File type not supported", kNPmsgErr, data);

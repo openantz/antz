@@ -23,6 +23,7 @@
 * --------------------------------------------------------------------------- */
 
 #include "npio.h"
+#include "io/file/npassimp.h"
 
 #include "io/npfile.h"
 #include "io/npch.h"
@@ -41,6 +42,10 @@
 	#include "io/net/npgithub.h"
 #endif
 
+#ifdef NP_ADDON_SCAN
+	#include "io/net/npscan.h"
+#endif
+
 /*! Initialize IO systems
 *
 *	@param dataRef is a global map reference instance
@@ -52,6 +57,11 @@
 void npInitIO( void* dataRef )
 {
 	pData data = (pData) dataRef;
+	int assimpSuccess = 0;
+
+	/// Init assimp library
+	data->io.assimp = NULL;
+	npAssimpInit( dataRef );
 
 	npInitOS( dataRef );
 	/// init the local IO devices
@@ -98,6 +108,10 @@ void npInitIO( void* dataRef )
 	printf("Init Github : issues ptr %p\n", data->io.github.issues);
 //	getchar();
 //	npGithubInit( dataRef );
+#ifdef NP_ADDON_SCAN
+	npScanInit(&data->io.scan, dataRef);
+#endif
+
 	if( !npGithubInit( &data->io.github, dataRef) == 0 )
 		printf("Init github failed\n");
 	else
@@ -186,6 +200,10 @@ void npUpdateIO (void* dataRef)
 
 	data->io.cycleCount++;
 
+#ifdef NP_ADDON_SCAN
+	npScanNetworkIP3( "127.0.0.1", dataRef ); /// lv, temp
+#endif
+
 	//we double buffer the mouse delta movement to maintain engine cycle sync
 	npUpdateMouse (dataRef);
 	
@@ -198,6 +216,8 @@ void npUpdateIO (void* dataRef)
 #ifdef NP_ADDON_CURL
 	npGithubRun( dataRef );
 #endif
+	npUpdateGeoList( dataRef );
+
 }
 
 
