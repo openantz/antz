@@ -49,6 +49,13 @@ void npInitGL(void* dataRef)
 
 	npInitTags (dataRef);		//do this before loading textures
 
+	npInitTexMap(dataRef);
+//	npAddTexMap(dataRef);	
+	/*
+	npAddTexMap(5, "m_rifl.bmp", "Z:\\shared_antz\\antz\\antz\\", dataRef);
+	npAddTexMap(6, "mp5sil.bmp", "Z:\\shared_antz\\antz\\antz\\", dataRef);
+	npAddTexMap(7, "dolphin_f.bmp", "Z:\\shared_antz\\antz\\antz\\", dataRef);
+	*/
 //	nposBeginThread (npLoadTextures, dataRef);	//zz debug, add thread worker func wrapper
 	npLoadTextures(dataRef);
 

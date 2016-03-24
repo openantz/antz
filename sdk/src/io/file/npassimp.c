@@ -102,6 +102,7 @@ struct aiString npAssimpGetTexturePath(int sceneIndex, void* dataRef)
 	@param dataRef is a global map reference instance.
 	@return the model id
 */
+/*
 int npAssimpLoadModel(char* filePath, int* geolistIndexMatch, void* dataRef)
 {
 	char filename[256] = {'\0'};
@@ -160,17 +161,18 @@ int npAssimpLoadModel(char* filePath, int* geolistIndexMatch, void* dataRef)
 	}
 
 
-		for(i = kNPgeoAssimpIndex; i < kNPgeoLenMax; i++)
-		{
-			if( strcmp(data->io.gl.geolist[i].modelFile, filename) == 0 ) /// Found it
-			{
-				if( strcmp(data->io.gl.geolist[i].modelPath, modelPath) == 0)
-				{
-					(*geolistIndexMatch) = i;
-					break;
-				}
-			}
-		}
+
+//		for(i = kNPgeoAssimpIndex; i < kNPgeoLenMax; i++)
+//		{
+//			if( strcmp(data->io.gl.geolist[i].modelFile, filename) == 0 ) /// Found it
+//			{
+//				if( strcmp(data->io.gl.geolist[i].modelPath, modelPath) == 0)
+//				{
+//					(*geolistIndexMatch) = i;
+//					break;
+//				}
+//			}
+//		}
 
 
 
@@ -280,3 +282,4 @@ int npAssimpLoadModel(char* filePath, int* geolistIndexMatch, void* dataRef)
 
 	return modelId;
 }
+*/

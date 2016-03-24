@@ -25,9 +25,12 @@
 #ifndef NPTEXMAP_H_
 #define NPTEXMAP_H_
 
+#include "../../npdata.h"
 
 //------------------------------------------------------------------------------
 void npInitTexMap (void* dataRef);
+
+pNPtexmap npAddTexMap(int extTexId, char* filename, char* path, void* dataRef);
 
 void npCloseTexMap (void* dataRef);
 

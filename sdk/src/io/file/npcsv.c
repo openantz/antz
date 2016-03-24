@@ -1092,6 +1092,7 @@ int npMapToCSV (char* csvStr, int mapType, int size, int* index, void* dataRef)
 
 	char str[4096];			//temp memory for value string, optimize this out, //zz debug			
 
+	char* dslash = NULL;
 	int i = 0, j = 0;		//node tag sort stuff
 	int count = 0;
 	void** nodes;
@@ -1102,6 +1103,7 @@ int npMapToCSV (char* csvStr, int mapType, int size, int* index, void* dataRef)
 	pNPnode node = NULL;
 	pNPtag tag = NULL;
 	pNPgeolist geolist = NULL;
+	pNPtexmap texmap = NULL;
 
 	pData data = (pData) dataRef;
 
@@ -1183,6 +1185,7 @@ int npMapToCSV (char* csvStr, int mapType, int size, int* index, void* dataRef)
 	}
 	else if(mapType == kNPmapModels)
 	{
+		/*
 		printf("kNPmapModels\n");
 //		n += sprintf (curs, "np_models_id,np_geometry_id,np_texture_id,type,object_name,file_name,path\n");
 		n += sprintf (curs, "np_geo_id,np_texture_id,type,object_name,file_name,path\n");
@@ -1192,17 +1195,17 @@ int npMapToCSV (char* csvStr, int mapType, int size, int* index, void* dataRef)
 //			geolist[i].geometryId = 0;
 			if(geolist[i].geometryId == i && geolist[i].modelId > 0)
 			{
-				/*
-				n += sprintf((curs + n), "%d,%d,%d,%d,\"%s\",\"%s\",\"%s\"\n",
-					geolist[i].modelId,
-					geolist[i].geometryId,
-					geolist[i].textureId,
-					0,
-					geolist[i].name,
-					geolist[i].modelFile,
-					geolist[i].modelPath
-					);
-				*/
+		
+		//		n += sprintf((curs + n), "%d,%d,%d,%d,\"%s\",\"%s\",\"%s\"\n",
+		//			geolist[i].modelId,
+		//			geolist[i].geometryId,
+		//			geolist[i].textureId,
+		//			0,
+		//			geolist[i].name,
+		//			geolist[i].modelFile,
+		//			geolist[i].modelPath
+		//			);
+	
 				n += sprintf((curs + n), "%d,%d,%d,\"%s\",\"%s\",\"%s\"\n",	
 					geolist[i].geometryId,
 					geolist[i].textureId,
@@ -1213,6 +1216,34 @@ int npMapToCSV (char* csvStr, int mapType, int size, int* index, void* dataRef)
 					);
 			}
 		}
+		return n;
+		*/
+	}
+	else if(mapType == kNPmapTextures)
+	{
+		printf("-------------Saving kNPmapTextures------------\n");
+		n += sprintf (curs, "np_texture_id,type,file_name,path\n");
+		// kNPtexListMax 2000
+		for( i = 1; i < 2000; i++ )
+		{
+			texmap = &data->io.gl.texmap[i];	
+			if( (dslash = strstr(texmap->path, "//")) == 0 )
+			{
+				printf("path : %s\n", texmap->path);
+				printf("double slash detected : %s\n", dslash);
+			}
+
+			if(texmap->extTexId != 0)
+			{
+				n += sprintf((curs + n), "%d,%d,\"%s\",\"%s\"\n",	
+					texmap->extTexId,
+					0,
+					texmap->filename,
+					texmap->path
+					);
+			}
+		}
+
 		return n;
 	}
 	else

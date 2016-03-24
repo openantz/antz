@@ -216,7 +216,9 @@ void npUpdateIO (void* dataRef)
 #ifdef NP_ADDON_CURL
 	npGithubRun( dataRef );
 #endif
-	npUpdateGeoList( dataRef );
+
+	npUpdateTexMap( dataRef );
+//	npUpdateGeoList( dataRef );
 
 }
 

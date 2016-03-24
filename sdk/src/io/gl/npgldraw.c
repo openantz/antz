@@ -996,7 +996,7 @@ void DrawPinChild (pNPnode node, void* dataRef)
 
 		if( node->geometry >= 1000 )
 		{
-			node->textureID = data->io.gl.geolist[node->geometry].textureId; /// lv model
+//			node->textureID = data->io.gl.geolist[node->geometry].textureId; /// @todo lv temp commented out model
 			npGLPrimitive (node->geometry, 0.0f);		// 2nd one is above node
 		}
 

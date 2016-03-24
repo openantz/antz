@@ -136,7 +136,7 @@ void npConsoleCmdText( pNPconsole console, void* dataRef )
 		else
 		{
 			printf("\nassimp ptr : %p", assimp);
-			npLoadModelFromFile(console->inputStr+6, dataRef);
+			//npLoadModelFromFile(console->inputStr+6, dataRef);
 		}
 //		printf("\nafter");
 	}

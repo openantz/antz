@@ -115,5 +115,6 @@ char* npSearchPathsForFile(char* filename, void* dataRef);
 void npGetFileNameFromPath(char* filepath, char* filename, void* dataRef);
 //void npGetFolderDelimiterChar(
 
+
 #endif
 

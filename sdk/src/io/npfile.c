@@ -667,6 +667,8 @@ int npSaveScene( int format, char* datasetName, void* dataRef)
 
 	result += npSaveMapToCSV( datasetName, kNPmapTag, data );  /// save tags
 
+	result += npSaveMapToCSV( datasetName, kNPmapTextures, data ); /// lv save textures
+
 	result += npSaveMapToCSV( datasetName, kNPmapModels, data ); /// lv save models
 
 	return result;

@@ -64,7 +64,7 @@ pNPgeolist npLoadModelFromFile(char* filepath, void* dataRef);
 
 void npUpdateGeoList( void* dataRef );
 //void npGeolistAddModel( char* path, char* filename, void* dataRef ); 
-void npGeolistAddModel(int geometryId, int modelId, char* modelName, char* fileName, char* modelPath, void* dataRef);
+//void npGeolistAddModel(int geometryId, int modelId, char* modelName, char* fileName, char* modelPath, void* dataRef);
 
 int	npGeolistGetX(void* dataRef); 
 void npGeolistSetX(int X, void* dataRef);

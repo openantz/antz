@@ -1055,6 +1055,21 @@ typedef NPgeolist* pNPgeolist;
 typedef struct NPgeolist NPgeo; /// new lv models
 typedef pNPgeolist pNPgeo; /// new lv models
 
+
+struct NPtexmap {
+	int loaded;
+	int extTexId;
+	int intTexId;
+	char path[256];
+	char filename[256];
+	void* image;
+	int width;
+	int height;
+	int channels;
+};
+typedef struct NPtexmap NPtexmap;
+typedef NPtexmap* pNPtexmap;
+
 struct NPgl {
 	void* coreNode; ///< core nodes tie global structures to the scene graph
 						//!< each global struct has a corresponding base node.
@@ -1091,6 +1106,7 @@ struct NPgl {
 	int			shade;
 	int			alphaMode;
 
+	NPtexmap texmap[2000];
 	int			textureCount;
 	int			maxTextureSize;
 	int			subsample;		//!<zzhp
@@ -1367,14 +1383,6 @@ typedef struct NPos NPos;
 typedef struct NPos* pNPos;
 
 
-struct NPtexmap {
-	void* image;
-	int width;
-	int height;
-	int channels;
-};
-typedef struct NPtexmap NPtexmap;
-typedef NPtexmap* pNPtexmap;
 
 #ifdef NP_ADDON_SCAN
 #endif
@@ -1398,7 +1406,7 @@ struct NPio {
 	NPdbs		db;
 	NPgithub    github;
 	void* assimp;
-	NPtexmap texmap;
+
 
 //!<	NPoscPackListener oscListener;		//!<JJ-zz
 	pNPconnect	connect[kNPmaxConnect];	//!<zz osc
@@ -1873,6 +1881,7 @@ enum kNP_MAP_TYPE
 	kNPmapTrack,
 	kNPmapGL,
 	kNPmapModels,   // lv models
+	kNPmapTextures, // lv textures
 
 	kNPmapCSV,			//!<generic table/row/field/type
 	kNPmapJSON,			//!<likely the most descriptive

@@ -1103,6 +1103,7 @@ lv,	This is being called in a thread, don't do opengl stuff.
 */
 void npCSVtoModel(char** read, int size, int* scanNumRet, void* dataRef)
 {
+	/*
 	pData data = (pData) dataRef;	
 	pNPgeo geo = NULL;
 	int match = 0;
@@ -1113,10 +1114,27 @@ void npCSVtoModel(char** read, int size, int* scanNumRet, void* dataRef)
 
 	if(match == 0)
 		npGeolistAddModel(geo->geometryId, geo->modelId, geo->name, geo->modelFile, geo->modelPath, dataRef);
-
+	*/
 	
 }
 
+void npCSVtoTexture(char** read, int size, int* scanNumRet, void* dataRef);
+void npCSVtoTexture(char** read, int size, int* scanNumRet, void* dataRef)
+{
+	pData data = (pData) dataRef;	
+	pNPgeo geo = NULL;
+	int match = 0;
+	
+	npTextureNew(read[0], dataRef);	
+//	geo = npModelNew(read[0], dataRef);
+
+//	match = npGeolistSearchGeo(geo, dataRef);
+
+//	if(match == 0)
+//		npGeolistAddModel(geo->geometryId, geo->modelId, geo->name, geo->modelFile, geo->modelPath, dataRef);
+
+	
+}
 
 
 /// @todo lv model npGLloadGeoList()
@@ -1292,12 +1310,78 @@ int npCSVtoC (pNPrecordSet recSet, const char* read, int size, void* dataRef)
 		case kNPmapModels : // lv models
 			recordCount = npLoadModelCSV(read, size, dataRef);
 			break; 
+		case kNPmapTextures : // lv textures
+			printf("npCSVtoC \\ kNPmapTextures\n");
+			recordCount = npLoadTextureCSV(read, size, dataRef);
+			break;
 		default : break;
 	}
 
 	recSet->count = recordCount;
 
 	return recordCount;
+}
+
+
+int npLoadTextureCSV(const char* buffer, int size, void* dataRef);
+int npLoadTextureCSV(const char* buffer, int size, void* dataRef)
+{
+	pData data = (pData) dataRef;
+
+	int ver = 0;				//zz debug, replace with table specific func ptr
+	int count = 0; 
+	int curs = 0;				//Cursor position in Buffer parsing source
+
+	int scanNumRet = 0;			//sscanf return value. Number of successfuly scanned elements
+	int recordCount = 0;
+
+	pNPrecordTag tag = NULL;
+
+
+	char* read = (char*)buffer;
+
+	if (!size)
+		return 0;
+
+	if (*read == '\r' || *read == '\n')
+	{
+		count += curs = npNextLineLimit(read, size);
+		read = &read[curs];
+	}
+
+	while( count < size )
+	{		
+		//processes a single model record, one line in the CSV file
+	//	npCSVtoModel(&read, size - count, &scanNumRet, dataRef);
+		npCSVtoTexture(&read, size - count, &scanNumRet, dataRef);
+		if (!tag)
+			printf("err 2340 - record tag is null\n");
+
+		//update count and set read ptr to beginning of next line
+		count += scanNumRet;	
+		count += curs = npNextLineLimit(read, size - count);
+		read = &read[curs];
+
+		//print part of the first few lines of data
+		recordCount++;
+		if ( recordCount <= 3)
+		{
+//			printf("id: %d  record_id: %d table_id: %d tag: %.12s \n", //desc: %.8s\n",
+//				tag->id, tag->recordID, tag->tableID, tag->title );//tag->desc);
+			//printf("countDown: %d  curs: %d  scanNumRet: %d  recordCount: %d  size: %d\n", countDown, curs, scanNumRet, recordCount, size);
+			if ( recordCount == 3) printf("... ");
+		}
+		else if ( recordCount == (recordCount / 1000) * 1000 )	//print id from file every 100 nodes
+		{
+	//		printf("%d ", tag->id);
+		}
+
+	} //end loop
+
+
+
+	return 0;
+	
 }
 
 int npLoadModelCSV (const char* buffer, int size, void* dataRef)
@@ -1825,9 +1909,15 @@ char* npGetType(int* type, int* format, const char* str, int size, void* dataRef
 	}
 	else if(strncmp(str,"np_geo_id,", 10) == 0) // lv models
 	{
-		printf ("\nCSV models file");
+		printf ("CSV models file\n");
 		*type = kNPfileCSV;
 		*format = kNPmapModels;
+	}
+	else if(strncmp(str, "np_texture_id,", 14) == 0 )
+	{
+		printf("CSV textures file\n");
+		*type = kNPfileCSV;
+		*format = kNPmapTextures;
 	}
 	else
 		return (char*)str;
@@ -2119,6 +2209,9 @@ endPoint:
 	if (type == kNPmapModels)
 		data->io.file.loading = false;
 
+	if (type == kNPmapTextures)
+		data->io.file.loading = false;
+
 	//free read buffers and threadFile structure
 	npFree (splitBlock, data);
 	npFree (read, data);
@@ -2250,7 +2343,7 @@ int npFileOpenAuto (const char* filePath, FILE* file, void* dataRef)
 		case kNPfileCatModels :
 //			npIsValidFilePath( filePath, data); /// Validate the file path
 #define kNPgeo 42 /// @todo fractal geos
-			geo = npLoadModelFromFile( filePath, data );
+		//	geo = npLoadModelFromFile( filePath, data );
 			/// @todo:			npIsValidGeo(geo, data ); 	
 			
 			if( geo && (geo->geometryId >= 1000 && geo->geometryId <= 2000) )
