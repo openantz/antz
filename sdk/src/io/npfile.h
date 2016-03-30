@@ -113,6 +113,8 @@ bool npOpenNodeFile( pNPnode node, void* dataRef );
 bool npOpenNode( pNPnode node, void* dataRef );
 char* npSearchPathsForFile(char* filename, void* dataRef);
 void npGetFileNameFromPath(char* filepath, char* filename, void* dataRef);
+char* npFilePathAbsToRel(char* abs, void* dataRef);
+char* npFilePathRelToAbs(char* rel, void* dataRef);
 //void npGetFolderDelimiterChar(
 
 

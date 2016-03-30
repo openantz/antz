@@ -194,6 +194,7 @@ pNPgeolist npAddGeo(int geoId, int extTexId, int type, char* object_name, char* 
 //		geoId++;
 	}
 
+	printf("asfdkjl path : %s\n", path);
 	// npNewGeoId(void* dataRef)
 	/*
 	while( (x = npSearchGeosId(geoId, dataRef) ) != 0 )
@@ -289,7 +290,12 @@ int npLoadModel(pNPgeolist geo, void* dataRef)
 	modelId = npNewModelId(&geo->geometryId, dataRef);
 	assimp->scene[modelId] = npModelImport(filePath, dataRef);
 	if(assimp->scene[modelId] == NULL)
+	{
+//		npDelGeo(
+		geo->geometryId = 0;
+		geo->loaded = 0;
 		return 0;
+	}
 
 	assimp->path = npAssimpGetTexturePath(modelId, dataRef);
 	npGetFileNameFromPath(&assimp->path.data[0], fileName, dataRef);
@@ -767,6 +773,7 @@ pNPgeo npModelNew(char* model_csvline, void* dataRef)
 	pNPgeo geo = NULL;
 //	char* curs = &model_csvline;
 	char* curs = model_csvline;
+	char* foundPath = NULL;
 	char objectName[256] = {'\0'};
 	char fileName[256] = {'\0'};
 	char filePath[256] = {'\0'};
@@ -783,6 +790,15 @@ pNPgeo npModelNew(char* model_csvline, void* dataRef)
 	curs =  npModelNewFileName(curs, 200, &fileName[0], dataRef);
 	curs = npModelNewFilePath(curs, 200, &filePath[0], dataRef); 
 
+	if(filePath[0] == '\0')
+	{
+		foundPath = npSearchPathsForFile(fileName, dataRef);
+		if(foundPath[0] != '\0')
+		{
+			foundPath[strlen(foundPath)-strlen(fileName)] = '\0';
+			strcpy(filePath, foundPath);
+		}
+	}
 	/// @todo npGeoMalloc(dataRef)
 	/*
 		pNPgeo npGeoMalloc(void* dataRef)
@@ -824,11 +840,23 @@ pNPgeo npModelNew(char* model_csvline, void* dataRef)
 	*/
 }
 
+int npPathIsRel(char* path, void* dataRef);
+int npPathIsRel(char* path, void* dataRef)
+{
+	char t[256] = {'\0'};
+	strcpy(t, path);
+	t[0] = tolower(t[0]);
+	if(t[0] >= 'a' && t[0] <= 'z' && t[1] == ':' && t[2] == '\\')
+		return 0;
+
+	return 1;
+}
 
 char* npModelNewFilePath(char* stringVal, int maxSize, char* filePath, void* dataRef)
 {
 	char* curs = stringVal;
 	char** read = NULL;
+	char* abs = NULL;
 	int strLength = 0;
 	int len = 0;
 	int i = 0;
@@ -846,7 +874,7 @@ char* npModelNewFilePath(char* stringVal, int maxSize, char* filePath, void* dat
 	npCSVstrncpy(filePath, &curs, strLength);
 	i = len = strlen(filePath);
 	
-	if(filePath[strlen(filePath)-1] != '\\')
+	if(filePath[strlen(filePath)-1] != '\\' && len > 0)
 	{
 		filePath[strlen(filePath)+1] = '\0';
 		filePath[strlen(filePath)] = '\\';
@@ -855,6 +883,17 @@ char* npModelNewFilePath(char* stringVal, int maxSize, char* filePath, void* dat
 	if(len == 0)
 		return curs;
 		
+	//npFilePathIsRel(filePath, dataRef);
+	if( npPathIsRel(filePath, dataRef))
+	{
+		abs = npFilePathRelToAbs(filePath, dataRef);
+		filePath[0] = '\0';
+		strcpy(filePath, abs);
+		free(abs);
+//		strcpy(filePath,
+	}
+
+//	npFilePathRelToAbs(filePath, dataRef);
 	/// Don't assume a trailing slash
 	/// if it doesn't have one, add it.
 //	printf("%c\n", filePath[i]);
@@ -1179,6 +1218,12 @@ void npUpdateGeoList( void* dataRef )
 				npModelStoreDL(assimp->scene[modelId], geolist->geometryId, dataRef);
 				geolist->loaded = 1;
 				data->io.gl.numModels++;
+			}
+			else
+			{
+				/// can't load
+				geolist->loaded = 0;
+				data->io.gl.numModels--;
 			}
 		}
 	}

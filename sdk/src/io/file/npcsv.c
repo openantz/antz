@@ -1094,6 +1094,7 @@ int npMapToCSV (char* csvStr, int mapType, int size, int* index, void* dataRef)
 	char str[4096];			//temp memory for value string, optimize this out, //zz debug			
 
 	char* dslash = NULL;
+	char* rel = NULL;
 	int i = 0, j = 0;		//node tag sort stuff
 	int count = 0;
 	void** nodes;
@@ -1197,7 +1198,18 @@ int npMapToCSV (char* csvStr, int mapType, int size, int* index, void* dataRef)
 			geolist = &data->io.gl.geolist[i];
 			if( geolist->geometryId != 0 )
 			{
+				rel = npFilePathAbsToRel(geolist->modelPath, dataRef);
+
 				printf(" i : %d \n tex id : %d\n\n", i, geolist->textureId); 
+				n += sprintf((curs + n), "%d,%d,%d,\"%s\",\"%s\",\"%s\"\n",	
+					geolist->geometryId,
+					geolist->textureId,
+					0,
+					geolist->name,
+					geolist->modelFile,
+					rel	
+					);
+/*
 				n += sprintf((curs + n), "%d,%d,%d,\"%s\",\"%s\",\"%s\"\n",	
 					geolist->geometryId,
 					geolist->textureId,
@@ -1206,6 +1218,8 @@ int npMapToCSV (char* csvStr, int mapType, int size, int* index, void* dataRef)
 					geolist->modelFile,
 					geolist->modelPath
 					);
+*/
+				free(rel);
 			}
 			/*
 			if( geolist[i].geometryId != 0 )

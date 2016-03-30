@@ -934,3 +934,47 @@ char* npSearchPathsForFile(char* filename, void* dataRef)
 
 	return "\0"; 
 }
+
+char* npFilePathRelToAbs(char* rel, void* dataRef)
+{
+	pData data = (pData) dataRef;
+	char* abs = NULL;
+	abs = malloc(sizeof(char) * 256);
+	abs[0] = '\0';
+	strcpy(abs, data->io.file.appPath);
+	strcat(abs, rel);
+	return abs;
+}
+
+//npPathAbsToRel
+char* npFilePathAbsToRel(char* abs, void* dataRef)
+{
+	pData data = (pData) dataRef;
+	char* rel = NULL;
+	char temp[256] = {'\0'};
+	char* z = NULL;
+	int i = 0;
+	rel = malloc(sizeof(char) * 256);
+	
+	strcpy(temp, abs);	
+	for(;i < strlen(temp); i++)
+		temp[i] = tolower(temp[i]);
+	
+	if( strcmp(temp, data->io.file.appPath) == 0 )
+	{
+		rel[0] = '\0';
+	}
+	else if( strcmp(temp, data->io.file.appPath) > 0 )
+	{
+		printf("\n----more than----\n");
+		rel[0] = '\0';
+		strcpy(rel, &temp[strlen(data->io.file.appPath)]);
+		printf("rel path : %s\n", rel);
+
+	}
+//	z = strstr(temp, data->io.file.appPath);
+	printf("\n---------------relative path : %s-----------------\n", rel);
+
+	return rel;
+}
+

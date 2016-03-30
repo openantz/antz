@@ -276,6 +276,7 @@ void npUpdateTexMap (void* dataRef)							//add to ctrl loop, debug zz
 	pData data = (pData) dataRef;
 	pNPtexmap texmap = NULL;
 	char filepath[256] = {'\0'};
+	char* foundPath = NULL;
 	int i = 0;
 
 //	printf("npUpdateTexMap\n");
@@ -292,6 +293,19 @@ void npUpdateTexMap (void* dataRef)							//add to ctrl loop, debug zz
 			texmap->intTexId = npLoadTexture(filepath, 0, dataRef);
 			if(texmap->intTexId > 0)
 				texmap->loaded = 1;
+			else if(texmap->intTexId == 0)
+			{
+				texmap->loaded = 0;
+				foundPath = npSearchPathsForFile(texmap->filename, dataRef);
+				if(foundPath != NULL)
+				{
+					foundPath[strlen(foundPath)-strlen(texmap->filename)] = '\0';	
+					texmap->path[0] = '\0';
+					strcpy(texmap->path, foundPath);
+					free(foundPath);
+				}
+			}
+
 
 			printf("filepath : %s\n", filepath);
 //			system("pause");
@@ -374,6 +388,8 @@ int npLoadTexture( const char* filePath, int fileType, void* dataRef)
 			tex->extTexId = npGetUnusedExtTexId(dataRef);
 			strcpy(tex->filename, filename);
 			strcpy(tex->path, path);
+			printf("asdf path : %s\n", path);
+//			npGetFileNameFromPath(filePath, &tex->path[0], dataRef);
 			tex->height = 0;
 			tex->width = 0;
 			tex->image = NULL;
@@ -496,6 +512,124 @@ void npLoadTextures(void* dataRef)
 		printf ("\nDone Loading Textures\n\n");
 	else
 		printf ("No Textures Found!!!\n\n");
+}
+
+void npLoadGeos(void* dataRef);
+void npLoadGeos(void* dataRef) 
+{
+	int i = 0;
+	int result = 0;
+	int fileType = 0;
+	int textureSize = 0;
+	int fileNumber = 1;
+
+	pNPfileRef fRef = NULL;
+
+	char* filename = (char*)malloc(4096);
+	char path[256] = {'\0'};
+
+	unsigned int textureID;		//zz debug, allow loading textures at runtime
+									//detect changes to data->io.file.mapPath
+	pData data = (pData) dataRef;
+
+
+	glGetIntegerv (GL_MAX_TEXTURE_SIZE, &textureSize);
+	data->io.gl.maxTextureSize = textureSize;
+//	printf ("\nMax Texture Size: %dx%d\n", textureSize, textureSize);
+	printf ("Loading Models...\n");
+	//	printf ("Larger textures down converted\n", textureSize);
+
+	fRef = nposNewFileRef( data );
+	
+	/// Legacy support where we first load map*.jpg files then all others
+	/*
+	result = nposFindFirstFile( fRef, "usr/images/", "map*.jpg", data );
+	if( result != 1 )
+		return;		// err or empty folder
+
+	do
+    {
+		i++;
+
+		// print a few of the filenames then dots for every 100 files
+		if( i <= 5 )
+			printf( "%.70s\n", fRef->name );
+		else if( i < 100 || i % 100 == 0 )
+			printf( "." );
+
+		//printf("csv path : %s\n", data->io.file.csvPath);
+		sprintf(filename, "%susr\\images\\%s", data->io.file.appPath, fRef->name );
+		//printf("filename : %s%s\n", data->io.file.csvPath, filename);
+		printf("file : %s\n", filename);
+
+		// if Folder (not a file) then recursively call to create dir tree
+		if( fRef->isDir )
+		{
+		//	npLoadTextures( sPath, data );			// recursion
+		//	npAddTexMap(dataRef);
+		}
+		else
+		{
+			printf("filename : %s\n", filename);
+			textureID = npLoadTexture( filename, 0, data );
+		}
+    }
+	while( nposFindNextFile( fRef ) );	// next file within limits
+	*/
+
+	/// Now we load all other models
+	result = nposFindFirstFile( fRef, "usr/model/", "*.*", data );
+	if( result != 1 )
+		return;		// err or empty folder
+
+	do
+    {
+		/*
+		// handle legacy support by skipping the ones we just laoded
+		if( strncmp(fRef->name, "map", 3) == 0
+			&& npGetFileTypeCat(NULL, fRef->name, data) == kNPfileJPG )
+			continue;
+		*/
+
+		i++;
+
+		// append current file/dir item to the basePath (parent dir)
+ //       sprintf(sPath, "%s/%s", basePath, fRef->fdFile.cFileName);
+
+		// print a few of the filenames then dots for every 100 files
+		if( i <= 5 )
+			printf( "%.70s\n", fRef->name );
+		else if(  i < 100 || i % 100 == 0 )
+			printf( "." );
+
+		printf("fRef->name : %s\n", fRef->name);
+		sprintf(filename, "%s/%s", "usr/model/", fRef->name );
+		printf("filename : %s\n", filename);
+
+		// if Folder (not a file) then recursively call to create dir tree
+		if( fRef->isDir )
+		{
+		//	npLoadTextures( sPath, data );			// recursion
+		}
+		else
+		{
+		//	textureID = npLoadTexture( filename, 0, data );
+			sprintf(path, "%s%s", data->io.file.appPath, "usr\\model\\");
+			printf("path : %s\n", path);
+			if( (strcmp(fRef->name, ".DS_Store") == 0) || (strcmp(fRef->name, "README") == 0) )
+				continue;
+
+			npAddGeo(0,0,0, NULL, fRef->name, path, dataRef);
+		}
+    }
+	while( nposFindNextFile( fRef ) );	// next file within limits
+
+    nposFindClose( fRef, data );		// always clean up!
+
+	if( data->io.gl.numModels )
+		printf ("\nDone Loading Models\n\n");
+	else
+		printf ("No Models Found!!!\n\n");
 }
 
 
