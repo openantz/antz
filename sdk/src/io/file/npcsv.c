@@ -1028,6 +1028,7 @@ void npMapTypeInit (void* dataRef)
 	{ 0,	kNPmapCSV,		"csv",			"CSV table descriptor" },
 	{ 0,	kNPmapJSON,		"json",			"JSON data descriptor" },
 	{ 0,	kNPmapModels,   "models",		"Models data descriptor" },
+	{ 0,    kNPmapTextures, "textures",     "Textures data descriptor" },
 	{ 0,	kNPmapCount,	"count",		"Item count for this list" }
 	};
 
@@ -1185,27 +1186,30 @@ int npMapToCSV (char* csvStr, int mapType, int size, int* index, void* dataRef)
 	}
 	else if(mapType == kNPmapModels)
 	{
-		/*
 		printf("kNPmapModels\n");
 //		n += sprintf (curs, "np_models_id,np_geometry_id,np_texture_id,type,object_name,file_name,path\n");
 		n += sprintf (curs, "np_geo_id,np_texture_id,type,object_name,file_name,path\n");
 		geolist = &data->io.gl.geolist[0];
-		for( i=1000; i < 2000; i++ )
+		//for( i=1000; i < 2000; i++ )
+		for( i=1; i < 2000; i++ )
 		{
 //			geolist[i].geometryId = 0;
-			if(geolist[i].geometryId == i && geolist[i].modelId > 0)
+			geolist = &data->io.gl.geolist[i];
+			if( geolist->geometryId != 0 )
 			{
-		
-		//		n += sprintf((curs + n), "%d,%d,%d,%d,\"%s\",\"%s\",\"%s\"\n",
-		//			geolist[i].modelId,
-		//			geolist[i].geometryId,
-		//			geolist[i].textureId,
-		//			0,
-		//			geolist[i].name,
-		//			geolist[i].modelFile,
-		//			geolist[i].modelPath
-		//			);
-	
+				printf(" i : %d \n tex id : %d\n\n", i, geolist->textureId); 
+				n += sprintf((curs + n), "%d,%d,%d,\"%s\",\"%s\",\"%s\"\n",	
+					geolist->geometryId,
+					geolist->textureId,
+					0,
+					geolist->name,
+					geolist->modelFile,
+					geolist->modelPath
+					);
+			}
+			/*
+			if( geolist[i].geometryId != 0 )
+			{
 				n += sprintf((curs + n), "%d,%d,%d,\"%s\",\"%s\",\"%s\"\n",	
 					geolist[i].geometryId,
 					geolist[i].textureId,
@@ -1215,9 +1219,9 @@ int npMapToCSV (char* csvStr, int mapType, int size, int* index, void* dataRef)
 					geolist[i].modelPath
 					);
 			}
+			*/
 		}
 		return n;
-		*/
 	}
 	else if(mapType == kNPmapTextures)
 	{

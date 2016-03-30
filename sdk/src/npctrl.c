@@ -1549,7 +1549,16 @@ void npCtrlProperty (int command, void* dataRef)
 				node->geometry++;
 				if( node->geometry > data->io.gl.numPrimitives && node->geometry < 2000)
 				{
-					geoId = node->geometry;
+					if( node->geometry > 1000 )
+					{
+						node->geometry -= 979;	
+					}
+
+					geoId = node->geometry - data->io.gl.numPrimitives;		
+					node->geometry = data->io.gl.geolist[geoId].geometryId;
+					node->textureID = npExtTexToIntTexId( data->io.gl.geolist[geoId].textureId, dataRef);
+					//geoId = node->geometry;
+					/*
 					while( data->io.gl.geolist[geoId].geometryId != geoId && geoId <= 2000 )
 						geoId++;
 
@@ -1557,6 +1566,8 @@ void npCtrlProperty (int command, void* dataRef)
 						node->geometry = 0;
 					else
 						node->geometry = geoId;
+					*/
+					
 
 				}
 			}	

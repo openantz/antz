@@ -1040,6 +1040,7 @@ typedef NPgeoList* pNPgeoList;
 #define kNPmodelFileNameMax 75
 #define kNPmodelFilePathMax 300
 struct NPgeolist {
+	int loaded;
 	unsigned int modelId;
 	int geometryId;
 	char name[kNPmodelNameMax];

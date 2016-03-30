@@ -217,8 +217,9 @@ void npUpdateIO (void* dataRef)
 	npGithubRun( dataRef );
 #endif
 
+//	npUpdateTexMap( dataRef );
+	npUpdateGeoList( dataRef );
 	npUpdateTexMap( dataRef );
-//	npUpdateGeoList( dataRef );
 
 }
 

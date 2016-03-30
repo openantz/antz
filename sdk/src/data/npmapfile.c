@@ -1103,6 +1103,7 @@ lv,	This is being called in a thread, don't do opengl stuff.
 */
 void npCSVtoModel(char** read, int size, int* scanNumRet, void* dataRef)
 {
+	npModelNew(read[0], dataRef);
 	/*
 	pData data = (pData) dataRef;	
 	pNPgeo geo = NULL;
@@ -2343,8 +2344,11 @@ int npFileOpenAuto (const char* filePath, FILE* file, void* dataRef)
 		case kNPfileCatModels :
 //			npIsValidFilePath( filePath, data); /// Validate the file path
 #define kNPgeo 42 /// @todo fractal geos
-		//	geo = npLoadModelFromFile( filePath, data );
 			/// @todo:			npIsValidGeo(geo, data ); 	
+			npGetFileNameFromPath( filePath, &fileName[0], dataRef );
+			strcpy(path, filePath);
+			path[strlen(filePath) - strlen(fileName)] = '\0';
+			npAddGeo(0, 0, 0, NULL, fileName, path, dataRef);
 			
 			if( geo && (geo->geometryId >= 1000 && geo->geometryId <= 2000) )
 			{

@@ -204,6 +204,7 @@ void npModelStoreDL(struct aiScene* scene, int dlOffset, void* dataRef)
 	pNPassimp assimp = (pNPassimp)data->io.assimp;
 	
 //	glNewList(gl->dl + 1000, GL_COMPILE);
+	printf("Offset %d\n", dlOffset);
 	glNewList(gl->dl + dlOffset, GL_COMPILE);
 //	npDrawAssimpModel(assimp->scene[1], assimp->scene[1]->mRootNode, dataRef);
 	npDrawAssimpModel(scene, scene->mRootNode, dataRef);
@@ -1228,6 +1229,7 @@ void npInitGeoList(void* dataRef)
 	for(i = 0; i < kNPgeoListMax; i++)
 	{
 		p_geo = &data->io.gl.geolist[i];
+		p_geo->loaded = 0;
 		p_geo->geometryId = 0;
 		p_geo->modelFile[0] = '\0';
 		p_geo->modelId = 0;

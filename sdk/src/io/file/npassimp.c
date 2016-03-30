@@ -97,12 +97,36 @@ struct aiString npAssimpGetTexturePath(int sceneIndex, void* dataRef)
 	return assimp->path;
 }
 
+int npAssimpLoadModel2(char* filePath, void* dataRef);
+int npAssimpLoadModel2(char* filePath, void* dataRef)
+{
+	pData data = (pData) dataRef;
+	char filename[256] = {'\0'};
+	/*
+	int i = 0;
+	int modelId = 0;
+	int textureId = 0;
+	*/
+	pNPassimp assimp = (pNPassimp)data->io.assimp;
+
+	if( (assimp->running == false) || (assimp == NULL) ) 
+		return 0;
+	
+	npModelImport(filePath, dataRef);
+
+	npGetFileNameFromPath(filePath, &filename[0], dataRef);
+	
+
+
+	return 0;
+}
+
 /** Loads the assimp model 
 	@param filePath, path or filename
 	@param dataRef is a global map reference instance.
 	@return the model id
 */
-/*
+
 int npAssimpLoadModel(char* filePath, int* geolistIndexMatch, void* dataRef)
 {
 	char filename[256] = {'\0'};
@@ -282,4 +306,3 @@ int npAssimpLoadModel(char* filePath, int* geolistIndexMatch, void* dataRef)
 
 	return modelId;
 }
-*/
