@@ -1436,6 +1436,9 @@ void npCtrlProperty (int command, void* dataRef)
 	pNPnode node = data->map.currentNode;
 	pNPnode nodeParent = NULL;
 	int geoId = 0; /// lv, models
+	int geoHigh = 0; // lv, models
+	int geoLast = 0; // lv, models
+	int i = 0;
 
 
 	msgPart[0] = '\0';
@@ -1522,27 +1525,65 @@ void npCtrlProperty (int command, void* dataRef)
 
 					geoId = 2000;
 
-					while( data->io.gl.geolist[geoId].geometryId != geoId )
-						geoId--;
+//					geoLast = 
+					for(i = geoId; i > 0; i--)
+					{
+						geoLast = data->io.gl.geolist[i].geometryId;
+						if(geoLast > geoHigh)
+						{
+							geoHigh = geoLast;
+							node->textureID = npExtTexToIntTexId( data->io.gl.geolist[i].textureId, dataRef);
+						}
+//						if( data->io.gl.geolist[geoId].geometryId
+					}
 
+					node->geometry = geoHigh;
+//					node->textureID = npExtTexToIntTexId( data->io.gl.geolist[geoId].textureId, dataRef);
+
+//					while( data->io.gl.geolist[geoId].geometryId == 0 )
+//						geoId--;
+
+					/*
 					if(geoId == 0)
 						node->geometry = data->io.gl.numPrimitives;
 					else
 						node->geometry = geoId;
+					*/
 
 
 				} 
-				else if( node->geometry > data->io.gl.numPrimitives && node->geometry < 2000)
+				else if( (node->geometry > data->io.gl.numPrimitives) && (node->geometry < 2000) )
 				{
+					geoLast = node->geometry;
+//					geoHigh = 0;
+					geoId = 2000;
+					geoHigh = node->geometry; 
+					for(i = geoId; i > 0; i--)
+					{
+						geoLast = data->io.gl.geolist[i].geometryId;
+//						if(geoLast > geoHigh)
+						//if( (geoLast < geoHigh) && (geoLast >= 1000) )
+						if( (geoLast >= 1000) && (geoLast <= 2000) && (geoLast <= node->geometry) ) 
+						{
+//							geoHigh = geoLast;
+							node->geometry = geoLast;
+							node->textureID = npExtTexToIntTexId( data->io.gl.geolist[i].textureId, dataRef);
+						}
+//						if( data->io.gl.geolist[geoId].geometryId
+					}
+
+				//	node->geometry = geoHigh;
+
+
+					/*
 					geoId = node->geometry;
 					while( data->io.gl.geolist[geoId].geometryId != geoId )
 					{
 						geoId--;
 					}
 					node->geometry = geoId;
-
+					*/
 				}
-
 			}
 			else
 			{

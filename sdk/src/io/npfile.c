@@ -832,7 +832,7 @@ int npLoadScene( int format, char* datasetName, void* dataRef)
 	return result;
 }
 
-void npGetFileNameFromPath(char* filepath, char* filename, void* dataRef)
+void npGetFileNameFromPath(const char* filepath, char* filename, void* dataRef)
 {
 	char* p_filepath = NULL; // lv, p_ prefix denotes pointer
 	char delimit[1] = "\\";
@@ -865,9 +865,6 @@ void npGetFileNameFromPath(char* filepath, char* filename, void* dataRef)
 
 //	delimit = nposGetFolderDelimit();
 
-//char* nposGetFolderDelimit(void)
-//	while( ((*p_filepath) != '\\' || (*p_filepath) != '/') && pathX >= 0 )
-//	while( (*p_filepath) != '\\' && pathX >= 0 )
 	while( (*p_filepath) != '\\' && pathX >= 0)
 	{
 		p_filepath--;
@@ -934,7 +931,7 @@ char* npSearchPathsForFile(char* filename, void* dataRef)
 
 	return "\0"; 
 }
-
+// lv model start
 char* npFilePathRelToAbs(char* rel, void* dataRef)
 {
 	pData data = (pData) dataRef;
@@ -946,7 +943,6 @@ char* npFilePathRelToAbs(char* rel, void* dataRef)
 	return abs;
 }
 
-//npPathAbsToRel
 char* npFilePathAbsToRel(char* abs, void* dataRef)
 {
 	pData data = (pData) dataRef;
@@ -961,20 +957,16 @@ char* npFilePathAbsToRel(char* abs, void* dataRef)
 		temp[i] = tolower(temp[i]);
 	
 	if( strcmp(temp, data->io.file.appPath) == 0 )
-	{
 		rel[0] = '\0';
-	}
 	else if( strcmp(temp, data->io.file.appPath) > 0 )
 	{
-		printf("\n----more than----\n");
 		rel[0] = '\0';
 		strcpy(rel, &temp[strlen(data->io.file.appPath)]);
-		printf("rel path : %s\n", rel);
+		//printf("rel path : %s\n", rel);
 
 	}
 //	z = strstr(temp, data->io.file.appPath);
-	printf("\n---------------relative path : %s-----------------\n", rel);
 
 	return rel;
 }
-
+// lv model end

@@ -77,7 +77,7 @@ int npWriteNode (const char* buffer, pNPnode node, int format, void* dataRef);
 
 int npFileVersion (char* buffer, int wordSize, int size);
 
-char* npGetType(int* type, int* format, const char* str, int size, void* dataRef); // new, lde @todo
+char* npGetType(int* type, int* format, const char* str, int size, void* dataRef); 
 
 void npThreadFileOpenMap (void* dataRef);
 
@@ -95,9 +95,11 @@ void npPreLoadInit( pNPrecordSet recSet, void* dataRef);
 
 int npGetFileTypeCat( int* fileCategory, const char* filePath, void* dataRef);
 
+// lv model begin
 int npLoadModelCSV (const char* buffer, int size, void* dataRef);
 
-void npCSVtoModel(char** read, int size, int* scanNumRet, void* dataRef); /// lv, model
+void npCSVtoModel(char** read, int size, int* scanNumRet, void* dataRef);
+// lv model end
 
 #endif
 

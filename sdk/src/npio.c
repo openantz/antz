@@ -217,9 +217,10 @@ void npUpdateIO (void* dataRef)
 	npGithubRun( dataRef );
 #endif
 
-//	npUpdateTexMap( dataRef );
+	//lv models begin 
 	npUpdateGeoList( dataRef );
 	npUpdateTexMap( dataRef );
+	//lv models end
 
 }
 
@@ -251,9 +252,7 @@ void npViewDatabases (void* dataRef)
 
 	console->menu = &console->menuStruct;
 
-	//printf("\nbefore npdbGetMenu");
 	console->menu = npdbGetMenu(console->menu, dataRef); //get the list
-	//printf("\nafter npdbGetMenu");
 	
 	if (console->menu == NULL)
 	{

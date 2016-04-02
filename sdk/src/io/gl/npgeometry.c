@@ -32,7 +32,6 @@
 #define kTorusScreenSizeCount 4
 #define kTorusThicknessCount 4
 
-//Just temporary lde
 #define TRUE 1
 
 struct NPtorus {
@@ -83,119 +82,6 @@ void DeleteCircle (NPcirclePtr circle);
 
 GLuint npCreatePrimitiveDL (void);
 
-/*
-void recursive_render (const struct aiScene *sc, const struct aiNode* nd, void* dataRef)
-{
-	pData data = (pData) dataRef;
-	pNPassimp assimp = data->io.assimp;
-	unsigned int i;
-	unsigned int n = 0, t;
-	GLenum face_mode;
-	struct aiMatrix4x4 m = nd->mTransformation;
-
-	printf("\nrecursive_render");
-	// update transform
-	aiTransposeMatrix4(&m);
-	glPushMatrix();
-	glMultMatrixf((float*)&m);
-
-	// draw all meshes assigned to this node
-	for (; n < nd->mNumMeshes; ++n) {
-		const struct aiMesh* mesh = assimp->scene->mMeshes[nd->mMeshes[n]];
-
-	//	apply_material(sc->mMaterials[mesh->mMaterialIndex]);
-
-		if(mesh->mNormals == NULL) {
-			glDisable(GL_LIGHTING);
-		} else {
-			glEnable(GL_LIGHTING);
-		}
-
-		for (t = 0; t < mesh->mNumFaces; ++t) {
-			const struct aiFace* face = &mesh->mFaces[t];
-		//	GLenum face_mode;
-
-			switch(face->mNumIndices) {
-				case 1: face_mode = GL_POINTS; break;
-				case 2: face_mode = GL_LINES; break;
-				case 3: face_mode = GL_TRIANGLES; break;
-				default: face_mode = GL_POLYGON; break;
-			}
-
-			glBegin(face_mode);
-
-			for(i = 0; i < face->mNumIndices; i++) {
-				int index = face->mIndices[i];
-				if(mesh->mColors[0] != NULL)
-				{
-					glColor4fv((GLfloat*)&mesh->mColors[0][index]);
-				}
-				if(mesh->mNormals != NULL)
-				{
-					glNormal3fv(&mesh->mNormals[index].x);
-				}
-				glVertex3fv(&mesh->mVertices[index].x);
-			}
-
-			glEnd();
-		}
-
-}
-*/
-// new geolist 2 func lv model
-/*
-name
-geometryId
-modelId
-modelPath
-modelFile
-textureId
-*/
-
-/*
-void npAddModelToGeoList2(char* name, unsigned int geometryId, struct aiScene* scene, int textureId, void* dataRef)
-{
-	pData data = (pData) dataRef;
-	pNPgeolist2 p_geo = &data->io.gl.geolist2[geometryId];
-	GLuint modelList = data->io.gl.dl + 1000;
-	int geoListIndex = 0;
-
-	if( (data->io.gl.numModels + 1) > (kNPgeoListMax / 2) )
-	{
-		printf("\nModel Limit Hit");
-		return;
-	}
-
-	data->io.gl.numModels++;
-	
-//	strcpy(p_geo->name[geoListIndex], name);
-	strcpy(p_geo->name, name);
-
-	printf("\ngeoList index %d : %d", geoListIndex ,textureId);
-	p_geo->textureId = textureId;
-	strncpy(p_geo->modelFile, name, 75); /// always use strncpy
-
-	printf("\nmodel file (%s)", p_geo->modelFile);
-	printf("\ndl id : %u", (unsigned int)(modelList + data->io.gl.numModels));
-
-	printf("\nmodelList : %d", modelList);
-	printf("\nnumModels : %d", data->io.gl.numModels-1);
-//	glNewList(modelList + (data->io.gl.numModels-1), GL_COMPILE);
-
-	printf("\ndata->io.gl.dl : %d", data->io.gl.dl);
-	printf("\ndl + 1000 : %d", data->io.gl.dl + 1000);
-	printf("\n1 gl error : %d", glGetError());
-
-	glNewList(data->io.gl.dl + 1000, GL_COMPILE);
-//	printf("\n 1 %d", glGetError());
-	npDrawAssimpModel(scene, scene->mRootNode, dataRef);
-//	printf("\n 2 %d", glGetError());
-	glEndList();
-
-	printf("\n2 gl error : %d", glGetError());
-	system("pause");
-}
-*/
 
 void npModelStoreDL(struct aiScene* scene, int dlOffset, void* dataRef)
 {
@@ -203,123 +89,16 @@ void npModelStoreDL(struct aiScene* scene, int dlOffset, void* dataRef)
 	pNPgl gl = &data->io.gl;
 	pNPassimp assimp = (pNPassimp)data->io.assimp;
 	
-//	glNewList(gl->dl + 1000, GL_COMPILE);
-	printf("Offset %d\n", dlOffset);
+	//printf("Offset %d\n", dlOffset);
 	glNewList(gl->dl + dlOffset, GL_COMPILE);
-//	npDrawAssimpModel(assimp->scene[1], assimp->scene[1]->mRootNode, dataRef);
 	npDrawAssimpModel(scene, scene->mRootNode, dataRef);
 	glEndList();
 }
-
-/*
-void npAddModelToGeoList(char* name, GLuint displayList, int textureId, void* dataRef)
-{
-	pData data = (pData) dataRef;
-//	pNPgeoList geoList = &data->io.gl.geoList;
-	pNPgeolist2 geolist = &data->io.gl.geolist2[
-
-	if( (geoList->numModels + 1) > (kNPgeoListMax / 2))
-	{
-		printf("\nModel Limit Hit");
-		return;
-	}
-
-	geoList->numModels++;
-	strcpy(geoList->name[1000 + geoList->numModels], name);
-//	geoList->DL[1000 + geoList->numModels] = displayList;
-	geoList->textureID[1000 + geoList->numModels] = textureId;
-
-
-}
-*/
 
 void npAddPrimitiveAssimpModelDL(struct aiScene* scene, void* dataRef)
 {
 	
 }
-/// temp
-/*
-void npAddPrimitiveToGeoList(char* name, GLuint displayList, int textureId, void* dataRef)
-{
-	pData data = (pData) dataRef;
-	pNPgeoList geoList = &data->io.gl.geoList;
-
-	if( (geoList->numPrimitives + 1) > (kNPgeoListMax / 2)) /// 1001
-	{
-		printf("\nPrimitives Limit Hit");
-		return;
-	}
-
-	geoList->numPrimitives++;
-	strcpy(geoList->name[geoList->numPrimitives], name);
-//	geoList->DL[geoList->numPrimitives] = displayList;
-	geoList->textureID[geoList->numPrimitives] = textureId;
-
-	return;
-}
-*/
-
-/*
-void npDelPrimitiveFromGeoList(int index, void* dataRef)
-{
-	pData data = (pData) dataRef;
-	pNPgeoList geoList = &data->io.gl.geoList;
-
-	if(geoList->numPrimitives == 0)
-	{
-		printf("\nNo Primitives to Delete");
-		return;
-	}
-
-	if(index == 0)
-	{
-		printf("\nCannot delete value at 0th index for it is the dummy value");
-		return;
-	}
-
-	if( (index > (kNPgeoListMax / 2)) || (index > geoList->numPrimitives) || (index == 0) )
-	{
-		printf("\nIndex %d out of primitive range : [1,%d]", index, (kNPgeoListMax/2) );
-		return;
-	}
-
-//	geoList->DL[index] = 0;
-	geoList->name[index][0] = '\0';
-	geoList->textureID[index] = 0;
-	geoList->numPrimitives--;
-
-}
-*/
-
-/*
-void npDelModelFromGeoList(int index, void* dataRef)
-{
-	pData data = (pData) dataRef;
-	pNPgeoList geoList = &data->io.gl.geoList;
-
-	if(geoList->numModels == 0)
-	{
-		printf("\nNo models to delete");
-		return;
-	}
-
-	if( ( (index+1000) > (kNPgeoListMax+1) ) || (index > geoList->numPrimitives) || ((index+1000) == 1000) )
-	{
-		printf("\nIndex %d out of primitive range : [1,%d]", index, (kNPgeoListMax/2) );
-		return;
-	}
-
-//	geoList->DL[(1000+index)] = 0;
-	geoList->name[(1000+index)][0] = '\0';
-	geoList->textureID[(1000+index)] = 0;
-	geoList->numModels--;
-
-}
-*/
-
-
-
-
 
 //------------------------------------------------------------------------------
 void npInitGLPrimitive (void* dataRef)
@@ -355,12 +134,13 @@ void npGLPrimitive (int geometry, float ratio)
 	else
 	{
 		glCallList(data->io.gl.dl + geometry);
-//		glCallList (geoList->DL + geometry); /// @todo: lv model
 	}
 
 	glPopMatrix();
 }
 
+//used to draw all geometry primitive types
+//------------------------------------------------------------------------------
 void npGLSurface2 (bool texture, pNPnode node, void* dataRef)
 {
 	pData data = (pData) dataRef;
@@ -1085,17 +865,10 @@ void npInitGeoListPrimitives(void* dataRef)
 	//geoList->numPrimitives = 0;
 
 	// Create the id for the list
-//	i = displayList = glGenLists (4096);//kNPgeoCount);
-//	i = geoList->DL = glGenLists (4096);
 	gl->dl = 0;
-	printf("\n1a gl error : %d", glGetError());
 	i = gl->dl = glGenLists(4096); // kNPgeoCount	
-	printf("\n2a gl error : %d", glGetError());
 //	printf("geoList->DL : %u", geoList->DL);
-	printf("gl->dl (%u)", gl->dl);
-	//system("pause");
 
-	//if( geoList->DL == 0 )
 	if( gl->dl == 0 )
 	{
 		npPostMsg("err 4488 - glGenLists() failed", kNPmsgErr, NULL);
@@ -1183,28 +956,14 @@ void npInitGeoListPrimitives(void* dataRef)
 		DrawCylinderDL();
 	glEndList();
 
-	//geoList->numPrimitives = i - geoList->DL;
 	gl->numPrimitives = i - gl->dl;
 //	printf("\ndisplayList : %u", displayList);
 //	printf("geoList->numPrimitives : %d", geoList->numPrimitives);  
-	printf("\ngl->numPrimitives : %d", gl->numPrimitives); 
+//	printf("\ngl->numPrimitives : %d", gl->numPrimitives); 
 		
-//	system("pause");
-	//return (displayList);
 	return;
 }
 
-// geolist 2
-/*
-void npgeolistInit(void* dataRef)
-{
-	pData data = (pData) dataRef;
-	pNPgeolist2 geolist = &data->io.gl.geolist2;
-	int i;	
-	geolist->modelFile[0] = '\0';
-	
-}
-*/
 
 void npInitGeoList(void* dataRef)
 {

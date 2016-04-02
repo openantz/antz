@@ -57,14 +57,13 @@ typedef struct NPgeo *pNPgeo;
 //------------------------------------------------------------------------------
 void npInitModels (void* dataRef);
 void npCloseModels (void* dataRef);
+pNPgeolist npAddGeo(int geoId, int extTexId, int type, char* object_name, char* file_name, char* path, void* dataRef);
 //pNPmodels npLoadModel( const char* path, char* filename, void* dataRef );
 
 int npLoadModel(pNPgeolist geo, void* dataRef);
 pNPgeolist npLoadModelFromFile(char* filepath, void* dataRef);
 
 void npUpdateGeoList( void* dataRef );
-//void npGeolistAddModel( char* path, char* filename, void* dataRef ); 
-//void npGeolistAddModel(int geometryId, int modelId, char* modelName, char* fileName, char* modelPath, void* dataRef);
 
 int	npGeolistGetX(void* dataRef); 
 void npGeolistSetX(int X, void* dataRef);
@@ -81,13 +80,10 @@ bool npGeolistLockStatus(void* dataRef);
 
 struct aiScene* npModelImport(char* filePath, void* dataRef);
 
-// returns geometryId
 pNPgeolist npGetGeolist(void* dataRef);
 char* npModelNewGeoId(char* idVal, int* geoId, void* dataRef);
-//int npModelNewTextureId(char* idVal, void* dataRef);
 char* npModelNewTextureId(char* idVal, int* textureId, void* dataRef);
 char* npModelNewTypeId(char* csv_typeId, int* typeId, void* dataRef);
-//char* npModelNewObjectName(char* stringVal, int maxSize, void* dataRef);
 char* npModelNewObjectName(char* stringVal, int maxSize, char* objectName, void* dataRef);
 char* npModelNewFileName(char* stringVal, int maxSize, char* fileName, void* dataRef);
 char* npModelNewFilePath(char* stringVal, int maxSize, char* filePath, void* dataRef);

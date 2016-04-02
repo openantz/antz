@@ -243,7 +243,8 @@ void npInitMap (void* dataRef)
 	};
 
 	//zz tex
-	// Path is seperate from file name because path may change.
+	//lv tex begin 
+	// Path is separate from file name because path may change.
 	static NPmapType texture[] = {
 
 		{ kNPid,			kNPint,		"np_texture_id",		"Texture ID" },
@@ -251,9 +252,11 @@ void npInitMap (void* dataRef)
 		{ kNPfile,			kNPcharArray,	"name",				"Texture name" },
 		{ kNPpath,			kNPcharArray,	"path",				"Path" } 
 	};
+	//lv tex end
 	
 	//zz mod
-    	// Path is seperate from file name because path may change.
+	//lv mod begin 
+    // Path is separate from file name because path may change.
 	static NPmapType models[] = {
 
 		{ kNPid,			kNPint,				"np_geo_id",	"Geometry ID" },
@@ -263,6 +266,7 @@ void npInitMap (void* dataRef)
 		{ kNPfile,			kNPcharArray,		"name",			"Texture name" },
 		{ kNPpath,			kNPcharArray,		"path",			"Path" }
 	};
+	//lv mod end
 //};
 
 	//-------

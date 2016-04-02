@@ -1184,17 +1184,14 @@ int npMapToCSV (char* csvStr, int mapType, int size, int* index, void* dataRef)
 		// cleanup					//zz debug, add handling for &index with file blocks 
 		npFree( nodes, data );
 		return n;
-	}
+	} // lv models begin
 	else if(mapType == kNPmapModels)
 	{
-		printf("kNPmapModels\n");
-//		n += sprintf (curs, "np_models_id,np_geometry_id,np_texture_id,type,object_name,file_name,path\n");
+		//printf("kNPmapModels\n");
 		n += sprintf (curs, "np_geo_id,np_texture_id,type,object_name,file_name,path\n");
 		geolist = &data->io.gl.geolist[0];
-		//for( i=1000; i < 2000; i++ )
 		for( i=1; i < 2000; i++ )
 		{
-//			geolist[i].geometryId = 0;
 			geolist = &data->io.gl.geolist[i];
 			if( geolist->geometryId != 0 )
 			{
@@ -1209,31 +1206,8 @@ int npMapToCSV (char* csvStr, int mapType, int size, int* index, void* dataRef)
 					geolist->modelFile,
 					rel	
 					);
-/*
-				n += sprintf((curs + n), "%d,%d,%d,\"%s\",\"%s\",\"%s\"\n",	
-					geolist->geometryId,
-					geolist->textureId,
-					0,
-					geolist->name,
-					geolist->modelFile,
-					geolist->modelPath
-					);
-*/
 				free(rel);
 			}
-			/*
-			if( geolist[i].geometryId != 0 )
-			{
-				n += sprintf((curs + n), "%d,%d,%d,\"%s\",\"%s\",\"%s\"\n",	
-					geolist[i].geometryId,
-					geolist[i].textureId,
-					0,
-					geolist[i].name,
-					geolist[i].modelFile,
-					geolist[i].modelPath
-					);
-			}
-			*/
 		}
 		return n;
 	}
@@ -1245,25 +1219,32 @@ int npMapToCSV (char* csvStr, int mapType, int size, int* index, void* dataRef)
 		for( i = 1; i < 2000; i++ )
 		{
 			texmap = &data->io.gl.texmap[i];	
-			if( (dslash = strstr(texmap->path, "//")) == 0 )
-			{
-				printf("path : %s\n", texmap->path);
-				printf("double slash detected : %s\n", dslash);
-			}
 
-			if(texmap->extTexId != 0)
+			if(texmap->extTexId != 0 && texmap->filename[0] != '\0')
 			{
+				rel = npFilePathAbsToRel(texmap->path, dataRef);
+				if( (rel[strlen(rel)-1] == '\\') && (rel[strlen(rel)-2] == '\\') )
+				{
+//					printf("remove extra slash\n");
+					/// lv, remove extra slash
+					rel[strlen(rel)-1] = '\0';
+				}
+
+				printf("i %d texture rel path : %s\n", i, rel);
+
 				n += sprintf((curs + n), "%d,%d,\"%s\",\"%s\"\n",	
 					texmap->extTexId,
 					0,
 					texmap->filename,
-					texmap->path
+					rel
 					);
+
+				free(rel);
 			}
 		}
 
 		return n;
-	}
+	} // lv models end
 	else
 	{
 		npPostMsg("err 4545 - unknown mapType", kNPmsgErr, data);

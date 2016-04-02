@@ -162,12 +162,44 @@ void npNewGeoId(int* geoId, void* dataRef)
 		(*geoId)++;
 }
 
+pNPgeolist npNewGeo(int* geoId, int* extTexId, char* geoname, char* filename, char* path, void* dataRef)
+{
+	pData data = (pData) dataRef;
+	pNPgeolist geo = NULL;
+
+	npNewGeoId(geoId, dataRef);
+
+	geo = npGetUnusedGeo(dataRef);
+
+	geo->geometryId = geoId;
+
+	if(extTexId == 0)
+		geo->textureId = npGetUnusedExtTexId(dataRef);
+	else
+		geo->textureId = extTexId;
+
+	strcpy(geo->modelFile, filename);
+	strcpy(geo->modelPath, path);
+
+	if(geoname != NULL)
+		strcpy(geo->name, geoname);
+	else
+		strcpy(geo->name, "");
+
+	geo->loaded = 0;
+	geo->modelId = 0;
+	geo->modelTextureFile[0] = '\0';
+	geo->modelTexturePath[0] = '\0';
+	
+
+	return geo;
+}
+
 /** Loads models that are in the geolist 
 	@param geo is an element of the geolist
 	@param dataRef is a global map reference instance.
 	@return the model id
 */
-pNPgeolist npAddGeo(int geoId, int extTexId, int type, char* object_name, char* file_name, char* path, void* dataRef);
 pNPgeolist npAddGeo(int geoId, int extTexId, int type, char* object_name, char* file_name, char* path, void* dataRef)
 {
 	pData data = (pData) dataRef;
@@ -194,12 +226,10 @@ pNPgeolist npAddGeo(int geoId, int extTexId, int type, char* object_name, char* 
 //		geoId++;
 	}
 
-	printf("asfdkjl path : %s\n", path);
-	// npNewGeoId(void* dataRef)
-	/*
-	while( (x = npSearchGeosId(geoId, dataRef) ) != 0 )
-		geoId++;
-	*/
+//	printf("path : %s\n", path);
+	
+//	geo = npNewGeo(&geoId, &extTexId, object_name, file_name, path, dataRef);
+
 	npNewGeoId(&geoId, dataRef);
 	
 	geo = npGetUnusedGeo(dataRef);
@@ -268,6 +298,7 @@ int npLoadModel(pNPgeolist geo, void* dataRef)
 	char fileName[256] = {'\0'};
 	char path[256] = {'\0'};
 	int modelId = 0;
+	int i = 0;
 	int geolistIndexMatch = 0;
 	
 	filePath[0] = '\0';
@@ -284,14 +315,11 @@ int npLoadModel(pNPgeolist geo, void* dataRef)
 	}
 
 	sprintf(filePath, "%s%s", geo->modelPath, geo->modelFile);
-//	modelId = npAssimpLoadModel(filePath, &geolistIndexMatch, dataRef);
-//	modelId = npAssimpLoadModel2(filePath, dataRef);
-//	modelId = geo->geometryId - 999; /// @todo : npNewModelId(int geoId, void* dataRef);
 	modelId = npNewModelId(&geo->geometryId, dataRef);
 	assimp->scene[modelId] = npModelImport(filePath, dataRef);
 	if(assimp->scene[modelId] == NULL)
 	{
-//		npDelGeo(
+		///@todo:npDelGeo
 		geo->geometryId = 0;
 		geo->loaded = 0;
 		return 0;
@@ -302,158 +330,30 @@ int npLoadModel(pNPgeolist geo, void* dataRef)
 	strcpy(path, filePath);
 	path[strlen(filePath) - strlen(geo->modelFile)] = '\0';
 	printf("---------path : %s-------\n", path);
+	for(i = 0; i < strlen(fileName); i++)
+	{
+		fileName[i] = tolower(fileName[i]);
+	}
+
 	npAddTexMap(geo->textureId, fileName, path, dataRef);
 	path[0] = '\0';
 	assimp->path.data[0] = '\0';
-//	geo->textureId = 70;
-//	strcpy(path, assimp->path.data);
-//	npAddTexMap(0, fileName, 
-//	npGetFileNameFromPath(filePath, &assimp->path.data[0], dataRef);
-//struct aiString npAssimpGetTexturePath(int sceneIndex, void* dataRef)
 
 	return modelId;
 }
-
-/*
-int npLoadModel(pNPgeolist geo, void* dataRef)
-{
-	pData data = (pData) dataRef;
-	pNPassimp assimp = (pNPassimp)data->io.assimp;
-	pNPgeolist geolist = &data->io.gl.geolist;
-	pNPgeolist geoMatch = NULL;
-	char filePath[256] = {'\0'};
-	int modelId = 0;
-	int geolistIndexMatch = 0;
-
-	sprintf(filePath, "%s%s", geo->modelPath, geo->modelFile);
-	modelId = npAssimpLoadModel(filePath, &geolistIndexMatch, dataRef);
-	//if(geolistIndexMatch != 0 && modelId != 0) 
-	if(modelId != 0) 
-	{
-		geoMatch = &geolist[geolistIndexMatch];	
-		if(geoMatch->modelTexturePath[0] != '\0')
-		{
-		//	strcpy(geo->modelTextureFile, geoMatch->modelTextureFile);
-			strcpy(geo->modelTexturePath, geoMatch->modelTexturePath);
-		}
-
-	}
-
-	if(modelId != 0)
-		data->io.gl.numModels++;	
-	
-	return modelId;
-}
-*/
 
 /// @todo pNPgeolist npGeolistGetGeo(int geometryId, void* dataRef)
-/*
-pNPgeolist npGeolistGetGeo(int geometryId, void* dataRef)
-{
-	pData data = (pData) dataRef;
-	pNPgeolist geolist = NULL;
-	geolist = npGetGeolist(dataRef);
-
-	return &geolist[geometryId];
-}
-*/
-
-/*
-pNPgeolist npGetGeolist(void* dataRef)
-{
-	pData data = (pData) dataRef;
-	return &data->io.gl.geolist[0];
-}
-*/
-
-	//modelId = npModelGetNewId(dataRef);
-/*
-int npModelNewId(int geoId, void* dataRef)
-{
-	pData data = (pData) dataRef;
-	pNPgeolist geolist = &data->io.gl.geolist[0];
-
-	return geoId - 999;
-
-//	return (++data->io.gl.modelId); /// @todo lv, add modelId to gl struct
-}
-*/
 
 int npGeoNull(void)
 {
 	return 0;
 }
 
-/*
-int npGeolistNewGeoId(void* dataRef)
-{
-	pNPgeolist geolist = npGetGeolist(dataRef);
-	pNPgeo geo = NULL;
-	int i = 0;
-
-	for(i = 1000; i < 2000; i++)
-	{
-		geo = &geolist[i];
-		// if i and geometryId are identical, geo is taken
-		// if not, geo is safe to work with.
-		if( i != geo->geometryId )
-			return i;
-	}
-
-	return 0;
-}
-*/
-
 void npSetSelectedNodeGeoId(int* geoId, void* dataRef )
 {
 	npSetSelectedNodes( kNPgeometry, geoId, dataRef );
 }
 
-/*
-pNPgeolist npLoadModelFromFile(char* filepath, void* dataRef)
-{
-	pData data = (pData) dataRef;	
-	pNPgl gl = &data->io.gl;
-	pNPgeolist geolist = &data->io.gl.geolist[0];
-	char filename[256] = {'\0'};
-	int geometryId = 0;
-	static int modelId = 1;
-	int geoId = 0;
-	int match = 0;
-
-	match = npGeolistFindFilePath(filepath, dataRef);
-	if(match)
-		return;
-
-	geoId = npGeolistNewGeoId(dataRef);
-
-	geolist[geoId].modelId = npModelNewId(geoId, dataRef);
-
-//	geoId = geometryId;
-
-	/// Check if geolist geoId is at end of array, if so, return.
-	if( geoId == 2000 )
-	{
-		printf("\nMax geoId hit");
-		system("pause");
-		return;
-	}
-
-	geolist[geoId].geometryId = geoId;
-	geolist[geoId].modelId = npModelNewId(geoId, dataRef);
-
-	npGetFileNameFromPath(filepath, &filename[0], dataRef);
-	strcpy(geolist[geoId].modelFile, filename); /// @todo : npGeolistSetModelFile(int geometryId, char* modelFile, void* dataRef); 
-	filepath[strlen(filepath) - strlen(filename)] = '\0';
-
-	strcpy(geolist[geoId].modelPath, filepath);
-
-	npGeolistUnlock(dataRef);
-	npGeolistIncLen(dataRef);
-
-	return &geolist[geoId];
-}
-*/
 /** Increments the geolist length
 	@param dataRef is a global map reference instance.
 	@return the geolist length
@@ -502,51 +402,6 @@ bool npGeolistLockStatus(void* dataRef)
 	pData data = (pData) dataRef;
 	return data->io.gl.geoLock;
 }
-
-/*
-bool npGeolistIdTaken(int geoId, void* dataRef)
-{
-	pNPgeolist geolist = npGetGeolist(dataRef);
-	
-	if( geolist[geoId].geometryId == geoId )
-		return true;
-	else
-		return false;
-
-	return false;
-}
-*/
-
-/*
-int npGeolistSearchGeo(pNPgeo geo, void* dataRef) 
-{
-	pNPgeolist geolist = npGetGeolist(dataRef);
-	pNPgeo geoTest = NULL;
-	int i = 0;
-
-
-//	if( npGeolistIdTaken(geo->geometryId, dataRef) )
-//	{
-		/// true, 
-//	}
-
-
-//	for(i = 1000; i < 2000; i++)
-//	{
-//		geoTest = &geolist[i];
-//
-//		if( strcmp(geoTest->modelPath, geo->modelPath) == 0 )
-//		{
-//			if( strcmp(geoTest->modelFile, geo->modelFile) == 0 )
-//			{
-//				return i;
-//			}
-//		}
-//	}
-
-	return 0;
-}
-*/
 
 pNPgeo npGeoInit(void* dataRef);
 pNPgeo npGeoInit(void* dataRef)
@@ -700,9 +555,8 @@ char* npTextureNewFilePath(char* stringVal, int maxSize, char* filePath, void* d
 	if( (dslash = strstr(filePath, "//")) != NULL )
 	{
 		dslash[1] = '\0';
-		printf("dslash : %s\n", dslash);
-		printf("filePath : %s\n", filePath);
-	//	system("pause");
+//		printf("dslash : %s\n", dslash);
+//		printf("filePath : %s\n", filePath);
 	}
 
 	/*
@@ -723,6 +577,7 @@ void npTextureNew(char* tex_csvline, void* dataRef)
 	pNPgeo geo = NULL;
 //	char* curs = &model_csvline;
 	char* curs = tex_csvline;
+	char* abs = NULL;
 	char objectName[256] = {'\0'};
 	char fileName[256] = {'\0'};
 	char filePath[256] = {'\0'};
@@ -736,6 +591,14 @@ void npTextureNew(char* tex_csvline, void* dataRef)
 	curs = npTextureNewType( curs, &type, dataRef );
 	curs = npTextureNewFilename( curs, 200, &fileName[0], dataRef );
 	curs = npTextureNewFilePath( curs, 200, &filePath[0], dataRef );
+		
+	if( npPathIsRel(filePath, dataRef))
+	{
+		abs = npFilePathRelToAbs(filePath, dataRef);
+		filePath[0] = '\0';
+		strcpy(filePath, abs);
+		free(abs);
+	}
 
 	npAddTexMap(extId, fileName, filePath, dataRef);
 //	curs = npModelNewGeoId( curs, &geometryId, dataRef );
@@ -800,44 +663,9 @@ pNPgeo npModelNew(char* model_csvline, void* dataRef)
 		}
 	}
 	/// @todo npGeoMalloc(dataRef)
-	/*
-		pNPgeo npGeoMalloc(void* dataRef)
-		{
-			pNPgeo geo = NULL;
-			geo = malloc(sizeof(NPgeo));
-			return geo;
-		}
-
-	*/
-	/*
-	geo = malloc(sizeof(NPgeo));
-	if(geo == NULL)
-		return NULL;
-	*/
 	npAddGeo(geometryId, textureId, 0, objectName, fileName, filePath, dataRef);
 	
-//	geo = npGeoInit(dataRef);
-
-
-	/*
-	geo->geometryId = geometryId;
-	geo->modelId = geometryId - 999;
-	geo->textureId  = textureId;
-//	geo->type = typeId; /// @todo geoType
-	strcpy(geo->name, objectName);
-	strcpy(geo->modelFile, fileName);
-	strcpy(geo->modelPath, filePath);
-	*/
-
-//	if( npGeolistSearchGeo(geo, dataRef) 
-//	npGeolistSearchGeo(geo, dataRef); // lv, temp
-//	match = npGeolistSearch
-	
 	return geo;
-	/*
-//	fileName = npModelNewFileName(stringVal, maxSize, dataRef)
-	fileNamePath = npModelNewFilePath(stringVal, maxSize, dataRef)
-	*/
 }
 
 int npPathIsRel(char* path, void* dataRef);
@@ -893,28 +721,6 @@ char* npModelNewFilePath(char* stringVal, int maxSize, char* filePath, void* dat
 //		strcpy(filePath,
 	}
 
-//	npFilePathRelToAbs(filePath, dataRef);
-	/// Don't assume a trailing slash
-	/// if it doesn't have one, add it.
-//	printf("%c\n", filePath[i]);
-	/*
-	if( filePath[i] != nposGetFolderDelimit() )
-		filePath[i] = nposGetFolderDelimit();
-	*/
-	/*
-	if( filePath[i-1] != '\\' )
-		filePath[i-1] = nposGetFolderDelimit();
-	*/
-
-	/*
-	while( filePath[i] != nposGetFolderDelimit() && i >= 0 )
-	{
-		i--;
-	}
-
-	filePath[i+1] = '\0';
-	*/
-
 	return curs;
 }
 
@@ -949,25 +755,9 @@ char* npModelNewFileName(char* stringVal, int maxSize, char* fileName, void* dat
 		printf("model file has no extension, cannot load\n");
 /// @todo geolist[geoId].loadModel = false;	
 	}
-
 	
-//	match = npGeolistFindFileName(fileName, dataRef);
-	
-
 	return curs;
 }
-
-/*
-int npModelNewTypeId(char* typeVal, void* dataRef)
-{
-	int typeId = 0;
-	typeId = npstrtoi(&typeVal);
-
-	/// @todo recognize valid type id
-
-	return typeId;
-}
-*/
 
 char* npModelNewObjectName(char* stringVal, int maxSize, char* objectName, void* dataRef)
 {
@@ -991,7 +781,7 @@ char* npModelNewObjectName(char* stringVal, int maxSize, char* objectName, void*
 		/// @todo: get objectName from model file
 	}
 	
-	/// @todo npGeoIsSame(pNPgeo geo1, pNPgeo geo2);	
+	/// @todo npGeoSame(pNPgeo geo1, pNPgeo geo2, void* dataRef);	
 	match = npGeolistFindObjectName(objectName, dataRef);
 
 	return curs;
@@ -1169,30 +959,6 @@ char* npModelNewGeoId(char* idVal, int* geoId, void* dataRef)
 
 	return idVal;
 }
-/** Adds model info to the Geolist, does not load the model.
-	@param geometryId
-	@param modelId
-	@param modelName
-	@param fileName
-	@param modelPath
-	@param dataRef is a global map reference instance.
-*/
-/*
-void npGeolistAddModel(int geometryId, int modelId, char* modelName, char* fileName, char* modelPath, void* dataRef) 
-{
-	pData data = (pData) dataRef;
-	pNPgeolist p_geo = &data->io.gl.geolist[geometryId];
-
-	p_geo->modelId = modelId;
-	p_geo->geometryId = geometryId;
-	strcpy(p_geo->name, modelName);
-	strcpy(p_geo->modelFile, fileName);
-	strcpy(p_geo->modelPath, modelPath);
-
-	npGeolistIncLen(dataRef);
-//	p_geo->textureId = textureId;
-}
-*/
 
 void npUpdateGeoList( void* dataRef )
 {
@@ -1207,11 +973,13 @@ void npUpdateGeoList( void* dataRef )
 		geolist = &data->io.gl.geolist[i];
 		if( (geolist->geometryId != 0) && (geolist->loaded == 0) )
 		{
+			/*
 			printf("\n");
 			printf("geolist->geometryId : %d\n", geolist->geometryId);
 			printf("geolist->modelFile : %s\n", geolist->modelFile);
 			printf("geolist->modelPath : %s\n", geolist->modelPath);
 			printf("\n");
+			*/
 			modelId = npLoadModel(geolist, dataRef);
 			if(modelId)
 			{
@@ -1231,76 +999,6 @@ void npUpdateGeoList( void* dataRef )
 	return;
 }
 
-/** Updates the geolist (if unlocked) then locks it	
-	@param dataRef is a global map reference instance.
-*/
-/*
-void npUpdateGeoList( void* dataRef ){
-	pData data = (pData) dataRef;
-	char modelfilePath[256] = {'\0'}; 
-	pNPgl gl = &data->io.gl;
-	pNPgeolist p_geo = NULL;
-	int geoLen = gl->geoLen; /// lv geolist length
-	int i = 1000;
-	pNPgeolist geolist = gl->geolist;
-	pNPassimp assimp = (pNPassimp)data->io.assimp;
-
-//			if( p_geo->textureId == 0
-//				&& p_geo->modelFile[0] != '\0')
-//				&& p_geo->modelPath[0] != '\0')
-
-				//&& p_geo->modelPath[0] != '\0')
-			//if( p_geo->geometryId == npGeolistGetX(dataRef) )
-
-	/// @todo lv implement geo hash table
-	if(npGeolistLockStatus(dataRef) == false) {
-		for(i = 1000 ; i < 2000; i++)
-		{
-			p_geo = &gl->geolist[i];
-			if( p_geo->geometryId == i )
-			{
-				p_geo->modelId = npLoadModel(p_geo, dataRef);
-				if(p_geo->modelTexturePath[0] != '\0' && p_geo->modelId != 0)
-					p_geo->textureId = npLoadTexture(p_geo->modelTexturePath, 0, dataRef);
-
-				if(p_geo->modelId != 0)
-				{
-//					npModelStoreDL(assimp->scene[p_geo->modelId], p_geo->geometryId, dataRef);
-					npModelStoreDL(assimp->scene[p_geo->geometryId - 999], p_geo->geometryId, dataRef);
-				}
-				else
-					gl->geolist[p_geo->geometryId].geometryId = 0;
-
-			}
-
-		}
-
-
-//		for(npGeolistSetX(1000, dataRef); npGeolistGetX(dataRef) < (npGeolistGetLen(dataRef)+1000); npGeolistIncX(dataRef))
-//		{
-//			p_geo = &gl->geolist[npGeolistGetX(dataRef)];
-//			if( p_geo->textureId == 0
-//				&& p_geo->modelFile[0] != '\0')
-//			{
-//				p_geo->modelId = npLoadModel(p_geo, dataRef); /// @todo lv, now
-//				if(p_geo->modelTexturePath[0] != '\0' && p_geo->modelId != 0)
-//					p_geo->textureId = npLoadTexture(p_geo->modelTexturePath, 0, dataRef);
-//
-//				if(p_geo->modelId != 0)
-//				{
-//					npModelStoreDL(assimp->scene[p_geo->modelId], p_geo->geometryId, dataRef);
-//					npModelStoreDL(assimp->scene[p_geo->geometryId - 999], p_geo->geometryId, dataRef);
-//				}
-//				else
-//					gl->geolist[p_geo->geometryId].geometryId = 0;
-//
-//			}
-//		}
-
-		npGeolistLock(dataRef);
-	}
-}
-*/
 /** Gets the length of the geolist
 	@param dataRef is a global map reference instance.
 	@return the geolist length

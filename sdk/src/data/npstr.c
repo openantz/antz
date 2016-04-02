@@ -175,9 +175,10 @@ endPoint:
 
 //	while (*curs != ',' && *curs != '\r' && *curs != '\n') curs++; //debug needed?
 
-	// lv new models
+	// lv, str fix begin
 	while( ( (*curs >= 'a') && (*curs <= 'z') ) || ( (*curs >= 'A') && (*curs <= 'Z') ) )
 		curs++;
+	// lv, str fix end
 
 	if (*curs == ',')
 		*curs++;		//if comma field separator then increment past

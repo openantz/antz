@@ -177,6 +177,7 @@ void color4_to_float4(const struct aiColor4D *c, float f[4])
 	f[3] = c->a;
 }
 
+// lv models start 
 void apply_material(const struct aiMaterial *mtl)
 {
 	float c[4];
@@ -246,6 +247,7 @@ void apply_material(const struct aiMaterial *mtl)
 	else
 		glEnable(GL_CULL_FACE);
 }
+
 
 //------------------------------------------------------------------------------
 void npDrawAssimpModel(struct aiScene* scene, struct aiNode* node, void* dataRef)
@@ -322,102 +324,7 @@ void npDrawAssimpModel(struct aiScene* scene, struct aiNode* node, void* dataRef
 
 	return;
 }
-
-//------------------------------------------------------------------------------
-/*
-void npDrawAssimpModel_old(struct aiScene* scene, struct aiNode* node, void* dataRef)
-{
-	pData data = (pData) dataRef;
-	pNPassimp assimp = data->io.assimp;
-	struct aiMatrix4x4 m = node->mTransformation;
-	struct aiFace* face = NULL;
-	struct aiMesh* mesh = NULL;
-	GLenum face_mode = 0;
-	int index = 0;
-	unsigned int z = 0, x = 0, i = 0;
-
-	/// node->mNumMeshes should never be 0
-	aiTransposeMatrix4(&m);
-	glPushMatrix();
-	glMultMatrixf((float*)&m);
-
-	printf("\nnode->mNumMeshes : %d", node->mNumMeshes);
-//	system("pause");
-
-//	if(node->mNumMeshes == 0)
-//	{
-//		printf("\nNo Meshes");
-//		return;
-//	}
-
-
-	glDisable (GL_LIGHTING);	//draw 100% ambient white
-
-	for(z = 0; z < node->mNumMeshes; z++)
-	{
-		mesh = scene->mMeshes[node->mMeshes[z]];
-//		apply_material(scene->mMaterials[mesh->mMaterialIndex]);
-		for(x = 0; x < (int)mesh->mNumFaces; x++)
-		{
-			face = &mesh->mFaces[x];
-			switch(face->mNumIndices) {
-				case 1: face_mode = GL_POINTS; break;
-				case 2: face_mode = GL_LINES; break;
-				case 3: face_mode = GL_TRIANGLES; break;
-				default: face_mode = GL_POLYGON; break;
-			}
-
-//			glEnable( GL_TEXTURE_2D );
-			glBegin(face_mode);
-
-			//printf("\ntexture id : %d", hasTexture);
-
-//			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-//			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-	//		printf("\nwidth : %d & Height : %d", data->io.texmap.width, data->io.texmap.height);
-		//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, data->io.texmap.width, data->io.texmap.height, 0, GL_RGB, GL_UNSIGNED_BYTE, data->io.texmap.image);
-	//		glGenerateMipmap(GL_TEXTURE_2D);
-
-			for(i = 0; i < face->mNumIndices; i++) {
-				index = face->mIndices[i];
-
-				if( mesh->mTextureCoords[0] != NULL ) {
-			    glTexCoord2f(mesh->mTextureCoords[0][index].x, mesh->mTextureCoords[0][index].y); //mTextureCoords[channel][vertex]
-				}
-
-				if( mesh->mColors[0] != NULL )
-				{
-					glColor4fv((GLfloat*)&mesh->mColors[0][index]);
-				//	glColor4f( 1.0, 1.0, 1.0, 1.0);
-				}
-//					glColor4f( 1.0, 1.0, 1.0, 1.0);
-
-				if( mesh->mNormals != NULL )
-					glNormal3fv( &mesh->mNormals[index].x );
-
-				glVertex3fv( &mesh->mVertices[index].x );
-			}
-			glEnd();
-//			glDisable( GL_TEXTURE_2D );
-	}
-
-//	glPopMatrix();
-	}
-
-//	glEnable( GL_LIGHTING );
-
-	for (i = 0; i < (int)node->mNumChildren; ++i) {
-		npDrawAssimpModel(scene, node->mChildren[i], dataRef);
-	}
-	glPopMatrix();
-
-
-	return;
-}
-*/
+// lv models end
 
 //------------------------------------------------------------------------------
 void DrawPin (int selectedRootNode, pNPnode node, void* dataRef)
@@ -425,16 +332,18 @@ void DrawPin (int selectedRootNode, pNPnode node, void* dataRef)
 	int i = 0;
 	int x = 0;
 	int z = 0;
-	int y = 1000; /// lv temp
+	int y = 1000; /// lv model temp
 	int index = 0;
 	int idRed = 0, idGrn = 0, idBlu = 0;
 	GLfloat modelView[16];	//zz-link  //zzhp can comment out if links not used
 
 	pData data = (pData) dataRef;
+	// lv model begin
 	pNPassimp assimp = data->io.assimp;
 	struct aiFace* face = NULL;
 	struct aiMesh* mesh = NULL;
 	GLenum face_mode = 0;
+	// lv model end
 
 
 	pNPnode nodeChild = data->map.currentNode;
@@ -518,12 +427,14 @@ void DrawPin (int selectedRootNode, pNPnode node, void* dataRef)
 		node->world.z = node->translate.z * rootGrid->scale.z;
 	}
 
+	// lv model begin
 	/// geometry >= 1000 indicates assimp model
 	if(node->geometry >= 1000)
 	{
 	//	node->textureID = data->io.gl.geolist[node->geometry].textureId; 
 		npGLPrimitive (node->geometry, 0.0f);		
 	}
+	// lv model end
 
 //zzoff
 /*
@@ -992,13 +903,15 @@ void DrawPinChild (pNPnode node, void* dataRef)
 			glPopMatrix();
 		}
 		else
-			npGLSurface2 (true, node, data);	//default for all other topo types // lv model
+			npGLSurface2 (true, node, data); // lv model //default for all other topo types // lv model
 
+		// lv model begin
 		if( node->geometry >= 1000 )
 		{
 //			node->textureID = data->io.gl.geolist[node->geometry].textureId; /// @todo lv temp commented out model
 			npGLPrimitive (node->geometry, 0.0f);		// 2nd one is above node
 		}
+		// lv model end
 
 		glLineWidth(1.0f);
 	}

@@ -1015,27 +1015,8 @@ struct NPhud {
 typedef struct NPhud NPhud;
 typedef struct NPhud * pNPhud;
 
+// lv model begin
 #define kNPgeoListMax 2000
-/*
-struct NPgeoList {
-//	unsigned int DL[kNPgeoListMax+1];	///<! Display Lists for drawing geometries
-	unsigned int DL;			///<! Display Lists for drawing geometries
-	int textureID[kNPgeoListMax+1];		///<! Texture Associated with each geometry
-	char name[kNPgeoListMax+1][32];		///<! Name of each geometry
-  	char modelFile[kNPgeoListMax][50];      
-	char modelPath[kNPgeoListMax][150]; 
-	int numPrimitives;
-	int numModels;
-	/// ------------------------------------------------------------
-	int modelId;
-	int geometryId;
-	int type;
-
-};
-typedef struct NPgeoList NPgeoList;
-typedef NPgeoList* pNPgeoList;
-*/
-
 #define kNPmodelNameMax 50
 #define kNPmodelFileNameMax 75
 #define kNPmodelFilePathMax 300
@@ -1053,9 +1034,8 @@ struct NPgeolist {
 typedef struct NPgeolist NPgeolist;
 typedef NPgeolist* pNPgeolist;
 
-typedef struct NPgeolist NPgeo; /// new lv models
-typedef pNPgeolist pNPgeo; /// new lv models
-
+typedef struct NPgeolist NPgeo;
+typedef pNPgeolist pNPgeo;
 
 struct NPtexmap {
 	int loaded;
@@ -1070,19 +1050,19 @@ struct NPtexmap {
 };
 typedef struct NPtexmap NPtexmap;
 typedef NPtexmap* pNPtexmap;
+// lv model end
 
 struct NPgl {
 	void* coreNode; ///< core nodes tie global structures to the scene graph
 						//!< each global struct has a corresponding base node.
-//	NPgeoList geoList; // @todo remove geolist1 
-	NPgeolist geolist[2000];
-	int			geoX;
-	int			geoLen;
+	NPgeolist geolist[2000]; // lv geolist
+	int			geoX; // lv geolist
+	int			geoLen; // lv geolist
 	bool		geoLock; // lv, geolist lock flag, if true: don't access, if false: safe to access 
-	int			numPrimitives;
-	int			numModels;
-	int			modelId;
-	unsigned int dl; ///!< Display List Base
+	int			numPrimitives;// lv geolist
+	int			numModels;// lv geolist
+	int			modelId;// lv geolist
+	unsigned int dl; ///!< lv geolist, Display List Base
 
 	int			id;				//!<the node ID used to store this GL item
 
@@ -1106,8 +1086,8 @@ struct NPgl {
 	int			normal;
 	int			shade;
 	int			alphaMode;
-
-	NPtexmap texmap[2000];
+	
+	NPtexmap texmap[2000]; // lv geolist
 	int			textureCount;
 	int			maxTextureSize;
 	int			subsample;		//!<zzhp
@@ -1187,7 +1167,7 @@ struct NPmap {
 	pNPmapType	typeMapChMap;			//!< debug db //!<zzssql
 
 	pNPmapType	typeMapPalette;				//!<zz color
-	pNPmapType	typeMapModel;			//!< lv 3D Models
+	pNPmapType	typeMapModel;			//!< lv geolist 
 
 	pNPmapType	mapTypeList;
 	int			mapTypeCount;
@@ -2602,7 +2582,7 @@ enum kNP_NATIVE_DATA_TYPES
 	kNPgitvizURL,
 	kNPmodel,	//!< lv model
 	kNPfileName,	//!< lv model
-	kNPpath,	//!< model
+	kNPpath,	//!< lv model
 	kNPobjName,
 
 	kNPmousePickMode,

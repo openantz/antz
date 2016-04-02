@@ -113,10 +113,7 @@ int npAssimpLoadModel2(char* filePath, void* dataRef)
 		return 0;
 	
 	npModelImport(filePath, dataRef);
-
 	npGetFileNameFromPath(filePath, &filename[0], dataRef);
-	
-
 
 	return 0;
 }
@@ -127,6 +124,7 @@ int npAssimpLoadModel2(char* filePath, void* dataRef)
 	@return the model id
 */
 
+// lv obs func
 int npAssimpLoadModel(char* filePath, int* geolistIndexMatch, void* dataRef)
 {
 	char filename[256] = {'\0'};
@@ -155,20 +153,17 @@ int npAssimpLoadModel(char* filePath, int* geolistIndexMatch, void* dataRef)
 	
 	delimit = nposGetFolderDelimit();
 
-//	result = strstr(filePath, &delimit);
 	result = strstr(filePath, "\\");
 	if( result != NULL)	
 		strcpy(modelPath, filePath);
 	else
-	{ /// Not a filePath, has no delimiters
+	{
 	  
 	}
 
 	modelPathLen = strlen(modelPath);
 	while(modelPath[modelPathLen] != '\\' && modelPathLen >= 0)
 		modelPathLen--;
-
-//	while(modelPath[modelPathLen] != '\\' && modelPathLen-- >= 0);
 
 	modelPath[modelPathLen+1] = '\0';
 
@@ -177,34 +172,15 @@ int npAssimpLoadModel(char* filePath, int* geolistIndexMatch, void* dataRef)
 
 #define kNPgeoLenMax 2000
 #define kNPgeoAssimpIndex 1000
-		/// search the geolist for this model file
 
 	if(modelPath[0] == '\0')
 	{
-		printf("stop");
 	}
-
-
-
-//		for(i = kNPgeoAssimpIndex; i < kNPgeoLenMax; i++)
-//		{
-//			if( strcmp(data->io.gl.geolist[i].modelFile, filename) == 0 ) /// Found it
-//			{
-//				if( strcmp(data->io.gl.geolist[i].modelPath, modelPath) == 0)
-//				{
-//					(*geolistIndexMatch) = i;
-//					break;
-//				}
-//			}
-//		}
-
-
 
 	///Check if search failed
 	if(i == kNPgeoLenMax) // no match made
 	{
-		printf("\nModel File is not in the geolist");
-//			system("pause");
+	//	printf("\nModel File is not in the geolist");
 		if(data->io.gl.geoLen <= kNPgeoLenMax)
 		{				
 //			npModelAddToGeolist(filename, geometryId, dataRef);
@@ -219,15 +195,12 @@ int npAssimpLoadModel(char* filePath, int* geolistIndexMatch, void* dataRef)
 	if(modelId <= 0 || modelId > 1001)
 	{
 		printf("Model ID 0 is reserved, cannot use\n");
-		printf("Valid Model ID range : [1,1001]\n");
+//		printf("Valid Model ID range : [1,1001]\n");
 		return modelId;
 	}
 	else
 	{
-//		printf("Successful");
 	}
-
-//	modelId = (*geolistIndexMatch)-999;
 
 	if(filePath[0] != '\0') // change filePath to modelPath
 	{
@@ -281,6 +254,10 @@ int npAssimpLoadModel(char* filePath, int* geolistIndexMatch, void* dataRef)
 			return modelId;
 		}
 
+		for(i = 0; i < strlen(assimp->path.data); i++)
+		{
+			assimp->path.data[i] = tolower(assimp->path.data[i]);
+		}
 
 //		if(data->io.gl.geolist[i].modelTextureFile
 
