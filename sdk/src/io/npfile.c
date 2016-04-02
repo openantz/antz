@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -392,8 +392,13 @@ void npOpenURL (const char* command, void* dataRef)							//zz html replace enti
 	pNPtag tag = node->tag;
 	char* title = tag->title;
 
-	char sysCmd[kNPurlMax] = {"start \0"};	//generally 2048 is max URL length
+//	char sysCmd[kNPurlMax] = {"start \0"};	//generally 2048 is max URL length
+	char* sysCmd = NULL;
+	sysCmd = malloc(kNPurlMax);
+	if(!sysCmd)
+		return;
 
+	strcpy( sysCmd, "start \0");
 
 	/// First check for local files and custom web URL formatting.
 	/// If no custom URL then open default webpage using the node record_id.
@@ -415,9 +420,11 @@ void npOpenURL (const char* command, void* dataRef)							//zz html replace enti
 			sprintf( sysCmd, "start %s%d", data->io.url, node->recordID );	//zz html leave this
 	}
 
-	/// system call with 'start' to open browser with the composed URL
-	system( sysCmd );
-	npPostMsg( sysCmd, kNPmsgCtrl, data );									//zz html end
+	// post system start string to GUI console
+	npPostMsg( sysCmd, kNPmsgCtrl, data );
+
+	/// call 'system( sysCmd );' to open item using OS default app / browser.
+	nposBeginThread( nposConsoleStart, sysCmd );
 }
 
 //-----------------------------------------------------------------------------
@@ -512,6 +519,7 @@ bool npOpenNodeFile( pNPnode node, void* dataRef )
 				npFileOpenAuto( nodePath, NULL, dataRef );
 				break;
 			default :	///< URL and other files opened with default OS handler
+				/// @todo maybe move fileviz node handling to npos.h
 #ifdef NP_MSW_				
 				sprintf( browserURL, "start %s", nodePath );
 #endif

@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -1814,7 +1814,7 @@ void npSystemConsoleHelp (int argc, char** argv)
 	// app ver request
 	if ( !strncmp( "-v", argv[1],2) )
 	{										//keep ver up-to-date with changes
-		printf("\nANTz v%s\n", kNPappVer);
+		printf("%s v%d.%d.%d\n", kNPappName, kNPvMajor, kNPvMinor, kNPvPatch);
 		exit(0);
 	}
 
@@ -1824,7 +1824,7 @@ void npSystemConsoleHelp (int argc, char** argv)
 		 || !strncmp( "-?",	 argv[1], 2)
 		 || !strncmp( "help",argv[1], 4) )
 	{
-		printf("ANTz v%s", kNPappVer);					//keep ver up-to-date with changes
+		printf("%s v%d.%d.%d\n", kNPappName, kNPvMajor, kNPvMinor, kNPvPatch);
 	}
 	else
 		return;	// no help requested, continue to Startup...

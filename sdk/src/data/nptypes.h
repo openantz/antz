@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -25,8 +25,10 @@
 #ifndef NPTYPES_H_
 #define NPTYPES_H_
 
-#define kNPappVer "0.200.1"
-
+#define kNPappName "ANTz"		///< This application's name.
+#define kNPvMajor 0				///< Major version, API significantly changed.
+#define kNPvMinor 201			///< Minor version, new or enhanced features.
+#define kNPvPatch 1				///< Patch version, bugs fixed.
 
 #include "stdbool.h"
 //#include "../io/npkey.h"			///< @todo zz move key codes to npkey.h
@@ -729,7 +731,7 @@ struct NPnode
 	NPfloatXYZ	world;						//!<child node world coordinates
 	float		distFromCamera;				//!<MB-Transp					//!<zz debug
 	int			hudType;					//!<removethis, use existing param //!<zz debug
-	bool			linkFlag;					//!<for establishing link nodes
+	bool		linkFlag;					//!<for establishing link nodes
 };
 
 /// pairs an id directly to a scene node pointer, used for mapping datasets, etc.
@@ -754,7 +756,7 @@ typedef struct NPmapNodeID *pNPmapNodeID;
 //! Global Data Structure -------------------------------------------------------
 
 struct NPkey {
-	void* coreNode; ///< core nodes tie global structures to the scene graph
+	void*	coreNode; ///< core nodes tie global structures to the scene graph
 						//!< each global struct has a corresponding base node.
 
 	bool	modAlphaUpper;		//!<combined shift and caps lock result
@@ -1065,9 +1067,20 @@ typedef struct NPgl NPgl;
 typedef struct NPgl * pNPgl;
 
 
+#define kNPmaxSets 4096
+struct NPselect {
+	pNPnodeList	set[kNPmaxSets];
+	int			setCount;
+};
+typedef struct NPselect NPselect;
+typedef struct NPselect * pNPselect;
+
+
 struct NPmap {
 	void* coreNode; ///< core nodes tie global structures to the scene graph
 						//!< each global struct has a corresponding base node.
+
+	NPselect	select;					//!< 
 
 	void**		node;					//!<root node array, uses kNPnodeRootMax
 	void**		sort;					//!<used for z-sort during GL draw
@@ -1137,6 +1150,7 @@ struct NPmap {
 };
 typedef struct NPmap NPmap;
 typedef struct NPmap * pNPmap;
+
 
 //!<JJ-zz
 //!<JJ - currently using track data column naming convention for mapping track-to-node-attribute (bottom part of structure will be unnecessary when channel file exists)

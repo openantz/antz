@@ -6,9 +6,9 @@
 *
 *  Hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
-*  Additional code contributors are listed chronologically: Lucas Erickson, 
+*  Additional code contributors are listed chronologically: Lucas Erickson,
 *  Mark Buchanan and Johannes Johannsen
 *
 *  Special thanks to Dave Warner, project synergist and conceptual architect.

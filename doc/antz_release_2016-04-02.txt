@@ -3,6 +3,13 @@
          latest code, issues and Wiki at https://github.com/openantz/
 
 ----------------------------------------------------------------------------
+2016-04-02 ANTz v0.201.1
+
+Enhanced:
+Selection methods moved to new file npselect.c to prepare for using sets.
+System console 'start' command (U-key) now executed from separate thread.
+
+----------------------------------------------------------------------------
 2015-12-15 ANTz v0.200.1
 
 Enhanced:

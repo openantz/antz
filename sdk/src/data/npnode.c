@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -180,6 +180,32 @@ NPfloatXY npGridSpiralXY( int nX, int nY, float dX, float dY, int index )
     }
 
 	return coordXY;
+}
+
+void npNodeListAdd( pNPnode node, void* dataRef);
+//-----------------------------------------------------------------------------
+void npNodeListAdd( pNPnode node, void* dataRef)
+{
+	pData data = (pData) dataRef;
+
+	/// @todo add support for more node type lists
+	if( node->type != kNodePin )
+		return;
+	
+//	data->map.nodePins[data->map.nodePinsCount++] = node;
+}
+
+void npNodeListRemove( pNPnode node, void* dataRef);
+//-----------------------------------------------------------------------------
+void npNodeListRemove( pNPnode node, void* dataRef)
+{
+	pData data = (pData) dataRef;
+
+	/// @todo add support for more node type lists
+	if( node->type != kNodePin )
+		return;
+	
+//	data->map.nodePins[data->map.nodePinsCount++] = node;
 }
 
 // should make this static and add locking for delete to be thread safe,      debug zz
@@ -393,8 +419,11 @@ pNPnode npNodeNew (int nodeType, pNPnode nodeParent, void* dataRef)
 	else
 		printf("err 4289 - node ID exceeds size of kNPnodeMax\n");
 
-	npSetTagOffset (node);
-	npTagNode (node, data);
+	npSetTagOffset( node);
+	npTagNode( node, data);
+
+	/// Add it to the node list
+	npNodeListAdd( node, data);
 
 	return (void*)node;
 }

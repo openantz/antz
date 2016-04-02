@@ -389,6 +389,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\ctrl\npselect.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\ctrl\npselect.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\ctrl\nptest.c"
 					>
 				</File>

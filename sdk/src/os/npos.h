@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -110,6 +110,8 @@ int nposFindNextFile( pNPfileRef fileRef );
 int nposFindFirstFile( pNPfileRef fileRef, const char* dirPath, 
 					   const char* fileFilter, void* dataRef );
 void nposFindClose( pNPfileRef fileRef, void* dataRef );
+
+void nposConsoleStart( void* sysCmd );
 
 #ifdef __cplusplus
 	}

@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -153,6 +153,7 @@ void npLoadTextures(void* dataRef)
     }
 	while( nposFindNextFile( fRef ) );	// next file within limits
 
+	//------------------------------------------------------------------
 	/// Now we load all other textures
 	result = nposFindFirstFile( fRef, "usr/images/", "*.*", data );
 	if( result != 1 )
@@ -160,7 +161,7 @@ void npLoadTextures(void* dataRef)
 
 	do
     {
-		// handle legacy support by skipping the ones we just laoded
+		// legacy support by skipping the ones we just laoded
 		if( strncmp(fRef->name, "map", 3) == 0
 			&& npGetFileTypeCat(NULL, fRef->name, data) == kNPfileJPG )
 			continue;

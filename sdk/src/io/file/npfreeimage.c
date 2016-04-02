@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -57,7 +57,7 @@ void npCloseFreeImage (void* dataRef)
 //------------------------------------------------------------------------------
 int npfiLoadTexture( const char* filename, void* dataRef )
 {
-	bool convertBPP = false;		///< Flag if converting BPP.
+//	bool convertBPP = false;		///< Flag if converting BPP.
 	int srcImageBPP = 0;			///< Source image pixel depth (BPP).
 	int width  = 0;
 	int height = 0;
@@ -109,10 +109,7 @@ int npfiLoadTexture( const char* filename, void* dataRef )
 	if( srcImageBPP == 24 || srcImageBPP == 32 )
 		bitmap32 = bitmap;
     else
-	{
-		convertBPP = true;
 		bitmap32 = FreeImage_ConvertTo32Bits( bitmap );
-	}
 
 	width  = FreeImage_GetWidth( bitmap32 );
 	height = FreeImage_GetHeight( bitmap32 );
@@ -171,11 +168,13 @@ int npfiLoadTexture( const char* filename, void* dataRef )
 		npPostMsg( msg, kNPmsgErr, dataRef );
 	}
 
-	// Unload the 32-bit colour bitmap
-	FreeImage_Unload( bitmap32 );
 
-	if( convertBPP )
+	/// Free secondary converted color-space buffer.
+	if( bitmap != bitmap32 )
 		FreeImage_Unload( bitmap );
+
+	/// Free primary image buffer bitmap.
+	FreeImage_Unload( bitmap32 );
 
 	return textureID;
 }

@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -417,8 +417,11 @@ void npUpdateDB (void* dataRef)							//add to ctrl loop, debug zz
 	}
 
 	/// if scene is flagged for an update then do it.
+	/// @todo fix bug that causes truncate related  
 	if( dbs->loadUpdate )
 	{
+		dbs->loadUpdate = false;	//zzdb
+
 		//printf("\nbefore npdbUpdateAntzStateFromDatabase activeDB :: %p", data->io.db.activeDB);
 		result = npdbUpdateAntzStateFromDatabase( dataRef );
 		//printf("\nafter npdbUpdateAntzStateFromDatabase activeDB :: %p", data->io.db.activeDB);
@@ -435,8 +438,6 @@ void npUpdateDB (void* dataRef)							//add to ctrl loop, debug zz
 			npPostMsg( "cannot load update - No Active DB", kNPmsgDB, data );
 			npPostMsg( "LOAD, SAVE or USE a DB to make Active!", kNPmsgDB, data );
 		}
-
-		dbs->loadUpdate = false;
 	}
 
 	return;
@@ -3595,7 +3596,7 @@ int npdbUpdateAntzStateFromDatabase(void* dataRef) // This needs to take a pNPda
 		return 1;
 	}
 
-	//printf("\nbefore npdbUpdateNodesFromMysqlResult");
+	printf("\n!!!!!! before npdbUpdateNodesFromMysqlResult !!!!\n");
 	npdbUpdateNodesFromMysqlResult( myResult, dataRef );
 	//printf("\nafter npdbUpdateNodesFromMysqlResult");
 //	npMapSort(dataRef);
@@ -3622,16 +3623,16 @@ int npdbLoadMenuItem (int item, void* dataRef)
 	/// check bounds, note that dbCount is +1 for null array slot[0], hence >=
 	if( item >= dbs->dbCount )
 	{
-		printf( "err 5586 - item: %d >= dbCount: %d", item, dbs->dbCount);
-		return 5586;
+		printf( "err 5686 - item: %d >= dbCount: %d", item, dbs->dbCount);
+		return 5686;
 	}
 
 	/// select database to load by menu item index 
 	dbItem = dbs->dbList[item];
 	if( !dbItem )
 	{
-		printf( "err 5587 - database is null for item: %d", item );
-		return 5587;
+		printf( "err 5687 - database is null for item: %d", item );
+		return 5687;
 	}
 
 	/// load the database
@@ -3649,7 +3650,7 @@ int npdbLoadMenuItem (int item, void* dataRef)
 //	data->io.db.activeDB->host = dbItem->host; // new, lde @todo
 	
 	if( err = npdbLoadScene( dbItem, data ) )
-		printf( "err 5588 - menu item function fail code: %d", err);
+		printf( "err 5688 - menu item function fail code: %d", err);
 	
 	
 //	printf("\n3 activeDB->name : %s", activeDB->name);
@@ -3931,13 +3932,13 @@ void npdbUpdateNodesFromMysqlResult(MYSQL_RES *result, void* dataRef)
 	pNPdatabase db = data->io.db.activeDB;
 	
 	// row = (*db->dbFunc->db_fetch_row)(result) // old, lde
-	printf("\nBefore While");
+	printf("npdb: Before While\n");
 	while( row = (*db->host->hostFuncSet->fetch_row)(result) )
 	{
 		updateNodeFromMysqlRow( (MYSQL_ROW*)row, dataRef );
 	}
 	
-	printf("\nAfter While");
+	printf("npdb: After While\n");
 }
 
 
@@ -4025,15 +4026,17 @@ pNPnode npdbGetNodeByMapID( int id, pNPmapID map, void* dataRef )
 	return npGetNodeByID( map->nodeID[map->nextID++], dataRef );
 }
 
-// old int npdbTruncate(void* conn, struct dbFunction *db, char* table)
-int npdbTruncate(void* conn, pNPdbFuncSet func, char* table)
+/// Truncate deletes entire table (row) contents.
+int npdbTruncate( void* conn, pNPdbFuncSet func, char* table )
 {
 	char statement[128];
 
 	sprintf( statement, "%s%s","TRUNCATE ", table);
-	if( (*func->query)(conn, statement) ) // Replace with safe function, lde @todo
-	{
-		printf("err 5586 - failed to TRUNCATE database\n");
+	if( (*func->query)(conn, statement) )
+	{	
+		/// @todo add method to check and rebuild corrupted DB tables
+		npPostMsg("err 5586 - failed to TRUNCATE DB", kNPmsgErr, NULL);
+		npPostMsg("DB table namespace likely corrupted!!!", kNPmsgErr, NULL);
 		return 1;
 	}
 

@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -51,7 +51,7 @@ void* npInitData (int argc, char** argv)
 	npSystemConsoleHelp( argc, argv );
 
 	printf( "Starting...\n" );
-	printf( "v%s\n\n", kNPappVer );
+	printf("%s v%d.%d.%d\n\n", kNPappName, kNPvMajor, kNPvMinor, kNPvPatch);
 
 	// allocate memory for the global 'data' structure
 	data = (pData) malloc (sizeof(Data));

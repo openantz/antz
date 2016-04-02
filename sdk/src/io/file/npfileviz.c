@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -166,11 +166,15 @@ pNPnode npNewFileVizNode( pNPnode parent, char* path, int type, int view, void* 
 	//set node attrib's based on file path, name, type, size, date, content
 	if ( type )//== kNPfileDir )
 	{
-		if( node->branchLevel > 0 )
+		if( node->branchLevel > 0 && parent->childCount > 1 )
 		{
-			node->topo = kNPtopoCylinder;
-			node->geometry = kNPgeoCylinder;
+			node->rotate.x = 30.0f;
+			node->rotate.y = 30.0f * parent->childCount;
 		}
+		
+		node->topo = kNPtopoRod;
+		node->geometry = kNPgeoCylinder;
+
 		node->textureID++;
 
 		node->colorIndex = node->branchLevel;
@@ -181,18 +185,11 @@ pNPnode npNewFileVizNode( pNPnode parent, char* path, int type, int view, void* 
 	}
 	else	//default file viz node
 	{
-//		node->topo = kNPtopoCylinder; //kNPtopoPin;
-//		node->geometry = kNPgeoCylinder; //kNPgeoPin;
 		node->colorIndex = node->branchLevel;
-//		npSetColorIndex(
 	}
 
 //	node->colorIndex = 3; //blue 
 	node->color.a = 180;  //dark transparent blue
-//		npSetIndexColor( &node->color, &node->colorIndex, NULL );
-//	return node;
-	//node->translate.x = 360.0f / dirItemCount;
-	//node->translate.y = 15.0f * latOffset(thisItem, totalItems)
 
 //	printf("file ext: %0.4s\n", &node->tag->title[node->tag->titleSize - 8] );
 
@@ -233,35 +230,17 @@ pNPnode npNewFileVizNode( pNPnode parent, char* path, int type, int view, void* 
 		case kNPfileTGA :
 		case kNPfileTIFF :
 
-		if( view )
-		{
-	//		if( data->io.gl.texture.mipmaps inverY ntscSafeRGB compressDXT )
-			soilFlags = SOIL_FLAG_INVERT_Y | SOIL_FLAG_MIPMAPS;
-				// | SOIL_FLAG_MIPMAPS			//disabling breaks RGBA textures
-				// | SOIL_FLAG_NTSC_SAFE_RGB	//we want the entire RGB spectrum
-				// | SOIL_FLAG_COMPRESS_TO_DXT	//no lossy compression, faster too
-			texID = SOIL_load_OGL_texture
-			(
-				path,
-				SOIL_LOAD_AUTO,
-				SOIL_CREATE_NEW_ID,
-				soilFlags
-			);
-		
-			//the last texture loaded is the texture count, non-loads return a texture=0
-			if( texID )
+			/// Load file as a texture map and apply to file node
+			if( view )
 			{
-				node->textureID = texID;
-				data->io.gl.textureCount = texID;
-				printf ("Loaded textureID: %d\n", texID);
+				node->textureID = npLoadTexture( path, fileType, data );
+
+				node->colorIndex = 19;		//zz use color names, kNPwhite = 19
+				node->color.a = 255;		//full opacity
 			}
 
-			node->colorIndex = 19;		//zz use color names, kNPwhite = 19
-			node->color.a = 255;		//full opacity
-		}
-
-			node->topo = kNPtopoCylinder;
-			node->geometry = kNPgeoCylinder;
+			node->topo = kNPtopoCube;
+			node->geometry = kNPgeoCube;
 			
 			if ( node->branchLevel > 0 )
 			{
@@ -276,15 +255,10 @@ pNPnode npNewFileVizNode( pNPnode parent, char* path, int type, int view, void* 
 				else
 					node->rotateRate.z = -0.125f;	//odd
 			}
-		
-
-		//node->topo = kNPtopoCylinder;
-		node->geometry = kNPgeoCylinder;
-
 					
 			break;
 		default :
-			
+			node->topo = kNPtopoRod;
 			break;
 	}
 
