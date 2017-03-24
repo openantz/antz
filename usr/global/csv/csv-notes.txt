@@ -33,3 +33,7 @@ topo - describes topo methods, attributes and their coordinate systems
 
 transcode - translate between 3rd party data and native (glyph) table structures
 
+sets - selection set lists and attributes (tag_id, color, size)
+        likely allow for ranges such as "1,2,3,4,10-88,110:432,10000,105"
+        set_id,set_type,tag_id,color_id,active,list
+

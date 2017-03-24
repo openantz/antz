@@ -1,0 +1,7 @@
+2016-07-04
+
+Texture map images go here!
+
+For details see:
+
+https://github.com/openantz/antz/wiki/Texture-Mapping

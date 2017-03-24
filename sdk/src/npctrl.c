@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -41,6 +41,7 @@
 
 #include "ctrl/npcmd.h"
 #include "ctrl/npengine.h"
+#include "ctrl/npselect.h"
 
 #include "os/npos.h"
 
@@ -121,14 +122,18 @@ void TraverseTree (int command, pNPnode node, void* dataRef)
 	
 	pData data = (pData) dataRef;
 
-	// recursively iterate through all nodes in the tree
-	for (i=0; i < node->childCount ; i++)
+	
+	/// Recursively iterate through all nodes in the tree and apply command
+	for (i=0; i < node->childCount; i++)
 	{
 		if ( node->type != kNodeLink				//prevents infinite loop, zz debug, should be safe to remove now
 			&& node->child[i]->child[0] != node )	//prevents double command update
 			TraverseTree (command, node->child[i], dataRef);
 	}
-	
+		
+	/// Rate limit user feedback to a few nodes
+	data->io.msgFlowCmd++;
+
 	if (data->io.mouse.tool == kNPtoolTag)
 	{
 		//hide everything except root pins and primary torus
@@ -284,11 +289,13 @@ void npCtrlCommand (int command, void* dataRef)
 				npCtrlCommandSet (command, node, data);
 			}
 			else
-			{									//apply to all selected nodes
+			{	
+				/// Apply command to currently selected nodes
 				for (i = kNPnodeRootPin; i < data->map.nodeRootCount; i++)
 					TraverseTree (command, data->map.node[i], dataRef);
 
-				npSelectNode (node, data);				//restore active node
+				data->io.msgFlowCmd = 0;			///< Reset msgFlowCmd
+				npSelectNode (node, data);			///< Restore selected node
 			}	
 		break;
 	}
@@ -452,18 +459,21 @@ void npCtrlFile (int command, void* dataRef)
 		case kNPcmdFileSave :
 			nposTimeStampName( name );
 			npSaveScene( kNPmapCSV, name, data );
-			break;
+			//npSaveScene2( kNPmapCSV, name, data );
+				break;
 		case kNPcmdFileSaveAs :
 			npFileDialog( NULL, NULL, kNPfileDialogSaveAs, dataRef);
 			break;
 
 		case kNPcmdScreenGrab :
-			data->io.gl.screenGrab = 1; //kNPscreenGrabWindow ...Full ..Thumb
+			data->io.gl.screenGrab = kNPscreenshotFull;
 			break;
 
 		case kNPcmdFileMapOne :
 			strcpy( name, "antz0001" );			//file set root name
+			//	strcpy( name, "preset/1" );			//file set root name
 			if (data->io.key.modShift)
+				//npSaveScene2( kNPmapCSV, name, data );
 				npSaveScene( kNPmapCSV, name, data );
 			else
 				npLoadScene( kNPmapCSV, name, data );
@@ -1092,7 +1102,7 @@ void npCtrlSelect (int command, void* dataRef)
 				if (node == NULL)
 				{
 					node = data->map.node[kNPnodeRootGrid];
-					npPostMsg("err 6288 - selectedGrid is NULL",kNPmsgErr,data);
+					// npPostMsg("err 6288 - selectedGrid is NULL",kNPmsgErr,data);
 				}
 				npSelectNode (node, data);		//update grid selection
 			}
@@ -1259,7 +1269,10 @@ void npCtrlSelect (int command, void* dataRef)
 			npSelectNode (node, data);		//restore currentNode
 */
 			if (data->io.mouse.tool == kNPtoolHide)
-				npPostMsg("Hide ALL nodes with level > 1",kNPmsgCtrl,data);
+			{
+				sprintf( msg, "Hide level > %d", data->io.hideLevel );
+				npPostMsg( msg, kNPmsgCtrl, data);
+			}
 			else if (data->io.mouse.tool == kNPtoolTag)
 				npPostMsg("Toggle ALL Text Tags",kNPmsgCtrl,data);
 			else
@@ -1365,11 +1378,7 @@ void npUpdateTopo (pNPnode node, void* dataRef)
 				node->geometry = kNPgeoTorus;
 			sprintf(msg, "topo: %d default", node->topo); 
 			break;
-//		case kNPtopoGrid :
-//			node->geometry = kNPgeoGrid;				//zz debug
-//			sprintf(msg, "topo: %d default grid", node->topo);
-			break;
-		case kNPtopoCube : 
+		case kNPtopoCube :
 			node->geometry = kNPgeoCube;
 			sprintf(msg, "topo: %d cube", node->topo);
 			break;
@@ -1377,7 +1386,7 @@ void npUpdateTopo (pNPnode node, void* dataRef)
 			node->geometry = kNPgeoSphere;
 			sprintf(msg, "topo: %d sphere", node->topo); 
 			break;
-		case kNPtopoTorus : 
+		case kNPtopoTorus :
 			node->geometry = kNPgeoTorus;
 			sprintf(msg, "topo: %d torus", node->topo); 
 			break;
@@ -1385,22 +1394,41 @@ void npUpdateTopo (pNPnode node, void* dataRef)
 			node->geometry = kNPgeoCylinder;
 			sprintf(msg, "topo: %d cylinder", node->topo);
 			break;
-		case kNPtopoPin : 
+
+		case kNPtopoPin :
 			node->geometry = kNPgeoPin;
 			sprintf(msg, "topo: %d pin", node->topo);
 			break;
-		case kNPtopoRod : 
+		case kNPtopoRod :
 			node->geometry = kNPgeoCylinder;
 			sprintf(msg, "topo: %d rod", node->topo);
 			break;
-		case kNPtopoPoint : 
-			node->geometry = kNPgeoOctahedron;
+		case kNPtopoPoint :
+			node->geometry = kNPgeoOctahedronWire;
 			sprintf(msg, "topo: %d point", node->topo);
 			break;
-		case kNPtopoGrid : 
-			node->geometry = kNPgeoTetrahedron;
+		case kNPtopoGrid :
+			node->geometry = kNPgeoGrid;
 			sprintf(msg, "topo: %d grid", node->topo);
 			break;
+
+		case kNPtopoZcube :
+			node->geometry = kNPgeoCubeWire;
+			sprintf(msg, "topo: %d zcube", node->topo);
+			break;
+		case kNPtopoZsphere :
+			node->geometry = kNPgeoSphereWire;
+			sprintf(msg, "topo: %d zsphere", node->topo); 
+			break;
+		case kNPtopoZtorus :
+			node->geometry = kNPgeoTorusWire;
+			sprintf(msg, "topo: %d ztorus", node->topo); 
+			break;
+		case kNPtopoZcylinder :
+			node->geometry = kNPgeoCylinderWire;
+			sprintf(msg, "topo: %d zcylinder", node->topo);
+			break;
+
 		case kNPtopoCone :
 			node->geometry = kNPgeoCone;
 			sprintf(msg, "topo: %d cone", node->topo);
@@ -1409,13 +1437,13 @@ void npUpdateTopo (pNPnode node, void* dataRef)
 			node->geometry = kNPgeoPlot;
 			sprintf(msg, "topo: %d plot", node->topo);
 			break;
-		case kNPtopoSurface :
-			node->geometry = kNPgeoSurface;
-			sprintf(msg, "topo: %d surface", node->topo);
-			break;
 		case kNPtopoMesh :
 			node->geometry = kNPgeoMesh;
 			sprintf(msg, "topo: %d mesh", node->topo);
+			break;
+		case kNPtopoSurface :
+			node->geometry = kNPgeoSurface;
+			sprintf(msg, "topo: %d surface", node->topo);
 			break;
 		default :
 			sprintf(msg, "topo: %d", node->topo); 
@@ -1482,8 +1510,8 @@ void npCtrlProperty (int command, void* dataRef)
 			else
 				node->textureID++;
 			if (node->textureID < 0)
-				node->textureID = data->io.gl.textureCount;
-			if (node->textureID > data->io.gl.textureCount)
+				node->textureID = data->io.gl.tex.count;
+			if (node->textureID > data->io.gl.tex.count)
 				node->textureID = 0;
 
 			sprintf(msg, "textureID: %d", node->textureID);
@@ -1492,7 +1520,7 @@ void npCtrlProperty (int command, void* dataRef)
 		case kNPcmdTextureDown :
 			node->textureID--;
 			if (node->textureID < 0)
-				node->textureID = data->io.gl.textureCount;
+				node->textureID = data->io.gl.tex.count;
 
 			sprintf(msg, "textureID: %d", node->textureID);
 			npPostMsg (msg, kNPmsgCtrl, dataRef);
@@ -1535,18 +1563,25 @@ void npCtrlProperty (int command, void* dataRef)
 			break;
 
 		case kNPcmdTopo :
-			if (node->topo == kNPtopoPlot)
+			if( 0 ) //node->topo == kNPtopoLink)			//zz debug
 			{
 				npPostMsg ("topo: link is Locked!", kNPmsgCtrl, dataRef);
 				return;
 			}
-			if (data->io.key.modShift)
+			if (data->io.key.modAlt)
 			{
 				node->facet++;
 				if (node->facet > kNPfacetCube)
 					node->facet = 1;
 				sprintf(msg, "facet: %d", node->facet);
 				npPostMsg (msg, kNPmsgCtrl, dataRef);
+			}
+			else if (data->io.key.modShift)
+			{
+				node->topo--;
+				if(node->topo < 1)  // kNPtopoCount			//zz debug
+					node->topo = kNPtopoCount - 1;
+				npUpdateTopo (node, data);
 			}
 			else
 			{	
@@ -2018,14 +2053,14 @@ void npCmdOpen( char* filePath, void* dataRef)
 	//npFileOpenMap( filePath, 1, strlen(filePath), dataRef );
 
 	int		result = 0;
-	char	msg[256];
+	// char	msg[256];
 
 	pData data = (pData) dataRef;
 
 	data->io.file.loading = true;
 
-	sprintf( msg, "Loading: %s", filePath );
-	npPostMsg (msg, kNPmsgCtrl, data );
+//	sprintf( msg, "Loading: %s", filePath );
+//	npPostMsg (msg, kNPmsgCtrl, data );
 	result += npFileOpenAuto( filePath, NULL, data );
 }
 

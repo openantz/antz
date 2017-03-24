@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -59,10 +59,10 @@ void npInitMySQL (void* dataRef)
 //	nposGetAppPath(appPath, &size);
 	osFunc->getAppPath(appPath, &size);
 	
-	printf("appPath: %s\n", appPath);
+//	printf("appPath: %s\n", appPath);
 	/// post the mysql connector client library version
 //	printf("data->io.db : %p", dbs);
-	printf( "MySQL Client ver: %d\n", MYSQL_VERSION_ID );
+	printf( "\nMySQL Client ver: %d\n", MYSQL_VERSION_ID );
 
 	/// load the mysql client library
 //	printf("\nAttempting to load windows dll\n");

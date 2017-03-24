@@ -1,0 +1,21 @@
+2016-07-04
+
+CSV tables go here!
+
+Foreign keys using the name of the corresponding table with row 'id' suffix.
+Node hierarchy specified using 'parent_id' to point to the parent 'node_id'
+in this table. For link nodes, the parent_id is the A-end of the link and 
+'child_id' is the B-end.
+
+node_id
+tag_id
+ch_id
+track_id
+
+For details see:
+https://github.com/openantz/antz/wiki/CSV-Tables
+
+A good description of CSV tables is in the legacy user manual,
+which is still mostly accurate:
+
+http://openantz.com/docs/antz_user_manual_2012_01_23.pdf

@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -71,43 +71,43 @@ void npSetTagOffset (pNPnode node)
 		return;
 
 	//note the missing 'break' statments allowing a function to fall to the next
-	switch (node->geometry)
-	{
-		case kNPgeoCubeWire :
-		case kNPgeoCube : 
-		//	break;
-		case kNPgeoSphereWire :
-		case kNPgeoSphere :
-		//	break;
-		case kNPgeoConeWire :
-		case kNPgeoCone :
-			node->tagOffset.z = 1.0f;
-			break;
-		case kNPgeoTorusWire :
-		case kNPgeoTorus :
-			node->tagOffset.y = 1.5;
-			break;
-		case kNPgeoDodecahedronWire :
-		case kNPgeoDodecahedron :
-		case kNPgeoOctahedronWire :
-		case kNPgeoOctahedron :
-		case kNPgeoTetrahedronWire :
-		case kNPgeoTetrahedron :
-		case kNPgeoIcosahedronWire :
-		case kNPgeoIcosahedron :
-			node->tagOffset.z = 1.0f;
-			break;
-		case kNPgeoPin :
-		case kNPgeoPinWire :
-			node->tagOffset.z = 5.5f;
-			break;
-		default : 
-			if (node->branchLevel == 0)
-				node->tagOffset.z = 5.5f;
-			else
+	if( node->topo == kNPtopoRod )
+		node->tagOffset.z = 10.0f;
+	else 
+		switch (node->geometry)
+		{
+			case kNPgeoCubeWire :
+			case kNPgeoCube : 
+			//	break;
+			case kNPgeoSphereWire :
+			case kNPgeoSphere :
+			//	break;
+			case kNPgeoConeWire :
+			case kNPgeoCone :
+				node->tagOffset.z = 1.0f;
+				break;
+			case kNPgeoTorusWire :
+			case kNPgeoTorus :
 				node->tagOffset.y = 1.5;
-			break;
-	}
+				break;
+			case kNPgeoDodecahedronWire :
+			case kNPgeoDodecahedron :
+			case kNPgeoOctahedronWire :
+			case kNPgeoOctahedron :
+			case kNPgeoTetrahedronWire :
+			case kNPgeoTetrahedron :
+			case kNPgeoIcosahedronWire :
+			case kNPgeoIcosahedron :
+				node->tagOffset.z = 1.0f;
+				break;
+			case kNPgeoPin :
+			case kNPgeoPinWire :
+				node->tagOffset.z = 5.5f;
+				break;
+			default :
+					node->tagOffset.z = 1.0f;
+				break;
+		}
 }
 
 /// 
@@ -182,6 +182,32 @@ NPfloatXY npGridSpiralXY( int nX, int nY, float dX, float dY, int index )
 	return coordXY;
 }
 
+void npNodeListAdd( pNPnode node, void* dataRef);
+//-----------------------------------------------------------------------------
+void npNodeListAdd( pNPnode node, void* dataRef)
+{
+	pData data = (pData) dataRef;
+
+	/// @todo add support for more node type lists
+	if( node->type != kNodePin )
+		return;
+	
+//	data->map.nodePins[data->map.nodePinsCount++] = node;
+}
+
+void npNodeListRemove( pNPnode node, void* dataRef);
+//-----------------------------------------------------------------------------
+void npNodeListRemove( pNPnode node, void* dataRef)
+{
+	pData data = (pData) dataRef;
+
+	/// @todo add support for more node type lists
+	if( node->type != kNodePin )
+		return;
+	
+//	data->map.nodePins[data->map.nodePinsCount++] = node;
+}
+
 // should make this static and add locking for delete to be thread safe,      debug zz
 // creates a new node and attaches it as a child of the nodeParent
 // if nodeParent is NULL then creates a root node
@@ -203,12 +229,8 @@ pNPnode npNodeNew (int nodeType, pNPnode nodeParent, void* dataRef)
 
 	if (nodeParent != NULL)
 	{
-		if (nodeParent->childCount >= kNPnodeChildMax)
-		{
-			sprintf(msg,"kNPnodeChildMax Hit: %d max", kNPnodeChildMax);
-			npPostMsg(msg, kNPmsgWarn, data);
-			return NULL;
-		}
+		if( nodeParent->childCount >= nodeParent->childSize )
+			npNodeChildMalloc(nodeParent);
 	}
 	else
 	{
@@ -393,8 +415,11 @@ pNPnode npNodeNew (int nodeType, pNPnode nodeParent, void* dataRef)
 	else
 		printf("err 4289 - node ID exceeds size of kNPnodeMax\n");
 
-	npSetTagOffset (node);
-	npTagNode (node, data);
+	npSetTagOffset( node);
+	npTagNode( node, data);
+
+	/// Add it to the node list
+	npNodeListAdd( node, data);
 
 	return (void*)node;
 }
@@ -402,15 +427,18 @@ pNPnode npNodeNew (int nodeType, pNPnode nodeParent, void* dataRef)
 //------------------------------------------------------------------------------
 bool npNodeAttach (pNPnode node, pNPnode parent, void* dataRef)
 {
-	if (parent->childCount >= kNPnodeChildMax)
+	if( !node || !parent )
 	{
-		npPostMsg ("err 2828 - Could not attach node, kNPnodeChildMax limit",
+		npPostMsg ("err 2827 - Cannot attach NULL node",
 			kNPmsgErr, dataRef);
 		return false;
 	}
 
-	parent->childIndex = parent->childCount++;
-	parent->child[parent->childIndex] = node;
+	if( parent->childCount >=  parent->childSize )
+		npNodeChildMalloc(parent);
+
+//	parent->childIndex = parent->childCount++;	//zz don't change the index
+	parent->child[parent->childCount++] = node;
 
 	return true;
 }
@@ -487,7 +515,7 @@ void npNodeRemove (bool freeNode, pNPnode node, void* dataRef)
 	pNPnode parent = NULL;
 	pNPnode child = NULL;													//zz-s
 
-	printf("id: %d\n", node->id);
+	//printf("id: %d\n", node->id);
 
 	if (node == NULL)
 	{
@@ -593,28 +621,32 @@ void npNodeRemove (bool freeNode, pNPnode node, void* dataRef)
 			//if a link then also need to remove from parent at the B end
 			if (node->type == kNodeLink)
 			{
+				//zz child?
 				parent = node->child[0];	//link B is a child[0] of the link
 			
-				//methods are designed to work with recursive delete branches
+				if( parent )
+				{
+					//methods are designed to work with recursive delete branches
 
-				//find the childIndex to this node									//zz-s
-				for (i = 0; i < parent->childCount; i++)
-					if (parent->child[i] == node)
-						parent->childIndex = i;
+					//find the childIndex to this node									//zz-s
+					for (i = 0; i < parent->childCount; i++)
+						if (parent->child[i] == node)
+							parent->childIndex = i;
 
-				//remove node ptr from child array compact the gap
-				parent->childCount--;					//zz-s this has to be handled with care with recursive call
-				for (i = parent->childIndex; i < parent->childCount; i++)
-					parent->child[i] = parent->child[i+1];
+					//remove node ptr from child array compact the gap
+					parent->childCount--;					//zz-s this has to be handled with care with recursive call
+					for (i = parent->childIndex; i < parent->childCount; i++)
+						parent->child[i] = parent->child[i+1];
 
-				//set the left over child ptr to null
-				parent->child[parent->childCount] = NULL;
+					//set the left over child ptr to null
+					parent->child[parent->childCount] = NULL;
 
-				//ascert the childIndex is valid
-				if (parent->childCount <= 0)
-					parent->childIndex = 0;
-				else if (parent->childIndex >= parent->childCount)
-					parent->childIndex = parent->childCount - 1;
+					//ascert the childIndex is valid
+					if (parent->childCount <= 0)
+						parent->childIndex = 0;
+					else if (parent->childIndex >= parent->childCount)
+						parent->childIndex = parent->childCount - 1;
+				}
 			}
 		}
 		else
@@ -645,9 +677,13 @@ void npNodeRemove (bool freeNode, pNPnode node, void* dataRef)
 	//update the nodeID map													//zz-s
 	data->map.nodeID[node->id] = NULL;
 
-	sprintf (msg, "Delete id: %d  Select id: %d", node->id, 
+	if( data->io.msgFlowFile < 3 )
+	{
+		data->io.msgFlowFile++;
+		sprintf (msg, "Delete id: %d  Select id: %d", node->id, 
 									data->map.currentNode->id );
-	npPostMsg (msg, kNPmsgCtrl, dataRef);
+		npPostMsg (msg, kNPmsgCtrl, dataRef);
+	}
 
 	//will free all node data including child nodes on the tree
 	if (freeNode)
@@ -658,11 +694,43 @@ void npNodeRemove (bool freeNode, pNPnode node, void* dataRef)
 	}
 }
 
+//------------------------------------------------------------------------------
+void npNodeChildMalloc (pNPnode node)
+{
+	int i = 0;
+	int childSlots = node->childSize;
+	pNPnode *oldArray = node->child;
+
+	if( childSlots < kNPnodeChildArrayMin )
+		childSlots = kNPnodeChildArrayMin;
+	else
+		childSlots *= 2;	//double the array slots
+
+	node->child = (pNPnode*)malloc( sizeof(pNPnode) * childSlots);
+
+	//copy the old array to the new one
+	for (i=0; i < node->childSize; i++)
+		node->child[i] = oldArray[i];
+
+	//initialize the new array slots
+	for (i=node->childSize; i < childSlots; i++)
+		node->child[i] = NULL;
+
+	//free the old array if it existed
+	if( childSlots != kNPnodeChildArrayMin )
+		free(oldArray);
+
+	node->childSize = childSlots;
+}
 
 //------------------------------------------------------------------------------
 void npInitNodeDefault (pNPnode node)
 {
 	int i = 0;
+
+	node->child = NULL;
+	node->childSize = 0;
+	npNodeChildMalloc(node);
 
 //	node->id = npNewNodeID();	// called by npNew and preserved during reset
 
@@ -674,9 +742,6 @@ void npInitNodeDefault (pNPnode node)
 	
 	node->parent		= NULL;				//parent node, binary tree of nodes
 	node->branchLevel	= 0;			//0 is the trunk pin (ice-cream cone)
-
-	for (i=0; i < kNPnodeChildMax; i++)
-		node->child[i] = NULL;
 
 	node->childIndex	= 0;
 	node->childCount	= 0;				//no children by default
@@ -1077,7 +1142,7 @@ void npInitNodeHUD (pNPnode node)
 	node->color.r		= 127;
 	node->color.g		= 127;
 	node->color.b		= 127;
-	node->color.a		= 127;		//opacity is overwridden by npDrawNodeTags()
+	node->color.a		= 127;		//opacity is overwridden by npDrawTags()
 
 	node->tagMode = kNPtagModeBoxOutlineHUD;
 }

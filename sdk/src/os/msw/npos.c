@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -581,12 +581,15 @@ int nposFindFirstFile( pNPfileRef fileRef, const char* dirPath,
     char sPath[kNPmaxPath];
 
 	// Specify the file mask as *.* to get everything!
-	sprintf( sPath, "%s/%s", dirPath, fileFilter );
+	if( fileFilter == NULL )
+		sprintf( sPath, "%s/*.*", dirPath );
+	else
+		sprintf( sPath, "%s/%s", dirPath, fileFilter );
 
 	fileRef->handle = FindFirstFile( sPath, &fileRef->fdFile);
 	if( fileRef->handle == INVALID_HANDLE_VALUE )
     {
-        printf("err 7357 - Path not found: [%s]\n", dirPath);
+        printf("err 7357 - INVALID_HANDLE_VALUE path: %s\n", dirPath);
         return -1;
     }
 
@@ -614,6 +617,79 @@ int nposFindFirstFile( pNPfileRef fileRef, const char* dirPath,
 	return 1;
 }
 
+//------------------------------------------------------------------------------
+void nposConsoleStart( void* sysCmd )
+{
+	system( (char*)sysCmd );
+}
+
+//------------------------------------------------------------------------------
+bool nposCreateDir( const char* dir, void* dataRef)
+{
+	return CreateDirectory( dir, NULL);
+}
+
+//zz models begin
+char nposGetFolderDelimit(void)
+{
+	return '\\';
+}
+
+/// new function lv
+bool nposDirExists(const char* dir, void* dataRef)
+{
+	unsigned int attribs = 0;
+
+	if(dir[0] == '\0')
+		return false;
+
+	attribs = GetFileAttributes(dir);
+	if(attribs == INVALID_FILE_ATTRIBUTES)
+		return false; /// Invalid Path
+
+	if(attribs & FILE_ATTRIBUTE_DIRECTORY)
+		return true; /// is a directory
+
+	return false;
+}
+
+bool nposFileExists(const char* filepath, void* dataRef)
+{
+	unsigned int attribs = 0;
+
+	attribs = GetFileAttributes(filepath);
+	if( (attribs != INVALID_FILE_ATTRIBUTES) && (attribs != 0) && (attribs != FILE_ATTRIBUTE_DIRECTORY) )
+		return true;
+
+	return false;
+}
+
+bool nposFileExistsAtDir(const char* dir, char* filename, void* dataRef)
+{
+	bool dirExists = false;
+	char filepath[256] = {'\0'};
+	unsigned int attribs = 0;
+
+	dirExists = nposDirExists(dir, dataRef);
+
+	if(dirExists == true)
+	{
+		sprintf(filepath, "%s%s", dir, filename);
+		attribs = GetFileAttributes(filepath);
+		if( (attribs != INVALID_FILE_ATTRIBUTES) )
+			return true;
+
+//		if( (attribs != INVALID_FILE_ATTRIBUTES) && (attribs != 0) && (attribs != FILE_ATTRIBUTE_DIRECTORY) )
+//			return true;
+	}
+	else
+	{
+		return false;
+	}
+
+	return false;
+}
+//zz models end
 
 //MSW file attributes
 /*

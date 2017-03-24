@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -57,7 +57,7 @@ void npSyncTags (void* dataRef);
 
 void npDrawNodeTextTag (pNPnode node, void* dataRef);
 void npDrawTextTag (pNPtag tag, void* dataRef);
-void npDrawNodeTags (void* dataRef);
+void npDrawTags (void* dataRef);
 
 void npGlutDrawString (void *font, char *str);
 

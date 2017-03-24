@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -78,7 +78,7 @@ void npInitDataTags( pNPtags tags, void* dataRef );
 void npInitTextTag( pNPtag tag, void* dataRef );
 void npInitDataRecordTag( pNPrecordTag recordTag, void* dataRef );
 
-void npPostMsg( char* message, int type, void* dataRef );
+void npPostMsg( const char* message, int type, void* dataRef );
 
 void npInitPropertyTracks( pNPnodePropertyTracks propertyTracks ); //JJ - added, is this right place
 

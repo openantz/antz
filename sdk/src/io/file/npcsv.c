@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -33,6 +33,7 @@
 #include "../gl/nptags.h"
 #include "../npgl.h"
 #include "../../npctrl.h"
+
 
 //-----------------------------------------------------------------------------
 void npInitCSV (void* dataRef)
@@ -384,7 +385,7 @@ void* npMapElementIDtoPtr (int elementID, void* dataRef)
 	itemCount = data->map.globalsCount;
 
 	//scan map using the ID and if found return a pointer to the data
-	for (i=0; i <= itemCount; i++)
+	for (i=0; i < itemCount; i++)
 	{
 		if (mapType[i].elementID == elementID)
 			return mapType[i].mapPtr;
@@ -395,7 +396,7 @@ void* npMapElementIDtoPtr (int elementID, void* dataRef)
 	itemCount = data->map.oscCount;
 
 	//scan map using the ID and if found return a pointer to the data
-	for (i=0; i <= itemCount; i++)
+	for (i=0; i < itemCount; i++)
 	{
 		if (mapType[i].elementID == elementID)
 			return mapType[i].mapPtr;
@@ -423,7 +424,7 @@ char* npGetMapTypeName (int elementID, void* dataRef)
 	itemCount = data->map.globalsCount;
 
 	//scan map using the ID and if found return a pointer to the data
-	for (i=0; i <= itemCount; i++)
+	for (i=0; i < itemCount; i++)
 	{
 		if (mapType[i].elementID == elementID)
 			return mapType[i].elementA;
@@ -434,7 +435,7 @@ char* npGetMapTypeName (int elementID, void* dataRef)
 	itemCount = data->map.oscCount;
 
 	//scan map using the ID and if found return a pointer to the data
-	for (i=0; i <= itemCount; i++)
+	for (i=0; i < itemCount; i++)
 	{
 		if (mapType[i].elementID == elementID)
 			return mapType[i].elementA;
@@ -462,7 +463,7 @@ int npMapStrToID (const char* str, void* dataRef)
 	itemCount = data->map.globalsCount;
 
 	//scan elementA lists and return the corresponding constant kNP... = 42
-	for (i=0; i <= itemCount; i++)
+	for (i=0; i < itemCount; i++)
 	{
 		mapItem = &mapType[i];
 
@@ -478,7 +479,7 @@ int npMapStrToID (const char* str, void* dataRef)
 	itemCount = data->map.oscCount;
 
 	//scan elementA lists and return the corresponding constant kNP... = 42
-	for (i=0; i <= itemCount; i++)
+	for (i=0; i < itemCount; i++)
 	{
 		mapItem = &mapType[i];
 
@@ -511,7 +512,7 @@ void* npMapStrToPtr (const char* str, void* dataRef)
 	itemCount = data->map.globalsCount;
 
 	//scan map using the ID and if found return a pointer to the data
-	for (i=0; i <= itemCount; i++)
+	for (i=0; i < itemCount; i++)
 	{
 		if (strncmp(str, (const char*)mapType[i].elementA, kNPnameMax) == 0)
 			return mapType[i].mapPtr;
@@ -522,7 +523,7 @@ void* npMapStrToPtr (const char* str, void* dataRef)
 	itemCount = data->map.oscCount;
 
 	//scan map using the ID and if found return a pointer to the data
-	for (i=0; i <= itemCount; i++)
+	for (i=0; i < itemCount; i++)
 	{
 		if (strncmp(str, (const char*)mapType[i].elementA, kNPnameMax) == 0)
 			return mapType[i].mapPtr;
@@ -551,10 +552,15 @@ void* npMapElementToPtr (const char* str, void* dataRef)
 	itemCount = data->map.globalsCount;
 
 	//scan map using the ID and if found return a pointer to the data
-//	printf("\nitemCount : %d", itemCount); // temp, lde
+//	printf("\nElement globalsCount: %d\n", itemCount); // temp, lde
 //	printf("\nstr : %s\n", str); // temp, lde
-	
-	for( i=0; i < itemCount; i++) // Fixed, lde
+	if( !str)
+	{
+		printf(" err 4426 - npMapElementToPtr str is NULL\n");
+		return NULL;
+	}
+
+	for( i=1; i < itemCount; i++) // Fixed, lde
 	{
 		//printf("%d ",i);
 		//printf("\n(const char*)mapType[%d].elementA : %s\n", i, (const char*)mapType[i].elementA);
@@ -566,7 +572,7 @@ void* npMapElementToPtr (const char* str, void* dataRef)
 	}
 	
 /*
-	for( i=1; i <= itemCount; i++ )		//zz debug, why i=1 and <= works
+	for( i=0; i < itemCount; i++ )		//zz debug, why i=1 and <= works
 	{									//instead of i=0 and <
 		if (strncmp(str, (const char*)mapType[i].elementA, kNPnameMax) == 0) // Fails here, lde @todo
 			return mapType[i].mapPtr;
@@ -576,10 +582,11 @@ void* npMapElementToPtr (const char* str, void* dataRef)
 	//get the map and itemCount
 	mapType = data->map.typeMapOSC;
 	itemCount = data->map.oscCount;
-
+//	printf("itemCount: %i\n", itemCount);
 	//scan map using the ID and if found return a pointer to the data
-	for (i=1; i <= itemCount; i++)
+	for (i=0; i < itemCount; i++)
 	{
+		//printf("%s\n", mapType[i].elementA);
 		if (strncmp(str, (const char*)mapType[i].elementA, kNPnameMax) == 0)
 			return mapType[i].mapPtr;
 	}
@@ -605,7 +612,7 @@ char* npMapTypeName (int mapType, void* dataRef)
 	itemCount = data->map.mapTypeCount;
 
 	//scan map using the ID and if found return a pointer to the data
-	for( i=1; i <= itemCount; i++ )		//zz debug, why i=1 and <= works
+	for( i=0; i < itemCount; i++ )		//zz debug, why i=1 and <= works
 	{									//instead of i=0 and <
 		if( mapTypeList[i].type == mapType )
 			return mapTypeList[i].name;
@@ -635,7 +642,7 @@ void* npMapAddressToPtr (const char* str, void* dataRef)
 	itemCount = data->map.globalsCount;
 
 	//scan map using the ID and if found return a pointer to the data
-	for (i=0; i <= itemCount; i++)
+	for (i=0; i < itemCount; i++)
 	{
 		if (strncmp(str, (const char*)mapType[i].elementB, kNPnameMax) == 0)
 			return mapType[i].mapPtr;
@@ -646,7 +653,7 @@ void* npMapAddressToPtr (const char* str, void* dataRef)
 	itemCount = data->map.oscCount;
 
 	//scan map using the ID and if found return a pointer to the data
-	for (i=0; i <= itemCount; i++)
+	for (i=0; i < itemCount; i++)
 	{
 		if (strncmp(str, (const char*)mapType[i].elementB, kNPnameMax) == 0)
 			return mapType[i].mapPtr;
@@ -663,7 +670,8 @@ pNPmapLink npMapAddressToMapTypeItem (const char* str, void* dataRef)
 //	return nMapIDtoPtr ( npMapStrToID (str, dataRef), dataRef );
 
 	int i = 0;
-	int itemCount = 0;
+	int count = 0;
+	char* mapMatch = NULL;
 
 	pData data = (pData) dataRef;
 
@@ -671,22 +679,37 @@ pNPmapLink npMapAddressToMapTypeItem (const char* str, void* dataRef)
 
 	//get the map and itemCount
 	mapType = data->map.typeMapGlobals;
-	itemCount = data->map.globalsCount;
+	count = data->map.globalsCount;
+
+	if( !str)
+	{
+		printf("err 4430 - npMapElementToPtr str is NULL\n");
+		return NULL;
+	}
 
 	//scan map using the ID and if found return a pointer to the data
-	for (i=0; i <= itemCount; i++)
+	for( i=0; i < count; i++)
 	{
+		mapMatch = mapType[i].elementB;
+		if( !mapMatch)
+			continue;
+		//printf("elementB: %s\n", mapType[i].elementB);
 		if (strncmp(str, (const char*)mapType[i].elementB, kNPnameMax) == 0)
 			return &mapType[i];
 	}
 
 	//get the map and itemCount
 	mapType = data->map.typeMapOSC;
-	itemCount = data->map.oscCount;
+	count = data->map.oscCount;
 
 	//scan map using the ID and if found return a pointer to the data
-	for (i=0; i <= itemCount; i++)
+	for( i=0; i < count; i++)
 	{
+		
+		printf("OSC elementB: %s\n", mapType[i].elementB);
+		mapMatch = mapType[i].elementB;
+		if( !mapMatch)
+			continue;
 		if (strncmp(str, (const char*)mapType[i].elementB, kNPnameMax) == 0)
 			return &mapType[i];
 	}
@@ -699,385 +722,6 @@ pNPmapLink npMapAddressToMapTypeItem (const char* str, void* dataRef)
 
 //-----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
-void npMapTypeInit (void* dataRef)
-{
-	int i = 0;
-	int size = 0;
-
-	pData data = (pData) dataRef;
-
-	pNPnode rootGrid = data->map.node[kNPnodeRootGrid];
-
-	// DB Table Formats
-	// CSV - our 'native' external format... Lowest-Common-Denominator (LCD)
-	// directly translates to our internal C-structs and optimized for GL draw
-	// ...
-	// MySQL tables are directly (loss-less) inter-changable with our CSV files
-	// JSON allows efficiently describing data tree structure and its members
-	// XML is less efficient then JSON but similar in many ways
-
-	// OSC - our 'native' Network PROTOCAL
-	// OSC is an oddball... its a 'keep it simple stupid' approach (to a fault)
-	// typically OSC is sent over UDP/IP, but can be sent over any network comm
-	// does NOT provide quality-of-service(QOS) but works with AVB to do so
-	// OSC-MIDI bridge (3rd party software modules and standalone hardware)
-	
-	// REALTIME Video Network Hardware Layers (QOS)
-	// Serial such as RS232, RS422, serial over USB and SPI for chip-to-chip
-	// DVB - Digital Video Broadcasting transmits over satellite, fiber, coax
-	// AVB - Audio Video Broadcasting provides QOS for AVB Ethernet devices
-	// SDI - Serial Digital Interface for video and audio or coax, has metadata
-
-	// HIGH Performance Networking
-	// FC - Fibre Channel is the HIGHEST performance, 8Gbps 250K IOPS
-	// Infiniband - Bandwidth similar to FC, IOPS are about 25K IOPS
-	// 10GigE - Bandwidth performance varies 6-10Gbps (typical) 10K IOPS
-
-	// ATM - A-sync Transfer M...
-
-	// In general, FC is best for HPC environments such as VR Caves
-	//----
-
-	//----
-		// itemID = can be a specific item number '42', a range '[42:100]', a mixed list '{42, 43, 44, 45, [55:62]}'	//zz debug, change mapType->item_id to string
-		// or the '*' (wildcard) can be used to assign (default init) values to all items
-		// id = 'active' applies to all currently active (selected) item(s)
-		// item_id = 0 is a valid index
-		// negative id values behaviour is undefined and will generate a warning... for example '[3-10]' is an invalid format
-		// single instance items (globals) without an id use item_id = 0, for 'nil' 
-		// item_id meaning is based on the map_path format...
-		// OSC uses the ID field to represent the connection ID where as 'np_...' uses it as an array index or record_id
-		
-		// bias = 0 for full duplex, output = TX = +1.0 for A to B, input = RX = -1.0 for B to A
-		// bias  0.5 = 100% A to B and 50% B to A ... ie mapping XY to RGBA color
-		//
-		// key value (record_id) is a combo of the map_path (file path, DB name and table_id...) and id
-
-		//build descriptor table for globals with pointer to specific elements
-		//note that mapItemID = element = address (CSV field name for native types)
-	
-	//--------------------------------------------------------------------------
-	// A-B map link describes both link ends usinng a 3 part address + Type Tag
-	// 1st part maps the path to the location of the file, DB table, net, RAM
-	// 2nd part is the row id(s), can be nil = "" or a set {1,2,3,42,42,[50:99]}
-	// 3rd part is the column field element name
-	// plus a type tag to desribe parameter value types
-	//--------------------------------------------------------------------------
-	/// @todo loading procedure currently only uses the elementA and not the mapPath, these means that all element names must be unique
-	NPmapLink mapGlobals[] = {								//zz swap id <--> element
-		//	data struct ptr			elementTypeID	element		direction	mapPath		index	elementA,		type_tag	title
-		{ (void*)NULL,				kNPint,			kNPgNull,			0,	"np",			0,	"null",				"i",	"null" },
-
-//		{ &data->io,				kNPstrList,		kNPmainArgcArgv,	0,	"globals",		0,	"main_argc_argv",	"is",	},
-
-		{ &data->io.gl.alphaMode,	kNPint,			kNPgAlphaMode,		0, 	"np_gl",		1,	"alpha_mode",		"i",	"Transparency Mode" },	
-		{ &data->io.clear,			kNPfloatRGBA,	kNPgBackground,		0,	"np_gl",		1,	"background_rgba",	"ffff",	"Background Color" },
-								
-		{ &data->io.gl.fullscreen,	kNPint,			kNPgFullscreen,		0,	"np_gl",		1,	"fullscreen",		"i",	},
-	//	{ &data->io.gl.width,		kNPint,			kNPwidth,			0,	"np_gl",		1,	"width",			"i",	},
-	//	{ &data->io.gl.height,		kNPint,			kNPheight,			0,	"np_gl",		1,	"height",			"i",	},
-		{ &data->io.gl.windowSize,	kNPintXY,		kNPwindowSize,		0,	"np_gl",		1,	"window_size_xy",	"ii",	},
-		{ &data->io.gl.position,	kNPintXY,		kNPposition,		0,	"np_gl",		1,	"position_xy",		"ii",	},
-	
-		{ &data->io.gl.hud.console.level, kNPint,	kNPhudLevel,		0,	"np_gl",		1,	"hud_level",		"i",	"HUD mode level" },
-		{ &data->io.gl.subsample,	kNPint,			kNPsubsample,		0,	"np_gl",		1,	"subsample",		"i",	"Subsample nodes" },
-		
-		{ &data->io.mouse.tool,		kNPint,			kNPmouseTool,		0,	"np_mouse",		1,	"tool",				"i",	"Tool selected" },
-		{ &data->io.mouse.camMode,	kNPint,			kNPmouseCamMode,	0,	"np_mouse",		1,	"cam_mode",			"i",	"Mouse Camera Mode" },
-		{ &data->io.mouse.pickMode,	kNPint,			kNPmousePickMode,	0,	"np_mouse",		1,	"pick_mode",		"i",	"Mouse Pick Mode" },
-
-		//zzd // uncommented, lde
-		/*
-		{ data->io.db.activeDB->host->ip,		kNPcstrPtr, kNPloginHostIP,	0,	"np_db",	1,	"host_ip",			"s",	"Host IP address" },
-		{ data->io.db.activeDB->host->user,			kNPcstrPtr, kNPloginUser,	0,	"np_db",	1,	"user",				"s",	"Username" },
-		{ data->io.db.activeDB->host->password,		kNPcstrPtr, kNPloginPassword, 0, "np_db",	1,	"password",			"s",	"Password" },
-		{ data->io.db.activeDB->host->type,		kNPcstrPtr, kNPloginHostType, 0, "np_db",	1,	"db_type",			"s",	"Database Type" },
-		 */
-		{ data->io.db.hosts[1]->ip,			kNPcstrPtr, kNPloginHostIP,		0, "np_db",	1,	"host_ip",			"s",	"Host IP address" },
-		{ data->io.db.hosts[1]->user,		kNPcstrPtr, kNPloginUser,		0, "np_db",	1,	"user",				"s",	"Username" },
-		{ data->io.db.hosts[1]->password,	kNPcstrPtr, kNPloginPassword,	0, "np_db",	1,	"password",			"s",	"Password" },
-		{ data->io.db.hosts[1]->type,		kNPcstrPtr, kNPloginHostType,	0, "np_db",	1,	"db_type",			"s",	"Database Type" },
-		
-	//	{ &data->io.mouse.PickMode,	kNPint,			kNPmouseCamMode,	0,	"np_mouse",		1,	"cam_mode",			"i",	"Mouse Camera Mode" },
-	
-		// tables require the element list to be unique, but only within the table scope
-
-		// Play/Pause tracks
-		// OSC IP and port TXRX pairs
-
-		//{ data->io.osc.list[].protocal,	kNPcstrPtr,		kNPprotocal,0,	"np_connect",	1,	"protocal",				"s",	"Protocal ie: mysql osc vrpn snmp" },
-		{ &data->io.osc.list[0].txIP,	kNPcstrPtr,		kNPtxIP,	0,	"np_osc",	1,	"tx_ip",				"s",	"Transmit IP" },
-		{ &data->io.osc.list[0].rxIP,	kNPcstrPtr,		kNPrxIP,	0,	"np_osc",	1,	"rx_ip",				"s",	"Receive IP" },
-		{ &data->io.osc.list[0].txPort,	kNPint,			kNPtxPort,	0,	"np_osc",	1,	"tx_port",				"i",	"TX Port" },
-		{ &data->io.osc.list[0].rxPort,	kNPint,			kNPrxPort,	0,	"np_osc",	1,	"rx_port",				"i",	"RX Port" },
-
-		// URL for external Browser record retrieval
-		{ data->io.url,				kNPcstrPtr,		kNPgBrowserURL,	0, "np_browser",	1,	"url",				"s",	"Browser URL" },
-		{ data->io.gitvizURL,		kNPcstrPtr,		kNPgitvizURL,	0, "np_git",		1,	"repo",				"s",	"GitViz User/Repo Name" },
-
-		{ &data->map.globalsCount,	kNPint,			kNPitemCount,	1, "np_globals",	1,	"item_count",		"i",	"Item count for this table"}	//end
-	};
-
-	// antz native csv table field 'elementB' name matches the 'elementA' name
-	// other 3rd party CSV table fields can be mapped and would NOT match
-	// OSC often uses a float normalized 0.0 to 1.0 for sliders, buttons...
-
-
-//JJ-zz-osc
-
-	// go through all nptypes.h lists and make one for elements and one for paths
-	
-	// may add connection specific OSC maps for greater 3rd party support //zz debug
-	
-	//zz-JJ planning to add base_type(globals,node...) and record_id columns
-
-	//make sure all the mapPath constants are in a single enumerated list
-
-	// list processed from beginning to end, new items added to end 
-	// this means they are processed first and override earlier entries... similar to c++ class inheritance
-	// shortcut addresses are used, perhaps expand this to auto-complete partial address, return close matches, suggest...
-	// some elements trigger function calls such as fullscreen, screen_size, etc... 
-	NPmapLink mapOSC[] = {
-	//	data struct ptr			elementTypeID	mapPathB	direction  element		id	type_tag		mapPathA,		id	element					type_tag
-	{ (void*)NULL,					kNPint,		kNPgNull,			0, "osc",		0,	"null",					"",		0, "osc",		0,	"/np/null",				"i" },
-
-	//alternate layout comparing set A with set B
-	{ &data->io.gl.alphaMode,	kNPint,			kNPgAlphaMode,							//C struct
-							0, 	"np_gl",	1,	"alpha_mode",				"i",			//set A C-struct converted to String Version
-								"osc",		0,	"/np/gl/1/alpha_mode",		"f"			},	//set B external mapping type such as OSC or CSV														
-											//  kNPcolorRGBA	..						//clear_color													//back_color_rgba 
-	{ &data->io.clear,			kNPfloatRGBA,	kNPgBackground,		0, "np_gl",		1,	"color_rgba",	"ffff",	"osc",  0,	"/np/gl/1/color_rgba", "ffff" , "Background Color" },
-
-	{ &data->io.clear.r,		kNPfloat,		kNPgBackgroundR,	0, "np_gl",		1,	"color_r",		"f",	"osc",  0,	"/np/gl/1/color_r",	"f" , "Background Color R" },
-	{ &data->io.clear.g,		kNPfloat,		kNPgBackgroundG,	0, "np_gl",		1,	"color_g",		"f",	"osc",  0,	"/np/gl/1/color_g",	"f" , "Background Color G" },
-	{ &data->io.clear.b,		kNPfloat,		kNPgBackgroundB,	0, "np_gl",		1,	"color_b",		"f",	"osc",  0,	"/np/gl/1/color_b",	"f" , "Background Color B" },
-	{ &data->io.clear.a,		kNPfloat,		kNPgBackgroundA,	0, "np_gl",		1,	"color_a",		"f",	"osc",  0,	"/np/gl/1/color_a",	"f" , "Background Color A" },
-
-	
-	{ &data->map.node,			kNPint,			kNPrecordID,	    1, "np_node",		1,	"record_id",	"i",	"osc",  0,	"/np/node/42/record_id",	"i" },	//should be a double insted of 'i'
-																					//0 denotes wildcard, ie: * = "selected" for selected node(s) kNPcmdTag makes a tag for currently selected items
-																					// or "active" for current active target, or "set*" for all selection sets
-//	{ &data->map.node,			kNPtagPtr,		kNPtag,	    1, "np_node",	0,	"tag",				"iss",	"osc",  0,	"/np/node/*/tag",		"iss" },	//get or set tag, create tag if none
-
-	// setting and instance of a node or tag that does not exist will create it on the fly
-	{ &data->map.node,			kNPint,			kNPtagID,			1, "np_node",	0,	"tag_id",			"i",	"osc",  0,	"/np/node/*/tag_id",	"i" },		//get or set tagID
-	{ &data->map.node,			kNPcstrPtr,		kNPtagName,			1, "np_node",	1,	"tag_name",			"s",	"osc",  0,	"/np/node/*/tag_name",	"s", "redirect: /np/tag/[../node/*/tag_id]/name" },
-	{ &data->map.node,			kNPcstrPtr,		kNPtagDesc,			1, "np_node",	1,	"tag_desc",			"s",	"osc",  0,	"/np/node/*/tag_desc",	"s" },
-
-	{ data->io.url,				kNPcstrPtr,		kNPgBrowserURL,		0, "np_browser", 1,	"/np/browser/1/url", "s",	"osc",	 0,	"/mrmr/textinput/7/z-zs-iPhone", "s" },
-
-
-	// data->io.gl.fullscreen +1 direction status flag is OUT (only)
-	// +1 direction status flag denotes A to B and that its an output (read only)
-	// data->io.g[id] context 'id' = 1 is the main GL window, 0 = system console
-//	{ &data->io.gl,				kNPint,			kNPfullscreen,	    1, "np_gl",		1,	"fullscreen",		"i",	"osc",  0,	"/np/cmd/fullscreen",	"f" },
-//	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdFullscreen, "fullscreen",		"i",	"osc",  0,	"/2/push7",	"f" },
-
-	// kNPcmdFullscreen will toggle the fullscreen mode of the active user window
-	// and is the same as pressing 'ctrl_cmd' + F or 'esc' key
-	// alternatively, kNPcmdFullscreenID will go fullscreen on a specific gl_context_id //zz implement
-
-	// active user window context can be set separately from the active command context
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdContext,		0, "np_cmd",	kNPcmdContext,	"context_next",		"i",	"osc",  0,	"/np/cmd/context_next",	"f" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdContextID,	0, "np_cmd",	kNPcmdContextID, "context_id",		"i",	"osc",  0,	"",	"f" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdUserFocus,	0, "np_cmd",	kNPcmdUserFocus, "user_focus",		"i",	"osc",  0,	"",	"f" },
-
-//	{ &data->io.clear.a,		kNPfloat,		kNPposition,		0, "np_gl",		1,	"position_xy",		"f",	"osc",  0,	"/np/gl/1/background_a",	"f" },
-//	{ &data->io.clear.a,		kNPfloat,		kNPscreen,			0, "np_gl",		1,	"screen_xy",		"fff",	"osc",  0,	"/np/gl/1/background_a",	"f" },
-
-//	{ &data->io.clear.a,		kNPfloat,		kNPdimensions,		0, "np_gl",		1,	"dimensions",		"fff",	"osc",  0,	"/np/gl/1/background_a",	"f" },
-//	{ &data->io.clear.a,		kNPfloat,		kNPdimensions,		0, "np_gl",		1,	"dimensions_height","f",	"osc",  0,	"/np/gl/1/dimensions_height",	"f" },
-//	{ &data->io.clear.a,		kNPfloat,		kNPdimensions,		0, "np_gl",		1,	"dimensions_depth",	"f",	"osc",  0,	"/np/gl/1/dimensions_depth",	"f" },
-
-	
-	{ &rootGrid->scale.z,		kNPfloat,		kNPnodeRootGrid,	0, "np_node",	 0, "root_grid_scale_z", "f", "osc", 0, "/1/fader4", "f", "", "applies to entire scene" },
-
-//	{ &data->io.gl.subsample,	kNPint,			kNPcmdSubsample,	0, "np_gl",		1, "subsample", "i", "osc", 0, "/1/fader5", "f", "", "applies to entire scene" },
-
-//	{ &data->ctrl->cmdFuncList,	kNPint,			kNPcmdTrigger,		0, "np_cmd",	0, "select_all_on", "f", "osc", 0, "/1/toggle1", "f", "", "applies to entire scene" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdSelectAll, "select_all", "i", "osc", 0, "/1/toggle4", "f", "", "applies to entire scene" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdSelectAll, "select_all", "i", "osc", 0, "/2/toggle4", "f", "", "applies to entire scene" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdSelectAll, "select_all", "i", "osc", 0, "/3/toggle4", "f", "", "applies to entire scene" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdSelectAll, "select_all", "i", "osc", 0, "/4/toggle4", "f", "", "applies to entire scene" },
-/*
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdXincrease, "increase_x", "i", "osc", 0, "/2/push1", "f", "", "", "" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdXdecrease, "decrease_x", "i", "osc", 0, "/2/push2", "f", "", "", "" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdYincrease, "increase_y", "i", "osc", 0, "/2/push3", "f", "", "", "" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdYdecrease, "decrease_y", "i", "osc", 0, "/2/push4", "f", "", "", "" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdZincrease, "increase_z", "i", "osc", 0, "/2/push5", "f", "", "", "" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdZdecrease, "decrease_z", "i", "osc", 0, "/2/push6", "f", "", "", "" },
-
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdRotateLeft, "rotate_y_left",	"i", "osc", 0, "/2/push7", "f", "", "", "" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdRotateRight,"rotate_y_right",	"i", "osc", 0, "/2/push8", "f", "", "", "" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdRotateUp,	  "rotate_x_up",	"i", "osc", 0, "/2/push9", "f", "", "", "" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdRotateDown, "rotate_x_down",	"i", "osc", 0, "/2/push10", "f", "", "", "" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdRotateCCW,  "rotate_z_ccw",	"i", "osc", 0, "/2/push11", "f", "", "", "" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdRotateCW,   "rotate_z_cw",	"i", "osc", 0, "/2/push12", "f", "", "", "" },
-*/
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdCamera,		"increase_x",	"i", "osc", 0, "/2/push1", "f", "", "", "" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdSelectToggle, "decrease_x",	"i", "osc", 0, "/2/push2", "f", "", "", "" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdGrid,			"increase_y",	"i", "osc", 0, "/2/push3", "f", "", "", "" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdPin,			"decrease_y",	"i", "osc", 0, "/2/push4", "f", "", "", "" },
-
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdColorDown,	"increase_z",	"i", "osc", 0, "/2/push5", "f", "", "", "" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdColorUp,		"decrease_z",	"i", "osc", 0, "/2/push6", "f", "", "", "" },
-//	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdAltColor,		"select_axes",	"i", "osc", 0, "/2/push7", "f", "", "", "" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdFullscreen,	"fullscreen",	"i","osc",  0, "/2/push7", "f", "", "", "" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdTexture,		"rotate_y_right","i","osc", 0, "/2/push8", "f", "", "", "" },
-	
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdAlphaDown,	"rotate_x_up",	"i", "osc", 0, "/2/push9", "f", "", "", "" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdAlphaMode,	"rotate_x_down","i", "osc", 0, "/2/push10", "f", "", "", "" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdHide,			"rotate_z_ccw",	"i", "osc", 0, "/2/push11", "f", "", "", "" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdAlphaUp,		"rotate_z_cw",	"i", "osc", 0, "/2/push12", "f", "", "", "" },
-
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdNew,			"new",			"i", "osc", 0, "/2/push13", "f", "", "", "" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdTopo,			"topo",			"i", "osc", 0, "/2/push14", "f", "", "", "" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdGeometry,		"geometry",		"i", "osc", 0, "/2/push15", "f", "", "", "" },
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdDelete,		"delete",		"i", "osc", 0, "/2/push16", "f", "", "", "" },
-//	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdRotateCW,		"rotate_z_cw",	"i", "osc", 0, "/2/push16", "f", "", "", "" },
-
-	{ &data->ctrl.cmdFunc,		kNPcmdFuncPtr,	kNPcmdTrigger,		0, "np_cmd",	kNPcmdZoomOn,		"zoom_in",		"i", "osc", 0, "/2/push16", "f", "", "" },
-//	{ &data->ctrl.cmdFunc,		kNPint,			kNPcmdTrigger,		0, "np_cmd",	kNPcmdZoomOut,		"rotate_z_cw",	"i", "osc", 0, "/2/push12", "f", "", "" },
-
-
-	//kNPmouseDown "ii"
-	//kNPmouseUp
-	//kNPmouseMove
-
-	//color, texture, transparency -,+
-	//topo, geo, 
-
-	// example of mapping osc directly to np and then mapping 3rd party 'osc' to native osc 'osc_np'
-	// osc - osc maps can be dynamically created and routed without passing through np...
-	// if an 'osc_np' address entry is used then it can be dynamically mapped directly to an internal c-struct parameter...
-	// if both osc - osc mapping pair addresses are unknown then the data can be routed RX->TX and auto-referenced by the internal global c-structure
-
-//	{ data->io.url,				kNPcstrPtr,		kNPgBrowserURL,		0, "np_browser", 1,	"url",				 "s",	"osc_np",0,	"/np/browser/1/url", "s" },
-	// above is native translation of Globals...
-	// below is 3rd party OSC schema
-	//zz debug duplicate url entries???
-	{ data->io.url,				kNPcstrPtr,		kNPgBrowserURL,		0, "np_browser", 1,	"/np/browser/1/url", "s",	"osc",	 0,	"/mrmr/textinput/7/z-zs-iPhone", "s" },
-	{ data->io.url,				kNPcstrPtr,		kNPgBrowserURL,		0, "osc_np",	 1,	"/np/browser/1/url", "s",	"osc",	 0,	"/mrmr/textinput/7",			"s" },
-
-	//	data struct ptr			elementTypeID		type/tag		a_map_path	id	element					mapPathA,  id	element					type_tag
-//	{ &data->io.gl.position,	kNPposition,		kNPfloatXY,		0, "np_gl",		1,	"position_xy",		"ii",	"osc",  1,	"/np/gl/1/position_xy",		"ii" },
-//	{ &data->io.gl,screen,		kNPscreen,			kNPfloatXY,		0, "np_gl",		1,	"screen_size_xy",	"ii",	"csv",	1,	"screen_size_xy",			"ii" },
-
-	{ &data->io.url,			kNPgBrowserURL,		kNPcstrPtr,		0, "np_globals", 1,	"browser_url",	 "s",	"osc",  1,	"/np/io/browser_url",		"s" },
-	// above is a copy of the mapGlobals... 
-	//zz - update to auto-generate (learn) new OSC addresses spaces, dynamic node parsing...
-
-	
-	{ &data->io.clear,			kNPfloatRGBA,	kNPgBackground,		0, "np_gl",	1,	"back_color_rgba",	 "ffff",	"osc",  0,	"/3/xy",					"ff" },
-	{ &data->io.clear.r,		kNPfloat,		kNPgBackgroundR,	0, "np_gl",	1,	"back_color_r",			"f",	"osc",  0,	"/1/fader1",				"f" },
-	{ &data->io.clear.g,		kNPfloat,		kNPgBackgroundG,	0, "np_gl",	1,	"back_color_g",			"f",	"osc",  0,	"/1/fader2",				"f" },
-	{ &data->io.clear.b,		kNPfloat,		kNPgBackgroundB,	0, "np_gl",	1,	"back_color_b",			"f",	"osc",  0,	"/1/fader3",				"f" },
-//	{ &data->io.clear.a,		kNPfloat,		kNPgBackgroundA,	0, "np_gl",	1,	"back_color_a",			"f",	"osc",  0,	"/1/fader4",				"f" },
-
-/*
-	{ &data->,		kNPfloat,		kNP,	0, "np_",	1,	"",			"f",	"osc",  0,	"/COG/NEUTRAL",				"f" },
-	{ &data->,		kNPfloat,		kNP,	0, "np_",	1,	"",			"f",	"osc",  0,	"/COG/PUSH",				"f" },
-	{ &data->,		kNPfloat,		kNP,	0, "np_",	1,	"",			"f",	"osc",  0,	"/COG/PULL",				"f" },
-	{ &data->,		kNPfloat,		kNP,	0, "np_",	1,	"",			"f",	"osc",  0,	"/COG/LIFT",				"f" },
-	{ &data->,		kNPfloat,		kNP,	0, "np_",	1,	"",			"f",	"osc",  0,	"/COG/DROP",				"f" },
-	{ &data->,		kNPfloat,		kNP,	0, "np_",	1,	"",			"f",	"osc",  0,	"/COG/LEFT",				"f" },
-	{ &data->,		kNPfloat,		kNP,	0, "np_",	1,	"",			"f",	"osc",  0,	"/COG/RIGHT",				"f" },
-	{ &data->,		kNPfloat,		kNP,	0, "np_",	1,	"",			"f",	"osc",  0,	"/COG/ROTATE_LEFT",			"f" },
-	{ &data->,		kNPfloat,		kNP,	0, "np_",	1,	"",			"f",	"osc",  0,	"/COG/ROTATE_RIGHT",		"f" },
-	{ &data->,		kNPfloat,		kNP,	0, "np_",	1,	"",			"f",	"osc",  0,	"/COG/ROTATE_CLOCKWISE",	"f" },
-	{ &data->,		kNPfloat,		kNP,	0, "np_",	1,	"",			"f",	"osc",  0,	"/COG/ROTATE_COUNTER_CLOCKWISE", "f" },
-	{ &data->,		kNPfloat,		kNP,	0, "np_",	1,	"",			"f",	"osc",  0,	"/COG/ROTATE_FORWARDS",		"f" },
-	{ &data->,		kNPfloat,		kNP,	0, "np_",	1,	"",			"f",	"osc",  0,	"/COG/ROTATE_REVERSE",		"f" },
-	{ &data->,		kNPfloat,		kNP,	0, "np_",	1,	"",			"f",	"osc",  0,	"/COG/DISAPPEAR",			"f" },
-*/
-	{ &data->io.clear.b,		kNPfloat,		kNPgBackgroundB,	0, "np_gl",	1,	"back_color_b",			"f",	"osc",  0,	"/AFF/Frustration",			"f" },
-	{ &data->io.clear.b,		kNPfloat,		kNPgBackgroundB,	0, "np_gl",	1,	"back_color_b",			"f",	"osc",  0,	"/AFF/Engaged/Bored",		"f" },
-	{ &data->io.clear.g,		kNPfloat,		kNPgBackgroundG,	0, "np_gl",	1,	"back_color_g",			"f",	"osc",  0,	"/AFF/Excitement",			"f" },
-	{ &data->io.clear.b,		kNPfloat,		kNPgBackgroundB,	0, "np_gl",	1,	"back_color_b",			"f",	"osc",  0,	"/AFF/Excitement Long Term","f" },
-	{ &data->io.clear.r,		kNPfloat,		kNPgBackgroundR,	0, "np_gl",	1,	"back_color_r",			"f",	"osc",  0,	"/AFF/Meditation",			"f" },
-
-	{ &data->io.clear.r,		kNPfloat,		kNPgBackgroundB,	0, "np_gl",	1,	"back_color_r",			"f",	"osc",  0,	"/EXP/WINK_LEFT",			"f" },
-	{ &data->io.clear.g,		kNPfloat,		kNPgBackgroundB,	0, "np_gl",	1,	"back_color_g",			"f",	"osc",  0,	"/EXP/WINK_RIGHT",			"f" },
-	{ &data->io.clear.b,		kNPfloat,		kNPgBackgroundB,	0, "np_gl",	1,	"back_color_b",			"f",	"osc",  0,	"/EXP/BLINK",				"f" },
-	{ &data->io.clear.r,		kNPfloat,		kNPgBackgroundB,	0, "np_gl",	1,	"back_color_r",			"f",	"osc",  0,	"/EXP/LEFT_LID",			"f" },
-	{ &data->io.clear.g,		kNPfloat,		kNPgBackgroundB,	0, "np_gl",	1,	"back_color_g",			"f",	"osc",  0,	"/EXP/RIGHT_LID",			"f" },
-	{ &data->io.clear.r,		kNPfloat,		kNPgBackgroundR,	0, "np_gl",	1,	"back_color_r",			"f",	"osc",  0,	"/EXP/HORIEYE",				"f" },
-	{ &data->io.clear.g,		kNPfloat,		kNPgBackgroundG,	0, "np_gl",	1,	"back_color_g",			"f",	"osc",  0,	"/EXP/VERTEYE",				"f" },
-	{ &data->io.clear.b,		kNPfloat,		kNPgBackgroundB,	0, "np_gl",	1,	"back_color_b",			"f",	"osc",  0,	"/EXP/SMILE",				"f" },
-	{ &data->io.clear.r,		kNPfloat,		kNPgBackgroundB,	0, "np_gl",	1,	"back_color_r",			"f",	"osc",  0,	"/EXP/CLENCH",				"f" },
-	{ &data->io.clear.g,		kNPfloat,		kNPgBackgroundB,	0, "np_gl",	1,	"back_color_g",			"f",	"osc",  0,	"/EXP/LAUGH",				"f" },
-	{ &data->io.clear.b,		kNPfloat,		kNPgBackgroundB,	0, "np_gl",	1,	"back_color_b",			"f",	"osc",  0,	"/EXP/SMIRK_LEFT",			"f" },
-	{ &data->io.clear.r,		kNPfloat,		kNPgBackgroundB,	0, "np_gl",	1,	"back_color_r",			"f",	"osc",  0,	"/EXP/SMIRK_RIGHT",			"f" },
-	{ &data->io.clear.g,		kNPfloat,		kNPgBackgroundB,	0, "np_gl",	1,	"back_color_g",			"f",	"osc",  0,	"/EXP/FURROW",				"f" },
-	{ &data->io.clear.b,		kNPfloat,		kNPgBackgroundB,	0, "np_gl",	1,	"back_color_b",			"f",	"osc",  0,	"/EXP/EYEBROW",				"f" },
-
-	{ &data->map.oscCount,		kNPint,			kNPitemCount,	    1, "osc",	0,	"item_count",			"i",	"osc",  0,	"/np/map/osc/item_count",	"i", "Map item count", "designates end of list" }
-	
-	}; //end of list
-
-	//add pointer element to the map descriptor
-	NPmapType mapTypeList[] = {
-	{ 0,	kNPmapNull,		"null",			"" },
-	{ 0,	kNPmapGlobals,	"globals",		"Accesses global map elements" },
-	{ 0,	kNPmapNode,		"node",			"Scene Graph tree Node element" },
-	{ 0,	kNPmapTag,		"tag",			"Text Tag" },
-	{ 0,	kNPmapChannel,	"channel",		"Channel maps tracks to nodes, globals & commands" },
-	{ 0,	kNPmapTrack,	"track",		"Tracks animate the scene using files or live IO" },
-	{ 0,	kNPmapGL,		"gl",			"OpenGL context specific parameters" },
-	{ 0,	kNPmapCSV,		"csv",			"CSV table descriptor" },
-	{ 0,	kNPmapJSON,		"json",			"JSON data descriptor" },
-	{ 0,	kNPmapCount,	"count",		"Item count for this list" }
-	};
-
-	//scan the list looking for kNPitemCount to dynamically set the list size
-	i = 0; while (mapTypeList[i++].type != kNPmapCount) data->map.mapTypeCount++;
-
-	// copy the structure to newly allocated RAM	
-	size = sizeof(mapTypeList);
-	data->map.mapTypeList = npMalloc(0, size, data);
-	memcpy(data->map.mapTypeList, (const void*)mapTypeList, size);
-
-	//scan the list looking for kNPitemCount to dynamically set the list size	//zz debug probably a simpler way to do this?
-	i = 0; while (mapGlobals[i++].elementID != kNPitemCount) data->map.globalsCount++;
-
-	// copy the structure to newly allocated RAM								 //zz debug , perhaps a way to avoid this too....
-	size = sizeof(mapGlobals);
-	data->map.typeMapGlobals = npMalloc(0, size, data);
-	memcpy(data->map.typeMapGlobals, (const void*)mapGlobals, size);
-
-	// REPEAT for mapOSC
-	//scan the list looking for kNPcount to dynamically get the size
-	i = 0; while (mapOSC[i++].elementID != kNPitemCount) data->map.oscCount++;
-
-	// copy the structure to newly allocated RAM, proably a better way, zz
-	size = sizeof(mapOSC);
-	data->map.typeMapOSC = npMalloc(0, size, data);
-	memcpy(data->map.typeMapOSC, (const void*)mapOSC, size);
-
-	//-------------
-	// TEST MAP		//zz debug
-//	printf("\n TEST GLOBALS alphaMode: %d\n\n", *(int*)mapGlobals[1].mapPtr);
-	printf("\nGlobals Map itemCount: %d\n", data->map.globalsCount);
-//	printf(" Globals Map size: %d\n", sizeof(mapGlobals));
-//	printf(" TEST MAP id: %d\n", npMapStrToID("full_screen\0",data));
-//	printf(" TEST MAP value: %d\n\n", *(int*)npMapStrToPtr ("full_screen\0", data));	
-
-//	printf("\n TEST GLOBALS alphaMode: %d\n\n", *(int*)mapGlobals[1].mapPtr);
-	printf("OSC Map itemCount: %d\n", data->map.oscCount);
-//	printf(" TEST MAP size: %d\n", sizeof(mapOSC));
-//	printf(" TEST MAP id: %d\n", npMapAddressToPtr("/1/fader4\0",data));
-//	printf(" TEST MAP value: %f\n\n", *(float*)npMapAddressToPtr ("/1/fader4\0", data));
-
-	//this should change the background color 'b' blue component
-//	*(float*)npMapAddressToPtr ("/1/fader1\0", data) = 0.6f;
-//	*(float*)npMapAddressToPtr ("/1/fader2\0", data) = 0.4f;
-//	*(float*)npMapAddressToPtr ("/1/fader3\0", data) = 0.6f;
-
-//	*(float*)npMapAddressToMapTypeItem ("/1/fader1\0", data)->mapPtr = 0.6f;
-//	*(float*)npMapAddressToMapTypeItem ("/1/fader2\0", data)->mapPtr = 0.4f;
-//	*(float*)npMapAddressToMapTypeItem ("/1/fader3\0", data)->mapPtr = 0.6f;
-}
 
 int npMapToCSV (char* csvStr, int mapType, int size, int* index, void* dataRef);
 //-----------------------------------------------------------------------------
@@ -1140,8 +784,9 @@ int npMapToCSV (char* csvStr, int mapType, int size, int* index, void* dataRef)
 		nodes = npMalloc(0, sizeof(pNPnode) * kNPnodeMax, data);			//data->map.nodeCount
 		if (!nodes) return 0;
 
-		//populate the sort lists, skip over null nodes
-		for (i = kNPnodeRootPin ; i < kNPnodeMax; i++)	//data->map.nodeCount; i++)
+		/// @todo implement a hash table and/or balanced tree //zz
+		//populate the sort lists, skip over null nodes		
+		for (i = kNPnodeRootPin; i < kNPnodeMax; i++)	//data->map.nodeCount; i++)
 			if (data->map.nodeID[i] != NULL)
 				nodes[j++] = data->map.nodeID[i];
 
@@ -1206,7 +851,7 @@ int npMapToCSV (char* csvStr, int mapType, int size, int* index, void* dataRef)
 					mapItem->name,
 					mapItem->desc,
 
-					npGetValueStr(str, mapItem, data)	//formats parameter values as csv 
+					npGetValueStr( str, mapItem, data)	//formats parameter values as csv 
 				 );
 	}
 /*	}
@@ -1265,9 +910,9 @@ int npGetFormat( const char* file, const char* curs, int size, void* dataRef )
 
 	else if (strncmp(curs, "osc_id", 6) == 0)	//3rd party OSC handler
 		mapType = kNPformatOSC;
-	else if (strncmp(curs, "json_id", 6) == 0)
+	else if (strncmp(curs, "json_id", 7) == 0)
 		mapType = kNPformatJSON;
-	else if (strncmp(curs, "snmp_id", 6) == 0)
+	else if (strncmp(curs, "snmp_id", 7) == 0)
 		mapType = kNPformatSNMP;
 	else if (strncmp(curs, "xml_id", 6) == 0)
 		mapType = kNPformatXML;
@@ -1497,7 +1142,7 @@ int npOpenMapCSV (char* filePath, int mapType, void* dataRef)
 
 	//find the chunk endpoint of the last record	//zz debug, add handling for record size > chunk size
 	endPoint = npLastEOL( buffer, size );
-	if (!endPoint){ printf(" err 8312 - no EOL in file chunk"); goto finish;}
+	if (!endPoint){ printf("err 8312 - no EOL in file chunk\n"); goto finish;}
 
 /* //zz
 		// set read ptr to beginning of first data row
@@ -1544,7 +1189,7 @@ int npOpenMapCSV (char* filePath, int mapType, void* dataRef)
 		//zz add custom type transcoding and a generic defualt handler
 		if(0)//strcmp( typeTagA, typeTagB ) )
 		{
-			printf(" warn 8323 - type tags do not match, id: %d\n", id);
+			printf("warn 8323 - type tags do not match, id: %d\n", id);
 			// npAutoTranslate();
 		}
 		else
@@ -1558,9 +1203,9 @@ int npOpenMapCSV (char* filePath, int mapType, void* dataRef)
 	
 			elementRef = npMapItemPtr (NULL, NULL, elementA, NULL, data);
 			if( !elementRef )
-			{
-					printf(" - unknown element - warn 9458");	 //zz debug add a default handler
-					// return 1;	//0;	`````````````````````````````````````````//zz debug
+			{							//zz todo add a default handler
+				if( (int)count < endPoint )
+					printf("warn 8324 - unknown npMapItemPtr element\n");	 
 			}
 			else if( strncmp( typeTagA, "i", 1 ) == 0 ) 
 			{
@@ -1614,7 +1259,7 @@ int npOpenMapCSV (char* filePath, int mapType, void* dataRef)
 //				printf( " strings not yet supports: %3s...\n", *(char*)elementRef );
 			}
 			else
-				printf( " err 8333 - unknown type tag: %.20s\n", typeTagA );
+				printf( "err 8333 - unknown type tag: %.20s\n", typeTagA );
 		}
 		printf("\n");
 
@@ -1753,17 +1398,17 @@ int npSaveMapToCSV( char* datasetName, int mapTypeID, void* dataRef )
 
 	//construct the file path name for this map type using passed in dataset name
 	sprintf( filePath, "%s%s%s%s", path, datasetName, mapTypeName, ".csv" );
-	sprintf( msg, "Saving: %s",  filePath);
+	sprintf( msg, "Save: %s",  filePath);
 	npPostMsg (msg, kNPmsgCtrl, data );
 
 	if( mapTypeID == kNPmapNode )
 		return npFileSaveMap( filePath, 1, strlen( filePath ), data );
 
-	buffer = (char*) npMalloc(0, kNPfileBlockSize, data);
+	buffer = (char*) npMalloc( 0, kNPfileBlockSize, data);
 	if( !buffer ) return 0;
 
 	// open the file, "w+" overwrites existing files
-	printf ("\nSave File: %s\n", filePath);
+//	printf( "\nSave File: %s\n", filePath);
 	file = npFileOpen (filePath, "w+", dataRef);
 
 	if (file == NULL)
@@ -1775,7 +1420,7 @@ int npSaveMapToCSV( char* datasetName, int mapTypeID, void* dataRef )
 	
 	// copies current state to the write buffer, formats as CSV
 	// file buffer needs to be larger then kNPfileBlockSize
-	printf("Writing CSV...\n");
+	printf("Writing...");
 	count = npMapToCSV( buffer, mapTypeID, kNPmapFileBufferMax, &index, data );
 
 	while (count > 0)
@@ -1791,28 +1436,127 @@ int npSaveMapToCSV( char* datasetName, int mapTypeID, void* dataRef )
 		else
 			count = 0;
 	}
-	printf(":)\n");
+	printf("\n");
 
 	// print partial file contents
 	if (total > 0)
 	{
-		printf("Bytes Written: %d\n", total);
-		npFileRewind(file);
-		size = npFileRead (buffer, 1, 79, file, dataRef);
-		printf("File Contents:\n");
-		for( i = 0; i < size; i++ )
-			printf("%c", buffer[i]);
-		printf("\n");
+		printf("Bytes Written: %d\n\n", total);
+//		npFileRewind(file);
+//		size = npFileRead (buffer, 1, 79, file, dataRef);
+//		printf("File Contents:\n");
+//		for( i = 0; i < size; i++ )
+//			printf("%c", buffer[i]);
+//		printf("\n");
 	}
 	else
-		printf("err 4316 - file write failure, zero bytes written\n");
+		printf("err 4326 - file write failure, zero bytes written\n");
 
 	err = npFileClose(file, dataRef);
+	if(err)
+		npPostMsg("err 4327 - file close failure", kNPmsgErr, data);
 
 	free (buffer);
 
-	npPostMsg("Done writing CSV", kNPmsgCtrl, data);	//zz debug, ...writing Globals to...
+//	npPostMsg("Done writing CSV", kNPmsgCtrl, data);	//zz debug, ...writing Globals to...
 
 	return total;
-} 
+}
 
+ 
+// appends map table name to filePath and adds '.csv' extension
+//-----------------------------------------------------------------------------
+int npSaveMapToCSV2( char* datasetName, int mapTypeID, void* dataRef )
+{
+	pData data = (pData) dataRef;
+
+	int i = 0;
+	int err = 0;
+	int size = 0;
+	int total = 0;
+	int index = 0;		//same as rootIndex...
+	int rootIndex = 0;
+	size_t count = 0;
+	FILE* file = NULL;
+
+	char* path = data->io.file.csvPath;
+	char* name = NULL;
+	char* mapTypeName = NULL;
+		
+	char* buffer = NULL;
+	char msg[kNPurlMax];
+	char filePath[kNPurlMax];
+	pNPnode node = NULL;
+
+
+	//convert lookup table
+	mapTypeName = npMapTypeName( mapTypeID, data );
+
+	//construct the file path name for this map type using passed in dataset name
+	sprintf( filePath, "%s/antz-%s%s", datasetName, mapTypeName, ".csv" );
+	sprintf( msg, "Save: %s",  filePath);
+	npPostMsg (msg, kNPmsgCtrl, data );
+
+	if( mapTypeID == kNPmapNode )
+		return npFileSaveMap( filePath, 1, strlen( filePath ), data );
+
+	buffer = (char*) npMalloc( 0, kNPfileBlockSize, data);
+	if( !buffer ) return 0;
+
+	// open the file, "w+" overwrites existing files
+//	printf( "\nSave File: %s\n", filePath);
+	file = npFileOpen (filePath, "w+", dataRef);
+
+	if (file == NULL)
+	{
+		printf("err 4215 - file open failed, cannot write file\n");							//debug, add err reporting, zz
+		free (buffer);
+		return 0;
+	}
+	
+	// copies current state to the write buffer, formats as CSV
+	// file buffer needs to be larger then kNPfileBlockSize
+	printf("Writing...");
+	count = npMapToCSV( buffer, mapTypeID, kNPmapFileBufferMax, &index, data );
+
+	while (count > 0)
+	{
+		printf(".");
+		total += count = npFileWrite( buffer, 1, count, file, data );
+	
+		if (count >= kNPfileBlockSize) //0)//zz debug file block methods //
+		{
+			printf("-");
+			count = npMapToCSV( buffer, mapTypeID, kNPmapFileBufferMax, &index, data );
+		}
+		else
+			count = 0;
+	}
+	printf("\n");
+
+	// print partial file contents
+	if (total > 0)
+	{
+		printf("Bytes Written: %d\n\n", total);
+//		npFileRewind(file);
+//		size = npFileRead (buffer, 1, 79, file, dataRef);
+//		printf("File Contents:\n");
+//		for( i = 0; i < size; i++ )
+//			printf("%c", buffer[i]);
+//		printf("\n");
+	}
+	else
+		printf("err 4326 - file write failure, zero bytes written\n");
+
+	err = npFileClose(file, dataRef);
+	if(err)
+		npPostMsg("err 4327 - file close failure", kNPmsgErr, data);
+
+	free (buffer);
+
+//	npPostMsg("Done writing CSV", kNPmsgCtrl, data);	//zz debug, ...writing Globals to...
+
+	return total;
+}
+
+ 

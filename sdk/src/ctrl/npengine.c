@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -285,7 +285,7 @@ void UpdateNodeDefault (pNPnode node, pData dataRef)
 	//apply topo specific limits, after node limits
 	if (parent != NULL)
 	{
-		if (parent->topo == kNPtopoCube)
+		if( parent->topo == kNPtopoCube || parent->topo == kNPtopoZcube )
 		{
 			if (node->translate.x > 180.0f)
 			{									//invert rate at top & bottom, debug zz
@@ -338,7 +338,8 @@ void UpdateNodeDefault (pNPnode node, pData dataRef)
 				printf ("id: %d   facet: %d\n", node->id, node->facet);
 			}
 		}
-		else if (parent->topo == kNPtopoCylinder)
+		else if( parent->topo == kNPtopoCylinder
+				|| parent->topo == kNPtopoZcylinder )
 		{
 			if (node->translate.x > 180.0f)
 				node->translate.x += -360.0f;
@@ -350,8 +351,9 @@ void UpdateNodeDefault (pNPnode node, pData dataRef)
 				node->translate.y += 180.0f;
 		}
 		else if (node->topo == kNPtopoSphere
-				|| parent->topo == kNPtopoPoint
+				|| parent->topo == kNPtopoZsphere
 				|| node->topo == kNPtopoTorus
+				|| node->topo == kNPtopoZtorus
 				|| parent->topo == kNPtopoPin
 				|| parent->topo == kNPtopoRod )
 		{

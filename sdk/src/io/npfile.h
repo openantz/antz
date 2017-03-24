@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -29,7 +29,7 @@
 #include "../npdata.h"
 #include "../data/npmapfile.h"
 #include "file/npcsv.h"
-#include "file/npmodels.h"
+#include "file/npmodels.h"		//zz models
 #include "file/npfreeimage.h"
 #include "file/npfileviz.h"
 
@@ -66,6 +66,9 @@ void npSaveAs (int size, void* dataRef);
 
 void npImport (const char* fileName, void* dataRef);
 void npExport (int size, void* dataRef);
+
+void npLoadDir( char* path, char* fileFilter, int fileCat, void* dataRef );		//zz tex
+void npLoadDirBranch( char* path, char* fileFilter, int fileCat, void* dataRef ); //zz tex
 
 // file and directory management
 
@@ -107,10 +110,18 @@ void npFileOpenChMap (const char* filePath, void* dataRef);
 void npFileCloseChTracks (const char* filePath, void* dataRef);
 
 int	npSaveScene( int format, char* datasetName, void* dataRef);
+int	npSaveScene2( int format, char* datasetName, void* dataRef);
 int	npLoadScene( int format, char* datasetName, void* dataRef);
 
 bool npOpenNodeFile( pNPnode node, void* dataRef );
 bool npOpenNode( pNPnode node, void* dataRef );
+
+//zz models begin
+char* npSearchPathsForFile(char* filename, void* dataRef);
+void npGetFileNameFromPath(char* filepath, char* filename, void* dataRef);
+char* npFilePathAbsToRel(char* abs, void* dataRef);
+char* npFilePathRelToAbs(char* rel, void* dataRef);
+//zz models end
 
 #endif
 

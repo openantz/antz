@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -25,17 +25,24 @@
 #ifndef NPGLSURFACE_H_
 #define NPGLSURFACE_H_
 
-
 #include "../../npdata.h"
+
+#include "../file/npassimp.h"	//zz models
 
 
 void npInitGLPrimitive (void* dataRef);
 void npCloseGLPrimitive (void* dataRef);
 
-void npGLSurface (bool texture, pNPnode node, void* dataRef);
+void npGLSurface( bool texture, pNPnode node, void* dataRef);
 
-void npGLPrimitive (int geometry, float ratio);
+void npGLPrimitive( int geometry, float ratio);
 
-void npGLTexture(pNPnode node, void* dataRef);
+void npGLTexture( pNPnode node, void* dataRef);
+
+//zz models
+void npInitGeoList( void* dataRef); // lv geolist
+void npInitGeoListPrimitives( void* dataRef); // lv geolist 
+void npModelStoreDL( struct aiScene* scene, pNPgeolist geolist, void* dataRef); // lv geolist
 
 #endif
+

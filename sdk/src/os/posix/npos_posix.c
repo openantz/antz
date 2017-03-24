@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -185,6 +185,12 @@ int nposGetKey (void)
 	return getch();																//debug zz
 }
 */
+
+//------------------------------------------------------------------------------
+void nposConsoleStart( void* sysCmd )
+{
+	system( (char*)sysCmd );
+}
 
 #endif
 

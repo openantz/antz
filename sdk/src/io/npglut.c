@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -35,11 +35,13 @@
 
 #include "../data/npmapfile.h"		//debug, zz
 
-#include "SOIL.h"
+#include "gl/nptexmap.h"		//zz tex
 
-void npGlutInitGL();
-void npGlutDrawGLScene(void);
-void npGlutDrawGLSceneIdle(void);
+
+void npGlutInitGL (void);
+void npGlutEventFuncs (void);
+void npGlutDrawGLScene (void);
+void npGlutDrawGLSceneIdle (void);
 // void npGlutResizeGLScene(int Width, int Height);
 
 void npGlutKeyDown (unsigned char key, int x, int y);
@@ -78,22 +80,19 @@ void npInitGlut (int argc, char **argv, void* dataRef)
 	pData data = (pData) dataRef;
 	pNPgl gl = &data->io.gl;
 
+	// init glut app framework
 	glutInit (&argc, argv);
 
-//zz debug, move OS specific code to npos.h ?	
-	//stereo3D not yet supported on OSX, zz debug
+	//zz debug stereo3D not yet supported on OSX
+	//zz debug move OS specific code to npos.h ? nposPostFramework()
 #ifndef NP_OSX_
 	sprintf (msg, "freeglut ver: %d", glutGet(GLUT_VERSION));
 	npPostMsg (msg, kNPmsgCtrl, data);
-
-	glGetBooleanv (GL_STEREO, &stereoSupport);
+	glGetBooleanv (GL_STEREO, (GLboolean*)&gl->stereo3D);
 #else
 	npPostMsg ("Apple GLUT", kNPmsgCtrl, data);
-
-	stereoSupport = false;			
+	gl->stereo3D = false;			
 #endif
-	
-	gl->stereo3D = stereoSupport;
 
 	if (gl->stereo3D)
 		sprintf (msg, "OpenGL Stereo 3D: YES");
@@ -101,13 +100,11 @@ void npInitGlut (int argc, char **argv, void* dataRef)
 		sprintf (msg, "OpenGL Stereo 3D: NO");
 	npPostMsg (msg, kNPmsgCtrl, data);
 
-	//OpenGL stereo 3D currently ONLY supported by Quadro and AMD Fire Pro series
-	//at this time the bios is different consumer cards use same chip die...?
-
+	/// OpenGL stereo 3D is ONLY supported by Quadro and AMD Fire Pro
 	if (gl->stereo3D)
 		glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GLUT_STEREO);
 	else
-		glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);			//add SRGBA support, zz
+		glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
 	glutInitWindowPosition (gl->position.x, gl->position.y);
 	glutInitWindowSize (gl->windowSize.x, gl->windowSize.y);
@@ -116,26 +113,33 @@ void npInitGlut (int argc, char **argv, void* dataRef)
 	glutSetWindow (gl->windowID);			//S3D
 	glutHideWindow();						//S3D
 
-/*	//stereo 3D and GameMode
-	//if (gl->gameMode)
-	printf("Attempting Game Mode, please ignore GLUT warnings\n");
-	glutGameModeString("1920x1080:32@121");
-	if ( glutEnterGameMode() == 0 )
-	{
-		glutGameModeString("1920x1080:32@120");
-		if ( glutEnterGameMode() == 0 )
-		{
-			glutGameModeString("1920x1080:32@119");
-			if ( glutEnterGameMode() == 0 )
-			{
-				glutGameModeString("1920x1080:32@60"); //does not specify refresh
-				result = ( glutEnterGameMode() );
-	}}}	//add more res... 1680x1050 1366x768 1280x720 1280x1024, 1024x768, also 100Hz and 110Hz
-*/
-//	wglSwapIntervalEXT(1);		//to remove frame tearing with VSYNC debug, zz
-//	nposSwapInterval(1);		//move OS methods to npos.h, debug zz
-//	glfwSwapInterval(1);		//may use the glfw libarry, not implememted, zz
+	//zz stereo 3D and GameMode stripped out on 2016-07-03
 
+	/// register keyboard, mouse and display events with GLUT
+	npGlutEventFuncs();
+
+	/// init OpenGL
+	npInitGL (dataRef);
+
+	/// show the window
+	glutShowWindow ();
+
+	if (gl->fullscreen)
+	{
+		npPostMsg ("FullScreen Window", kNPmsgCtrl, data);
+		glutFullScreen ();
+	}		
+
+	/// System Ready...
+	data->ctrl.startup = false;
+	npPostMsg( "www.openANTz.com", kNPmsgCtrl, data);
+	npPostMsg( "System Ready...", kNPmsgCtrl, data);
+	npPostMsg( data->map.startupMsg, kNPmsgCtrl, data);
+}
+
+//------------------------------------------------------------------------------
+void npGlutEventFuncs (void)
+{
 	//! register keyboard events with GLUT
 	glutKeyboardFunc (npGlutKeyDown);
 	glutKeyboardUpFunc (npGlutKeyUp);
@@ -147,6 +151,8 @@ void npInitGlut (int argc, char **argv, void* dataRef)
 	glutMouseFunc (npMouseEvent);
 	glutMotionFunc (npMouseMotion);
 	glutPassiveMotionFunc( npMousePosition );
+
+	/// Apple GLUT does not support the mouse wheel
 #ifndef NP_OSX_														//zz-osx debug lde
 	glutMouseWheelFunc (npMouseWheel);
 #endif
@@ -155,58 +161,7 @@ void npInitGlut (int argc, char **argv, void* dataRef)
 	glutIdleFunc (npGlutDrawGLSceneIdle);
 	glutReshapeFunc (npGLResizeScene);
 	
-	//! init GL
-	npInitGL (dataRef);
-
-	//! show the window
-	glutShowWindow ();
-
-	if (gl->fullscreen)
-	{
-		npPostMsg ("FullScreen Window", kNPmsgCtrl, dataRef);
-		glutFullScreen ();
-	}		
-
-
-//		gl->stereo3D = false;		
-/*
-	if (result == 0)
-	{
-		npPostMsg ("FullScreen Window", kNPmsgCtrl, dataRef);
-		glutShowWindow ();
-		glutFullScreen ();
-//		gl->stereo3D = false;								//stereo 3D, debug zz
-	}
-	else
-	{	//GameMode may be different then what we requested, so get the modes
-		glutSetWindowTitle("ANTz - GameMode");
-
-		gl->width = glutGameModeGet( GLUT_GAME_MODE_WIDTH );
-		gl->height = glutGameModeGet( GLUT_GAME_MODE_HEIGHT );
-		gl->pixelDepth = glutGameModeGet( GLUT_GAME_MODE_PIXEL_DEPTH );
-		gl->refreshRate = (float)glutGameModeGet( GLUT_GAME_MODE_REFRESH_RATE );
-		printf("FullScreen Game Mode: %dx%d:%d@%d\n",gl->width,gl->height,
-						gl->pixelDepth, (int)gl->refreshRate);
-		//stereo 3D, turn off stereo if reresh rate is too low, update this, zz
-		if (gl->refreshRate >= 99)
-			printf("Stereo 3D enabled\n");
-		else
-		{
-			if (gl->stereo3D)
-				printf("Stereo 3D disabled, low refresh rate: %dHz\n", 
-					gl->refreshRate);
-			gl->stereo3D = false;
-		}
-	}
-*/
-	//! System Ready...
-	data->ctrl.startup = false;
-	npPostMsg ("www.openANTz.com", kNPmsgCtrl, dataRef);
-	npPostMsg ("System Ready...", kNPmsgCtrl, dataRef);
-	npPostMsg(data->map.loadMsg, kNPmsgCtrl, data);
-	//glGetIntegerv (GL_TEXTURE_STACK_DEPTH, &depth); // GL_MODELVIEW_STACK_DEPTH
 }
-
 
 //------------------------------------------------------------------------------
 void npCloseGlut (void* dataRef)
@@ -235,93 +190,20 @@ void npAppLoopGlut (void* dataRef)
 //------------------------------------------------------------------------------
 void npGlutDrawGLScene(void) 
 {
-		//screenGrab
-		int temp = 0; //store console level
-		int i = 0;
-        int w = 0, tempW = 0;
-        int h = 0, tempH = 0;
-
-		static char filePath[kNPmaxPath];
-		static char timeStamp[64];
-		char msg[kNPmaxPath];
-		int err = 0;
-
 	double deltaTime = 0.0;
 	double currentTime = 0.0;
 	double targePeriod = 0.0;
 
 	pData data = (pData) npGetDataRef();
-		
+
+
 	//update data, positions, physics, user input
 	npUpdateCtrl (data);
 
-
-	//screenGrab
-    if( data->io.gl.screenGrab ) //screenGrab F12
-    {
-//		npScreenGrab()
-		w = glutGet( GLUT_WINDOW_WIDTH );
-		h = glutGet( GLUT_WINDOW_HEIGHT );
-
-		w = tempW = data->io.gl.width;
-		h = tempH = data->io.gl.height;
-
-		//construct the filename path
-		nposTimeStampName( timeStamp );
-		strcpy( filePath, data->io.file.mapPath );
-		strcat( filePath, timeStamp );
-		
-		//resize to thumbnail and turn off HUD
-		if( data->io.gl.screenGrab == 2 )
-		{
-			filePath[0] = '\0';
-			strncat( filePath, data->io.gl.datasetName, kNPmaxPath - 4  );
-			strcat( filePath, ".dds" );
-
-			w = 480; // 320 // 160 // data->map.thumbSize.width
-			h = 270; // 180 // 90  // data->map.thumbSize.height
-			temp = data->io.gl.hud.console.level;
-			data->io.gl.hud.console.level = 0;
-			npGLResizeScene( w, h );
-			npGLDrawScene( data );
-			
-			err = SOIL_save_screenshot		//grab backbuffer and write to file
-				(
-				filePath,
-				//SOIL_SAVE_TYPE_BMP,
-				//SOIL_SAVE_TYPE_TGA,
-				SOIL_SAVE_TYPE_DDS, 
-				0, 0, w, h
-				);
-
-			//restore screen size and re-render
-			data->io.gl.hud.console.level = temp;
-			npGLResizeScene(tempW, tempH);
-			npGLDrawScene (data);
-			sprintf(msg, "Saved Thumbnail: %s", filePath);
-		}
-		else
-		{
-			strcat( filePath, ".bmp" );
-		//	strcat( filePath, ".tga" );
-		
-			npGLDrawScene (data);
-
-			err = SOIL_save_screenshot		//grab backbuffer and write to file
-				(
-				filePath,
-				SOIL_SAVE_TYPE_BMP,
-				//SOIL_SAVE_TYPE_TGA,
-				//SOIL_SAVE_TYPE_DDS, 
-				0, 0, w, h
-				);
-			sprintf(msg, "Saved Screenshot: %s", filePath);
-		}
-		npPostMsg( msg, kNPmsgFile, data );
-
-		data->io.gl.screenGrab = false;
-    }
-	else  //init time on first run
+	//screenshot
+    if( data->io.gl.screenGrab ) // Screenshot F4
+		npScreenShot (data);
+	else					//init time on first run
 		npGLDrawScene (data);
 
 //	glFlush();		//zzhp							//vsync, not yet functional, debug zz
@@ -341,14 +223,14 @@ void npGlutDrawGLScene(void)
 
 //	glFinish();					//vsync
 
-	//update the locally stored time, used when calculating the delta time
-	nposUpdateTime (data);
-
-	if( !data->io.gl.fullscreen )
+	if( !data->io.gl.fullscreen )		//S3D
 	{
-		data->io.gl.position.x = glutGet(GLUT_WINDOW_X);		//S3D
+		data->io.gl.position.x = glutGet(GLUT_WINDOW_X);
 		data->io.gl.position.y = glutGet(GLUT_WINDOW_Y);
 	}
+
+	//update the locally stored time, used when calculating the delta time
+	nposUpdateTime (data);
 }
 
 //------------------------------------------------------------------------------
@@ -379,23 +261,9 @@ void npglFullscreen (void* dataRef)
 			glutSetWindow (gl->windowID);
             glutShowWindow ();
 
-			glutKeyboardFunc (npGlutKeyDown);
-			glutKeyboardUpFunc (npGlutKeyUp);
-			glutSpecialFunc (npGlutKeyDownSpecial);
-			glutSpecialUpFunc (npGlutKeyUpSpecial);
-
-
-			//register mouse events with GLUT
-			//glutEntryFunc( npMouseEntry );  //zz only works when clicking
-			glutMouseFunc (npMouseEvent);
-			glutMotionFunc (npMouseMotion);
-			glutPassiveMotionFunc( npMousePosition );
-
-			glutDisplayFunc (npGlutDrawGLScene);
-			glutIdleFunc (npGlutDrawGLSceneIdle);
-
-			glutReshapeFunc (npGLResizeScene);
-			//---
+			//! register keyboard, mouse and display events with GLUT
+			npGlutEventFuncs();
+			
 			npInitGL (data);
 		}
 	
@@ -411,20 +279,6 @@ void npglFullscreen (void* dataRef)
 		if (deltaX != 0 || deltaY != 0)
 			glutPositionWindow (gl->position.x + deltaX,
 								gl->position.y + deltaY);
-		
-		//zz debug err checking to make sure window is proper size!
-/*
-		if (x != gl->windowSize.x);
-		{
-			gl->windowSize.x = x;
-			gl->windowSize.y = y;
-			glutReshapeWindow (x, y);
-			glutPositionWindow (100, 100);
-
-			npPostMsg("err 2978 - window width mismatch", kNPmsgGL, data);
-		}
-*/
-
 	
 		npPostMsg("Exit FullScreen", kNPmsgGL, data);
 	}
@@ -453,23 +307,6 @@ void npglFullscreen (void* dataRef)
 					glutGameModeString("1920x1080:32@60"); //does not specify refresh
 					result = ( glutEnterGameMode() );
 		}}}
-
-		//register keyboard events with the new GameMode GL context
-		glutKeyboardFunc (npGlutKeyDown);
-		glutKeyboardUpFunc (npGlutKeyUp);
-		glutSpecialFunc (npGlutKeyDownSpecial);
-		glutSpecialUpFunc (npGlutKeyUpSpecial);
-		
-		//register mouse events with GLUT
-		glutMouseFunc (npMouseEvent);
-		glutMotionFunc (npMouseMotion);
-
-		glutDisplayFunc (npGlutDrawGLScene);
-		glutIdleFunc (npGlutDrawGLSceneIdle);
-		glutReshapeFunc (npGLResizeScene);
-		
-		//---
-		npInitGL (data);
 */
 		gl->position.x = glutGet((GLenum)GLUT_WINDOW_X);
 		gl->position.y = glutGet((GLenum)GLUT_WINDOW_Y);
@@ -482,7 +319,6 @@ void npglFullscreen (void* dataRef)
 			printf("FullScreen Window\n");
 			glutShowWindow ();
 			glutFullScreen ();
-			//gl->stereo3D = false;							// 3D, debug zz
 		}
 		else
 		{	//GameMode may be different then what we requested, so get the modes
@@ -494,17 +330,6 @@ void npglFullscreen (void* dataRef)
 			gl->refreshRate = (float)glutGameModeGet( GLUT_GAME_MODE_REFRESH_RATE );
 			printf("FullScreen Game Mode: %dx%d:%d@%d\n", gl->width, gl->height,
 							gl->pixelDepth, (int)gl->refreshRate);
-			//stereo 3D, turn off stereo if reresh rate is too low, update this, zz
-			if (gl->refreshRate >= 99)
-			{
-				printf("Stereo 3D enabled\n");
-				gl->stereo3D = true;
-			}
-			else
-			{
-				printf("Stereo 3D disabled, low refresh rate\n");
-				gl->stereo3D = false;
-			}
 		}
 
 		gl->fullscreen = true;

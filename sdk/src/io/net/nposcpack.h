@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -29,44 +29,45 @@
 #ifndef NPOSCPACK_H_
 #define NPOSCPACK_H_
 
-//zz osc
-//create listener, returns listener id
-//either IPv4 or IPv6 as a string "255.1.1.1"
-//requires DNS lookup, unless is a numeric IP address
-int npOscNewListener( char* txURL, char* txIP, int txPort,
-					  char* rxURL, char* rxIP, int rxPort, void* dataRef );
 
 //use above function instead of custom data struct
-struct NPoscPackListener {
+struct NPoscConn {
 	int id;
 
 	char* txURL;	//requires DNS lookup, unless is a numeric IP address
 	char* rxURL;
 
-	char* txIP;		//either IPv4 or IPv6 as a string "255.1.1.1"
-	char* rxIP;
+	char txIP[24];		//either IPv4 or IPv6 as a string "255.1.1.1"
+	char rxIP[24];
 
 	int txPort;
 	int rxPort;
 	//int oscPackIdx;  // index into array that holds the oscpack instances
 };
-typedef struct NPoscPackListener NPoscPackListener;
-typedef struct NPoscPackListener* pNPoscPackListener;
+typedef struct NPoscConn NPoscConn;
+typedef struct NPoscConn* pNPoscConn;
 
 struct NPoscPackSender {
 	int oscPackIdx; // index into array that holds the oscpack instances
 };
 typedef struct NPoscPackSender NPoscPackSender;
 typedef struct NPoscPackSender* pNPoscPackSender;
+
 // listener functions
-void npStartListeners( pNPoscPackListener oscListener, int argc, char** argv, void* dataRef );
-void npInitOscPackListener( pNPoscPackListener oscListener, void* dataRef );
-void npStartOscPackListener( pNPoscPackListener oscListener );
+//zz void npStartListeners( pNPoscPackConn oscListener, int argc, char** argv, void* dataRef );
+void npInitOscPackListener( pNPoscConn oscListener, void* dataRef );
+void npStartOscPackListener( pNPoscConn oscListener );
+
+//zz osc
+//create listener, returns listener id
+//either IPv4 or IPv6 as a string "255.1.1.1"
+//requires DNS lookup, unless is a numeric IP address
+//int npOscNewListener( char* txURL, char* txIP, int txPort,
+//					  char* rxURL, char* rxIP, int rxPort, void* dataRef );
 
 // read a line that has been received by listener
+//zz note this is used by npch.c
 char* npOscReadLine( char* bufferStart, int maxLength, int udpFd );
-
-
 
 // Tx sender functions
 void npInitOscPackSender( pNPoscPackSender oscSender, char* ip, int port );
@@ -90,6 +91,7 @@ void npOscGetBool( pNPoscPackSender oscSender, bool b );
 
 //send OSC message  //zz-jj moved from nposc.c
 void npOscTx( int oscID, char* addr, char* tag, void** arguments, void* dataRef);
+
 //
 void npOscListenerThread (void* oscListenerX);	//JJ-zz called from nposc
 

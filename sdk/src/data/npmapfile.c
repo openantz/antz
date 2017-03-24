@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -33,6 +33,9 @@
 
 //#include "../io/gl/nptags.h"	//move the necessary functions to npdata, debug zz
 #include "../io/npgl.h"			//zz debug, added for npPostTool()
+
+#include "../io/file/npmodels.h"	//zz models
+
 
 void npLoadChannelFile (char* buffer, int wordSize, int size, void* dataRef);
 
@@ -668,6 +671,7 @@ void npLoadMapFile (char* buffer, int wordSize, int size, void* dataRef)
 	int i = 0, count = 0, curs = 0;				//Cursor position in Buffer parsing source
 	int scanNumRet = 0;			//sscanf return value. Number of successfuly scanned elements
 	int nodeCount = 0;
+	int errLimit = 0;
 	int format = 0;
 	
 	pNPnode node = NULL;
@@ -729,7 +733,7 @@ void npLoadMapFile (char* buffer, int wordSize, int size, void* dataRef)
 			else if ( nodeCount == (nodeCount / 1000) * 1000 )	//print id from file every 100 nodes
 				printf("%d ", nodeCount);
 		}
-		else
+		else if( errLimit++ < 3 )
 			printf("err 2440 - npLoadMapFile node is null\n");
 
 	}	// end loop
@@ -859,7 +863,7 @@ int npFileSaveMap (char* filePath, int wordSize, int size, void* dataRef)
 	//zzf end
 
 	// open the file, "w+" overwrites existing files
-	printf ("\nSave File: %s\n", filePath);
+//	printf ("\nSave File: %s\n", filePath);
 	file = npFileOpen (filePath, "w+", dataRef);
 
 	if (file == NULL)
@@ -891,22 +895,22 @@ int npFileSaveMap (char* filePath, int wordSize, int size, void* dataRef)
 	// print first line of file contents
 	if (total > 0)
 	{
-		printf("Bytes Written: %d\n", count);
-		npFileRewind(file);
-		size = npFileRead (buffer, 1, 79, file, dataRef);
-		printf("File Contents:\n");
-		for( i = 0; i < size; i++ )
-			printf("%c", buffer[i]);
-		printf("\n");
+		printf("Bytes Written: %d\n\n", total);
+//		npFileRewind(file);
+//		size = npFileRead (buffer, 1, 79, file, dataRef);
+//		printf("File Contents:\n");
+//		for( i = 0; i < size; i++ )
+//			printf("%c", buffer[i]);
+//		printf("\n");
 	}
 	else
 		printf("err 4216 - file write failure, zero bytes written\n");
 
 	err = npFileClose(file, dataRef);
-	if (err)
+	if( err )
 		printf("err 4217 - file close failed, return: %d\n", i);
 
-	printf("Done\n\n");
+//	printf("Done\n\n");
 
 	// separate into CSV files and equivalent db tables, debug, zz
 	// file tables include pin data, child lists, camera data
@@ -1166,6 +1170,7 @@ int npLoadNodesCSV (const char* buffer, int size, int type, void* dataRef)
 	int i = 0, count = 0, curs = 0;				//Cursor position in Buffer parsing source
 	int scanNumRet = 0;			//sscanf return value. Number of successfuly scanned elements
 	int nodeCount = 0;
+	int errLimit = 0;
 	int format = type;
 	
 	pNPnode node = NULL;
@@ -1222,8 +1227,8 @@ int npLoadNodesCSV (const char* buffer, int size, int type, void* dataRef)
 			else if ( nodeCount == (nodeCount / 1000) * 1000 )	//print id from file every 100 nodes
 				printf("%d ", nodeCount);
 		}
-		else
-			printf("err 2440 - npLoadMapFile node is null\n");
+		else if( errLimit++ < 3 )
+			printf("err 2441 - npLoadMapFile node is null\n");
 
 		// if end of buffer then exit loop
 		if (count >= size)
@@ -1429,15 +1434,13 @@ int npGetFileTypeCat( int* fileCategory, const char* filePath, void* dataRef )
 	if (!strcmp(ext, "tiff")) return kNPfileTIFF;
 	if (!strcmp(ext, "cut")) return kNPfileCUT;
 	if (!strcmp(ext, "exr")) return kNPfileEXR;
-	if (!strcmp(ext, "rfg3")) return kNPfileRFG3;
+	if (!strcmp(ext, "rfg3")) return kNPfileFAX;
 	if (!strcmp(ext, "hdr")) return kNPfileHDR;
 	if (!strcmp(ext, "ico")) return kNPfileICO;
 	if (!strcmp(ext, "iff")) return kNPfileIFF;
-	if (!strcmp(ext, "jbig")) return kNPfileJBIG;
 	if (!strcmp(ext, "jng")) return kNPfileJNG;
-	if (!strcmp(ext, "ms-photo")) return kNPfileJPGXR;
+	if (!strcmp(ext, "ms-photo")) return kNPfileJXR;
 	if (!strcmp(ext, "koa")) return kNPfileKOA;
-	if (!strcmp(ext, "ipe")) return kNPfileIPE;
 	if (!strcmp(ext, "mng")) return kNPfileMNG;
 	if (!strcmp(ext, "pcx")) return kNPfilePCX;
 	if (!strcmp(ext, "pbm")) return kNPfilePBM;
@@ -1507,6 +1510,8 @@ int npGetFileTypeCat( int* fileCategory, const char* filePath, void* dataRef )
 
 	*fileCategory = kNPfileCatAV;					// AV (audio/video)
 	if (!strcmp(ext, "mxf")) return kNPfileMXF;
+
+	/// @todo add kNPfileCatDir
 
 	// printf( "undefined file extension: %s\n", ext );
 	*fileCategory = kNPfileCatNull;
@@ -2083,7 +2088,7 @@ int npTableMapUpdate (const char* filePath, FILE* file, void* dataRef)
 	if( !tableID )
 	{
 	//	tableID = npTableNew( filePath, file, data );
-		printf( "table_map insert: %s\n", filePath );
+	//	printf( "table_map insert: %s\n", filePath );
 	}
 	else
 		printf( "table_map update: %s\n", filePath );
@@ -2100,7 +2105,6 @@ int npFileOpenAuto (const char* filePath, FILE* file, void* dataRef)
 	int id = 0;
 
 	pData data = (pData) dataRef;
-	pNPmodels models;
 
 	//pData data = (pData) dataRef;
 	pNPthreadFile threadFile = NULL;
@@ -2120,19 +2124,20 @@ int npFileOpenAuto (const char* filePath, FILE* file, void* dataRef)
 	switch( fileCat )
 	{
 		case kNPfileCatImage :
-			if( id = npLoadTexture( filePath, fileType, data) )
+			if( id = npLoadTexture( filePath, data) )
 				npSetSelectedNodes( kNPtextureID, &id, data );
 			break;
 		case kNPfileCatTable :
 			nposBeginThread( npFileOpenThread, threadFile );
 			break;
-		case kNPfileCatModels :
+		case kNPfileCatModels :							//zz models insert here
+/*			pNPmodels models;
 			if( models = npLoadModels( filePath, data ) )
 			{
 				npSetSelectedNodes( kNPgeometry, &models->geometryID, data );
 				npSetSelectedNodes( kNPtextureID, &models->textureID, data );
 			}
-			break;
+*/			break;
 		default :
 			npPostMsg("err 4989 - File type not supported", kNPmsgErr, data);
 			break;
@@ -2462,4 +2467,163 @@ void npFloatToCSV(char** buffer, const int* value)
 
 	return n;
 }
+
+//zz models begin
+void npCSVtoTexture(char** read, int size, int* scanNumRet, void* dataRef);
+
+int npLoadTextureCSV(const char* buffer, int size, void* dataRef)
+{
+	pData data = (pData) dataRef;
+
+	int ver = 0;				//zz debug, replace with table specific func ptr
+	int count = 0; 
+	int curs = 0;				//Cursor position in Buffer parsing source
+
+	int scanNumRet = 0;			//sscanf return value. Number of successfuly scanned elements
+	int recordCount = 0;
+
+	pNPrecordTag tag = NULL;
+
+
+	char* read = (char*)buffer;
+
+	if (!size)
+		return 0;
+
+	if (*read == '\r' || *read == '\n')
+	{
+		count += curs = npNextLineLimit(read, size);
+		read = &read[curs];
+	}
+
+	while( count < size )
+	{		
+		//processes a single model record, one line in the CSV file
+	//	npCSVtoModel(&read, size - count, &scanNumRet, dataRef);
+		npCSVtoTexture(&read, size - count, &scanNumRet, dataRef);
+		if (!tag)
+			printf("err 2340 - record tag is null\n");
+
+		//update count and set read ptr to beginning of next line
+		count += scanNumRet;	
+		count += curs = npNextLineLimit(read, size - count);
+		read = &read[curs];
+
+		//print part of the first few lines of data
+		recordCount++;
+		if ( recordCount <= 3)
+		{
+//			printf("id: %d  record_id: %d table_id: %d tag: %.12s \n", //desc: %.8s\n",
+//				tag->id, tag->recordID, tag->tableID, tag->title );//tag->desc);
+			//printf("countDown: %d  curs: %d  scanNumRet: %d  recordCount: %d  size: %d\n", countDown, curs, scanNumRet, recordCount, size);
+			if ( recordCount == 3) printf("... ");
+		}
+		else if ( recordCount == (recordCount / 1000) * 1000 )	//print id from file every 100 nodes
+		{
+	//		printf("%d ", tag->id);
+		}
+
+	} //end loop
+
+
+
+	return 0;
+	
+}
+
+int npLoadModelCSV (const char* buffer, int size, void* dataRef)
+{
+	pData data = (pData) dataRef;
+
+	int ver = 0;				//zz debug, replace with table specific func ptr
+	int count = 0; 
+	int curs = 0;				//Cursor position in Buffer parsing source
+
+	int scanNumRet = 0;			//sscanf return value. Number of successfuly scanned elements
+	int recordCount = 0;
+
+	pNPrecordTag tag = NULL;
+
+
+	char* read = (char*)buffer;
+
+	if (!size)
+		return 0;
+
+	if (*read == '\r' || *read == '\n')
+	{
+		count += curs = npNextLineLimit(read, size);
+		read = &read[curs];
+	}
+
+	printf("29387498234 npLoadModelCSV count : %d\n", count);
+	while( count < size )
+	{		
+		//processes a single model record, one line in the CSV file
+		printf("756 npCSVtoModel\n");
+		npCSVtoModel(&read, size - count, &scanNumRet, dataRef);
+		printf("756 npCSVtoModel After\n");
+		if (!tag)
+			printf("err 2340 - record tag is null\n");
+
+		//update count and set read ptr to beginning of next line
+		count += scanNumRet;	
+		count += curs = npNextLineLimit(read, size - count);
+		read = &read[curs];
+
+		//print part of the first few lines of data
+		recordCount++;
+		if ( recordCount <= 3)
+		{
+//			printf("id: %d  record_id: %d table_id: %d tag: %.12s \n", //desc: %.8s\n",
+//				tag->id, tag->recordID, tag->tableID, tag->title );//tag->desc);
+			//printf("countDown: %d  curs: %d  scanNumRet: %d  recordCount: %d  size: %d\n", countDown, curs, scanNumRet, recordCount, size);
+			if ( recordCount == 3) printf("... ");
+		}
+		else if ( recordCount == (recordCount / 1000) * 1000 )	//print id from file every 100 nodes
+		{
+	//		printf("%d ", tag->id);
+		}
+
+	} //end loop
+
+
+
+	return 0;
+	
+}
+
+
+/** Takes a CSV model file line, converts it to C types, and add it to the geolist 
+lv,	This is being called in a thread, don't do opengl stuff.
+*/
+void npCSVtoModel(char** read, int size, int* scanNumRet, void* dataRef)
+{
+	npModelNew(read[0], dataRef);
+	/*
+	pData data = (pData) dataRef;	
+	pNPgeo geo = NULL;
+	int match = 0;
+	
+	geo = npModelNew(read[0], dataRef);
+
+	match = npGeolistSearchGeo(geo, dataRef);
+
+	if(match == 0)
+		npGeolistAddModel(geo->geometryId, geo->modelId, geo->name, geo->modelFile, geo->modelPath, dataRef);
+	*/
+	
+}
+
+void npCSVtoTexture(char** read, int size, int* scanNumRet, void* dataRef)
+{
+	pData data = (pData) dataRef;	
+	pNPgeo geo = NULL;
+	int match = 0;
+	
+//	npTextureNew(read[0], dataRef);	
+	npTextureNewB(read[0], dataRef);	
+}
+
+//zz models end
 

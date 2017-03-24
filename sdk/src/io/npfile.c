@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -28,9 +28,10 @@
 #include "npconsole.h"
 #include "../os/npos.h"
 #include "../npctrl.h"
-#include "../io/npgl.h"		   //used for npPostTool()						zz, debug
+#include "../io/npgl.h"			//used for npPostTool()						zz, debug
 #include "../io/gl/nptags.h"
-#include "file/npdot.h"		   //<! parses DOT files from doxygen with graphviz
+#include "gl/nptexmap.h"		//zz tex
+#include "file/npdot.h"			// parses DOT files from doxygen with graphviz
 
 
 bool npValidateURL( const char* urlASCII, void* dataRef );
@@ -38,7 +39,7 @@ bool npNodeFilePath( char* buildPath, pNPnode node, void* dataRef );
 bool npOpenNodeFile( pNPnode node, void* dataRef );
 bool npOpenNode( pNPnode node, void* dataRef );
 
-
+#define kNPtblGlobals "globals"
 //-----------------------------------------------------------------------------
 void npInitFile (void* dataRef)
 {
@@ -49,26 +50,25 @@ void npInitFile (void* dataRef)
 
 
 	// builds soft-coded default routing maps using mapItem descriptors
-	npMapTypeInit(dataRef);									//zz debug, move to npmap.c
+	npMapTypesInit(dataRef);									//zz debug, move to npmap.c
 
-	// save the globals csv file
-	strcpy (filePath, data->io.file.csvPath);
-	strcat( filePath, "antzglobals.csv" );					//globals.csv");
+	/// Format the default globals table pathname
+	sprintf( filePath, "%santz%s.csv", data->io.file.csvPath, kNPtblGlobals );					//globals.csv");
 
+	/// Load the globals table, if none found then save one using defaults
+	//result = npOpenMapCSV( filePath, kNPmapMapGlobals, dataRef);
 	result = npOpenGlobalsCSV (filePath, 1, 15, dataRef);
-
-	// if no globals csv file then create one
 	if (!result)
 	{
 		npSaveMapToCSV ("antz", kNPmapGlobals, dataRef);
-		printf("Saved %s\n", filePath);
+		printf("Saved %s\n\n", filePath);
 	}
 	else
-		printf("Loaded %s\n", filePath);
+		printf("Loaded %s\n\n", filePath);
 
 //	result = npOpenMapCSV ("antzosc.csv", kNPmapMapOSC, dataRef);
 
-/*								//zz osc this worked but now broken... err 4427
+/*						//zz osc this worked but now broken... err 4427
 	// if no globals csv file then create one
 	strcpy (filePath, data->io.file.csvPath);
 	strcat (filePath, "antzosc.csv");
@@ -80,6 +80,7 @@ void npInitFile (void* dataRef)
 	else
 		printf("Loaded %s\n", filePath);
 */
+	printf("TEST 22\n\n");
 	return;
 }
 
@@ -330,6 +331,40 @@ void npFileExport (int size, void* dataRef)
 }
 
 
+//zz tex
+//------------------------------------------------------------------------------
+/*! Load directory with optional file name filter and category.
+	@param path Directory path to search for file(s) including sub-diretories.
+	@param fileFilter Only load files with specified filter, ie: 'map*.jpg'
+	@param fileCat Load files by category, use kNPfileCatNull for all.
+	@param dataRef Global scene graph pointer.
+
+*/
+void npLoadDir( char* path, char* fileFilter, int fileCat, void* dataRef )
+{
+	// if( kNPfileCatNull )
+
+	switch( fileCat )
+	{
+		case kNPfileCatImage :
+			npLoadTexDir( path, fileFilter, dataRef );
+			break;
+		default : break;
+	}
+}
+//------------------------------------------------------------------------------
+/*! Load directory with sub-directories, optional file name filter and category.
+	@param path Directory path to search for file(s) including sub-diretories.
+	@param fileFilter Only load files with specified filter, ie: 'map*.jpg'
+	@param fileCat Load files by category, use kNPfileCatNull for all.
+	@param dataRef Global scene graph pointer.
+*/
+void npLoadDirBranch( char* path, char* fileFilter, int fileCat, void* dataRef )
+{
+	npLoadTexDir( path, fileFilter, dataRef );
+}
+
+
 //-----------------------------------------------------------------------------
 // file and directory management
 // current working directory is OS specific
@@ -392,8 +427,13 @@ void npOpenURL (const char* command, void* dataRef)							//zz html replace enti
 	pNPtag tag = node->tag;
 	char* title = tag->title;
 
-	char sysCmd[kNPurlMax] = {"start \0"};	//generally 2048 is max URL length
+//	char sysCmd[kNPurlMax] = {"start \0"};	//generally 2048 is max URL length
+	char* sysCmd = NULL;
+	sysCmd = malloc(kNPurlMax);
+	if(!sysCmd)
+		return;
 
+	strcpy( sysCmd, "start \0");
 
 	/// First check for local files and custom web URL formatting.
 	/// If no custom URL then open default webpage using the node record_id.
@@ -415,9 +455,11 @@ void npOpenURL (const char* command, void* dataRef)							//zz html replace enti
 			sprintf( sysCmd, "start %s%d", data->io.url, node->recordID );	//zz html leave this
 	}
 
-	/// system call with 'start' to open browser with the composed URL
-	system( sysCmd );
-	npPostMsg( sysCmd, kNPmsgCtrl, data );									//zz html end
+	// post system start string to GUI console
+	npPostMsg( sysCmd, kNPmsgCtrl, data );
+
+	/// call 'system( sysCmd );' to open item using OS default app / browser.
+	nposBeginThread( nposConsoleStart, sysCmd );
 }
 
 //-----------------------------------------------------------------------------
@@ -512,6 +554,7 @@ bool npOpenNodeFile( pNPnode node, void* dataRef )
 				npFileOpenAuto( nodePath, NULL, dataRef );
 				break;
 			default :	///< URL and other files opened with default OS handler
+				/// @todo maybe move fileviz node handling to npos.h
 #ifdef NP_MSW_				
 				sprintf( browserURL, "start %s", nodePath );
 #endif
@@ -645,25 +688,112 @@ int npSaveScene( int format, char* datasetName, void* dataRef)
 {
 	int		result = 0;
 	pData data = (pData) dataRef;
-//	char* name[kNPmaxName] = {'\0'};
+	char pathName[kNPmaxPath] = {'\0'};
 
 	/// @todo create directory file sets with tables, images and 3D models
 	// file set based on (user) selected table types
 	//	if ( data->io.file.saveMapSet[kNPmapGlobals] )
 
-	// if( !datasetName )
-//		sprintf( filePath, "%s%s%s", dirPath, name, "globals.csv" );
-//		sprintf( msg, "Saving: %s", filePath );
-//		npPostMsg( msg, kNPmsgCtrl, data );
-
-	npScreenGrabThumb( datasetName, kNPformatDDS,
+	sprintf( pathName, "usr/images/%s", datasetName);
+	npScreenGrabThumb( pathName, kNPfileTIFF,
 						0, 0, kNPthumbWidth, kNPthumbHeight, data );
 
-	result += npSaveMapToCSV( datasetName, kNPmapGlobals, data );
+	result += npSaveMapToCSV( datasetName, kNPmapGlobals, data ); 
 
 	result += npSaveMapToCSV( datasetName, kNPmapNode, data );
 
 	result += npSaveMapToCSV( datasetName, kNPmapTag, data );
+
+//zz	result += npSaveMapToCSV( datasetName, kNPmapTextures, data ); //lv save textures
+
+//zz	result += npSaveMapToCSV( datasetName, kNPmapModels, data ); //lv save models
+
+	return result;
+}
+int npSaveScene2( int format, char* datasetName, void* dataRef)
+{
+	int	result = 0;
+	char msg[512];
+	char dir[kNPmaxPath];
+
+	pData data = (pData) dataRef;
+
+	/// @todo set the CWD to the location of the app
+
+	// if no 'usr' dir then create it
+	if( !nposDirExists( kNPpathUser, data ) )
+	{
+		if( !nposCreateDir( kNPpathUser, data) )	//create the usr dir
+		{
+			sprintf( msg, "err 4288 - failed to create 'usr' directory", 
+					 datasetName, data);
+			npPostMsg( msg, kNPmsgErr, data);
+			return -1;
+		}
+	}
+
+	// if dataset dir exists then overwrite it, else create it
+	sprintf( dir, "%s%s/%s", data->io.file.appPath, kNPpathUser, datasetName);
+	if( nposDirExists( dir, data) )
+	{
+		sprintf( msg, "Overwriting dataset: %s", datasetName, data);
+		npPostMsg( msg, kNPmsgFile, data);
+	}
+	else if( !nposCreateDir( dir, data) )	//create the dir
+	{
+		sprintf( msg, "err 4289 - failed to create directory: %s", 
+				 datasetName, data);
+		npPostMsg( msg, kNPmsgErr, data);
+		return -1;
+	}
+	
+	sprintf( dir, "%s%s/%s/%s", data->io.file.appPath, kNPpathUser, datasetName, kNPpathCSV);
+	if( nposDirExists( dir, data) )
+	{
+		sprintf( msg, "Overwriting dataset: %s", datasetName, data);
+		npPostMsg( msg, kNPmsgFile, data);
+	}
+	else if( !nposCreateDir( dir, data) )	//create the dir
+	{
+		sprintf( msg, "err 4290 - failed to create directory: %s", 
+				 datasetName, data);
+		npPostMsg( msg, kNPmsgErr, data);
+		return -1;
+	}
+
+	printf("\n\nPATH: %s\n\n",dir);
+
+
+	result += npSaveMapToCSV2( dir, kNPmapGlobals, data ); 
+
+	result += npSaveMapToCSV2( dir, kNPmapNode, data );
+
+	result += npSaveMapToCSV2( dir, kNPmapTag, data );
+
+	// construct the images folder, used for saving a thumbnail
+	sprintf( dir, "%s%s/%s/%s", data->io.file.appPath, kNPpathUser, datasetName, kNPpathImages);
+	if( nposDirExists( dir, data) )
+	{
+		sprintf( msg, "Overwriting dataset: %s", datasetName, data);
+		npPostMsg( msg, kNPmsgFile, data);
+	}
+	else if( !nposCreateDir( dir, data) )	//create the dir
+	{
+		sprintf( msg, "err 4290 - failed to create directory: %s", 
+				 datasetName, data);
+		npPostMsg( msg, kNPmsgErr, data);
+		return -1;
+	}
+
+	// save thumbnail
+	strcat( dir, "/");
+	strcat( dir, datasetName);
+	npScreenGrabThumb( dir, kNPfileDDS,
+						0, 0, kNPthumbWidth, kNPthumbHeight, data );
+
+//zz	result += npSaveMapToCSV( datasetName, kNPmapTextures, data ); //lv save textures
+
+//zz	result += npSaveMapToCSV( datasetName, kNPmapModels, data ); //lv save models
 
 	return result;
 }
@@ -795,7 +925,7 @@ int npLoadScene( int format, char* datasetName, void* dataRef)
 	int		result = 0;
 	char*	dirPath = NULL;
 	char	filePath[kNPmaxPath];
-	char	msg[256];
+	char	msg[kNPmaxPath];
 
 	pData data = (pData) dataRef;
 
@@ -803,26 +933,166 @@ int npLoadScene( int format, char* datasetName, void* dataRef)
 	data->io.file.loading = true;
 
 	//zz could list directory contents and/or display dir node tree
+	// for(i=0; i < count; i++) npFileOpenAuto( tbl[i], NULL, data );
 
 	sprintf( filePath, "%s%s%s%s", dirPath, datasetName, 
 			npMapTypeName( kNPmapGlobals, data ), ".csv" );
-	sprintf( msg, "Loading: %s", filePath );
+	sprintf( msg, "File Open: %s", filePath );
 	npPostMsg( msg, kNPmsgCtrl, data );
 	//result += npFileOpenAuto( filePath, NULL, data );	// fullscreen issue #111
 	result += npOpenGlobalsCSV( filePath, 1, 0, data );
 
 	sprintf( filePath, "%s%s%s%s", dirPath, datasetName, 
-			npMapTypeName( kNPmapNode, data ), ".csv" );
-	sprintf( msg, "Loading: %s", filePath );
-	npPostMsg (msg, kNPmsgCtrl, data );
+			 npMapTypeName( kNPmapNode, data ), ".csv" );
 	result += npFileOpenAuto( filePath, NULL, data );
 
 	sprintf( filePath, "%s%s%s%s", dirPath, datasetName, 
-			npMapTypeName( kNPmapTag, data ), ".csv" );
-	sprintf( msg, "Loading: %s", filePath );
-	npPostMsg( msg, kNPmsgCtrl, data );
+			 npMapTypeName( kNPmapTag, data ), ".csv" );
 	result += npFileOpenAuto( filePath, NULL, data );
 
 	return result;
 }
+
+//zz models begin
+void npGetFileNameFromPath(char* filepath, char* filename, void* dataRef)
+{
+	char* p_filepath = NULL; // lv, p_ prefix denotes pointer
+	char delimit[1] = "\\";
+	int pathLen = 0; // lv, Len suffix denotes length
+	int pathX = 0; // lv, X suffix denotes an index
+
+	filename[0] = '\0';
+
+	if(filepath == NULL)
+	{
+		printf("filepath is NULL");
+		return;
+	}
+	
+	pathLen = strlen(filepath); // lv, Len suffix denotes length
+	if(pathLen == 0)
+	{
+		printf("\nString has zero length");
+		return;
+	}
+
+	p_filepath = strstr(filepath, ".");
+	if(!p_filepath)
+	{
+		printf("\nfile does not have extension");
+		return;
+	}
+
+	pathX = pathLen - strlen(p_filepath);
+
+//	delimit = nposGetFolderDelimit();
+
+	while( (*p_filepath) != '\\' && pathX >= 0)
+	{
+		p_filepath--;
+		pathX--;
+	}
+
+	p_filepath++;
+//	delimit = nposGetFolderDelimit();
+//	delimit = "/";
+	if(pathX == -1 && (strstr(filepath, "/") != NULL) )
+	{
+//		delimit = '/';
+		p_filepath = strstr(filepath, ".");
+		pathX = pathLen - strlen(p_filepath);	
+
+		while( (*p_filepath) != '/' && pathX >= 0)
+		{
+			p_filepath--;
+			pathX--;
+		}
+		p_filepath++;
+		
+	}
+
+	pathX++;
+
+	strcpy(filename, p_filepath);
+}
+
+char* npSearchPathsForFile(char* filename, void* dataRef)
+{
+	char* filepath = NULL;
+	char* searchpaths[4];
+	int index = 0;
+	pData data = (pData) dataRef;
+
+//	searchpaths
+	searchpaths[0] = data->io.file.appPath;
+	searchpaths[1] = data->io.file.modelPath;
+	searchpaths[2] = data->io.file.csvPath;
+	searchpaths[3] = data->io.file.mapPath;
+
+	if(filename[0] != '\0' && filename != NULL)
+	{
+		for(index = 0; index < 4; index++)
+		{
+			if( nposFileExistsAtDir(searchpaths[index], filename, dataRef ) == true )
+			{
+				filepath = malloc(sizeof(char) *  (strlen(searchpaths[index]) + strlen(filename) + 1) );
+				if(filepath != NULL)
+				{
+					filepath[0] = '\0';
+					sprintf(filepath, "%s%s", searchpaths[index], filename);
+//					printf("\nfilepath : %s", filepath);
+					return filepath;
+				}
+				else
+				{
+					return "\0";
+				}
+			}
+		}
+	}
+
+	return "\0"; 
+}
+
+char* npFilePathRelToAbs(char* rel, void* dataRef)
+{
+	pData data = (pData) dataRef;
+	char* abs = NULL;
+	abs = malloc(sizeof(char) * 256);
+	abs[0] = '\0';
+	strcpy(abs, data->io.file.appPath);
+	strcat(abs, rel);
+	return abs;
+}
+
+char* npFilePathAbsToRel(char* abs, void* dataRef)
+{
+	pData data = (pData) dataRef;
+	char* rel = NULL;
+	char tmp[256] = {'\0'};
+	char* z = NULL;
+	int i = 0;
+	int len = 0;
+	rel = malloc(sizeof(char) * 256);
+	
+	strcpy(tmp, abs);	
+	len = strlen(tmp);
+	for(;i < len; i++)
+		tmp[i] = tolower(tmp[i]);
+	
+	if( strcmp(tmp, data->io.file.appPath) == 0 )
+		rel[0] = '\0';
+	else if( strcmp(tmp, data->io.file.appPath) > 0 )
+	{
+		rel[0] = '\0';
+		strcpy(rel, &tmp[strlen(data->io.file.appPath)]);
+		//printf("rel path : %s\n", rel);
+
+	}
+//	z = strstr(temp, data->io.file.appPath);
+
+	return rel;
+}
+//zz models end
+
 
