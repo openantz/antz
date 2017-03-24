@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -25,23 +25,26 @@
 #ifndef NPTEXMAP_H_
 #define NPTEXMAP_H_
 
+#include "../../npdata.h"		//zz models
 
 //------------------------------------------------------------------------------
 void npInitTexMap (void* dataRef);
-
 void npCloseTexMap (void* dataRef);
-
 void npUpdateTexMap (void* dataRef);
 
-void npLoadTextures(void* dataRef);
+int npLoadTexture( const char* filePath, void* dataRef);
+void npLoadTexDir( const char* dirPath, char* fileFilter, void* dataRef);
 
-int npLoadTexture( const char* filePath, int fileType, void* dataRef);
-
-int npSetTexture( int textureID, void* dataRef);
-
-int npScreenGrab( char* filePath, int type, int x, int y, int w, int h, void* dataRef);
-
+void npScreenShot( void* dataRef);
 int npScreenGrabThumb( char* name, int type, int x, int y, int w, int h, void* dataRef );
+
+
+//zz models begin
+int npGeoTexId( int geometryId, void* dataRef );
+pNPtexmap npAddTexMap(int* extTexId, char* filename, char* path, void* dataRef);
+void npLoadExtTexMaps(void* dataRef);
+pNPtexmap npTexlistSearchFile(char* filename, char* path, void* dataRef);
+//zz models end
 
 #endif
 

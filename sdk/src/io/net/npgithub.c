@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -33,70 +33,69 @@
 
 
 /// 
-int npGithubInit(pNPgithub github, void* dataRef)
+void npGithubInit( pNPgithub github, void* dataRef)
 {
     pData data = (pData) dataRef;
-	int index = 0;
+	int i = 0;
     
-	github->issues = malloc(sizeof(NPgithubIssues));
-	if(github->issues == NULL)
-	{	
-		return -1;
-	}
-	
-	index = 0;	
+	data->io.github.issues = NULL;
 
-	data->io.github.issues->running = false;
+	github->issues = malloc(sizeof(NPgithubIssues));
+	if( !github->issues )
+	{	
+		npPostMsg( "err 9101 - npGithubInit malloc failed", 0, data);
+		return;
+	}
+
+	github->issues->running = false;
 
 	/// @todo add define : kNPgithubMaxRequests
-	for(index = 0; index < 10; index++)
+	for(i = 0; i < 10; i++)
 	{
-		github->rR[index].page = -1;
-		github->rR[index].per_page = NULL;
-		github->rR[index].requestUrl[0] = '\0';
-		github->rR[index].response = NULL;
-		github->rR[index].responseSize = 0;
-		github->rR[index].state = NULL;
-		github->rR[index].urlSize = -1;
+		github->rR[i].page = -1;
+		github->rR[i].per_page = NULL;
+		github->rR[i].requestUrl[0] = '\0';
+		github->rR[i].response = NULL;
+		github->rR[i].responseSize = 0;
+		github->rR[i].state = NULL;
+		github->rR[i].urlSize = -1;
 	}
 		
 	github->num_of_users = 0;
 	/// @todo add define : kNPgithubMaxUsers
-	for(index = 0; index < kNPgithubMaxUsers; index++)
+	for(i = 0; i < kNPgithubMaxUsers; i++)
 	{
-		github->user[index].avatar_image_file = NULL;
-		github->user[index].avatar_image_file_path = NULL;
-		github->user[index].avatar_image_textureID = 0;
-		github->user[index].avatar_url = NULL;
-		github->user[index].events_url = NULL;
-		github->user[index].followers_url = NULL;
-		github->user[index].gists_url = NULL;
-		github->user[index].gravatar_id = NULL;
-		github->user[index].html_url = NULL;
-		github->user[index].id = -1;
-		github->user[index].login = NULL;
-		github->user[index].number = -1;
-		github->user[index].organizations_url = NULL;
-		github->user[index].received_events_url = NULL;
-		github->user[index].repos_url = NULL;
-		github->user[index].site_admin = false;
-		github->user[index].starred_url = NULL;
-		github->user[index].subscriptions_url = NULL;
-		github->user[index].type = NULL;
-		github->user[index].url = NULL;
+		github->user[i].avatarFileName = NULL;
+		github->user[i].avatar_image_file_path = NULL;
+		github->user[i].avatarTexID = 0;
+		github->user[i].avatar_url = NULL;
+		github->user[i].events_url = NULL;
+		github->user[i].followers_url = NULL;
+		github->user[i].gists_url = NULL;
+		github->user[i].gravatar_id = NULL;
+		github->user[i].html_url = NULL;
+		github->user[i].id = -1;
+		github->user[i].login = NULL;
+		github->user[i].number = -1;
+		github->user[i].organizations_url = NULL;
+		github->user[i].received_events_url = NULL;
+		github->user[i].repos_url = NULL;
+		github->user[i].site_admin = false;
+		github->user[i].starred_url = NULL;
+		github->user[i].subscriptions_url = NULL;
+		github->user[i].type = NULL;
+		github->user[i].url = NULL;
 	}
 
-	printf("npGithubInit\n");
 	npGithubIssuesInit(github->issues, dataRef); 
 
-	return 0;
+	return;
 }
 
 void npGithubIssuesInit(pNPgithubIssues issues, void* dataRef)
 {
 	int index = 0;
 
-	printf("next 1\n");
 	issues->count = 0;
 	issues->current = NULL;
 	issues->index = 0;
@@ -136,9 +135,6 @@ void npGithubIssuesInit(pNPgithubIssues issues, void* dataRef)
 		issues->issue[index].userId = 0;
 		issues->issue[index].num_of_labels = 0;
 	}
-	
-
-	printf("next 2\n");
 }
 
 
@@ -248,8 +244,8 @@ char* npGithubGetUserAvatar(pNPgithubUser user, void* dataRef)
 	char fileName[kNPurlMax] = {'\0'};
 
 	sprintf(fileName, "%s/%s.png", kNPgitvizImages, user->login); 
-	user->avatar_image_file = malloc(sizeof(char) * strlen(fileName));
-	strcpy(user->avatar_image_file, fileName);
+	user->avatarFileName = malloc(sizeof(char) * strlen(fileName));
+	strcpy(user->avatarFileName, fileName);
 
     id++;
     fp = fopen(fileName, "wb");
@@ -289,7 +285,7 @@ char* npGithubGetUserAvatar(pNPgithubUser user, void* dataRef)
 		return NULL;
 	}
 
-	return user->avatar_image_file;
+	return user->avatarFileName;
 	
 
 }

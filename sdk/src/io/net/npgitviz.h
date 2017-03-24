@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -28,9 +28,9 @@ struct NPgithubUser2 {
     char* login;
     char* id;
     char* avatar_url;
-    char* avatar_image_file;
+    char* avatarFileName;
     char* avatar_image_file_path;
-    int avatar_image_textureID;
+    int avatarTexID;
     char* gravatar_id;
     char* url;
     char* html_url;

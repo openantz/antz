@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -26,8 +26,8 @@
 #define NPMAP_H_
 
 #include "../npdata.h"
-
-
+#include "../ctrl/npselect.h"
+ 
 //--- Functions ---------------------------------------------------------------
 
 void npInitMap (void* dataRef);
@@ -41,20 +41,12 @@ void npGetMaps (void* dataRef);
 void npGetMapIO (void* dataRef); //Ports, GL (Sort Visible, Sort-Z, screen 1/2/3 )
 void npGetMapNPE (void* dataRef); // collision, rotation, translation...
 
+
 int npGetRootIndex (pNPnode node, void* dataRef);
-
 void* npGetNodeByID (int id, void* dataRef);
-void npSelectNodeByID (int id, void* dataRef);
 
-void npNodeSelectionOn( pNPnode node, void* dataRef);
-void npNodeSelectionOff( pNPnode node, void* dataRef);
 void npNodeHideLevel( pNPnode node, void* dataRef);
 void npNodeTagModeOff( pNPnode node, void* dataRef);
-
-void npSelectNode (pNPnode node, void* dataRef);
-void npSelectAll (int nodeType, void* dataRef);
-void npSelectNone (int nodeType, void* dataRef);
-void npSelectInvert (int nodeType, void* dataRef);
 
 void npTraverseTree (void (*nodeFunc)(pNPnode node, void* dataRef), 
 					 pNPnode node, void* dataRef);
@@ -86,6 +78,7 @@ void npTagSortAdd (pNPrecordTag recordTag, void* dataRef);
 //zz-q
 void npSetMapItem( char* mapPath, char* item, char* element, char* typeTag,
 				  char* value, void* dataRef );
+
 
 //zz note that we use slightly different terminology for our tree/graph
 //

@@ -7,6 +7,6 @@ np_tag_id,record_id,table_id,title,description
 6,46,0,"Click on a node and PRESS 'U' to USE",""
 7,47,0,"<a href="antz.exe -f usr/csv/antz0001node.csv -f usr/csv/antz0001tag.csv">ANTz Preset 1</a>",""
 8,42,0,"<a href="notepad usr/csv/antzglobals.csv">ANTz Globals Table</a>",""
-9,49,0,"<a href="doc/cheatsheet_2015-11-17.txt">ANTz Commands - CHEATSHEET</a>",""
-10,50,0,"<a href="doc/antz_release_2015-12-15.txt">ANTz 2015-12-15 Release Notes</a>",""
+9,49,0,"<a href="doc/cheatsheet.txt">ANTz Commands - CHEATSHEET</a>",""
+10,50,0,"<a href="doc/antz_release_2017-01-05.txt">ANTz 2017-01-05 Release Notes</a>",""
 11,45,0,"<a href="notepad usr/csv/antz0001tag.csv">Tag Table</a>",""

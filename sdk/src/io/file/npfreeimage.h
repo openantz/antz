@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -27,9 +27,10 @@
 
 //------------------------------------------------------------------------------
 void npInitFreeImage( void* dataRef);
-int npfiLoadTexture( const char* filename, void* dataRef);
 void npCloseFreeImage( void* dataRef);
 
+int npfiLoadTexture( const char* filename, void* dataRef);
+int npfiScreenshot( const char* filePath, int format, int alpha, void* dataRef);
 
 #endif
 

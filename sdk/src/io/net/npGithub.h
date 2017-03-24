@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -21,6 +21,10 @@
 *  http://creativecommons.org/publicdomain/zero/1.0/
 *
 * --------------------------------------------------------------------------- */
+
+#ifndef NPGITHUB_H_
+#define NPGITHUB_H_
+
 #include "../../data/nptypes.h"
 #include "npcurl.h"
 
@@ -38,7 +42,9 @@ char* npGithubReceiveResponse(pNPgithub github, int request_index, void* dataRef
 
 size_t npGithubWriteMemoryCallback(void* contents, size_t size, size_t nmemb, void* userp);
 void npGithubIssuesInit(pNPgithubIssues issues, void* dataRef);
-int npGithubInit(pNPgithub github, void* dataRef);
+void npGithubInit(pNPgithub github, void* dataRef);
 void npGithubRun(void* dataRef);
 void npGithubGetIssues(void* dataRef);
+
+#endif
 

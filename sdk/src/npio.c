@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -41,6 +41,8 @@
 	#include "io/net/npgithub.h"
 #endif
 
+#include "io/file/npassimp.h"	//zz models
+
 /*! Initialize IO systems
 *
 *	@param dataRef is a global map reference instance
@@ -53,61 +55,53 @@ void npInitIO( void* dataRef )
 {
 	pData data = (pData) dataRef;
 
-	npInitOS( dataRef );
+	npInitOS( data );
 	/// init the local IO devices
 	
 	/// launch file services and updates hard-coded global variables from file
-	npInitFile( dataRef );
+	npInitFile( data );
 
 	/// Plugin Manager for native libraries and 3rd party modules.
 	/// Once loaded, plugins can modify any method or data.
-	npInitPlugin( dataRef );
+	npInitPlugin( data );
 
 	/// IO channels use both local drives and networking
-	npInitCh( dataRef );	
+	npInitCh( data );	
 
 	/// keyboard mapping and event handling
 //	npInitKeyboard (dataRef);		//zz
 
 	/// mouse event handling
-	npInitMouse( dataRef );
+	npInitMouse( data );
 //	npInitSerial (dataRef);			//zz support terminal based system boot-up
 
 	/// audio video input and output
 //  npInitAV (dataRef);				//zz
-	npInitVideo( dataRef );
+	npInitVideo( data );
 
 	/// start network connections which in turn can further update init state
-	npInitOSC( dataRef );			//zz-osc
+	npInitOSC( data );			//zz-osc
 
 	/// @todo change npConnectDB over to npInitDB
-	npInitDB( dataRef );
+	npInitDB( data );
 
-	
+
 #ifdef NP_ADDON_JANNSON
-	printf("Init JSON\n");
-	//npInitJSON( &data->io.json, dataRef);
-	npInitJSON( &data->io.json, dataRef);
+	npPostMsg( "Init JANNSON", 0, data);
+	npInitJSON( &data->io.json, data);
 #endif
 
 #ifdef NP_ADDON_CURL
-	printf("Init CURL\n");
-	npCurlInit( dataRef );
-
-	data->io.github.issues = NULL;
-	printf("Init Github : issues ptr %p\n", data->io.github.issues);
-//	getchar();
-//	npGithubInit( dataRef );
-	if( !npGithubInit( &data->io.github, dataRef) == 0 )
-		printf("Init github failed\n");
-	else
-		printf("Init github\n");
-
-	if(data->io.github.issues == NULL);
-		printf("data->io.github.issues\n");
-
-	//npGitJSONinit( &gitJSON, &data->io.issues);	
+	npPostMsg( "Init CURL", 0, data);
+	npCurlInit( data );
 #endif
+
+#ifdef NP_ADDON_GITVIZ
+	npPostMsg( "Init GitHub", 0, data);
+	npGithubInit( &data->io.github, data);
+#endif
+
+	printf("\n");
 }
 
 // This is a temporary location for this, lde @todo
@@ -185,18 +179,22 @@ void npUpdateIO (void* dataRef)
 	pData data = (pData) dataRef;
 
 	data->io.cycleCount++;
+	data->io.msgFlowFile = 0;
+	data->io.msgFlowCmd = 0;			///< Reset msgFlowCmd
 
 	//we double buffer the mouse delta movement to maintain engine cycle sync
 	npUpdateMouse (dataRef);
 	
 	npUpdateConsole (dataRef);
 
+	npUpdateOsc( dataRef );
+
 	npUpdateCh (dataRef);			//zz-JJ
 
 	npUpdateDB( dataRef );			//zzd
 
 #ifdef NP_ADDON_CURL
-	npGithubRun( dataRef );
+	npGithubRun( dataRef );			//zz debug change to npUpdateNet()
 #endif
 }
 

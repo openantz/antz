@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -24,11 +24,13 @@
 #include "npgitviz.h"
 
 #include "../../data/npmap.h"
+#include "../gl/nptexmap.h"		//zz tex
 #include "../gl/nptags.h"
+
 //#include "npGithub.h"
 
 #include <time.h>
-#include "soil.h"
+
 /// @todo npCreateTimeDayViz2 should be npInitTimeDayViz2
 
 char* dumpTill(char* dump_from, char* dump_to, char* till)
@@ -44,92 +46,6 @@ char* dumpTill(char* dump_from, char* dump_to, char* till)
     
     return ptr;
 }
-
-/*
-pNPnode npCreateTimeDayViz2(int day, pNPnode parent, void* dataRef)
-{
-	pNPnode day_node;
-	pNPrecordTag day_recordTag;
-	static int id = 0;
-
-	day_node = npNodeNew(kNodePin, parent, dataRef);
-	
-	day_recordTag = npNewTag( dataRef );
-	//sprintf(year_recordTag->title, "%d", yearIndex + 2014);
-	sprintf(day_recordTag->title, "%d", day);
-	day_recordTag->titleSize = strlen(day_recordTag->title) + 1;
-	day_recordTag->recordID = id+1;
-
-	day_node->recordID = id+1;
-	id++;
-
-	npTagSortAdd(day_recordTag, dataRef);
-	npTagNode(day_node, dataRef);
-
-	return day_node;
-}
-*/
-
-/*
-pNPnode npCreateTimeMonthViz2(char* month, pNPnode parent, void* dataRef)
-{
-	pNPnode month_node;
-	pNPrecordTag month_recordTag;
-	static int id = 0;
-
-	month_node = npNodeNew(kNodePin, parent, dataRef);
-	
-	month_recordTag = npNewTag( dataRef );
-	//sprintf(year_recordTag->title, "%d", yearIndex + 2014);
-	sprintf(month_recordTag->title, "%s", month);
-	month_recordTag->titleSize = strlen(month_recordTag->title) + 1;
-	month_recordTag->recordID = id+1;
-
-	month_node->recordID = id+1;
-	id++;
-
-	npTagSortAdd(month_recordTag, dataRef);
-	npTagNode(month_node, dataRef);
-
-	return month_node;
-}
-*/
-
-/*
-pNPnode new_npCreateTimeViz2(pNPnode year_node[], void* dataRef)
-{
-//	pNPnode year_node[2];
-	pNPnode month_node;
-	pNPnode day_node;
-
-	int yearIndex  = 0;
-	int monthIndex = 0;
-	int dayIndex   = 0;
-
-	char* monthString[] = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"}; 
-
-	printf("\n2354 new_npCreateTimeViz");
-	for(yearIndex = 0; yearIndex < 2; yearIndex++)
-	{
-		year_node[yearIndex] = npCreateTimeYearViz(yearIndex + 2014, dataRef);	
-		for(monthIndex = 0; monthIndex < 12; monthIndex++)
-		{
-			month_node = npCreateTimeMonthViz2(monthString[monthIndex], year_node[yearIndex], dataRef);	
-			month_node->translate.x = (-30 * monthIndex);
-			month_node->hide = true;
-			/// @todo Attach to year node
-			for(dayIndex = 0; dayIndex <= 31; dayIndex++)
-			{
-				day_node = npCreateTimeDayViz2(dayIndex, month_node, dataRef);
-				day_node->translate.x = (11.61290 * dayIndex);
-				day_node->hide = true;
-			}
-		}
-	}
-
-return year_node;	
-}
-*/
 
 void npGitVizSetIssueCreationNodeState2(pNPgithubIssue issue, void* dataRef)
 {
@@ -405,54 +321,7 @@ void new_npGithubGetIssueClosedAt2(pNPgithubIssue issue)
     issue->issue_closed_at->second= atoi(str[5]);
     
 }
-/*
-pNPnode npLinkIssueCreationNodeToIssueClosedNode2(pNPnode issue_creation_node, pNPnode issue_closed_node, void* dataRef)
-{
-	pNPnode link;
-		link = npNodeNewLink(issue_creation_node, issue_closed_node, dataRef);
-	return link;
-}
-*/
 
-/* Temporarily commented out, lde /// @todo
-void npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
-{
-	pNPnode issue_creation_node;
-
-	pNPgithubIssue current_issue;
-	int yearCreatedIndex  = 0;
-	int monthCreatedIndex = 0;
-	int dayCreatedIndex   = 0;
-
-	current_issue = github->issue[issueIndex];
-
-	/// @todo not sure that this segment belongs here
-
-//	new_npGithubGetIssueCreatedAt(current_issue);	
-//	yearCreatedIndex = current_issue->issue_created_at.year - 2014; // - 2014 temporary
-//	monthCreatedIndex = current_issue->issue_created_at.month - 1;
-//	dayCreatedIndex = current_issue->issue_created_at.day;
-
-	/// ---------------------------------------------
-
-//	current_issue->issue_creation_node = npNodeNew(kNodePin, NULL, dataRef);
-
-	current_issue->issue_creation_node = (pNPnode) malloc (sizeof(NPnode));
-	npInitNodeDefault(current_issue->issue_creation_node); /// new
-	current_issue->issue_creation_node->hide = true;
-	npGitVizSetIssueCreationNodeState2(current_issue, dataRef);
-
-	if( strcmp(current_issue->state, "closed") == 0 )
-	{
-//		current_issue->issue_closed_node = npNodeNew(kNodePin, NULL, dataRef);
-		current_issue->issue_closed_node = (pNPnode) malloc (sizeof(NPnode));
-		npInitNodeDefault(current_issue->issue_closed_node);
-		current_issue->issue_closed_node->hide = true; 
-		npGitVizSetIssueClosedNodeState(current_issue, dataRef);
-	}
-
-}
-*/
 
 void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 {
@@ -510,8 +379,8 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	current_issue->issue_node = node = npNodeNew(kNodePin, NULL, dataRef);
 	node->geometry = kNPgeoCube;
 
-//	old_npGithubGetIssueCreatedAt2(current_issue, dataRef);
-//	new_npGithubGetIssueCreatedAt2(current_issue);	
+	//	old_npGithubGetIssueCreatedAt2(current_issue, dataRef);
+	//	new_npGithubGetIssueCreatedAt2(current_issue);	
 	test_npGithubGetIssueCreatedAt(current_issue, dataRef);
 	
 	/// 
@@ -532,11 +401,11 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 		node->color.b = 0;
 		
 		seconds = difftime(now, mktime(&time_created));
-//		printf("%.f seconds have passed since the issue was created \n", seconds);
+	//	printf("%.f seconds have passed since the issue was created \n", seconds);
 	//	seconds += 10000;
-//		current_issue->issue_node->scale.z = seconds / 12500000;
+	//	current_issue->issue_node->scale.z = seconds / 12500000;
 		node->scale.z = (float)(seconds / 10000000);
-//		printf("\ncurrent_issue->issue_node->scale.z :: %f", current_issue->issue_node->scale.z);  	
+	//	printf("\ncurrent_issue->issue_node->scale.z :: %f", current_issue->issue_node->scale.z);  	
 	}
 	else if( strcmp(current_issue->state, "closed") == 0 )
 	{
@@ -571,7 +440,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	npTagNode (node, dataRef);
 
 	/// Set the Title as text tag	
-//	printf("\nTag");
+	//	printf("\nTag");
 	issueTitleTag = npNewTag(dataRef);
 	sprintf(issueTitleTag->title, "%s", current_issue->title);
 	issueTitleTag->titleSize = strlen(current_issue->title) + 1;
@@ -600,10 +469,10 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	
 	// ---------------------------------------------------------------------------
 		
-//	printf("\ncurrent_issue->user ptr : %p", current_issue->user);
-//	printf("\nlogin ptr : %p", current_issue->user->login);
-//	printf("\nlogin str : %s", current_issue->user->login);
-//	printf("\ncurrent_issue->user->login : %p %s\n", current_issue->user->login, current_issue->user->login);
+	//	printf("\ncurrent_issue->user ptr : %p", current_issue->user);
+	//	printf("\nlogin ptr : %p", current_issue->user->login);
+	//	printf("\nlogin str : %s", current_issue->user->login);
+	//	printf("\ncurrent_issue->user->login : %p %s\n", current_issue->user->login, current_issue->user->login);
 	issueCreatorTag = npNewTag(dataRef);
 	sprintf(issueCreatorTag->title, "Opened By : %s", current_issue->user->login);
 	issueCreatorTag->titleSize = strlen(issueCreatorTag->title) + 1;
@@ -643,8 +512,8 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	
 	/// Tag title text tag to node
 	npTagSortAdd(issueTitleTag, dataRef);
-//	npTagNode(current_issue->issue_node, dataRef);
-//	id++;
+	//	npTagNode(current_issue->issue_node, dataRef);
+	//	id++;
 
 	
 	/// Add sub-node that indicates user that created the issue
@@ -658,14 +527,14 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	issue_user->recordID = issueCreatorTag->recordID;
 	issue_user->tableID = issueCreatorTag->tableID;
 	npTagNode(issue_user, dataRef);
-//	issue_user->translate.x += 50;
-//	issue_user->translate.x -= 100;
+	//	issue_user->translate.x += 50;
+	//	issue_user->translate.x -= 100;
 	issue_user->scale.z = 0.50;
 
 	///Set the recordId to the issue number
-//	current_issue->issue_node->child[0]->recordID = (issueTitleTag->recordID = current_issue->number);
-//	current_issue->issue_node->child[0]->tableID = (issueTitleTag->tableID = 3);
-//	npTagNode(current_issue->issue_node->child[0], dataRef);
+	//	current_issue->issue_node->child[0]->recordID = (issueTitleTag->recordID = current_issue->number);
+	//	current_issue->issue_node->child[0]->tableID = (issueTitleTag->tableID = 3);
+	//	npTagNode(current_issue->issue_node->child[0], dataRef);
 
 
 	/// Add sub-node that indicates user that is assigned the issue (the assignee)
@@ -686,40 +555,38 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	else
 	{
 		issueAssigneeTag = npNewTag(dataRef);
-//		printf("\ncurrent_issue ptr : %p", current_issue);
-//		printf("\ncurrent_issue->assignee : %p", current_issue->assignee);
+	//		printf("\ncurrent_issue ptr : %p", current_issue);
+	//		printf("\ncurrent_issue->assignee : %p", current_issue->assignee);
 		if(current_issue->assignee != NULL)
 		{
-//			printf("\ncurrent_issue->assignee->login ptr : %p", current_issue->assignee->login);
-//			printf("\ncurrent_issue->assignee->login : %s", current_issue->assignee->login);
+		//	printf("\ncurrent_issue->assignee->login ptr : %p", current_issue->assignee->login);
+		//	printf("\ncurrent_issue->assignee->login : %s", current_issue->assignee->login);
 			
-			if(current_issue->assignee->avatar_image_file == NULL)
+			if(current_issue->assignee->avatarFileName == NULL)
 			{
-				current_issue->assignee->avatar_image_file = malloc(sizeof(char) * ( strlen(current_issue->assignee->login) + 5 ) );   
-				current_issue->assignee->avatar_image_file[0] = '\0';
-				sprintf(current_issue->assignee->avatar_image_file, "%s.png", current_issue->assignee->login);
-//				printf("\ncurrent_issue->assignee->avatar_image_file : %s", current_issue->assignee->avatar_image_file);
+				current_issue->assignee->avatarFileName = malloc(sizeof(char) * ( strlen(current_issue->assignee->login) + 5 ) );   
+				current_issue->assignee->avatarFileName[0] = '\0';
+				sprintf(current_issue->assignee->avatarFileName, "%s.png", current_issue->assignee->login);
+			//	printf("\ncurrent_issue->assignee->avatarFileName : %s", current_issue->assignee->avatarFileName);
 			}
 			
-			
-//			getchar();
 
 			sprintf(issueAssigneeTag->title, "Assigned To : %s", current_issue->assignee->login);
-//			printf("\nafter sprintf");
+	//	printf("\nafter sprintf");
 			issueAssigneeTag->titleSize = strlen(issueAssigneeTag->title) + 1;
 
 			issueAssigneeTag->recordID = current_issue->number;
 			issueAssigneeTag->tableID = kNPgitvizTableID + 7; //zz 7;
 
-//			printf("\nbefore npTagSortAdd");
+	//	printf("\nbefore npTagSortAdd");
 			npTagSortAdd(issueAssigneeTag, dataRef);
-//			printf("\nafter npTagSortAdd");
+	//	printf("\nafter npTagSortAdd");
 
 			node->child[1]->recordID = issueAssigneeTag->recordID; 
 			node->child[1]->tableID = issueAssigneeTag->tableID;
 
 			npTagNode(node->child[1], dataRef);
-//			printf("\nAfter npTagNode");
+	//	printf("\nAfter npTagNode");
 		}
 
 	}
@@ -734,21 +601,19 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 	
 	///=============================================================
 	titlePtr = issueTitleTag->title;
-//	numLettersInTitle (spaces count)
+	//	numLettersInTitle (spaces count)
 	numLettersInTitle = strlen(issueTitleTag->title);
 	node->child[2]->geometry = kNPgeoTorus;
 
 	///=============================================================
 
-//	printf("\ncurrent_issue->num_of_labels : %d", current_issue->num_of_labels);
+	//	printf("\ncurrent_issue->num_of_labels : %d", current_issue->num_of_labels);
 	for(index = 0; index < current_issue->num_of_labels; index++)
 	{
 		npNodeNew(kNodePin, node->child[2], dataRef);	
 
-/*
-		current_issue->issue_node->child[2]->child[index]->recordID = (issueTitleTag->recordID = current_issue->number);
-		current_issue->issue_node->child[2]->child[index]->tableID = (issueTitleTag->tableID = 2);
-*/
+	//	current_issue->issue_node->child[2]->child[index]->recordID = (issueTitleTag->recordID = current_issue->number);
+	//	current_issue->issue_node->child[2]->child[index]->tableID = (issueTitleTag->tableID = 2);
 
 		if( strcmp(current_issue->label[index].name, "enhancement") == 0 )
 		{
@@ -768,7 +633,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 			node->child[2]->child[index]->color.g = 0;
 			node->child[2]->child[index]->color.b = 0;
 			node->child[2]->child[index]->color.a = 220;	// mostly opaque
-//			current_issue->issue_node->child[2]->child[index]->color.a = 1;
+		// current_issue->issue_node->child[2]->child[index]->color.a = 1;
 			node->child[2]->child[index]->recordID = current_issue->number;
 			node->child[2]->child[index]->tableID = kNPgitvizTableID + 7; //zz 5;
 		}
@@ -780,7 +645,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 			node->child[2]->child[index]->color.g = 0;
 			node->child[2]->child[index]->color.b = 0;
 			node->child[2]->child[index]->color.a = 220;	// mostly opaque
-//			current_issue->issue_node->child[2]->child[index]->color.a = 1;
+		//	current_issue->issue_node->child[2]->child[index]->color.a = 1;
 			node->child[2]->child[index]->recordID = current_issue->number;
 			node->child[2]->child[index]->tableID = kNPgitvizTableID + 8; //zz 8;
 		}
@@ -792,7 +657,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 			node->child[2]->child[index]->color.g = 100;
 			node->child[2]->child[index]->color.b = 0;
 			node->child[2]->child[index]->color.a = 220;	// mostly opaque
-//			current_issue->issue_node->child[2]->child[index]->color.a = 1;
+		//	current_issue->issue_node->child[2]->child[index]->color.a = 1;
 			node->child[2]->child[index]->recordID = current_issue->number;
 			node->child[2]->child[index]->tableID = kNPgitvizTableID + 9; //zz 9;
 		}
@@ -804,7 +669,7 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 			node->child[2]->child[index]->color.g = 255;
 			node->child[2]->child[index]->color.b = 0;
 			node->child[2]->child[index]->color.a = 220;	// mostly opaque
-//			current_issue->issue_node->child[2]->child[index]->color.a = 1;
+		//	current_issue->issue_node->child[2]->child[index]->color.a = 1;
 			node->child[2]->child[index]->recordID = current_issue->number;
 			node->child[2]->child[index]->tableID = kNPgitvizTableID + 9; //zz 9;
 		}
@@ -844,143 +709,54 @@ void theNew_npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
 		npTagNode(node->child[2]->child[index], dataRef);
 	}
 
-//		printf("\n user ptr : %p", current_issue->user);
+	// printf("\n user ptr : %p", current_issue->user);
 
-		if(current_issue->user == NULL) /// user should never be null
-		{
-			printf("user is null : %d\n", issueIndex);
-			printf("title is %s\n", current_issue->title);
-//			////getchar();
-			return;
-		}
-
-	//	printf("\ncurrent_issue->user->avatar_image_textureID : %d", current_issue->user->avatar_image_textureID);  
-		
-		if(current_issue->user->avatar_image_textureID == 0)
-		{
-//			printf("\navatar_image_file : %s", current_issue->user->avatar_image_file);
-		//	printf("\nuser->login : %s", current_issue->user->login);
-
-			current_issue->user->avatar_image_textureID = SOIL_load_OGL_texture
-	        (
-				current_issue->user->avatar_image_file,
-				SOIL_LOAD_AUTO,
-				SOIL_CREATE_NEW_ID,
-				SOIL_FLAG_INVERT_Y |
-				SOIL_FLAG_MIPMAPS //|			//disabling breaks RGBA textures
-	        // | SOIL_FLAG_NTSC_SAFE_RGB	//we want the entire RGB spectrum
-	        // | SOIL_FLAG_COMPRESS_TO_DXT	//no lossy compression, faster too
-	        );
-
-			//printf("\ncurrent_issue->user->avatar_image_textureID : %d", current_issue->user->avatar_image_textureID); 
-	                
-	        if(current_issue->user->avatar_image_textureID == 0)
-	        {
-				printf("err 2309 - SOIL error: %s\n", SOIL_last_result());         
-	        }
-	        else
-	        {
-		        data->io.gl.textureCount = current_issue->user->avatar_image_textureID;
-				
-				issue_user->textureID = current_issue->user->avatar_image_textureID;
-	        }
-
-		}
-		else
-		{
-		//	printf(" Texture already exists %d\n", current_issue->user->avatar_image_textureID);  
-		    data->io.gl.textureCount = current_issue->user->avatar_image_textureID;
-			issue_user->textureID = current_issue->user->avatar_image_textureID;
-		}
-		/// -------------------------------------------------------------------------------------------------------------
-
-		if(current_issue->assignee != NULL)
-		{
-//			printf("\nassignee->avatar_image_file : %s", current_issue->assignee->avatar_image_file);
-//			printf("\nassignee->login : %s", current_issue->assignee->login);
-//			////getchar();
-			if(current_issue->assignee->avatar_image_textureID == 0)
-			{
-				current_issue->assignee->avatar_image_textureID = SOIL_load_OGL_texture
-				(
-					current_issue->assignee->avatar_image_file,
-					SOIL_LOAD_AUTO,
-					SOIL_CREATE_NEW_ID,
-					SOIL_FLAG_INVERT_Y |
-					SOIL_FLAG_MIPMAPS //|			//disabling breaks RGBA textures
-	        // | SOIL_FLAG_NTSC_SAFE_RGB	//we want the entire RGB spectrum
-	        // | SOIL_FLAG_COMPRESS_TO_DXT	//no lossy compression, faster too
-				);
-	        
-				if(current_issue->assignee->avatar_image_textureID == 0)
-				{
-					printf("err 2310 - SOIL error: %s\n", SOIL_last_result());
-				}
-				else
-				{
-				    data->io.gl.textureCount = current_issue->assignee->avatar_image_textureID;
-		//			current_issue->issue_node->child[1]->textureID = current_issue->assignee->avatar_image_textureID;
-		//			issue_assignee->textureID = current_issue->assignee->avatar_image_textureID;
-					node->child[1]->textureID = current_issue->assignee->avatar_image_textureID;
-		        }
-			}
-			else
-			{
-			//	printf(" Texture already exists %d\n", current_issue->assignee->avatar_image_textureID);  
-			    data->io.gl.textureCount = current_issue->assignee->avatar_image_textureID;
-				node->child[1]->textureID = current_issue->assignee->avatar_image_textureID;
-			}
-		}
-		else
-		{
-//			printf("\nAssignee is NULL");
-//			////getchar();
-		}
-		
-
-		/// -------------------------------------------------------------------------------------------------------------
-	
-//	current_issue->issue_node->child[2]->geometry = 
-
-}
-
-/*
-void npGitVizIssue2(pNPgithub github, int issueIndex, void* dataRef)
-{
-	pNPnode issue_creation_node;
-
-	pNPgithubIssue current_issue;
-	int yearCreatedIndex  = 0;
-	int monthCreatedIndex = 0;
-	int dayCreatedIndex   = 0;
-
-//	current_issue = github->issue[issueIndex];
-	current_issue = &github->issues->issue[issueIndex];
-
-	
-	current_issue->issue_creation_node = npNodeNew(kNodePin, NULL, dataRef);
-
-	current_issue->issue_creation_node = (pNPnode) malloc (sizeof(NPnode));
-//	npInitNodeDefault(current_issue->issue_creation_node); /// new
-		
-//	current_issue->issue_creation_node->hide = true;
-	current_issue->issue_creation_node->hide = false;
-	npGitVizSetIssueCreationNodeState2(current_issue, dataRef);
-
-	if( strcmp(current_issue->state, "closed") == 0 )
+	if(current_issue->user == NULL) /// user should never be null
 	{
-		current_issue->issue_closed_node = npNodeNew(kNodePin, NULL, dataRef);
-		current_issue->issue_closed_node = (pNPnode) malloc (sizeof(NPnode));
-		npInitNodeDefault(current_issue->issue_closed_node);
-//		current_issue->issue_closed_node->hide = true; 
-		current_issue->issue_closed_node->hide = false; 
-		npGitVizSetIssueClosedNodeState(current_issue, dataRef);
+		printf("user is null : %d\n", issueIndex);
+		printf("title is %s\n", current_issue->title);
+	// ////getchar();
+		return;
 	}
 
+	//	printf("\ncurrent_issue->user->avatarTexID : %d", current_issue->user->avatarTexID);  
+	
+	if(current_issue->user->avatarTexID == 0)
+	{
+		// printf("\navatar_image_file : %s", current_issue->user->avatarFileName);
+		// printf("\nuser->login : %s", current_issue->user->login);
+
+		current_issue->user->avatarTexID = npLoadTexture( 
+			current_issue->user->avatarFileName, data );
+	
+		// printf("\ncurrent_issue->user->avatarTexID : %d", current_issue->user->avatarTexID); 
+                
+        if(current_issue->user->avatarTexID)
+			issue_user->textureID = current_issue->user->avatarTexID;
+	}
+	else //	printf(" Texture already exists %d\n", current_issue->user->avatarTexID);  
+		issue_user->textureID = current_issue->user->avatarTexID;
+
+	/// -------------------------------------------------------------------------------------------------------------
+
+	if(current_issue->assignee != NULL)
+	{
+		if(current_issue->assignee->avatarTexID == 0)
+		{
+			current_issue->assignee->avatarTexID = npLoadTexture( 
+				current_issue->assignee->avatarFileName, data );
+        
+			if(current_issue->assignee->avatarTexID )
+				node->child[1]->textureID = current_issue->assignee->avatarTexID;
+		}
+		else
+			node->child[1]->textureID = current_issue->assignee->avatarTexID;
+	}
+	// else assignee is NULL
+
 }
-*/
 
-
+//------------------------------------------------------------------------------
 void npHideIssueClosedNode2(pNPgithubIssue issue, void* dataRef)
 {
 	pNPnode node = (pNPnode) issue->issue_closed_node;
@@ -1041,9 +817,6 @@ void npSetIssueCreationNodeTopo2(pNPgithubIssue issue, int topo, void* dataRef)
 	node->topo = topo;
 }
 
-
-
-
 void theNew_npGitViz(pNPgithub github, void* dataRef)
 {
 	int issueIndex = 0;
@@ -1056,89 +829,90 @@ void theNew_npGitViz(pNPgithub github, void* dataRef)
 	return;
 }
 
+
 /*
-void npGitViz(pNPgithub github, void* dataRef)
+pNPnode npCreateTimeDayViz2(int day, pNPnode parent, void* dataRef)
 {
-	pNPnode year_node[2];
-	pNPnode dayCreated_node;
-	pNPnode dayClosed_node;
-	pNPnode link;
+	pNPnode day_node;
+	pNPrecordTag day_recordTag;
+	static int id = 0;
 
-	pNPgithubIssue current_issue;
-	int issueIndex = 0;
-	int yearCreatedIndex = 0;
-	int monthCreatedIndex = 0;
-	int dayCreatedIndex = 0;
-	int childCount = 0;
+	day_node = npNodeNew(kNodePin, parent, dataRef);
+	
+	day_recordTag = npNewTag( dataRef );
+	//sprintf(year_recordTag->title, "%d", yearIndex + 2014);
+	sprintf(day_recordTag->title, "%d", day);
+	day_recordTag->titleSize = strlen(day_recordTag->title) + 1;
+	day_recordTag->recordID = id+1;
 
-	int yearClosedIndex = 0;
-	int monthClosedIndex = 0;
-	int dayClosedIndex = 0;
+	day_node->recordID = id+1;
+	id++;
 
-	new_npCreateTimeViz2(&year_node, dataRef);
-//	for(issueIndex = 0; issueIndex < github->count; issueIndex++)
-	printf("93929190 %d", github->issues->count);
-	//for(issueIndex = 0; issueIndex < github->issues->count; issueIndex++)
-	for(issueIndex = 0; issueIndex < 167; issueIndex++)
+	npTagSortAdd(day_recordTag, dataRef);
+	npTagNode(day_node, dataRef);
+
+	return day_node;
+}
+*/
+
+/*
+pNPnode npCreateTimeMonthViz2(char* month, pNPnode parent, void* dataRef)
+{
+	pNPnode month_node;
+	pNPrecordTag month_recordTag;
+	static int id = 0;
+
+	month_node = npNodeNew(kNodePin, parent, dataRef);
+	
+	month_recordTag = npNewTag( dataRef );
+	//sprintf(year_recordTag->title, "%d", yearIndex + 2014);
+	sprintf(month_recordTag->title, "%s", month);
+	month_recordTag->titleSize = strlen(month_recordTag->title) + 1;
+	month_recordTag->recordID = id+1;
+
+	month_node->recordID = id+1;
+	id++;
+
+	npTagSortAdd(month_recordTag, dataRef);
+	npTagNode(month_node, dataRef);
+
+	return month_node;
+}
+*/
+
+/*
+pNPnode new_npCreateTimeViz2(pNPnode year_node[], void* dataRef)
+{
+//	pNPnode year_node[2];
+	pNPnode month_node;
+	pNPnode day_node;
+
+	int yearIndex  = 0;
+	int monthIndex = 0;
+	int dayIndex   = 0;
+
+	char* monthString[] = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"}; 
+
+	printf("\n2354 new_npCreateTimeViz");
+	for(yearIndex = 0; yearIndex < 2; yearIndex++)
 	{
-		npGitVizIssue2(github, issueIndex, dataRef); /// @todo npGitVizAllgithub
-
-//		current_issue = github->issue[issueIndex];
-		current_issue = &github->issues->issue[issueIndex];		
-		
-
-		new_npGithubGetIssueCreatedAt2(current_issue);	
-
-		yearCreatedIndex = current_issue->issue_created_at.year - 2014; // - 2014 temporary
-		monthCreatedIndex = current_issue->issue_created_at.month - 1;
-		dayCreatedIndex = current_issue->issue_created_at.day;
-
-//		printf("\nIndexes, Year : %d, Month : %d, Day : %d", yearCreatedIndex, monthCreatedIndex, dayCreatedIndex);
-		
-		dayCreated_node = year_node[yearCreatedIndex]->child[monthCreatedIndex]->child[dayCreatedIndex];
-		dayCreated_node->translate.x = (11.61290 * dayCreatedIndex);
-		year_node[yearCreatedIndex]->child[monthCreatedIndex]->hide = false;
-
-		dayCreated_node->hide = false;
-
-		childCount = dayCreated_node->childCount;
-		dayCreated_node->child[childCount] = current_issue->issue_creation_node;
-		
-		npShowIssueCreationNode2(current_issue, dataRef);
-		npSetIssueCreationNodeParent2(current_issue, dayCreated_node, dataRef);
-		npSetIssueCreationNodeGeometry2(current_issue, kNPgeoTorus, dataRef);
-		npSetIssueCreationNodeTopo2(current_issue, kNPtopoTorus, dataRef);	
-
-		dayCreated_node->childCount++;		
-
-		if(current_issue->issue_closed_node != NULL)
-		{	
-			new_npGithubGetIssueClosedAt2(current_issue);
-
-			yearClosedIndex = current_issue->issue_closed_at->year - 2014; // - 2014 temporary
-			monthClosedIndex = current_issue->issue_closed_at->month - 1;
-			dayClosedIndex = current_issue->issue_closed_at->day;
-			
-			dayClosed_node = year_node[yearClosedIndex]->child[monthClosedIndex]->child[dayClosedIndex];
-			dayClosed_node->translate.x = (11.61290 * dayClosedIndex);
-			year_node[yearClosedIndex]->child[monthClosedIndex]->hide = false;
-			dayClosed_node->hide = false;
-
-			childCount = dayClosed_node->childCount;
-			dayClosed_node->child[childCount] = current_issue->issue_closed_node;
-			
-			npShowIssueClosedNode2(current_issue, dataRef);
-			npSetIssueClosedNodeParent2(current_issue, dayClosed_node, dataRef);
-			npSetIssueClosedNodeGeometry2(current_issue, kNPgeoSphere, dataRef);
-			npSetIssueClosedNodeTopo2(current_issue, kNPtopoSphere, dataRef);
-
-			dayClosed_node->childCount++;
-			link = npLinkIssueCreationNodeToIssueClosedNode2(current_issue->issue_creation_node, current_issue->issue_closed_node, dataRef);
-			link->geometry = 20;
+		year_node[yearIndex] = npCreateTimeYearViz(yearIndex + 2014, dataRef);	
+		for(monthIndex = 0; monthIndex < 12; monthIndex++)
+		{
+			month_node = npCreateTimeMonthViz2(monthString[monthIndex], year_node[yearIndex], dataRef);	
+			month_node->translate.x = (-30 * monthIndex);
+			month_node->hide = true;
+			/// @todo Attach to year node
+			for(dayIndex = 0; dayIndex <= 31; dayIndex++)
+			{
+				day_node = npCreateTimeDayViz2(dayIndex, month_node, dataRef);
+				day_node->translate.x = (11.61290 * dayIndex);
+				day_node->hide = true;
+			}
 		}
-
 	}
 
+return year_node;	
 }
 */
 

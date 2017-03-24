@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -28,7 +28,7 @@
 #include "../../npdata.h"
 
 //builds a node tree of the file directory structure
-int npNewFileViz (const char *basePath, pNPnode parent, int i, void* dataRef);
+int npNewFileViz( char *basePath, pNPnode parent, int i, void* dataRef);
 
 #endif
 

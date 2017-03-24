@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -672,18 +672,18 @@ void initAdapter()
 //
 //  Start listening on the UDP port
 //
-void npStartOscPackListener( pNPoscPackListener oscListener )
+void npStartOscPackListener( pNPoscConn oscListener )
 {
 	((UdpListeningReceiveSocket*)listenerSockets[oscListener->id])->RunUntilSigInt();
 }
 
 
 //
-//  Initialize NPoscPackListener, get it ready to listen on a port, but does not start listening
+//  Initialize NPoscPackConn, get it ready to listen on a port, but does not start listening
 //  Listening on port is done by "npStartOscPackListener"
 //
 //JJ-zz swapped in/out to be out followed by in TxRx 
-void npInitOscPackListener( pNPoscPackListener oscListener, void* dataRef )
+void npInitOscPackListener( pNPoscConn oscListener, void* dataRef )
 {
 	int outgoingPort = oscListener->txPort;
 	int incomingPort = oscListener->rxPort;
@@ -697,6 +697,7 @@ void npInitOscPackListener( pNPoscPackListener oscListener, void* dataRef )
 		if (listenerPorts[i] == incomingPort)
 		{
 			oscListener->id = i;			//zz could offset this by + 1
+			printf("err 3231 - OSC redundant RX port: %d\n", incomingPort);
 			return;
 		}
 	}
@@ -836,7 +837,7 @@ void npSendOscPackBundle( pNPoscPackSender oscSender )
 //
 void npOscListenerThread (void* oscListenerX)
 {
-	pNPoscPackListener oscListener = (pNPoscPackListener)oscListenerX;
+	pNPoscConn oscListener = (pNPoscConn)oscListenerX;
 	npStartOscPackListener( oscListener );
 }
 
@@ -844,7 +845,7 @@ void npOscListenerThread (void* oscListenerX)
 //  Startup any UDP listeners as specified on command line
 //
 /*
-extern "C" void npStartListeners( pNPoscPackListener oscListener, int argc, char **argv, void* dataRef )
+extern "C" void npStartListeners( pNPoscPackConn oscListener, int argc, char **argv, void* dataRef )
 {
 	npPostMsg("npStartListeners, starts OSC UDP listeners if any specified on command line", kNPmsgDebug, dataRef);
 	for (int i = 0; i < argc; i++) 
@@ -869,7 +870,7 @@ extern "C" void npOscConnect( pNPosc Item, void* dataRef )
 	int i = 0;
 	pData data = (pData) dataRef;
 //	pNPoscItem oscItem = NULL;
-	pNPoscPackListener oscItem = NULL;
+	pNPoscConn oscItem = NULL;
 
 //	oscItem = data->io.osc.list[oscID];
 

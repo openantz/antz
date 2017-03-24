@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -729,7 +729,7 @@ void* npChReadLine( char* bufferStart, int maxLength, pNPtrackDataSource trackDa
 		else {
 			//npPostMsg("trackRead from UDP!!!", kNPmsgDebug, dataRef);
 		}
-		return npOscReadLine( bufferStart, maxLength, data->io.osc.list[0].id); //JJ-zz data->io.oscListener.oscPackIdx );
+		return npOscReadLine( bufferStart, maxLength, data->io.osc.conns[0].id); //JJ-zz data->io.oscListener.oscPackIdx );
 	default:
 		return NULL;
 	}

@@ -43,15 +43,19 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
-				AdditionalIncludeDirectories="../../libs/curl/include/curl;../../libs/jansson/src;../../libs/freeglut/include/GL;../../libs/oscpack/src;../../libs/soil/src;../../libs/mysql/include/;../../libs/freeimage/x32"
+				Optimization="2"
+				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
+				WholeProgramOptimization="true"
+				AdditionalIncludeDirectories="../../libs/assimp/include/assimp;../../libs/curl/include/curl;../../libs/expat/lib;../../libs/freeglut/include/GL;../../libs/freeimage/x32;../../libs/jansson/src;../../libs/mysql/include/;../../libs/oscpack/src;../../libs/soil/src"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;BUILDING_LIBCURL;DEBUGBUILD;USE_WINDOWS_SSPI;USE_SCHANNEL"
 				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
+				BasicRuntimeChecks="0"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				DebugInformationFormat="4"
+				Detect64BitPortabilityProblems="false"
+				DebugInformationFormat="3"
 				CompileAs="0"
 			/>
 			<Tool
@@ -65,9 +69,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib SOIL.lib libmysql.lib mysqlclient.lib libcurld.lib jansson_d.lib wldap32.lib ws2_32.lib FreeImage.lib"
+				AdditionalDependencies="assimp.lib FreeImage.lib glu32.lib jansson_d.lib libexpat.lib libmysql.lib libcurld.lib mysqlclient.lib opengl32.lib SOIL.lib wldap32.lib ws2_32.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;../../libs/curl/build/Win32/VC9/LIB Debug - DLL Windows SSPI&quot;;../../libs/freeglut/lib/x86;../../libs/oscpack;../../libs/mysql;../../libs/soil/lib;../../libs/jansson/make/lib/Debug;../../libs/freeimage/x32"
+				AdditionalLibraryDirectories="&quot;../../libs/assimp/lib/assimp_debug-dll_win32&quot;;&quot;../../libs/curl/build/Win32/VC9/LIB Debug - DLL Windows SSPI&quot;;../../libs/expat;../../libs/freeglut/lib/x86;../../libs/freeimage/x32;../../libs/jansson/make/lib/Debug;../../libs/mysql;../../libs/oscpack;../../libs/soil/lib"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
@@ -125,12 +129,13 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="../../libs/curl/include/curl;../../libs/jansson/src;../../libs/freeglut/include/GL;../../libs/oscpack/src;../../libs/soil/src;../../libs/mysql/include/;../../libs/freeimage/x32"
+				AdditionalIncludeDirectories="../../libs/assimp/include/assimp;../../libs/curl/include/curl;../../libs/expat/lib;../../libs/freeglut/include/GL;../../libs/freeimage/x32;../../libs/jansson/src;../../libs/mysql/include/;../../libs/oscpack/src;../../libs/soil/src"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;CURL_STATICLIB;BUILDING_LIBCURL;USE_WINDOWS_SSPI;USE_SCHANNEL"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 				CompileAs="0"
 			/>
@@ -145,10 +150,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib SOIL.lib libmysql.lib mysqlclient.lib ws2_32.lib libcurl.lib jansson.lib wldap32.lib FreeImage.lib"
+				AdditionalDependencies="assimp.lib opengl32.lib glu32.lib SOIL.lib libmysql.lib mysqlclient.lib ws2_32.lib libcurl.lib jansson.lib wldap32.lib FreeImage.lib"
 				OutputFile="$(OutDir)\..\..\..\..\$(ProjectName).exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../libs/jansson/make/lib/Release;&quot;../../libs/curl/build/Win32/VC9/LIB Release - DLL Windows SSPI&quot;;../../libs/freeglut/lib/x86;../../libs/oscpack;../../libs/soil/lib;../../libs/mysql;../../libs/freeimage/x32"
+				AdditionalLibraryDirectories="../../libs/expat/;&quot;../../libs/assimp/lib/assimp_release-dll_win32&quot;;&quot;../../libs/curl/build/Win32/VC9/LIB Release - DLL Windows SSPI&quot;;../../libs/freeimage/x32;../../libs/freeglut/lib/x86;../../libs/jansson/make/lib/Release;../../libs/mysql;../../libs/oscpack;../../libs/soil/lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				LargeAddressAware="2"
@@ -389,6 +394,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\ctrl\npselect.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\ctrl\npselect.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\ctrl\nptest.c"
 					>
 				</File>
@@ -587,6 +600,14 @@
 				<Filter
 					Name="file"
 					>
+					<File
+						RelativePath="..\..\src\io\file\npassimp.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\io\file\npassimp.h"
+						>
+					</File>
 					<File
 						RelativePath="..\..\src\io\file\npcsv.c"
 						>
@@ -1441,6 +1462,26 @@
 					</File>
 					<File
 						RelativePath="..\..\libs\curl\include\curl\typecheck-gcc.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="assimp"
+					>
+					<File
+						RelativePath="..\..\libs\assimp\include\assimp\cimport.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\assimp\include\assimp\material.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\assimp\include\assimp\postprocess.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\assimp\include\assimp\scene.h"
 						>
 					</File>
 				</Filter>

@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -42,6 +42,9 @@
 #include "npmouse.h"
 
 #include "../npctrl.h"
+
+#include "file/npassimp.h"	//zz models
+#include "file/npmodels.h"
 
 
 /// @todo build-out DB commands, err handling and user feedback
@@ -88,7 +91,7 @@ void npConsoleCmdText( pNPconsole console, void* dataRef )
 //	printf("\nstr test: %s\n", str);
 
 	//turn on messages to display command responses for user
-//	console->mode = kNPconsoleMessage;
+//	console->mode = kNPconsoleMsg;
 	
 	
 	if (data->io.mouse.tool == kNPtoolTag)	//zz debug, messy - if(..toolTag) else strncmp...
@@ -420,7 +423,7 @@ void npConsoleCmdText( pNPconsole console, void* dataRef )
 //------------------------------------------------------------------------------
 void npConsoleExit( pNPconsole console, void* dataRef )
 {
-	console->mode = kNPconsoleMessage;
+	console->mode = kNPconsoleMsg;
 	console->cursorShow = false;
 	//npPostMsg("Exit Console -> Keyboard: Game Mode", kNPmsgCtrl, dataRef);
 	npPostMsg("Exit Console Mode", kNPmsgCtrl, dataRef);
@@ -959,7 +962,7 @@ void npConsoleMenuText( pNPconsole console, void* dataRef )
 			npPostMsg( msg, kNPmsgView, data );
 
 			//exit menu mode
-			console->mode = kNPconsoleMessage;
+			console->mode = kNPconsoleMsg;
 			console->cursorShow = false;
 		//	npPostMsg( "Exit Console", kNPmsgCtrl, dataRef );			//send as kNPmsgCtrl
 		//	npPostMsg( "Keyboard: Game Mode", kNPmsgCtrl, dataRef );
@@ -1047,7 +1050,7 @@ void npConsoleKeyEvent (int key, int keyEventType, void* dataRef)
 				case 13 : //kKeyCodeReturn :   //process command string			
 					switch (console->mode)						//zzf
 					{
-						case kNPconsoleMessage : break;
+						case kNPconsoleMsg : break;
 						case kNPconsoleCmd :
 						case kNPconsoleTag :
 							//zz debug, add the newline to the string
@@ -1064,7 +1067,7 @@ void npConsoleKeyEvent (int key, int keyEventType, void* dataRef)
 					break;
 				case 27 : //kKeyCodeESC :
 					//return to default console mode when done
-					console->mode = kNPconsoleMessage;
+					console->mode = kNPconsoleMsg;
 					console->cursorShow = false;
 							
 					npPostMsg("Leave Console", kNPmsgCtrl, data);			//send as kNPmsgCtrl
@@ -1135,7 +1138,7 @@ void npConsoleKeyEvent (int key, int keyEventType, void* dataRef)
 				case kKeyCodeUp :	// UP arrow
 					switch (console->mode)						//zzf
 					{
-						case kNPconsoleMessage : break;
+						case kNPconsoleMsg : break;
 						case kNPconsoleCmd :
 							npConsoleCmdText( console, data );
 							break;
@@ -1156,7 +1159,7 @@ void npConsoleKeyEvent (int key, int keyEventType, void* dataRef)
 				case kKeyCodeDown :	// DOWN arrow
 					switch (console->mode)						//zzf
 					{
-						case kNPconsoleMessage : break;
+						case kNPconsoleMsg : break;
 						case kNPconsoleCmd : 
 							npConsoleCmdText(console, data);
 							break;
@@ -1814,7 +1817,7 @@ void npSystemConsoleHelp (int argc, char** argv)
 	// app ver request
 	if ( !strncmp( "-v", argv[1],2) )
 	{										//keep ver up-to-date with changes
-		printf("\nANTz v%s\n", kNPappVer);
+		printf("%s v%d.%d.%d\n", kNPappName, kNPvMajor, kNPvMinor, kNPvPatch);
 		exit(0);
 	}
 
@@ -1824,7 +1827,7 @@ void npSystemConsoleHelp (int argc, char** argv)
 		 || !strncmp( "-?",	 argv[1], 2)
 		 || !strncmp( "help",argv[1], 4) )
 	{
-		printf("ANTz v%s", kNPappVer);					//keep ver up-to-date with changes
+		printf("%s v%d.%d.%d\n", kNPappName, kNPvMajor, kNPvMinor, kNPvPatch);
 	}
 	else
 		return;	// no help requested, continue to Startup...

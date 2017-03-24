@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -36,62 +36,28 @@
 #include "../npmouse.h"
 #include "../gl/npcolor.h"
 
-
 /*
-// color functions in 'npcolor.h' alternates provided here for convenience 
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-float HueToRGB( float v1, float v2, float vH )             //Function Hue_2_RGB
-{
-   if ( vH < 0.0 ) vH += 1.0f;
-   if ( vH > 1.0 ) vH -= 1.0f;
-   if ( (6.0f * vH) < 1.0f ) return (v1 + (v2 - v1) * 6.0f * vH);
-   if ( (2.0f * vH) < 1.0f ) return (v2);
-   if ( (3.0f * vH) < 2.0f ) return (v1 + (v2 - v1) * ((2.0f/3.0f) - vH) * 6.0f);
-   return ( v1 );
-}
-void HSLtoRGB( float H, float S, float L, float* R, float* G, float* B ) //pNPfloatRGB rgbOut
-{
-	float v1, v2;
-	
-	//HSL
-	if ( S == 0 )						//HSL from 0 to 1
-	{
-		*R = L;	//R * 255 for ubyte		//RGB results from 0 to 255
-		*G = L;	// * 255;
-		*B = L;	// * 255;
-	}
-	else
-	{
-		if ( L < 0.5f )
-			v2 = L * ( 1.0f + S );
-		else
-			v2 = ( L + S ) - ( S * L );
-	   
-	   v1 = 2.0f * L - v2;
-	   
-	   *R = npHueToRGB( v1, v2, H + 0.3333333f );	//R * 255 for ubyte
-	   *G = npHueToRGB( v1, v2, H );				//G * 255 for ubyte
-	   *B = npHueToRGB( v1, v2, H - 0.3333333f );	//B * 255 for ubyte
-	}
-}
-NPfloatRGBA npHSLtoRGBA( float H, float S, float L, float alpha )
-{
-	NPfloatRGBA color; 
+TX
+force feedback
+lighting controls
+sound output
+remote antz clusters
+peer-to-peer collaboration
 
-	// regular 'npHSLtoRGB()' color functions located in 'npcolor.h' 
-	// alternate 'HSLtoRGB()' here for convienance
-	npHSLtoRGB( H, S, L, &color.r, &color.g, &color.b);
+RX
+GPS track data
+realtime sensors: temperature, position, pressure, eeg, 6-dof
+commands
+tracks
+selection
+applying to selection / all / current
+flying the camera
+syncing commands/data
 
-	color.a = alpha;
-
-	return color;
-}
-//------------------------------------------------------------------------------
+cleanup nposcpack and move majority of functions over to nposc...
 */
 
 // ---------------------------------------------------------------------------
-//
 // this only works for type tags 'i' 'f' 's' and 'ff'
 void npInitOSC (void* dataRef )
 {
@@ -100,29 +66,31 @@ void npInitOSC (void* dataRef )
 
 	pData data = (pData) dataRef;
 
-	pNPconnect connect = NULL;
-
-//	pNPoscItem oscItem = NULL;
-	pNPoscPackListener oscItem = NULL;										//zz debug
+//zz	pNPconnect connect = NULL;
+		pNPoscConn oscItem = NULL;									//zz debug
 
 	//JJ - start any UDP listeners specified on command line
-	// or in globals (CSV) file, was npStartListeners()					//zz-JJ
-	for( i = 0; i < data->io.connectCount; i++ )		
+	//zz - or in globals (CSV) file, was npStartListeners()
+//zz	for( i = 0; i < data->io.connectCount; i++ )		
+		for( i = 0; i < data->io.osc.count; i++ )		
 	{
-		oscItem = &data->io.connect[i]->oscListener;
+//zz		oscItem = &data->io.connect[i]->oscListener;
+		oscItem = &data->io.osc.conns[i];
 
 		npInitOscPackListener( oscItem, data );
 		nposBeginThread( npOscListenerThread, oscItem );
 
 		sprintf( msg, "OSC listener port RX: %d  TX: %d", 
 						oscItem->rxPort, oscItem->txPort );
-		// printf(msg);
-		npPostMsg(msg, kNPmsgOSC, data );	//zz debug
+
+		npPostMsg(msg, kNPmsgOSC, data );
 	}
 }
 
+
 // ---------------------------------------------------------------------------
 //zz osc
+/// @todo need to create thread sync buffers 
 //zz currently only works for type tags 'i' 'f' 's' and 'ff'
 void npOscRx (int oscID, const char* addr, const char* tag, void** arguments, void* dataRef )
 {
@@ -296,6 +264,7 @@ void npOscRx (int oscID, const char* addr, const char* tag, void** arguments, vo
 		npPostMsg (msg, data->io.osc.msgMode, data);
 	}
 }
+
 /*
 void npTxOSC (int oscID, char* addr, char* tag, void** arguments, void* dataRef ) 
 {
@@ -310,5 +279,73 @@ int npTestOSC(void* dataRef)
 	*(float*)npMapAddressToMapTypeItem ("/1/fader3\0", dataRef)->mapPtr = 0.6f;
 
 	return 1;
+}
+
+//------------------------------------------------------------------------------
+pNPoscMsg npOscNextMsgRX( pNPoscConn conn );
+pNPoscMsg npOscNextMsgRX( pNPoscConn conn )
+{
+	return NULL;
+}
+
+//------------------------------------------------------------------------------
+pNPoscMsg npOscNextMsgTX( pNPoscConn conn );
+pNPoscMsg npOscNextMsgTX( pNPoscConn conn )
+{
+	return NULL;
+}
+
+//------------------------------------------------------------------------------
+void npOscAddMsgRX( pNPoscMsg oscMsg );
+void npOscAddMsgRX( pNPoscMsg oscMsg )
+{
+	return;
+}
+
+//------------------------------------------------------------------------------
+void npOscProcessMsgRX( pNPoscMsg oscMsg );
+void npOscProcessMsgRX( pNPoscMsg oscMsg )
+{
+	return;
+}
+
+//------------------------------------------------------------------------------
+void npOscProcessMsgTX( pNPoscMsg oscMsg );
+void npOscProcessMsgTX( pNPoscMsg oscMsg )
+{
+	return;
+}
+
+/// Processes RX/TX messages for all connections in sync with the main loop
+//------------------------------------------------------------------------------
+void npUpdateOsc( void* dataRef )
+{
+	int i = 0;
+
+	pData data = (pData) dataRef;
+	pNPosc osc = &data->io.osc;
+	pNPoscConn conn = NULL;
+	pNPoscMsg oscMsg = NULL;
+
+	return;
+	/// Process the threaded RX listener messages from all connections
+	for( i=0; i < osc->count; i++ )
+	{
+		conn = &osc->conns[i];	///< get the connection
+		
+		while( oscMsg = npOscNextMsgRX(conn) )
+			npOscProcessMsgRX( oscMsg );
+	}
+
+	/// May want to add additional control processing here
+
+	/// Process the TX buffers
+	for( i=0; i < osc->count; i++ )
+	{
+		conn = &osc->conns[i];	///< get the connection
+		
+		while( oscMsg = npOscNextMsgTX(conn) )
+			npOscProcessMsgTX( oscMsg );
+	}
 }
 

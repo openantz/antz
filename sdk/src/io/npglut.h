@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -27,11 +27,12 @@
 
 #include "../npdata.h"
 
+/// GLUT based app frameworks are platform specific
 #ifdef NP_MSW_
 	#include "freeglut.h"
 #endif
 #ifdef NP_OSX_
-	#include <GLUT/glut.h>
+	#include <GLUT/glut.h>		/// Apple GLUT
 	#include <OpenGL/gl.h>
 #endif
 #ifdef NP_LINUX_
@@ -58,3 +59,4 @@ void npGLWireTorus (GLdouble innerRadius, GLdouble outerRadius,
 void npGlutPrimitive (int primitive);
 
 #endif
+

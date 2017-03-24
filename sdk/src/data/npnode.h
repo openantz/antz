@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -44,6 +44,7 @@ pNPnode npNodeNewLink (pNPnode linkA, pNPnode linkB, void* dataRef);
 bool npNodeAttach (pNPnode node, pNPnode parent, void* dataRef);
 void npNodeDelete (pNPnode node, void* dataRef);
 void npNodeRemove (bool freeNode, pNPnode node, void* dataRef);
+void npNodeChildMalloc (pNPnode node);
 
 void npSetTagOffset (pNPnode node);
 

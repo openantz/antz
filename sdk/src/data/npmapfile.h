@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -94,6 +94,17 @@ int npMapTraverseTreeLL(char* buffer, int* index, pNPnode node, int format, void
 void npPreLoadInit( pNPrecordSet recSet, void* dataRef);
 
 int npGetFileTypeCat( int* fileCategory, const char* filePath, void* dataRef);
+
+
+//zz models begin
+int npLoadModelCSV (const char* buffer, int size, void* dataRef);
+
+void npCSVtoModel(char** read, int size, int* scanNumRet, void* dataRef);
+
+int npLoadTextureCSV(const char* buffer, int size, void* dataRef);
+
+int npCSVstrncpy(char* cstrout, char** csvstr, int size);
+//zz models end
 
 #endif
 

@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -28,6 +28,8 @@
 #include "../npctrl.h"
 #include "../os/npos.h"
 
+#include "file/npmodels.h"	//zz models
+
 #include "watchtools.h"
 
 
@@ -44,12 +46,9 @@ void npInitGL(void* dataRef)
 
 	npInitTags (dataRef);		//do this before loading textures
 
-//	nposBeginThread (npLoadTextures, dataRef);	//zz debug, add thread worker func wrapper
-	npLoadTextures(dataRef);
-
-//	glShadeModel (GL_FLAT);
-//	glDepthFunc (GL_LEQUAL);
-//	glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+	npInitTexMap (dataRef);		//zz tex
+	
+	npInitModels (dataRef);		//zz models
 }
 
 //------------------------------------------------------------------------------
@@ -57,7 +56,8 @@ void npCloseGL (void* dataRef)
 {
 	npCloseTags (dataRef);
 
-	//	npFreeTextures (dataRef);		//debug, zz
+	// npFreeModels(dataRef);		//zz models
+	// npFreeTextures (dataRef);	//zz debug
 }
 
 
@@ -85,7 +85,7 @@ void npGLResizeScene (int width, int height)
 		data->io.gl.windowSize.y = height;
 	}
 
-	if (resizeCount++ > 2)
+	if (resizeCount++ > 2 && !data->io.gl.screenGrab)
 	{
 		sprintf(msg, "Resize: %dx%d", width, height);
 		npPostMsg(msg, kNPmsgGL, data);
@@ -140,13 +140,13 @@ void npGLLighting (void* dataRef)
 	{
 		glDisable (GL_LIGHTING);		//disable lighting and alpha for pickPass
 		glDisable (GL_BLEND);
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f); //background id 0 mapped to black
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f); //background id 0 mapped to black
 	}
 	else
 	{
 		glEnable (GL_LIGHTING);		//MB-Transp
 		glEnable (GL_BLEND);
-		glClearColor(data->io.clear.r, data->io.clear.g, data->io.clear.b, 1.0f);
+		glClearColor(data->io.clear.r, data->io.clear.g, data->io.clear.b, 0.0f);
 	}
 
 	//clear background using the clear color, set to black for pickPass
@@ -643,7 +643,7 @@ void npTagEditMode( bool tagEditMode, void* dataRef )
 	else
 	{
 		//set to console msg mode
-		console->mode = kNPconsoleMessage;
+		console->mode = kNPconsoleMsg;
 		console->cursorShow = false;
 	}
 }
@@ -866,48 +866,26 @@ void npPickTool (pNPnode node, void* dataRef)
 			}
 			if (data->io.mouse.linkA == NULL)				//first pick A
 			{
-				if (node->childCount < kNPnodeChildMax)
-				{
-					data->io.mouse.linkA = node;
-					if (node->recordID)
-						sprintf(msg,"Link node A selected id: %d record: %d - now pick B",
-								node->id, node->recordID);
-					else
-						sprintf(msg,"Link node A selected id: %d - now pick B",
-								node->id);
-					npPostMsg (msg, kNPmsgCtrl, data);
-				}
+				data->io.mouse.linkA = node;
+				if (node->recordID)
+					sprintf(msg,"Link node A selected id: %d record: %d - now pick B",
+							node->id, node->recordID);
 				else
-				{
-					sprintf(msg,"Cannot Link node A id: %d - exceeds child max",
+					sprintf(msg,"Link node A selected id: %d - now pick B",
 							node->id);
-					npPostMsg (msg, kNPmsgCtrl, data);
-					npPostMsg ("Pick new Link A", kNPmsgCtrl, data);
-					data->io.mouse.linkA = NULL;			//reset the process
-				}
+				npPostMsg (msg, kNPmsgCtrl, data);
 			}
 			else											//create link
 			{
-				if (   node->childCount < kNPnodeChildMax
-					&& data->io.mouse.linkA->childCount < kNPnodeChildMax)
+				node = npNodeNewLink (data->io.mouse.linkA, node, data);
+				if (node != NULL)
 				{
-					node = npNodeNewLink (data->io.mouse.linkA, node, data);
-					if (node != NULL)
-					{
-						sprintf(msg, "New Link id: %d from id: %d to id: %d", 
-								node->id, node->parent->id, 
-								node->child[node->childIndex]->id);
-						npPostMsg (msg, kNPmsgCtrl, data);
-					}
-					data->io.mouse.linkA = NULL;				//reset the process
-				}
-				else
-				{
-					sprintf(msg,"Cannot Link node B id: %d - exceeds child max",
-							node->id);
+					sprintf(msg, "New Link id: %d from id: %d to id: %d", 
+							node->id, node->parent->id, 
+							node->child[node->childIndex]->id);
 					npPostMsg (msg, kNPmsgCtrl, data);
-					npPostMsg ("Pick different Link B - or R-click to Cancel", kNPmsgCtrl, data);
 				}
+				data->io.mouse.linkA = NULL;				//reset the process
 			}
 			break;
 /*

@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -39,269 +39,6 @@ void npInitMap (void* dataRef)
 	int i = 0;
 	pData data = (pData) dataRef;
 
-//------------------------------------------------------------------------------
-//move these to npmaproot.h mapbase.h or npmaptree.h
-//forms the base data structure, can be augmented at run time
-//describes complete data map schema in a CSV/MySQL/JSON compatible manner
-//includes globals, data tree graph, node and link types
-//table name, field names, type and description... etc.
-//------------------------------------------------------------------------------
-
-//#define kNPbaseItemCount 18		//must be updated if below item count changed
-	static NPmapType base[] = {
-
-	{ kNPfloat,				kNPfloat,		"float",			"openGL float" },
-	{ kNPint,				kNPint,			"int",				"C int" },
-	{ kNPubyte,				kNPubyte,		"ubyte",			"C ubyte" },
-	{ kNPbool,				kNPbool,		"bool",				"C ubyte boolean" },
-
-	//zz debug remove these?... they are identical to kNP... hmmm
-	{ kNPGLboolean,			kNPGLboolean,	"GLboolean",		"openGL boolean" },
-	{ kNPGLubyte,			kNPGLubyte,		"GLubyte",			"openGL ubyte" },
-	{ kNPGLint,				kNPGLint,		"GLint",			"openGL int" },
-	{ kNPGLfloat,			kNPGLfloat,		"GLfloat",			"openGL float" },
-
-	// if both the constant and the data type are equal then it is a fundamental type
-	// note can be a structure
-	{ kNPfloatXYZA,			kNPfloatXYZA,	"NPfloatXYZA",		"openGL float x,y,z,angle" },
-	{ kNPfloatXYZS,			kNPfloatXYZS,	"NPfloatXYZS",		"openGL x,y,z,scaler" },
-	{ kNPfloatRGBA,			kNPfloatRGBA,	"NPfloatRGBA",		"openGL float r,g,b,a" },
-	{ kNPfloatRGB,			kNPfloatRGB,	"NPfloatRGB",		"openGL float r,g,b" },
-	{ kNPintXYZ,			kNPintXYZ,		"NPintXYZ",			"C int x,y,z" },
-	{ kNPubyteRGBA,			kNPubyteRGBA,	"NPubyteRGBA",		"openGL ubyte r,g,b,a" },
-	{ kNPboolXYZS,			kNPboolXYZS,	"NPboolXYZS",		"openGL boolean angle,x,y,z" },
-	{ kNPboolXYZ,			kNPboolXYZ,		"NPboolXYZ",		"openGL boolean x,y,z" },
-	{ kNPfloatXY,			kNPfloatXY,		"NPfloatXY",		"openGL float x,y" },
-	{ kNPfloatXYZ,			kNPfloatXYZ,	"NPfloatXYZ",		"openGL float x,y,z" }
-	};
-
-	// used by the CSV header and DB field names
-	// node currently expands to 94 columns or elements such as channel x,y,z
-//#define kNPnodeItemCount 52		//must be updated if below item count changed
-	static NPmapType node[] = {
-
-	{ kNPid,				kNPint,			"id",				"node ID" },
-	{ kNPtype,				kNPint,			"type",				"node type" },
-	{ kNPdata,				kNPint,			"data",				"node type specific data" },
-
-	{ kNPselected,			kNPint,			"selected",			"node currently selected" },
-
-	{ kNPparent,			kNPvoidPtr,		"parent_id",		"parent node in a data tree" },
-	{ kNPbranchLevel,		kNPint,			"branch_level",		"branch depth on tree, 0 is root node" },
-	{ kNPchild,				kNPvoidPtr,		"child_id",			"list ID of attached child nodes" },
-	{ kNPchildIndex,		kNPint,			"child_index",		"specifies the current child" }, 
-	{ kNPchildCount,		kNPint,			"child_count",		"current number of children" },
-
-	{ kNPchInputID,			kNPint,			"ch_input_id",		"channel input maps tracks to node" },
-	{ kNPchOutputID,		kNPint,			"ch_output_id",		"channel output maps node to tracks" },
-	{ kNPchLastUpdated,		kNPint,			"ch_last_updated",	"last cycle channel was updated" },
-
-	{ kNPaverage,			kNPint,			"average",			"averaging type applied to data" },
-//	{ kNPinterval,			kNPint,			"interval",			"the interval to be averaged" },
-	{ kNPinterval,			kNPint,			"sample",			"the interval to be averaged" },
-//zzsql could also have sample be samples...
-
-/// @todo change kNPintXYZ to kNPfloatXYZ for both aux_a and aux_b
-	{ kNPauxA,				kNPintXYZ,		"aux_a",			"node type specific parameters" },	//zz grid NO change
-	{ kNPauxB,				kNPintXYZ,		"aux_b",			"reserved for future use" },		//zz grid NO change
-
-	{ kNPcolorShift,		kNPfloat,		"color_shift",		"color shift is akin to hue" },
-	
-	{ kNProtateVec,			kNPfloatXYZS,	"rotate_vec",		"rotation unit vector" },
-	{ kNPscale,				kNPfloatXYZ,	"scale",			"scale node XYZ" },
-	{ kNPtranslate,			kNPfloatXYZ,	"translate",		"position relative to parent node" },
-	{ kNPtagOffset,			kNPfloatXYZ,	"tag_offset",		"text tag offset relative to node center" },
-
-	{ kNProtateRate,		kNPfloatXYZ,	"rotate_rate",		"angular velocity" },
-	{ kNProtate,			kNPfloatXYZ,	"rotate",			"orienation such as heading, tilt, roll" },
-	{ kNPscaleRate,			kNPfloatXYZ,	"scale_rate",		"scale rate" },
-	{ kNPtranslateRate,		kNPfloatXYZ,	"translate_rate",	"velocity vector" },
-	{ kNPtranslateVec,		kNPfloatXYZ,	"translate_vec",	"user defined vector" },
-
-	{ kNPshader,			kNPint,			"shader",			"wire, flat, gouraud, phong" },
-	{ kNPgeometry,			kNPint,			"geometry",			"cube, sphere, pin, FFT mesh, etc" },
-
-	{ kNPlineWidth,			kNPfloat,		"line_width",		"draws lines, zero for off" },
-	{ kNPpointSize,			kNPfloat,		"point_size",		"draws dots, zero for off" },
-	{ kNPratio,				kNPfloat,		"ratio",			"geometry ratio, ie torus inner radius" },
-
-	{ kNPcolorIndex,		kNPint,			"color_index",		"specifies the color from the palette"},
-	{ kNPcolor,				kNPubyteRGBA,	"color",			"color assigned to new data" },
-	{ kNPcolorFade,			kNPint,			"color_fade",		"fades alpha of older data points"},
-	{ kNPtextureID,			kNPint,			"texture_id",		"GL texture ID" },
-
-	{ kNPhide,				kNPbool,		"hide",				"hide the node, data stays active" },
-	{ kNPfreeze,			kNPbool,		"freeze",			"freezes data and physics updates" },
-	
-	{ kNPtopo,				kNPint,			"topo",				"topography, cube, sphere, torus, etc" },
-	{ kNPfacet,				kNPint,			"facet",			"topo face number" },
-	
-	{ kNPautoZoom,			kNPintXYZ,		"auto_zoom",		"scales node to fit screen" },
-	
-	{ kNPtriggerHi,			kNPintXYZ,		"trigger_hi",		"trigger if high setpoint hit" },
-	{ kNPtriggerLo,			kNPintXYZ,		"trigger_lo",		"trigger if low setpoint hit" },
-	{ kNPsetHi,				kNPfloatXYZ,	"set_hi",			"trigger high setpoint" },
-	{ kNPsetLo,				kNPfloatXYZ,	"set_lo",			"trigger low setpoint" },
-	{ kNPproximity,			kNPfloatXYZ,	"proximity",		"radius used for proximity detection" },
-	{ kNPproximityMode,		kNPintXYZ,		"proximity_mode",	"physics engine collision mode" },
-
-	{ kNPsegments,			kNPintXYZ,		"segments",			"segment count, such as the grid" },
-
-	{ kNPtagMode,			kNPint,			"tag_mode",			"text tag display mode" },
-	{ kNPformatID,			kNPint,			"format_id",		"translates values, used for labels" },
-	{ kNPmapID,				kNPint,			"table_id",			"location of the records source table" },
-	{ kNPrecordID,			kNPint,			"record_id",		"record ID in the source table" },	//debug zz
-
-	{ kNPsize,				kNPint,			"size",				"node size in bytes" }
-	};
-
-//#define kNPcameraItemCount 17		//must be updated if below item count changed
-	static NPmapType camera[] = {
-
-	{ kNPid,				kNPint,			"id",				"node ID" },
-	{ kNPtype,				kNPint,			"type",				"node type" },
-		
-	{ kNPformat,			kNPint,			"format",			"320p, 480i, 720p, 4K full app" },
-	{ kNPinterlaced,		kNPint,			"interlaced",		"interlaced field order" },
-	{ kNPstereo,			kNPint,			"stereo_3d",		"stereoscopic 3D" },
-	{ kNPaspectRatio,		kNPfloat,		"aspect_ratio",		"1.0, 1.333, 1.777, 1.85, 2.25... " },
-	{ kNPfps,				kNPfloat,		"fps",				"15, 24, 29.97, 30, 59.94, 60, 119.88" },
-	{ kNPcolorSpace,		kNPint,			"color_space",		"8, 12bit, YUV, RGBA, XYZ, CMYK..." },
-	{ kNPwidth,				kNPint,			"width",			"res in pixels" },
-	{ kNPheight,			kNPint,			"height",			"res in pixels" },
-
-	{ kNPfov,				kNPfloat,		"fov",				"FOV 35mm, 70mm..." },
-	{ kNPclipNear,			kNPfloat,		"clip_near",		"camera near clipping plane" },
-	{ kNPclipFar,			kNPfloat,		"clip_far",			"camera far clipping plane" },
-
-	{ kNPaperture,			kNPfloat,		"aperture",			"F stop" },
-	{ kNPexposure,			kNPfloat,		"exposure",			"in seconds" },
-	{ kNPsensorType,		kNPint,			"sensor_type",		"3CCD, Debayer pattern..." },
-
-	{ kNPsize,				kNPint,			"size",				"data size in bytes" }
-	};
-
-//#define kNPgridItemCount 5		//must be updated if below item count changed
-	static NPmapType grid[] = {
-
-	{ kNPid,				kNPint,			"id",				"node ID" },
-	{ kNPtype,				kNPint,			"type",				"node type" },
-
-	{ kNPsegments,			kNPintXYZ,		"segments",			"number of grid segments" },
-	{ kNPoverlay,			kNPbool,		"overlay",			"overlays relative to screen coord" },
-
-	{ kNPsize,				kNPint,			"size",				"node size in bytes" }
-	};
-
-//#define kNPpinItemCount 12		//must be updated if below item count changed
-	static NPmapType pin[] = {
-
-	{ kNPid,				kNPint,			"id",				"node ID" },
-	{ kNPtype,				kNPint,			"type",				"node type" },
-
-	{ kNPinnerRadius,		kNPfloat,		"inner_radius",		"inner radius of the toroid" },
-	{ kNPouterRadius,		kNPfloat,		"outer_radius",		"outer radius of the toroid" },
-	{ kNPradiusRatioIndex,	kNPint,			"radius_ratio_index", "sorts pre-loaded GPU toriods" },
-	{ kNPscreenSizeIndex,	kNPint,			"screen_size_index", "same as above for detail level" },
-	{ kNPslices,			kNPint,			"slices",			"calculated from radiusRatioIndex" },
-	{ kNPstacks,			kNPint,			"stacks",			"and from the screenSizeIndex" },
-	{ kNPtranslateTex,		kNPfloatXYZ,	"translate_tex",	"offsets texture origin" },
-	{ kNPscaleTex,			kNPfloatXYZ,	"scale_tex",		"scales the texture" },
-	{ kNProtateTex,			kNPfloatXYZS,	"rotate_tex",		"orientation of the texture map" },
-	{ kNPsize,				kNPint,			"size",				"node size in bytes" }
-	};
-
-	//zzsql
-	static NPmapType tag[] = {
-
-		{ kNPid,			kNPint,			"id",				"tag ID" },
-		{ kNPrecordID,		kNPint,			"record_id",		"Record ID" },
-		{ kNPmapID,			kNPint,			"table_id",			"Table ID" },
-		{ kNPtitle,			kNPcharArray,	"title",			"Title" },
-		{ kNPdesc,			kNPcharArray,	"description",		"Description" }
-	}; // debug db
-	
-	static NPmapType ChMap[] = {
-
-		{ kNPid,			kNPint,			"id",				"Channel Map ID" },
-		{ kNPchannelID,		kNPint,			"channel_id",		"Channel ID"	 },
-		{ kNPtrackID,		kNPint,			"track_id",			"Track ID"		 },
-		{ kNPattribute,		kNPcharArray,	"attribute",		"Attribute"		 },
-		{ kNPtrackTableID,	kNPint,			"track_table_id",	"Track Table ID" },
-		{ kNPchMapTableID,	kNPint,			"ch_map_table_id",	"Channel Map Table ID"},
-		{ kNPrecordID,		kNPint,			"record_id",		"Record ID"		}
-	}; // debug db //zzsql
-	
-	//zz color
-	static NPmapType palette[] = {
-
-		{ kNPid,			kNPint,			"id",				"Color Palette Index" },
-		{ kNPrecordID,		kNPint,			"red",				"Red" },
-		{ kNPmapID,			kNPint,			"green",			"Green" },
-		{ kNPtitle,			kNPint,			"blue",				"Blue" },
-		{ kNPdesc,			kNPint,			"alpha",			"Alpha Transparency" }
-	};
-/*	
-	//zz tex
-	static NPmapType texture[] = {
-
-		{ kNPid,			kNPint,			"np_texture_id",	"Texture ID" },
-		{ kNPtype,			kNPint,			"type",				"Type: 2D, 3D, Cubemap, Video" },
-		{ kNPfileName,		kNPcharArray,	"file_name",		"File Name" },
-		{ kNPpath,			kNPcharArray,	"path",				"File Path" }
-	};
-	
-	//zz mod
-	static NPmapType models[] = {
-
-		{ kNPid,			kNPint,			"np_models_id",		"3D Models ID" },
-		{ kNPid,			kNPint,			"np_geometry_id",	"Geometry ID" },
-		{ kNPid,			kNPint,			"np_texture_id",	"Texture ID" },
-		{ kNPtype,			kNPint,			"type",				"Type: Mesh, Terrain, etc." },
-		{ kNPobjName,		kNPcharArray,	"object_name",		"3D Scene Object Name" },
-		{ kNPfileName,		kNPcharArray,	"file_name",		"File Name" },
-		{ kNPpath,			kNPcharArray,	"path",				"File Path" }
-	};
-*/	
-
-	//-------
-	//-------
-//	npMapTypeInit(data);						//zz debug, move this from npcsv.h
-	//-------
-
-	for (i=0; i < kNPpaletteMax; i++)
-		data->map.color[i] = NULL;
-
-	//-------
-	// clear the typeMap
-	for (i=0; i < kNPdataTypeMax; i++)
-		data->map.typeMap[i] = NULL;
-
-	data->map.typeMapBase		= base;
-	data->map.typeMapNode		= node;
-	data->map.typeMapPin		= pin;
-	data->map.typeMapCamera		= camera;
-	data->map.typeMapGrid		= grid;
-	data->map.typeMapTag		= tag;		// debug db //zzsql
-	data->map.typeMapChMap		= ChMap;	// debug db //zzsql
-	
-	data->map.typeMapPalette	= palette;
-//	data->map.typeMapTexture	= texture;	//zz tex
-//	data->map.typeMapModels		= models;	//zz mod
-
-	data->map.typeMapGlobals	= NULL;		//zz debug
-	
-	data->map.mapTypeList = NULL;
-	data->map.mapTypeCount = 0;
-
-	// populate the typeMap
-	data->map.typeMap[kNPbase]	= base;
-	data->map.typeMap[kNPnode]	= node;
-//	data->map.typeMap[kNPcmd] = graph;
-	data->map.typeMap[kNPpin]	= pin;
-	data->map.typeMap[kNPcamera]= camera;
-	data->map.typeMap[kNPgrid]	= grid;
-
 
 	data->map.selectSet.x		= false;
 	data->map.selectSet.y		= false;
@@ -328,9 +65,12 @@ void npInitMap (void* dataRef)
 	data->map.sortSwap			= 0;						//zzhp debug
 	data->map.sortSwapFlag		= 0;						//zzhp debug
 
+	for (i=0; i < kNPpaletteMax; i++)
+		data->map.color[i] = NULL;
+
 	//clear the node ID array
 	data->map.node = (void*) malloc (kNPnodeRootMax * sizeof(void*));
-	if (data == NULL)
+	if( !data->map.node )
 	{
 		printf ("err 4273 - malloc failed to allocate root node array\n");
 		exit(EXIT_FAILURE);
@@ -338,13 +78,13 @@ void npInitMap (void* dataRef)
 
 	//clear the node ID array
 	data->map.sortA = (void*) malloc (kNPnodeMax * sizeof(void*));		//zzhp
-	if (data == NULL)
+	if( !data->map.sortA )
 	{
 		printf ("err 4274 - malloc failed to allocate sort array\n");
 		exit(EXIT_FAILURE);
 	}
 	data->map.sortB = (void*) malloc (kNPnodeMax * sizeof(void*));		//zzhp
-	if (data == NULL)
+	if( !data->map.sortB )
 	{
 		printf ("err 4275 - malloc failed to allocate sort array\n");
 		exit(EXIT_FAILURE);
@@ -352,7 +92,7 @@ void npInitMap (void* dataRef)
 
 	//clear the node ID array
 	data->map.nodeID = (void*) malloc (kNPnodeMax * sizeof(void*));
-	if (data == NULL)
+	if( !data->map.nodeID )
 	{
 		printf ("err 4276 - malloc failed to allocate nodeID array\n");
 		exit(EXIT_FAILURE);
@@ -360,14 +100,14 @@ void npInitMap (void* dataRef)
 
 	//clear the node ID array
 	data->map.parentID = (int*) malloc (kNPnodeMax * sizeof(int*));
-	if (data == NULL)
+	if( !data->map.parentID )
 	{
 		printf ("err 4277 - malloc failed to allocate parentID array\n");
 		exit(EXIT_FAILURE);
 	}
 
 	data->map.sortID = (void*) malloc (kNPnodeMax * sizeof(void*));
-	if (data == NULL)
+	if( !data->map.sortID )
 	{
 		printf ("err 4278 - malloc failed to allocate sortID array\n");
 		exit(EXIT_FAILURE);
@@ -375,7 +115,7 @@ void npInitMap (void* dataRef)
 
 	//clear the node ID array
 	data->map.orphanList = (int*) malloc (kNPnodeMax * sizeof(int*));
-	if (data == NULL)
+	if( !data->map.orphanList )
 	{
 		printf ("err 4279 - malloc failed to allocate nodeID array\n");
 		exit(EXIT_FAILURE);
@@ -403,7 +143,9 @@ void npInitMap (void* dataRef)
 	data->map.sortCountA = 0;					//zzhp
 	data->map.sortCountB = 0;					//zzhp
 
-	strcpy( data->map.loadMsg, "Press '1' key to get hints!!!\0" );
+	strcpy( data->map.startupMsg, "Press '1' key to get hints!!!\0" );
+
+	npInitChMapTypes( data);
 }
 
 //------------------------------------------------------------------------------
@@ -425,99 +167,6 @@ int npGetRootIndex (pNPnode node, void* dataRef)
 		}
 
 	return index;
-}
-
-//------------------------------------------------------------------------------
-void npSelectNode (pNPnode node, void* dataRef)
-{
-	int rootIndex = 0;
-	pData data = (pData) dataRef;
-
-	pNPnode parent = NULL;
-//	char msg[256];																//zz-s
-
-	//return if NULL, not considered an err
-	if (node == NULL)
-	{
-		//zz debug, not really an error
-//		npPostMsg("Err 6841 - invalid node selected", kNPmsgErr, dataRef);		//zz-s
-		
-		//select the camera
-		node = data->map.currentCam;
-
-		if (node == NULL)
-		{
-			npPostMsg("Err 6841 - currentCam is NULL", kNPmsgErr, dataRef);
-			return;
-		}
-	}
-
-	
-	if ( data->map.previousNode != data->map.currentNode )
-		data->map.previousNode = data->map.currentNode;
-	
-
-/*	if (node->parent != NULL)													//zz-s	
-	{
-		parent = node->parent;
-		sprintf(msg,"id: %d  type: %d  parent: %d", node->id, node->type, parent->id); 
-	}
-	else
-		sprintf(msg,"node id: %d  type: %d  parent NULL", node->id, node->type); 
-	npPostMsg(msg, kNPmsgErr, dataRef);											//zz-s
-*/	
-	//traverses up the tree to the pin root and gets the pin index
-	rootIndex = npGetRootIndex (node, dataRef);
-
-	//if a pin
-	switch (node->type)
-	{	
-	//	case kNodeDefault : break;
-		case kNodeCamera :
-			data->map.currentCam = node; 
-			data->map.currentNode = node;
-			data->map.nodeRootIndex = rootIndex;
-			break;
-		case kNodePin :
-		case kNodeLink :
-			data->map.selectedPinIndex = rootIndex;
-			data->map.selectedPinNode = node;
-			data->map.currentNode = node;
-			data->map.nodeRootIndex = rootIndex;
-			break;
-		case kNodeGrid :
-			data->map.selectedGrid = node; 
-			data->map.currentNode = node;
-			data->map.nodeRootIndex = rootIndex;
-			break;
-		case kNodeHUD : data->map.selectedHUD = node; break;
-		default : 
-			npPostMsg("Err 6842 - node type unknown", kNPmsgErr, dataRef);
-			
-			//select the camera
-		/*	rootIndex = 1;
-			node = data->map.currentCam;
-			data->io.mouse.pickMode = kNPmodeCamera;
-			data->map.currentNode = node;
-			data->map.nodeRootIndex = rootIndex;
-		*/
-			break;
-	}
-}
-
-//------------------------------------------------------------------------------
-void npNodeSelection( pNPnode node, void* dataRef)
-{
-	if( node->type != kNodePin )
-		return;
-
-	node->selected = true;
-}
-
-//------------------------------------------------------------------------------
-void npNodeSelectionOff( pNPnode node, void* dataRef)
-{
-	node->selected = false;
 }
 
 //------------------------------------------------------------------------------
@@ -543,64 +192,6 @@ void npNodeTagModeOff( pNPnode node, void* dataRef)
 		node->tagMode = 0;
 }
 
-/// Select ALL nodes for given node type.
-//------------------------------------------------------------------------------
-void npSelectAll (int nodeType, void* dataRef)
-{
-	int i = 0;
-	int commandTemp = 0;
-
-	pData data = (pData) dataRef;
-	pNPnode node = data->map.currentNode;
-
-
-	/// @todo implement selecting nodes by type
-	if( nodeType == kNodeCamera )
-	{
-		npPostMsg( "err 0000 - npSelectAll camera not implemented", 0, data);
-		return;
-	}
-	else if( nodeType == kNodeGrid )
-	{
-		npPostMsg( "err 0000 - npSelectAll grid not implemented", 0, data);
-		return;
-	}
-
-	if( data->io.mouse.tool == kNPtoolHide ) 
-	{
-		data->io.hideLevel--;
-		if( data->io.hideLevel < -1 )
-			data->io.hideLevel = kNPhideLevelMax;
-
-		npTraverseMap (npNodeHideLevel, dataRef);
-	}
-	else if( data->io.mouse.tool == kNPtoolTag )
-		npTraverseMap (npNodeTagModeOff, dataRef);
-	else	
-	{	/// select or clear all nodes
-		data->map.selectAll = 1 - data->map.selectAll; //toggle selectAll
-
-		if( data->map.selectAll )
-			npTraverseMap (npNodeSelection, dataRef);
-		else
-			npTraverseMap (npNodeSelectionOff, dataRef);
-	}
-}
-
-/// Clear node selection for given node type.
-//------------------------------------------------------------------------------
-void npSelectNone (int nodeType, void* dataRef)
-{
-
-}
-
-/// Invert node selection for given node type.
-//------------------------------------------------------------------------------
-void npSelectInvert (int nodeType, void* dataRef)
-{
-
-}
-
 //------------------------------------------------------------------------------
 pNPnode npMapNodeNext (void* dataRef){return NULL;}			//select next sibling node
 pNPnode npMapNodePrevious (void* dataRef){return NULL;}		//previous sibling
@@ -618,15 +209,6 @@ void* npGetNodeByID (int id, void* dataRef)
 	return node;
 }
 
-//------------------------------------------------------------------------------
-void npSelectNodeByID (int id, void* dataRef)
-{
-	pNPnode node = NULL;
-
-	node = npGetNodeByID (id, dataRef);	//get node by id
-
-	npSelectNode (node, dataRef);
-}
 
 //applies passed in nodeFunc to the node and all of its sub-nodes
 //recursive tree traversal process may be configured for parent first or last
@@ -847,7 +429,10 @@ void npMapSortAdd (int id, int parentID, void* nodeRef, void* dataRef)
 	pNPnode node = (pNPnode) nodeRef;
 	pData data = (pData) dataRef;
 
-	if (id < 0 || id >= kNPnodeMax)
+	if( !node )
+		return;
+
+	if ( id < 1 || id >= kNPnodeMax)
 	{
 		printf ("err 4833 - id: %d out of range, npMapSortAdd()\n", id);
 		return;
@@ -908,7 +493,7 @@ pNPnode npMapSortID (int id, void* dataRef)
 	return data->map.sortID[id];
 }
 
-//update node branchLevel based on parent level, traverses all sub-child nodes
+/// update node level for when branch has moved, traverses all sub-nodes
 //-----------------------------------------------------------------------------
 void npNodeUpdateBranchLevel (pNPnode node)
 {
@@ -937,7 +522,7 @@ void npNodeMoveBranch (pNPnode node, pNPnode newParent, void* dataRef)
 	int i = 0;
 	int childIndex = 0;
 	int parentIndex = 0;
-	char msg[256];
+//	char msg[256];
 
 	pData data = (pData) dataRef;
 
@@ -947,12 +532,8 @@ void npNodeMoveBranch (pNPnode node, pNPnode newParent, void* dataRef)
 		return;
 	}
 		
-	if (newParent->childCount >= kNPnodeChildMax)
-	{
-		sprintf(msg, "err 4836 - kNPnodeChildMax hit: %d max", kNPnodeChildMax);
-		npPostMsg(msg, kNPmsgErr, data);
-		return;
-	}
+	if( newParent->childCount >= newParent->childSize )
+		npNodeChildMalloc(newParent);
 
 	//remove node from parent old parent
 	npNodeRemove (false, node, data);			//npCutBranch()
@@ -970,7 +551,9 @@ void npNodeMoveBranch (pNPnode node, pNPnode newParent, void* dataRef)
 //			node->id, node->branchLevel, newParent->id );
 }
 
-//attach orhan nodes to their parent after loading all file records
+// attach orhan nodes to their parent after loading all file records
+// delete node if parent is missing
+// link nodes are deleted if either parent A or B is missing
 //-----------------------------------------------------------------------------
 void npMapSort(void* dataRef)
 {
@@ -978,26 +561,66 @@ void npMapSort(void* dataRef)
 	bool result = false;
 	int parentIndex = 0;
 
-	pNPnode node = NULL;
-	pNPnode nodeParent = NULL;
-	pNPnode child = NULL;			//used for link B
 	pData data = (pData) dataRef;
+	pNPnode node = NULL;
+	pNPnode parent = NULL;
+	pNPnode child = NULL;			//used for link B
+
+	void** sortID = data->map.sortID;		//confusing names....
+	int* parentID = data->map.parentID;
+	int* orphanID = data->map.orphanList;
+	int child_id = 0;						//confusing names....
+
+	int count = data->map.orphanCount;
+	char msg[128] = {'\0'};
 
 	//iterate through the orphanList
-	for (i=0; i < data->map.orphanCount; i++)
+	for (i=0; i < count; i++)
 	{
-		node = data->map.sortID[data->map.orphanList[i]];
-		nodeParent = data->map.sortID[data->map.parentID[i]];
+		node = sortID[orphanID[i]];
+		parent = sortID[parentID[i]];
+
+		/// delete orphan node if parent is missing
+		if( !parent )
+		{
+			npNodeDelete( node, data );
+			data->map.sortID[i] = NULL;
+
+			/// rate limited orphan node messaging
+			if( i < 6 )
+			{
+				sprintf( msg, "warn 4836 - orphan id: %d  missing parent_id: %d",
+						 orphanID[i], parentID[i] );
+				npPostMsg( msg, kNPmsgWarn, data );
+			}
+			continue;
+		}
 
 		//some special processing for link nodes only
-		if (node->type == kNodeLink)
+		if( node->type == kNodeLink )
 		{
 			//we temporarily store link B childID in the childIndex
-			child = data->map.sortID[node->childIndex];
+			child_id = node->childIndex;
 			node->childIndex = 0;	//no longer need temp storage
 			
+			child = sortID[child_id];
+
+			if( !child )
+			{
+				npNodeDelete (node, dataRef);
+				data->map.sortID[i] = NULL;
+
+				if( i < 6 )
+				{
+					sprintf( msg, "warn 4837 - link id: %d  missing child_id: %d",
+							 orphanID[i], child_id );
+					npPostMsg( msg, kNPmsgWarn, data );
+				}
+				continue;
+			}
+
 			node->child[0] = child;
-		//	node->childCount++;
+		//	node->childCount++;		//zz zero prevents tree recursion problem
 
 			//attach node to link B end
 			result = npNodeAttach (node, child, data);
@@ -1006,40 +629,42 @@ void npMapSort(void* dataRef)
 				npNodeDelete (node, dataRef);
 				data->map.sortID[i] = NULL;
 
-				printf ("err 4837 - orphan link node id: %d   parent_id: %d\n",
-					data->map.orphanList[i], data->map.parentID[i] );
+				if( i < 6 )
+				{
+					sprintf( msg, "warn 4838 - cant attach link id: %d", orphanID[i] );
+					npPostMsg( msg, kNPmsgWarn, data );
+				}
+				continue;
 			}
 
 			//if this is not an actual orphan the skip the rest
-			if (node->parent == nodeParent)
+			if (node->parent == parent)
 				continue;
 		}
 
-		if (nodeParent != data->map.node[kNPnodeRootNull])
-		{
-			npNodeMoveBranch (node, nodeParent, data);
+		//zz so we delete objects still pointing to the root
+		//zz note that we removed CSVone support for pre 2012-04 files
+		if (parent != data->map.node[kNPnodeRootNull])
+		{   
+			npNodeMoveBranch (node, parent, data);
 
-			//compatability for files prior to 2012-04-22 with topo == 0
-			//other half of this procedure is in npReadMapCSVNode()
-			if (node->topo == 0 && node->type == kNodePin && nodeParent != NULL)
-			{
-				if ( nodeParent->topo == kNPtopoPin || nodeParent->topo == 0
-					|| nodeParent->topo == kNPtopoTorus )
-					node->topo = kNPtopoTorus;
-				else
-					node->topo = kNPtopoPin;
+			if( i < 6 )//|| i % 1000 == 0 )
+			{	sprintf( msg, "orphan id: %d attached to parent_id: %d", 
+					data->map.orphanList[i], data->map.parentID[i] );
+				npPostMsg( msg, kNPmsgWarn, data );
 			}
-
-			printf ("orphan id: %d attached to parent id: %d\n", 
-				data->map.orphanList[i], data->map.parentID[i] );
 		}
 		else
 		{
 			npNodeDelete (node, dataRef);
 			data->map.sortID[i] = NULL;
 
-			printf ("err 4838 - orphan id: %d   missing parent id: %d\n",
-				data->map.orphanList[i], data->map.parentID[i] );
+			if( i < 6 )
+			{
+				sprintf( msg, "warn 4839 - del orphan id: %d   parent_id: %d",
+					data->map.orphanList[i], data->map.parentID[i] );
+				npPostMsg( msg, kNPmsgWarn, data );
+			}
 		}
 	}
 }
@@ -1077,6 +702,9 @@ void* npMapNodeAdd (int id, int type, int branchLevel, int parentID,
 	//if new one, either a child or parent, determined by branchLevel
 	//default is to update->camera, update->grid
 	//new node for all others
+
+	if( data->map.nodeCount >= kNPnodeMax )
+		return NULL;
 
 	//root node
 	if( branchLevel <= 0 ) // or perhaps parentID == 0, debug zz
@@ -1143,7 +771,6 @@ void* npMapNodeAdd (int id, int type, int branchLevel, int parentID,
 		nodeParent = npMapSortID (parentID, dataRef);	//if DNE return default node
 		node = npNodeNew (type, nodeParent, dataRef);
 	}
-
 
 	// add to parent lookup table for sorting orphan child nodes at end
 	npMapSortAdd (id, parentID, node, dataRef);

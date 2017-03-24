@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -27,6 +27,8 @@
 #include "npgldraw.h"
 
 #include "../npglut.h"
+
+#include "../file/npmodels.h"	//zz models
 
 #define kTorusScreenSizeCount 4
 #define kTorusThicknessCount 4
@@ -105,7 +107,7 @@ void npCloseGLPrimitive (void* dataRef)
 	return;
 }
 
-#define kNPc 0.707107
+#define kNPc 0.707107f
 //------------------------------------------------------------------------------
 void npDrawCubeDL (void)
 {
@@ -724,7 +726,6 @@ void DrawConeDL()
 	// gluDeleteQuadric(sphere);				``````````````//zz debug, should use this
 }
 
-#define kNPgeoMax 4096
 //------------------------------------------------------------------------------
 GLuint npCreatePrimitiveDL(void)
 {
@@ -822,4 +823,541 @@ GLuint npCreatePrimitiveDL(void)
 	
 	return (displayList);
 }
+
+//zz models begin
+#define kNPgeoUnitCube 2.0f	//zz move to nptypes.h
+#define kNPdrawModelsMode 2	// NP_POINTS = 0, NP_LINES = 1 and NP_POLYGONS = 2
+
+void set_float4(float f[4], float a, float b, float c, float d)
+{
+	f[0] = a;
+	f[1] = b;
+	f[2] = c;
+	f[3] = d;
+}
+
+void color4_to_float4(const struct aiColor4D *c, float f[4])
+{
+	f[0] = c->r;
+	f[1] = c->g;
+	f[2] = c->b;
+	f[3] = c->a;
+}
+
+void apply_material(const struct aiMaterial *mtl)
+{
+	float c[4];
+
+	GLenum fill_mode;
+	int ret1, ret2;
+	struct aiColor4D diffuse;
+	struct aiColor4D specular;
+	struct aiColor4D ambient;
+	struct aiColor4D emission;
+	struct aiString str;
+	float shininess, strength;
+	int two_sided;
+	int wireframe;
+	int test = 0;
+	unsigned int max;
+
+	test = aiGetMaterialTexture(mtl, aiTextureType_NORMALS, 0, &str, NULL, NULL, NULL, NULL, NULL, NULL);
+//	printf("\ntest : %d", test);
+
+	set_float4(c, 0.8f, 0.8f, 0.8f, 1.0f);
+	if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_DIFFUSE, &diffuse))
+		color4_to_float4(&diffuse, c);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, c);
+
+	set_float4(c, 0.0f, 0.0f, 0.0f, 1.0f);
+	if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_SPECULAR, &specular))
+		color4_to_float4(&specular, c);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, c);
+
+	set_float4(c, 0.2f, 0.2f, 0.2f, 1.0f);
+	if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_AMBIENT, &ambient))
+		color4_to_float4(&ambient, c);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, c);
+
+	set_float4(c, 0.0f, 0.0f, 0.0f, 1.0f);
+	if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_EMISSIVE, &emission))
+		color4_to_float4(&emission, c);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, c);
+
+	max = 1;
+	ret1 = aiGetMaterialFloatArray(mtl, AI_MATKEY_SHININESS, &shininess, &max);
+	if(ret1 == AI_SUCCESS) {
+    	max = 1;
+    	ret2 = aiGetMaterialFloatArray(mtl, AI_MATKEY_SHININESS_STRENGTH, &strength, &max);
+		if(ret2 == AI_SUCCESS)
+			glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess * strength);
+        else
+        	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+    }
+	else {
+		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 0.0f);
+		set_float4(c, 0.0f, 0.0f, 0.0f, 0.0f);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, c);
+	}
+
+	max = 1;
+	if(AI_SUCCESS == aiGetMaterialIntegerArray(mtl, AI_MATKEY_ENABLE_WIREFRAME, &wireframe, &max))
+		fill_mode = wireframe ? GL_LINE : GL_FILL;
+	else
+		fill_mode = GL_FILL;
+	glPolygonMode(GL_FRONT_AND_BACK, fill_mode);
+
+	max = 1;
+	if((AI_SUCCESS == aiGetMaterialIntegerArray(mtl, AI_MATKEY_TWOSIDED, &two_sided, &max)) && two_sided)
+		glDisable(GL_CULL_FACE);
+	else
+		glEnable(GL_CULL_FACE);
+}
+
+
+
+//------------------------------------------------------------------------------
+void npDrawModelsDL( struct aiMesh* mesh, int faceMode );
+/// Display List (DL) code is optimized for performance.
+/// We don't want anything extra inside the DL.
+void npDrawModelsDL( struct aiMesh* mesh, int faceMode )
+{
+	//zz move this to npGetBoundingBox()
+	// printf( "child mesh: %d  polygons: %d\n", z, mesh->mNumFaces );
+
+	// skip if no verti
+	if( mesh->mNumVertices == 0 )
+		return;
+
+	/// @todo could not access assimp mesh->HasNormals...
+	//apply_material(scene->mMaterials[mesh->mMaterialIndex]);
+	if( mesh->mNormals != NULL )
+	{
+		glEnableClientState( GL_NORMAL_ARRAY );
+		glNormalPointer( GL_FLOAT, 0, mesh->mNormals );
+	}
+	if( mesh->mColors[0] != NULL )
+	{
+		glEnableClientState( GL_COLOR_ARRAY );
+		glColorPointer( 4, GL_FLOAT, 0, mesh->mColors[0] );
+	}
+	if( mesh->mTextureCoords[0] != NULL )
+	{
+		glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+		glTexCoordPointer(3, GL_FLOAT, 0, mesh->mTextureCoords[0]);
+	}
+
+	// vertextPtr should be last for performance
+	glEnableClientState( GL_VERTEX_ARRAY );
+//	glVertexPointer( 3, GL_FLOAT, 92, mesh->mVertices );	// 12 bytes / vertex
+//	glDrawArrays( faceMode, 0, mesh->mNumVertices / 8 );		//draw mesh
+//	glVertexPointer( 3, GL_FLOAT, 576, mesh->mVertices );	 // 4 
+//	glDrawArrays( faceMode, 0, mesh->mNumVertices / 48 );		//draw mesh
+	glVertexPointer( 3, GL_FLOAT, 0, mesh->mVertices );	 // 4 
+	glDrawArrays( faceMode, 0, mesh->mNumVertices );		//draw mesh
+
+	// finished drawing this mesh so disable the states
+	glDisableClientState( GL_VERTEX_ARRAY );
+
+	if( mesh->mNormals != NULL )
+		glDisableClientState( GL_NORMAL_ARRAY );
+	if( mesh->mColors[0] != NULL )
+		glDisableClientState( GL_COLOR_ARRAY );
+	if( mesh->mTextureCoords[0] != NULL  )
+		glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+}
+
+/*
+	for(z = 0; z < node->mNumMeshes; z++)
+	{
+		mesh = scene->mMeshes[node->mMeshes[z]];
+		//apply_material(scene->mMaterials[mesh->mMaterialIndex]);
+		for(x = 0; x < (int)mesh->mNumFaces; x++)
+		{
+			face = &mesh->mFaces[x];
+			switch(face->mNumIndices) {
+				case 1: face_mode = GL_POINTS; break;
+				case 2: face_mode = GL_LINES; break;
+				case 3: face_mode = GL_TRIANGLES; break;
+				default: face_mode = GL_POLYGON; break;
+			}
+*/
+		
+void npModelsTreeRecursion(struct aiScene* scene, struct aiNode* node, int faceMode, void* dataRef);
+/// @todo move to npgeometry.c
+void npModelsTreeRecursion(struct aiScene* scene, struct aiNode* node, int faceMode, void* dataRef)
+//-----------------------------------------------------------------------------
+{
+//	pNPassimp assimp = data->io.assimp;
+//	struct aiMatrix4x4 m = node->mTransformation;
+//	struct aiFace* face = NULL;
+//	GLenum face_mode = 0;
+
+	pData data = (pData) dataRef;
+
+	struct aiMesh* mesh = NULL;
+	unsigned int i = 0, x = 0, z = 0;
+	
+	/// Loop through all meshes belonging to this models node and draw them
+	for( z = 0; z < node->mNumMeshes; z++ )
+	{
+		mesh = scene->mMeshes[node->mMeshes[z]];
+		npDrawModelsDL( mesh, faceMode );
+	}
+
+	/// Recursively traverse models tree to draw all children
+	for (i = 0; i < node->mNumChildren; i++)
+		npModelsTreeRecursion( scene, node->mChildren[i], faceMode, dataRef );
+}
+
+
+void npBoxGen(struct aiScene* scene, struct aiNode* node, pNPbox bBox ,void* dataRef);
+void npBoxGen(struct aiScene* scene, struct aiNode* node, pNPbox bBox ,void* dataRef)
+{
+	struct aiMesh* mesh = NULL;
+	struct aiVector3D v;
+	
+	unsigned int m = 0;
+	int vNum = 0;
+	int vI;
+
+	if(!node)
+		return;
+
+	if(scene->mRootNode == node && node->mMeshes)
+	{
+		bBox->xH = scene->mMeshes[node->mMeshes[m]]->mVertices[0].x;
+		bBox->yH = scene->mMeshes[node->mMeshes[m]]->mVertices[0].y;
+		bBox->zH = scene->mMeshes[node->mMeshes[m]]->mVertices[0].z;
+		
+		bBox->xL = scene->mMeshes[node->mMeshes[m]]->mVertices[0].x;
+		bBox->yL = scene->mMeshes[node->mMeshes[m]]->mVertices[0].y;
+		bBox->zL = scene->mMeshes[node->mMeshes[m]]->mVertices[0].z;
+	}
+	else if(scene->mRootNode == node && node && (node->mMeshes == NULL))
+	{
+		for(m = 0; m < node->mNumChildren; m++)
+		{
+			if(node->mChildren[m]->mNumMeshes > 0)
+			{
+				bBox->xH = scene->mMeshes[node->mChildren[m]->mMeshes[0]]->mVertices[0].x;
+				bBox->yH = scene->mMeshes[node->mChildren[m]->mMeshes[0]]->mVertices[0].y;
+				bBox->zH = scene->mMeshes[node->mChildren[m]->mMeshes[0]]->mVertices[0].z;
+				
+				bBox->xL = scene->mMeshes[node->mChildren[m]->mMeshes[0]]->mVertices[0].x;
+				bBox->yL = scene->mMeshes[node->mChildren[m]->mMeshes[0]]->mVertices[0].y;
+				bBox->zL = scene->mMeshes[node->mChildren[m]->mMeshes[0]]->mVertices[0].z;
+				break;
+			}
+		}
+
+	}
+
+	for(m = 0; m < node->mNumMeshes; m++)
+	{
+		mesh = scene->mMeshes[node->mMeshes[m]];
+		vNum = mesh->mNumVertices;
+		for(vI = 0; vI < vNum; vI++)
+		{
+			v = mesh->mVertices[vI];
+			if(v.x > bBox->xH)
+				bBox->xH = v.x;
+
+			if(v.y > bBox->yH)
+				bBox->yH = v.y;
+
+			if(v.z > bBox->zH)
+				bBox->zH = v.z;
+
+			if(v.x < bBox->xL)
+				bBox->xL = v.x;
+
+			if(v.y < bBox->yL)
+				bBox->yL = v.y;
+
+			if(v.z < bBox->zL)
+				bBox->zL = v.z;
+			//vec->
+		}
+	//	node->mT
+	}
+
+	if(node->mChildren)
+	{
+		for(m = 0; m < node->mNumChildren; m++)
+			npBoxGen(scene, node->mChildren[m], bBox, dataRef);
+	}
+}
+
+/// @todo change to npCreateModelsDL( pNPmodels scene, pNPgeolist geolist, void* dataRef)
+void npModelStoreDL(struct aiScene* scene, pNPgeolist geo, void* dataRef)
+{
+	pData data = (pData) dataRef;
+	pNPgl gl = &data->io.gl;
+	pNPassimp assimp = (pNPassimp)data->io.assimp;
+	NPbox bBox;
+
+	float dX = 0.0f, dY = 0.0f, dZ = 0.0f;	//bounding box dimensions
+	float cX = 0.0f, cY = 0.0f, cZ = 0.0f;	//center offset
+	float rX = 0.0f, rY = 0.0f, rZ = 0.0f;	//rotate
+	float sX = 0.0f, sY = 0.0f, sZ = 0.0f;	//scale
+
+	float normalize = 1.0f;	//default scale value is 1.0f for no change
+	int faceMode = 0; // GL_POINTS, lines, polygons
+
+	printf( "Preparing 3D Models...\n" );
+
+	/// If model has 0 scale then normalize the scale and set the model center.
+	/// Perhaps set to zero in the np_models table or file loaded directly.
+	if( geo->scale.x == 0.0f || geo->scale.y ==  0.0f || geo->scale.z ==  0.0f )
+	{
+		//printf( "find model scene bounding box\n" );
+		npBoxGen( scene, scene->mRootNode, &bBox, dataRef );
+
+		printf( "bounding box min XYZ: %f %f %f \n  max XYZ: %f %f %f\n",
+				bBox.xL, bBox.yL, bBox.zL, bBox.xH, bBox.yH, bBox.zH );
+
+		/// Calculate the bounding box dimensions dX, dY, dZ
+		dX = (float)fabs( bBox.xH - bBox.xL );
+		dY = (float)fabs( bBox.yH - bBox.yL );
+		dZ = (float)fabs( bBox.zH - bBox.zL );
+
+		/// Find the geometric center point of entire models scene
+		cX = (bBox.xH + bBox.xL) / 2.0f;
+		cY = (bBox.yH + bBox.yL) / 2.0f;
+		cZ = (bBox.zH + bBox.zL) / 2.0f;
+
+		printf( "model center %f %f %f \n", cX, cY, cZ ); 
+
+		/// Calculate the scale factor using the largest axis length
+		if( dX > 0.0f || dY > 0.0f || dZ > 0.0f )
+		{
+			if( dX > dY && dX > dZ )
+				normalize =  kNPgeoUnitCube / dX;
+			if( dY > dZ )
+				normalize = kNPgeoUnitCube / dY;
+			else
+				normalize = kNPgeoUnitCube / dZ;
+				
+			printf( "normalized model scale: %f\n", normalize );
+		}
+		else
+			normalize = 1.0f;	// model is a singularity, don't scale
+
+		/// Normalize the model scene with uniform scale
+		sX = sY = sZ = normalize;
+	}
+	else
+	{
+		printf( "Center, Rotate and Scale using np_models table\n" );
+
+		cX = geo->center.x;
+		cY = geo->center.y;
+		cZ = geo->center.z;
+		sX = geo->scale.x;
+		sY = geo->scale.y;
+		sZ = geo->scale.z;
+	}
+	
+	// we don't currently have a procedure to auto-orient the object
+	// so we just use whatever is in from the CSV table
+	rX = geo->rotate.x;
+	rY = geo->rotate.y;
+	rZ = geo->rotate.z;
+
+	/// @todo add support for models face mode, ie: QUAD_STRIP POLYGON...
+	// set the mode prior to entering the recursion cycle
+	// GL_POINTS GL_LINES LINE_STRIP QUAD QUAD_STRIP POLYGON
+	if( kNPdrawModelsMode == 0 )	//NP_POLYGONS // mesh->mFaces != NULL && mesh->mNumFaces > 0 )
+		faceMode = GL_POINTS;			//draw points
+	else if( kNPdrawModelsMode == 1)// shader == kNPshaderLines )
+		faceMode = GL_LINES;			//draw lines
+	else
+		faceMode = GL_TRIANGLES;		//draw faces
+
+	// Start the display list, keep everything fast from here
+	glNewList( gl->dl + geo->geometryId, GL_COMPILE );
+		glScalef( sX, sY, sZ );					///< Set the models scale
+		glTranslatef( -cX, -cY, -cZ );			///< Inverse center model
+	
+		// orient models using KML coords system, note the Y-X-Z process order
+		if( rY != 0.0f )
+			glRotatef( rY, 0.0f, 0.0f, -1.0f );		//heading
+		if( rX != 0.0f )
+			glRotatef( rX, -1.0f, 0.0f, 0.0f );		//tilt
+		if( rZ != 0.0f )
+			glRotatef( rZ, 0.0f, 0.0f, -1.0f );		//roll
+		
+		// detect first mesh face type and use it to set GL_POLY... face mode
+		/// @todo support multiple face modes within a single mesh
+		/// @todo import texture materials
+
+	/// Start recursion loop, draws all objects in this models scene graph
+	npModelsTreeRecursion( scene, scene->mRootNode, faceMode, data );
+
+	glEndList();
+}
+
+void npInitGeoListPrimitives(void* dataRef)
+{
+	pData data = (pData) dataRef;
+	pNPgl gl = &data->io.gl;
+//	pNPgeoList geoList = &data->io.gl.geoList;
+	pNPgeolist geolist = data->io.gl.geolist;
+	GLuint displayList = 0, i = 0;
+
+	gl->numPrimitives = 0;
+	//geoList->numPrimitives = 0;
+
+	// Create the id for the list
+	gl->dl = 0;
+	i = gl->dl = glGenLists(4096); // kNPgeoCount
+//	printf("geoList->DL : %u", geoList->DL);
+
+	if( gl->dl == 0 )
+	{
+		npPostMsg("err 4488 - glGenLists() failed", kNPmsgErr, NULL);
+		return;
+	}
+
+	// start list
+	glNewList (i++, GL_COMPILE);
+		glutWireCube (1.4142f);
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		glutSolidCube (1.4142f);
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		DrawSphereWireDL();					//using GLU for proper tex mapping
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		DrawSphereDL();						//using GLU for proper tex mapping
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		npGlutPrimitive (kNPgeoConeWire);
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		npGlutPrimitive (kNPgeoCone);		//GLU not very good cone tex mapping
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		npGLWireTorus (kNPtorusRadius * 0.1f, kNPtorusRadius, 7, 16);
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		npGLSolidTorus (kNPtorusRadius * 0.1f, kNPtorusRadius, 7, 16);
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		npGlutPrimitive (kNPgeoDodecahedronWire);
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		npGlutPrimitive (kNPgeoDodecahedron);
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		npGlutPrimitive (kNPgeoOctahedronWire);
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		npGlutPrimitive (kNPgeoOctahedron);
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		npGlutPrimitive (kNPgeoTetrahedronWire);
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		npGlutPrimitive (kNPgeoTetrahedron);
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		npGlutPrimitive (kNPgeoIcosahedronWire);
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		npGlutPrimitive (kNPgeoIcosahedron);
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		DrawPinDL();
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		DrawPinWireDL();
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		DrawCylinderWireDL();
+	glEndList();
+
+	glNewList (i++, GL_COMPILE);
+		DrawCylinderDL();
+	glEndList();
+
+	gl->numPrimitives = i - gl->dl;
+//	printf("\ndisplayList : %u", displayList);
+//	printf("geoList->numPrimitives : %d", geoList->numPrimitives);
+//	printf("\ngl->numPrimitives : %d", gl->numPrimitives);
+
+	return;
+}
+
+void npInitGeoList(void* dataRef)
+{
+	pData data = (pData) dataRef;
+	pNPgl gl = &data->io.gl;
+//	pNPgeoList geoList = &data->io.gl.geoList;
+	pNPgeolist geolist = data->io.gl.geolist;
+	pNPgeolist p_geo = data->io.gl.geolist;
+	int i = 0;
+
+	gl->modelId = 0;
+//	gl->geoLock = true;
+	npGeolistLock(dataRef);
+	npGeolistSetLen(0, dataRef);
+	npGeolistSetX(0, dataRef);
+	gl->numModels = 0;
+	gl->numPrimitives = 0;
+
+	npInitGeoListPrimitives(dataRef);
+
+	gl->texmapCount = 0;
+	for(i = 0; i < 100; i++)
+	{
+		gl->extMap[i] = 0;
+		gl->extMapMe[i] = NULL;
+	}
+
+//	geoList->DL = glGenLists(kNPgeoListMax);
+	for(i = 0; i < kNPgeoListMax; i++)
+	{
+		p_geo = &data->io.gl.geolist[i];
+		p_geo->extTexId = 0;
+		p_geo->loaded = 0;
+		p_geo->geometryId = 0;
+		p_geo->modelFile[0] = '\0';
+		p_geo->modelId = 0;
+		p_geo->modelPath[0] = '\0';
+		p_geo->modelTextureFile[0] = '\0';
+		p_geo->modelTexturePath[0] = '\0';
+		p_geo->name[0] = '\0';
+		p_geo->textureId = 0;
+		/*
+		geolist->modelFile[0] = '\0';
+		geolist->name[i] = '\0';
+		geolist->textureId = 0;
+		*/
+	}
+
+	return;
+}
+
+//zz models end
 

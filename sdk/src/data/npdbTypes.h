@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -40,16 +40,7 @@
 #endif
 */
 
-/*
- #define kNPdbHostMax	512		///< max number of DB host servers
- #define kNPdbMax		4096	///< max number of databases
- #define kNPtblMax		128		///< max number of tables, new lde
- #define kNPpwdMax		256		///< max password length
- #define kNPuserNameMax	256		///< max user name length
- #define kNPdbNameMax	64		///< @todo make sure 64 is good for non-MySQL DBs
- #define kNPdbFuncSetMax 64		///< max number DB function sets
- */
-#define	kNPurlMax			4096			//!< maximum length of URL accepted
+#define	kNPurlMax			4096			///< maximum length of URL accepted
 enum NP_DATABASE {
 	kNPdbHostMax	= 512,		///< max number of DB host servers
 	kNPdbMax		= 4096,		///< max number of databases
@@ -77,34 +68,7 @@ struct NPdbFuncSet{
 	
 	//pNPdbFunction*	funcList;
 	//int				funcCount;
-	
 	///  abstract our database server type specific methods
-	
-	/*
-	void* (__stdcall *init)			();
-	void* (__stdcall *connect)		();
-	int   (__stdcall *options)		();
-	void* (__stdcall *ping)			();
-	void* (__stdcall *close)		    ();
-	
-	void* (__stdcall *show)			();
-	void* (__stdcall *query)		    ();
-	void* (__stdcall *store_result)	();
-	void* (__stdcall *free_result)	();
-	
-	void* (__stdcall *use)			();
-	void* (__stdcall *select)		    ();
-	void* (__stdcall *alter)		    ();
-	void* (__stdcall *insert)		    ();
-	void* (__stdcall *fetch_row)	    ();
-	void* (__stdcall *fetch_lengths)  ();
-	void* (__stdcall *num_fields)	    ();
-	void* (__stdcall *num_rows)		();
-	void* (__stdcall *db_error)		();
-	void* (__stdcall *db_errno)		();
-	void* (__stdcall *conn_thread_id) ();
-	*/
-	
 	
 	void* (NPDB_CALLCONV *init)			();
 	void* (NPDB_CALLCONV *connect)		();
@@ -321,11 +285,11 @@ struct NPdbs { // Should this be renamed to NPdbServer, lde @todo
 	pNPdbFuncSet	funcSetList[kNPdbFuncSetMax]; ///< host type specific
 	int				funcSetCount;				  ///< function set count
 	
-	pNPdatabase		dbList[kNPdbMax];	///< list of databases
-	int				dbCount;			///< number of databases
+	pNPdatabase		dbList[kNPdbMax];		///< list of databases
+	int				dbCount;				///< number of databases
 	
-	pNPdatabase		activeDB;			///< points to active DB in list
-	char			inUseDB2[64];        ///< Name of currently in use database, lde
+	pNPdatabase		activeDB;				///< points to active DB in list
+	char			inUseDB2[kNPdbNameMax];	///< Name of in use database, lde
 	
 	float			saveUpdateRate;		///< auto save update rate, 0 is off
 	float			loadUpdateRate;		///< auto load update rate, 0 is off
@@ -338,21 +302,21 @@ struct NPdbs { // Should this be renamed to NPdbServer, lde @todo
 typedef struct NPdbs NPdbs;
 typedef struct NPdbs *pNPdbs;
 
-//!<struct pNPdatabases { //!<zzsql
+// struct pNPdatabases { //zzsql
 struct NPdatabases {
 	void* coreNode; ///< core nodes tie global structures to the scene graph
-	//!< each global struct has a corresponding base node.
+	///< each global struct has a corresponding base node.
 	
-	char** list;		//!< list of databases by name
-	int size;			//!< number of items in the list
+	char** list;		///< list of databases by name
+	int size;			///< number of items in the list
 };
 typedef struct NPdatabases NPdatabases;
 typedef struct NPdatabases *pNPdatabases;
 
-/* new struct, lde */
+// new struct, lde
 struct NPtables {
-	char** list;		//!< list of tables by name
-	int size;			//!< number of items in the list
+	char** list;		///< list of tables by name
+	int size;			///< number of items in the list
 };
 typedef struct NPtables NPtables;
 typedef struct NPtables *pNPtables;

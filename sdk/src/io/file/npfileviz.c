@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -27,15 +27,16 @@
 #include "../../os/npos.h"
 #include "../../data/npmapfile.h"
 #include "../npgl.h"
-#include "SOIL.h"
 
-void npPathNameToTag (pNPnode node, char* path, void* dataRef );
-pNPnode npNewFileVizNode (pNPnode parent, char* path, int type, int view, void* dataRef);
+
+void npPathNameToTag( pNPnode node, char* path, void* dataRef);
+pNPnode npFileVizNode( pNPnode parent, char* path, pNPfileRef fRef, 
+						  int preview, void* dataRef);
 
 
 /// Recursively build node trees of the directory structure
 //------------------------------------------------------------------------------
-int npNewFileViz (const char *basePath, pNPnode parent, int i, void* dataRef)
+int npNewFileViz ( char *dirPath, pNPnode parent, int i, void* dataRef)
 {
 	int result = 0;
 	pNPfileRef fRef = NULL;
@@ -43,16 +44,19 @@ int npNewFileViz (const char *basePath, pNPnode parent, int i, void* dataRef)
     char sPath[kNPmaxPath];
 
 	//zz add advanced tree search/filter/query logic
-	int maxItems = kNPnodeMax;	//maximum total items to add
-	int depth = 27;				//how many directory levels deep to go
-	int breadth = 1024;			//how many items per directory to display
+	int maxItems = kNPnodeMax;		// max total items to add
+	int depth = kNPbranchLevelMax;	// max directory level depth
 
 	pData data = (pData) dataRef;
 	pNPnode node = NULL;
 
+	/// @todo add global init for fileviz and separate recursive function
+	node = data->map.node[kNPnodeRootGrid];
+	node->textureID = 0;
+
 	fRef = nposNewFileRef( data );
 
-	result = nposFindFirstFile( fRef, basePath, "*.*", data );
+	result = nposFindFirstFile( fRef, dirPath, "*.*", data );
 	if( result != 1 )
 		return false;	// err or empty folder
 
@@ -60,14 +64,11 @@ int npNewFileViz (const char *basePath, pNPnode parent, int i, void* dataRef)
     {
 		i++;
 
-		// append current file/dir item to the basePath (parent dir)
-        sprintf(sPath, "%s/%s", basePath, fRef->fdFile.cFileName);
-
 		// create a new node with parameters based on the file attributes
-		node = npNewFileVizNode( parent, sPath, fRef->isDir, true, data );
+		node = npFileVizNode( parent, dirPath, fRef, false, data );
 
 		// print a few of the filenames then dots for every 100 files
-		if( i <= 12 )
+		if( i <= 5 )
 			printf( "id: %7d level: %2d name: %.50s\n",
 					node->id, node->branchLevel, fRef->fdFile.cFileName );
 		else if( i % 100 == 0 )
@@ -75,10 +76,14 @@ int npNewFileViz (const char *basePath, pNPnode parent, int i, void* dataRef)
 
 		// if Folder (not a file) then recursively call to create dir tree
 		if( fRef->isDir && node->branchLevel < depth )
-			 npNewFileViz( sPath, node, i, data );			// recursion
+		{
+			// append current file/dir item to the basePath (parent dir)
+			sprintf(sPath, "%s/%s", dirPath, fRef->fdFile.cFileName);
+			npNewFileViz( sPath, node, i, data );					// recursion
+		}
     }
 	while( nposFindNextFile( fRef )
-			&& i < breadth
+//			&& i < breadth
 			&& data->map.nodeCount < maxItems );	// next file within limits
 
     nposFindClose( fRef, data );		// always clean up!
@@ -143,12 +148,16 @@ void npPathNameToTag( pNPnode node, char* path, void* dataRef )
 //default file type = 0 and dir = 1, app/exe = 2, file.txt = 3, csv, jpg.. 
 
 //---------------------------------------------------------------------------
-pNPnode npNewFileVizNode( pNPnode parent, char* path, int type, int view, void* dataRef )
+//pNPnode npNewFileVizNode( pNPnode parent, char* path, int type, int view, void* dataRef )
+pNPnode npFileVizNode( pNPnode parent, char* path, pNPfileRef fRef, 
+						int preview, void* dataRef )
 {
 	int fileType = 0;
+	int fileCat = 0;
 	int texID = 0;
-	unsigned int soilFlags = 0;
+	float scale = 1.0f;
 	char fileName[kNPmaxName] = {'\0'};
+	char filePath[kNPmaxPath] = {'\0'};
 	
 	pData data = (pData) dataRef;
 	pNPnode node = NULL;
@@ -156,43 +165,40 @@ pNPnode npNewFileVizNode( pNPnode parent, char* path, int type, int view, void* 
 
 	node = npNodeNew( kNodePin, parent, data );
 	tag = node->tag;
-	//node->size = (int)fRef->sizeLo;
-		
-	npPathNameToTag( node, path, data );		//set the nodes tag title
 
-//	node = parent;
-//	tag = node->tag;
+	node->size = (int)fRef->sizeLo;
+		
+	/// @todo make relative FileViz paths, tags would be just the file name
+	// directories node names should be full path or partial?
+	sprintf( filePath, "%s/%s", path, fRef->fdFile.cFileName );
+	npPathNameToTag( node, filePath, data );		//set the nodes tag title
+
+	/// default node color based on level
+	node->colorIndex = node->branchLevel;
 
 	//set node attrib's based on file path, name, type, size, date, content
-	if ( type )//== kNPfileDir )
+	if ( fRef->isDir )
 	{
-		if( node->branchLevel > 0 )
+		if( node->branchLevel > 0 && parent->childCount > 1 )
 		{
-			node->topo = kNPtopoCylinder;
-			node->geometry = kNPgeoCylinder;
+			node->rotate.x = 35.0f;
+			node->rotate.y = 140.0f * node->id;
 		}
-		node->textureID++;
+		
+		node->topo = kNPtopoRod;
+		node->geometry = kNPgeoCylinder;
+
+		node->tagMode = 1;
 
 		node->colorIndex = node->branchLevel;
-
 		npSetIndexColor( &node->color, &node->colorIndex, NULL );
-	
+		npSetTagOffset( node );
+
 		return node;
-	}
-	else	//default file viz node
-	{
-//		node->topo = kNPtopoCylinder; //kNPtopoPin;
-//		node->geometry = kNPgeoCylinder; //kNPgeoPin;
-		node->colorIndex = node->branchLevel;
-//		npSetColorIndex(
 	}
 
 //	node->colorIndex = 3; //blue 
 	node->color.a = 180;  //dark transparent blue
-//		npSetIndexColor( &node->color, &node->colorIndex, NULL );
-//	return node;
-	//node->translate.x = 360.0f / dirItemCount;
-	//node->translate.y = 15.0f * latOffset(thisItem, totalItems)
 
 //	printf("file ext: %0.4s\n", &node->tag->title[node->tag->titleSize - 8] );
 
@@ -200,68 +206,56 @@ pNPnode npNewFileVizNode( pNPnode parent, char* path, int type, int view, void* 
 	strncat( fileName, &tag->title[tag->labelHead], 
 			 (tag->labelTail - tag->labelHead + 1) );
 
-	fileType = npGetFileTypeCat( NULL, fileName, dataRef );
-//	printf( "%d   %s\n", fileType, fileName );
-	switch( fileType )
-	{
-		case kNPfileH :
-			//tokenize #define #include and function declarations
-			//create link nodes for the #include files
-			//	node->topo = kNPtopoPin;
-			node->geometry = kNPgeoTetrahedron;
-			node->colorIndex = 1;
+	fileType = npGetFileTypeCat( &fileCat, fileName, dataRef );
+
+	switch( fileCat )
+	{	case kNPfileCatCode :
+			switch( fileType )
+			{	case kNPfileH :
+					//tokenize #define #include and function declarations
+					//create link nodes for the #include files
+					//	node->topo = kNPtopoPin;
+					node->geometry = kNPgeoTetrahedronWire;
+					node->colorIndex = 2;
+					break;
+				case kNPfileC :
+					node->geometry = kNPgeoDodecahedron;
+					scale = (float)sqrt( ((float)fRef->fdFile.nFileSizeLow / 100000.0f) 
+								 * ((float)fRef->fdFile.nFileSizeLow / 100000.0f) )
+								 + 0.3f;
+					node->scale.x = node->scale.y = node->scale.z = scale;
+					node->colorIndex = 1;
+					break;
+				case kNPfileCPP :
+					node->geometry = kNPgeoOctahedron;
+					node->colorIndex = 1;
+					break;
+				default :
+					node->geometry = kNPgeoOctahedronWire;
+					node->colorIndex = 3;
+					break;
+			}
 			break;
-		case kNPfileC :
-		case kNPfileCPP :
-			node->geometry = kNPgeoDodecahedronWire;
-			node->colorIndex = 2;
-			break;
-		case kNPfileCSV :
+		case kNPfileCatTable : //kNPfileCSV :
 			node->geometry = kNPgeoSphere;
 			break;
-		case kNPfileTXT :
+		case kNPfileCatText :
 			node->geometry = kNPgeoCube;
 			node->colorIndex = 0;
+			node->scale.x = node->scale.y = node->scale.z = 0.5f;
 			break;
-		case kNPfileBMP :
-		case kNPfileDDS :
-		case kNPfileGIF :
-		case kNPfileJ2K :
-		case kNPfileJPG :
-		case kNPfilePNG :
-		case kNPfileRAW :
-		case kNPfileTGA :
-		case kNPfileTIFF :
-
-		if( view )
-		{
-	//		if( data->io.gl.texture.mipmaps inverY ntscSafeRGB compressDXT )
-			soilFlags = SOIL_FLAG_INVERT_Y | SOIL_FLAG_MIPMAPS;
-				// | SOIL_FLAG_MIPMAPS			//disabling breaks RGBA textures
-				// | SOIL_FLAG_NTSC_SAFE_RGB	//we want the entire RGB spectrum
-				// | SOIL_FLAG_COMPRESS_TO_DXT	//no lossy compression, faster too
-			texID = SOIL_load_OGL_texture
-			(
-				path,
-				SOIL_LOAD_AUTO,
-				SOIL_CREATE_NEW_ID,
-				soilFlags
-			);
-		
-			//the last texture loaded is the texture count, non-loads return a texture=0
-			if( texID )
+		case kNPfileCatImage :
+			/// Load file as a texture map and apply to file node
+			if( preview )
 			{
-				node->textureID = texID;
-				data->io.gl.textureCount = texID;
-				printf ("Loaded textureID: %d\n", texID);
+				node->textureID = npLoadTexture( filePath, data );
+
+				node->colorIndex = 19;		//zz use color names, kNPwhite = 19
+				node->color.a = 255;		//full opacity
 			}
 
-			node->colorIndex = 19;		//zz use color names, kNPwhite = 19
-			node->color.a = 255;		//full opacity
-		}
-
-			node->topo = kNPtopoCylinder;
-			node->geometry = kNPgeoCylinder;
+			node->topo = kNPtopoCube;
+			node->geometry = kNPgeoCube;
 			
 			if ( node->branchLevel > 0 )
 			{
@@ -276,19 +270,20 @@ pNPnode npNewFileVizNode( pNPnode parent, char* path, int type, int view, void* 
 				else
 					node->rotateRate.z = -0.125f;	//odd
 			}
-		
-
-		//node->topo = kNPtopoCylinder;
-		node->geometry = kNPgeoCylinder;
-
 					
 			break;
 		default :
-			
+			//node->topo = kNPtopoRod;
 			break;
 	}
 
 	npSetIndexColor( &node->color, &node->colorIndex, NULL );
+	npSetTagOffset( node );
+
+	/// invert large objects to help see potential hidden geos inside
+	if(node->scale.z > 1.1f )
+		node->scale.z *= -1.0f;
+
 	//set transparency based on age of item updated/modified/created
 	//node->color.a = (unsigned char)( 256.0f * timeSinceUpdated / timeRange );
 	return node;

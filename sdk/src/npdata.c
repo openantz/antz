@@ -6,7 +6,7 @@
 *
 *  ANTz is hosted at http://openantz.com and NPE at http://neuralphysics.org
 *
-*  Written in 2010-2015 by Shane Saxon - saxon@openantz.com
+*  Written in 2010-2016 by Shane Saxon - saxon@openantz.com
 *
 *  Please see main.c for a complete list of additional code contributors.
 *
@@ -50,8 +50,10 @@ void* npInitData (int argc, char** argv)
 	// if console help requested then show command usage help and exit
 	npSystemConsoleHelp( argc, argv );
 
-	printf( "Starting...\n" );
-	printf( "v%s\n\n", kNPappVer );
+	printf("%s v%d.%d.%d\n", kNPappName, kNPvMajor, kNPvMinor, kNPvPatch);
+	printf( "Starting...\n\n" );
+
+	printf( "kNPnodeMax: %d\n", kNPnodeMax);
 
 	// allocate memory for the global 'data' structure
 	data = (pData) malloc (sizeof(Data));
@@ -238,7 +240,7 @@ void npInitNodeConsole (void* consoleRef, void* dataRef)
 	console->position.x = kNPpositionLeft;
 	console->position.y	= kNPpositionBottom;
 
-	console->mode = 0;							//kNPconsoleMessage = default mode
+	console->mode = 0;							//kNPconsoleMsg = default mode
 	
 	console->level = kNPconsoleLevelThree;		//3 lines of text
 	console->box.x = 734.0f;					//80 chars * 9 + 14 (for border)
@@ -349,6 +351,9 @@ void npInitTools (pNPnode root, void* dataRef)
 	//create the root HUD node
 	root = npNodeNew (kNodeHUD, 0, data);
 
+	/// @todo Load menu layout using node table
+	//this becomes a loop
+
 	//create the primary HUD branches
 	node = npNodeNew (kNodeHUD, root, data);	//reserved for future use
 		node->hudType = kNPhudNull;
@@ -374,13 +379,14 @@ void npInitTools (pNPnode root, void* dataRef)
 
 	node = npNodeNew (kNodeHUD, root, data);
 		node->hudType = kNPhudMode;
-		data->io.mouse.pickMode = kNPmodePin;		//needs to match npInitTools, zz debug, change init order?
-		npPostMode (node, data);					//had to include npgl.h, zz debug
+		data->io.mouse.pickMode = kNPmodePin;
+		npUpdateTag (node->tag);					//had to include npgl.h, zz debug
 
 	node = npNodeNew (kNodeHUD, root, data);
 		node->hudType = kNPhudTool;
-		data->io.mouse.tool = kNPtoolCombo;			//needs to match npInitTools, zz debug
-		npPostTool (node, data);					//had to include npgl.h, zz debug
+		data->io.mouse.tool = kNPtoolCombo;
+		strcpy (node->tag->title, "Tool : Combo   ");	//zz issue #105
+		npUpdateTag (node->tag);
 
 	node = npNodeNew (kNodeHUD, root, data);
 		node->hudType = kNPhudSave;
@@ -414,8 +420,34 @@ void npInitTools (pNPnode root, void* dataRef)
 		node->hudType = kNPhudTag;					//zz select-end
 
 
-	node = npNodeNew (kNodeHUD, root, data);		//zzf //zz debug ??
+//	node = npNodeNew (kNodeHUD, root, data);		//zzf //zz debug ??
 //		node->hudType = kNPhudCursor;
+}
+
+
+void npInitDataTex( pNPtex tex, void* dataRef);
+//------------------------------------------------------------------------------
+void npInitDataTex( pNPtex tex, void* dataRef)		//zz tex
+{
+	int i = 0;
+	char path[kNPmaxPath];
+	pData data = (pData) dataRef;
+
+	tex->count = 0;
+	tex->dirCount = 0;
+	tex->maxSize = 1024;	// 1024 is conservative, most GPU's are now 16K+
+
+	for( i=0; i < kNPdirPathsMax; i++)
+		tex->dirPaths[i] = NULL;
+
+	/// Legacy 'usr/images' path, 'map00001.jpg...' textures loaded first
+	tex->dirPaths[0] = npNewStrcpy( kNPpathLegacyImages, data);
+	tex->dirCount++;
+	
+	/// Construct the 'usr/global/images' path used for startup
+	sprintf( path, "%s/%s/%s", kNPpathUser, kNPpathGlobal, kNPpathImages);
+	tex->dirPaths[1] = npNewStrcpy( path, data);
+	tex->dirCount++;
 }
 
 //------------------------------------------------------------------------------
@@ -477,23 +509,33 @@ void npInitDataGL(void* dataRef)
 	
 	gl->alphaMode = kNPalphaModeSubtractive;
 
-	gl->textureCount = 0;
-	gl->maxTextureSize = 1024;	// all GL implementations support at least 1024
-
 	gl->pickPass = false;
 	gl->pickID = 0;
 
-	gl->screenGrab = false;
+	gl->screenGrab = kNPscreenshotOFF;
 	gl->datasetName[0] = '\0';
 
 	gl->subsample = 1;			//zzhp
 
 	gl->linkQueCount = 0;
+	gl->linkPreQueCount = 0;
 
-	for (i=0; i < kNPlinkQueMax; i++)
-		gl->linkQue[i] = NULL;
+	gl->linkQue = calloc( kNPlinkQueMax, sizeof(pNPnode) );
+	if( gl->linkQue == NULL )
+	{
+		printf ("err 4282 - malloc failed to allocate linkQue\n");
+		exit(EXIT_FAILURE);
+	}
 
-	npInitDataHUD(data);
+	gl->linkPreQue = calloc( kNPlinkQueMax, sizeof(pNPnode) );
+	if( gl->linkPreQue == NULL )
+	{
+		printf ("err 4283 - malloc failed to allocate linkPreQue\n");
+		exit(EXIT_FAILURE);
+	}
+
+	npInitDataHUD( data);
+	npInitDataTex( &gl->tex, data);		//zz tex
 }
 
 //------------------------------------------------------------------------------
@@ -593,56 +635,36 @@ void npInitDataFile (pNPfile file, void* dataRef)
 //------------------------------------------------------------------------------
 void npInitDataOSC (pNPosc osc, void* dataRef)
 {
-	int size = 0;
-
 	pData data = (pData) dataRef;
-	pNPoscPackListener oscItem = NULL;
+	pNPoscConn conn = NULL;
 
-	osc->max = kNPoscListMax;	//zz, fix list size at this time
-	
-	size = osc->max * sizeof(NPoscItem);
 
-	//osc->list = npCalloc( 0, size, data );	//zz, fix list size at this time
-	//	memset( osc->list, NULL, kNPoscListMax );
-
+	/// setup global OSC settings
 	osc->id = 0;
+	osc->count = 0;
 	osc->logMode = 0;	//0 = none, 1 = system, 2 = err, 3 = warn, 4 = debug
 	osc->msgMode = kNPmsgOSC;	//0 = quiet, 1 = system, 2 = GUI
 
-	strcpy( osc->list[0].txIP, "127.0.0.1" );
-	strcpy( osc->list[0].rxIP, "127.0.0.1" );
-	osc->list[0].txPort = 8000;
-	osc->list[0].rxPort = 9000;
+	/// setup default OSC connections
+	// issue #233 workaround is to set the default ports to 0000
+	// ports are set in the antzglobals.csv
+	conn = &osc->conns[0];
+	strcpy( conn->txIP, "127.0.0.1" );	///< set in globals or detected
+	strcpy( conn->rxIP, "127.0.0.1" );	///< this systems IP
+	conn->rxPort = 0000;
+	conn->txPort = 0000;
+	osc->count++;
 
-	
-//	npNewConnect( txIP, txPort, rxIP, rxPort, data );
-
-	//for( i=0; i < data->io.connectCount; i++ )
-	{
-	data->io.connect[0] = npMalloc( 0, sizeof(NPconnect),data );
-
-	oscItem = &data->io.connect[0]->oscListener;
-	oscItem->rxPort = 8000;
-	oscItem->txPort = 9000;
-	data->io.connectCount++;
-
-	data->io.connect[1] = npMalloc( 0, sizeof(NPconnect),data );
-
-	oscItem = &data->io.connect[1]->oscListener;
-	oscItem->rxPort = 8001;
-	oscItem->txPort = 9001;
-	data->io.connectCount++;
-
-	data->io.connect[2] = npMalloc( 0, sizeof(NPconnect),data );
-
-	oscItem = &data->io.connect[2]->oscListener;
-	oscItem->rxPort = 7400;
-	oscItem->txPort = 7401;
-	data->io.connectCount++;
-	}
-data->io.connectCount = 0;
-	osc->size = sizeof(NPosc) + size;
+	/// Multiple ports can be setup
+/*	conn = &osc->conns[1];
+	strcpy( conn->txIP, "127.0.0.1" );
+	strcpy( conn->rxIP, "127.0.0.1" );
+	conn->rxPort = 8001;
+	conn->txPort = 9001;
+	osc->count++;
+*/
 }
+
 
 /*
 pNPdatabase npdbAddTable( void );
@@ -835,6 +857,9 @@ void npInitDataIO(int argc, char** argv, void* dataRef)
 	io->axes.z = true;
 
 	io->write = NULL;
+
+	io->msgFlowFile = 0;
+	io->msgFlowCmd = 0;
 
 	// setup the default URL
 	memset( io->url, '\0', kNPurlMax );
@@ -1346,7 +1371,7 @@ void npDataCameraPreset (int preset, pNPnode node, void* dataRef)
 //zz debug add support for startup messages to be sent to system console	//zz debug
 //adds message to the que to be processed by npDispatchMessages
 //------------------------------------------------------------------------------
-void npPostMsg (char* message, int type, void* dataRef)
+void npPostMsg (const char* message, int type, void* dataRef)
 {
 	pNPmessage msg = NULL;
 	pData data = NULL; 
@@ -1364,6 +1389,9 @@ void npPostMsg (char* message, int type, void* dataRef)
 	if (type == kNPmsgDebug)		//discard debug messages if NOT Debug build
 		return;
 #endif
+
+	if( data->io.msgFlowCmd > kNPmsgCmdRate )
+		return;
 
 	if( data->ctrl.startup )
 	{
@@ -1385,14 +1413,12 @@ void npPostMsg (char* message, int type, void* dataRef)
 	if ( data->io.gl.hud.console.mode == kNPconsoleMenu && type != kNPmsgView )
 		return;
 
-	// err reporting of messages that are too long
+	// report if message is too long
 	if( strnlen( message, kNPmsgLengthMax ) >= kNPmsgLengthMax )
-	{
-		printf("err 8888 - kNPmsgLengthMax exceeded: %0.30s\n", message);
-		message[kNPmsgLengthMax] = '\0';	// trim the message
-	}
+		printf("err 8889 - kNPmsgLengthMax exceeded: %0.30s\n", message);
 
 	// copy the message to the message que buffer
 	strncpy (&msg->que[msg->queIndex][0], message, kNPmsgLengthMax);
+	msg->que[msg->queIndex][kNPmsgLengthMax] = '\0';
 }
 
