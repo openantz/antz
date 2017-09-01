@@ -1,8 +1,8 @@
-<a href="https://github.com/openantz/antz/archive/master.zip">DOWNLOAD - MSW app source</a> or click 'Download ZIP' button under 'Clone or download' (uppper-right).
+<a href="https://github.com/openantz/antz/archive/master.zip">DOWNLOAD - MSW app and source</a> branch: master
 
-<a href="https://github.com/openantz/antz/archive/osx.zip">DOWNLOAD - OSX app and source</a>
+<a href="https://github.com/openantz/antz/archive/osx.zip">DOWNLOAD - OSX app and source</a> branch: osx
 
-<a href="https://github.com/openantz/antz/archive/linux.zip">DOWNLOAD - Linux app and source</a>
+<a href="https://github.com/openantz/antz/archive/linux.zip">DOWNLOAD - Linux app and source</a> branch: linux
 
 Command overview 'cheatsheet.txt' is in the 'doc' folder.
 
