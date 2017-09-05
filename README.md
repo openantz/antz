@@ -4,9 +4,7 @@
 
 <a href="https://github.com/openantz/antz/archive/linux.zip">DOWNLOAD - Linux app and source</a> branch: linux
 
-Command overview 'cheatsheet.txt' is in the app 'doc' folder.
-
-Doc folder also contains release notes, LICENSE.txt and links to other resources.
+Command 'cheatsheet.txt' and LICENSE.txt is in the app 'doc' folder.
 
 See <a href="https://github.com/openantz/antz/wiki">Wiki - Developer Guide</a> for dev docs.
 
