@@ -1,10 +1,10 @@
-<a href="https://github.com/openantz/antz/archive/master.zip">DOWNLOAD - MSW app and source</a> branch: master
+<a href="https://github.com/openantz/antz/archive/master.zip">DOWNLOAD - MSW</a> branch: master
 
-<a href="https://github.com/openantz/antz/archive/osx.zip">DOWNLOAD - OSX app and source</a> branch: osx
+<a href="https://github.com/openantz/antz/archive/osx.zip">DOWNLOAD - OSX</a> branch: osx
 
-<a href="https://github.com/openantz/antz/archive/linux.zip">DOWNLOAD - Linux app and source</a> branch: linux
+<a href="https://github.com/openantz/antz/archive/linux.zip">DOWNLOAD - Linux</a> branch: linux
 
-See <a href="https://github.com/openantz/antz/wiki">Wiki - Developer Guide</a> for dev docs.
+See <a href="https://github.com/openantz/antz/wiki">Wiki - Developer Guide</a>
 
 Command 'cheatsheet.txt' and LICENSE.txt are in the <a href="https://github.com/openantz/antz/tree/master/doc">app 'doc' folder.</a>
 
