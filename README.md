@@ -10,4 +10,4 @@ Command 'cheatsheet.txt' and LICENSE.txt are in the <a href="https://github.com/
 
 Sample datasets at ANTz homepage: <a href="http://openantz.com">http://openantz.com</a>
 
-Developers should fork the master repo which contains all OS types. Then create a specific feature branch, and once done submit a pull request to the master repo.
+Developers should fork the master repo which contains all OS types.
