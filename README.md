@@ -6,8 +6,8 @@
 
 See <a href="https://github.com/openantz/antz/wiki">Wiki - Developer Guide</a>
 
-Command 'cheatsheet.txt' and LICENSE.txt are in the <a href="https://github.com/openantz/antz/tree/master/doc">app 'doc' folder.</a>
+Command 'cheatsheet.txt' and LICENSE.txt are in the <a href="https://github.com/openantz/antz/tree/master/doc">'doc' folder</a>.
 
-Links to sample datasets at ANTz homepage: <a href="http://openantz.com/links.html">http://openantz.com</a>
+Sample datasets at http://openantz.com/links.html
 
 Developers should fork the master repo which contains all OS types.
