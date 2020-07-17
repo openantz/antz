@@ -10,7 +10,7 @@ To get orientated see: <a href="https://github.com/openantz/antz/wiki/User-Comma
 
 Sample datasets and useful links at: https://openantz.com/links.html
 
-ANTz core code is distributed under an **Apache 2.0 License**. Various 3rd party library licenses (that we believe are commercial friendly) are located in 'sdk/libs' folder. Note that previous to 2020, ANTz was distributed as Public Domain CC0. If you have any questions, feel free to contact us at:
+**ANTz core code** is distributed under an **Apache 2.0 License**. Various **3rd party library licenses** (that we believe are commercial friendly) are located in 'sdk/libs' folder. Note that prior to 2020, ANTz was distributed as Public Domain CC0. If you have any questions, feel free to contact us at:
 
 https://openantz.com/contact.html
 
