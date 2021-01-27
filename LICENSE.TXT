@@ -1,3 +1,15 @@
+DISCLAIMER: THIS LICENSE DOES NOT APPLY TO 3RD PARTY LIBRARIES.
+
+We strive to select libraries that are friendly to (commercial) open source.
+But this is not a guarantee and you are responsible for abiding to the 3rd
+party licenses. For example, commercial projects may require an agreement
+with the MySQL vendor or removing the dependency.
+
+See '../sdk/libs/LIBS-LICENSES.txt' for further info on 3rd party licenses.
+
+----------------------------------------------------------------------------
+START TERMS AND CONDITIONS FOR ANTz CORE SOURCE CODE (NOT 3RD PARTY LIBS)
+
                                  Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/
