@@ -1,6 +1,6 @@
 **ANTz core code** is under an **Apache 2.0 License**.
 
-**3rd party libraries** have a myriad of (**commercial friendly**) licenses, see <a href="https://github.com/openantz/antz/tree/master/sdk/libs/antz-libs-notes.txt">'antz-libs-notes.txt'</a>.
+**3rd party libraries** have a myriad of (**commercial friendly**) licenses, see <a href="sdk/libs/LICENSE_LIBS_NOTES.txt">'LICENSE_LIBS_NOTES.txt'</a>.
 
 #### Pre-compiled apps hosted at www.openantz.com
 - <a href="https://openantz.com/download/msw/">DOWNLOAD - MSW APP</a>
