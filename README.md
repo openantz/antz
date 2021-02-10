@@ -1,4 +1,4 @@
-**ANTz core code** is under an **Apache 2.0 License**.
+**ANTz core code** is licensed under an **Apache 2.0 License**.
 
 **3rd party libraries** have a myriad of (**commercial friendly**) licenses, see <a href="sdk/libs/LICENSE_LIBS_NOTES.txt">'LICENSE_LIBS_NOTES.txt'</a>.
 
@@ -11,7 +11,7 @@ To get orientated see: <a href="https://github.com/openantz/antz/wiki/User-Comma
 
 Sample datasets and useful links at: https://openantz.com/links.html
 
-*Note that prior to 2020, ANTz was distributed as Public Domain CC0. If you have any questions, feel free to contact us at:
+If you have any questions, feel free to contact us at:
 
 https://openantz.com/contact.html
 
