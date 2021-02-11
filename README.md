@@ -3,8 +3,8 @@ Feel free to get support: https://openantz.com/contact.html
 
 #### Two different apps are provided for the MSW platform:
 
-- ANTz.exe core app (with source code).
-- ANTz+XR.exe app supports AJA Video Systems, Blackmagic Design, NVIDIA and zSpace.
+- antz.exe core app (open source).
+- ANTz+XR.exe app (closed source) supports AR, VR and Mixed Reality.
 
 Details at: [Wiki - ANTz+XR](https://github.com/openantz/antz/wiki/ANTz+XR)
 
