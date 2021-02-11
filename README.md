@@ -25,5 +25,5 @@ ANTz Copyright 2021, Shane Saxon. Licensed under Apache-2.0.
 ANTz-XR Copyright 2021, Shane Saxon. Licensed under the terms:
 - Shane Saxon hereby grants Recipient the right to reproduce and distribute the ANTz-XR Software. Unless required by applicable law or agreed to in writing, Software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. All other rights are reserved.
 
+----
 All trademarks are property of their respective owners.
-
