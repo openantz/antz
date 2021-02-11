@@ -7,9 +7,9 @@ Feel free to contact us: https://openantz.com
 - ANTz-XR.exe app (no source) extends HW support to zSpace, Blackmagic Design and AJA Video.
 
 #### Compiled apps hosted at www.openantz.com
-- <a href="https://openantz/download/msw/">DOWNLOAD (MS Windows) - ANTz.exe</a>
-- <a href="https://https://openantz/download/osx/">DOWNLOAD (OSX) - ANTz.app</a>
-- <a href="https://https://openantz/download/linux/">DOWNLOAD (Linux)- ANTz.bin</a>
+- <a href="https://openantz.com/download/msw/">DOWNLOAD (MS Windows) - ANTz.exe</a>
+- <a href="https://openantz.com/download/osx/">DOWNLOAD (OSX) - ANTz.app</a>
+- <a href="https://openantz.com/download/linux/">DOWNLOAD (Linux)- ANTz.bin</a>
 
 To get orientated see: <a href="https://github.com/openantz/antz/wiki/User-Commands/">Wiki - User Commands</a>
 
