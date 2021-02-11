@@ -1,16 +1,48 @@
-DISCLAIMER: THIS LICENSE DOES NOT APPLY TO 3RD PARTY LIBRARIES.
+LICENSE.txt 2021-01-11
 
-We strive to select libraries that are friendly to (commercial) open source.
-But this is not a guarantee and you are responsible for abiding to the 3rd
-party licenses. For example, commercial projects may require an agreement
-with the MySQL vendor or removing the dependency.
+-------------------------------------------------------------------------------
+------- DISCLAIMER: THIS LICENSE DOES NOT APPLY TO 3RD PARTY LIBRARIES. -------
+--------- IT IS YOUR RESPONSIBILITY TO ABIDE BY ALL OF THE LICENSES. ----------
+------------- 3rd party licenses are located in the 'doc' folder. -------------
+-------------------------------------------------------------------------------
 
-See '../sdk/libs/LIBS-LICENSES.txt' for further info on 3rd party licenses.
+------ OUR LICENSE REQUIRES THAT YOU INCLUDE NOTICE.txt (attributions). ------
+-------------------------------------------------------------------------------
 
-----------------------------------------------------------------------------
-START TERMS AND CONDITIONS FOR ANTz CORE SOURCE CODE (NOT 3RD PARTY LIBS)
+ANTz-XR Copyright 2021 Shane Saxon. Licensed under the terms:
+ 
+  Shane Saxon hereby grants Recipient the right to reproduce and distribute the
+  ANTz-XR Software. Unless required by applicable law or agreed to in writing,
+  Software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. All other rights are reserved.
 
-                                 Apache License
+-------------------------------------------------------------------------------
+
+ANTz Copyright 2021 Shane Saxon. Licensed under Apache License, Version 2.0.
+
+-------------------------------------------------------------------------------
+
+                                 ANTz LICENSE
+
+                          Copyright 2021 Shane SAXON
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+-------------------------------------------------------------------------------
+The full text of the Apache License 2.0 is below:
+-------------------------------------------------------------------------------
+
+                                Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/
 
@@ -187,16 +219,4 @@ START TERMS AND CONDITIONS FOR ANTz CORE SOURCE CODE (NOT 3RD PARTY LIBS)
 
    END OF TERMS AND CONDITIONS
 
-   Copyright 2021 Shane Saxon
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+-------------------------------------------------------------------------------
