@@ -22,6 +22,6 @@ Sample datasets and useful links at: https://openantz.com/links.html
 ----
 ANTz Copyright 2021, Shane Saxon. Licensed under Apache-2.0.
 
-ANTz+Xr™ Copyright 2021, Shane Saxon.
+ANTz+Xr™ Copyright 2021, Shane Saxon. All rights reserved.
 
 All trademarks are property of their respective owners.
