@@ -3,8 +3,8 @@ Feel free to get support: https://openantz.com/contact.html
 
 #### Two different apps are provided for the MSW platform:
 
-- antz.exe core app (open source).
-- ANTz+Xr.exe app (closed source) supports AR, VR and Mixed Reality.
+- antz.exe core app (WITH) open source code.
+- ANTz+Xr.exe app (ONLY) extended support for AR, VR and Mixed Reality.
 
 Details at: [Wiki - ANTz+Xr](https://github.com/openantz/antz/wiki/ANTz+Xr)
 
@@ -22,6 +22,6 @@ Sample datasets and useful links at: https://openantz.com/links.html
 ----
 ANTz Copyright 2021, Shane Saxon. Licensed under Apache-2.0.
 
-ANTz+Xr™ Copyright 2021, Shane Saxon. All rights reserved.
+ANTz+Xr™ Copyright 2021, Shane Saxon. Licensed under CC BY-ND 4.0.
 
 All trademarks are property of their respective owners.
