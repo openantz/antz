@@ -3,8 +3,8 @@ Feel free to get support: https://openantz.com/contact.html
 
 #### Two different apps are provided for the MSW platform:
 
-- antz.exe core app (WITH) open source code.
-- ANTz+Xr.exe app (ONLY) extended support for AR, VR and Mixed Reality.
+- antz.exe core app (with) open source code.
+- ANTz+Xr.exe app (only) extended support for AR, VR and Mixed Reality.
 
 Details at: [Wiki - ANTz+Xr](https://github.com/openantz/antz/wiki/ANTz+Xr)
 
@@ -13,7 +13,7 @@ Details at: [Wiki - ANTz+Xr](https://github.com/openantz/antz/wiki/ANTz+Xr)
 - <a href="https://openantz.com/download/osx/">DOWNLOAD (OSX) - ANTz</a>
 - <a href="https://openantz.com/download/linux/">DOWNLOAD (Linux)- ANTz</a>
 
-Wiki - User Commands](https://github.com/openantz/antz/wiki/User-Commands)
+[Wiki - User Commands](https://github.com/openantz/antz/wiki/User-Commands)
 
 Sample datasets and useful links at: https://openantz.com/links.html
 
