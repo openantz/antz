@@ -7,13 +7,12 @@ Feel free to request support at: [OpenANTz.com](https://openantz.com/contact.htm
 - **ANTz+Xr.exe** app (only) extended support for AR, VR and Mixed Reality.
 
 Details: [Wiki - ANTz+Xr](https://github.com/openantz/antz/wiki/ANTz+Xr)
+Usage: [Wiki - User Commands](https://github.com/openantz/antz/wiki/User-Commands)
 
 #### Downloads hosted at OpenANTz.com
 - <a href="https://openantz.com/download/msw/">DOWNLOAD (MS Windows) - ANTz</a>
 - <a href="https://openantz.com/download/osx/">DOWNLOAD (OSX) - ANTz</a>
 - <a href="https://openantz.com/download/linux/">DOWNLOAD (Linux)- ANTz</a>
-
-[Wiki - User Commands](https://github.com/openantz/antz/wiki/User-Commands)
 
 Sample datasets and useful links at: https://openantz.com/links.html
 
