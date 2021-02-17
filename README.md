@@ -3,10 +3,10 @@ Feel free to request support at: [OpenANTz.com](https://openantz.com/contact.htm
 
 #### Dual apps are provided for the MSW platform:
 
-- antz.exe core app (with) open source code.
-- ANTz+Xr.exe app (only) extended support for AR, VR and Mixed Reality.
+- **antz.exe** core app (with) open source code.
+- **ANTz+Xr.exe** app (only) extended support for AR, VR and Mixed Reality.
 
-Details at: [Wiki - ANTz+Xr](https://github.com/openantz/antz/wiki/ANTz+Xr)
+Details: [Wiki - ANTz+Xr](https://github.com/openantz/antz/wiki/ANTz+Xr)
 
 #### Downloads at www.openantz.com
 - <a href="https://openantz.com/download/msw/">DOWNLOAD (MS Windows) - ANTz</a>
