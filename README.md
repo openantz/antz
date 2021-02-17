@@ -8,7 +8,7 @@ Feel free to request support at: [OpenANTz.com](https://openantz.com/contact.htm
 
 Details: [Wiki - ANTz+Xr](https://github.com/openantz/antz/wiki/ANTz+Xr)
 
-#### Downloads at www.openantz.com
+#### Downloads hosted at OpenANTz.com
 - <a href="https://openantz.com/download/msw/">DOWNLOAD (MS Windows) - ANTz</a>
 - <a href="https://openantz.com/download/osx/">DOWNLOAD (OSX) - ANTz</a>
 - <a href="https://openantz.com/download/linux/">DOWNLOAD (Linux)- ANTz</a>
