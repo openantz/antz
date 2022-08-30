@@ -20,8 +20,8 @@ Sample datasets and useful links at: https://openantz.com/links.html
 3rd party licenses and helpful resources are in the apps 'doc' folder.
 
 ----
-ANTz Copyright 2021, Shane Saxon. Licensed under [Apache-2.0.](https://www.apache.org/licenses/LICENSE-2.0)
+ANTz Copyright 2022, Shane Saxon. Licensed under [Apache-2.0.](https://www.apache.org/licenses/LICENSE-2.0)
 
-ANTz+Xr™ Copyright 2021, Shane Saxon. Licensed under [CC BY-ND 4.0.](https://creativecommons.org/licenses/by-nd/4.0/)
+ANTz+Xr™ Copyright 2022, Shane Saxon. Licensed under [CC BY-ND 4.0.](https://creativecommons.org/licenses/by-nd/4.0/)
 
 All trademarks are property of their respective owners.
