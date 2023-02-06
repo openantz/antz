@@ -10,10 +10,10 @@ Details: [Wiki - ANTz+Xr](https://github.com/openantz/antz/wiki/ANTz+Xr)
 
 Usage: [Wiki - User Commands](https://github.com/openantz/antz/wiki/User-Commands)
 
-#### Download latest proto ver (newest)
-- <a href="https://openantz.com/download/msw/">DOWNLOAD (MS Windows) - ANTz+Xr</a>
+#### Download latest app build at OpenANTz.com
+- <a href="https://openantz.com/download/msw/proto/">DOWNLOAD (MS Windows) - ANTz+Xr</a>
 
-*As of 2023-02-06 the proto ver doesn't work for MySQL (otherwise better).
+*As of 2023-02-06 the proto ver has no MySQL (otherwise it's better).
 
 #### Download release ver (older)
 - <a href="https://openantz.com/download/msw/">DOWNLOAD (MS Windows) - ANTz</a>
