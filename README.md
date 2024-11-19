@@ -1,5 +1,18 @@
+--- ATTENTION! ---
 
-Feel free to request support at: [OpenANTz.com](https://openantz.com/contact.html)
+ANTz project is migrating to GaiaViz!
+
+- [GaiaViz home](gaiaviz.com)
+- [GaiaViz Wiki](https://github.com/GaiaViz/GaiaViz/wiki/)
+- [DOWNLOAD - GaiaViz App](https://gaiaviz.com/downloads/)
+
+Feel free to request support at: [GaiaViz.com Contact](https://gaiaviz.com/contact/)
+
+-----
+-----
+-----
+
+--- LEGACY LINKS BELOW (ALWAYS USEFULL ;) ---
 
 #### Dual apps are provided for the MSW platform:
 
@@ -25,8 +38,8 @@ Sample datasets and useful links at: https://openantz.com/links.html
 3rd party licenses and helpful resources are in the apps 'doc' folder.
 
 ----
-ANTz Copyright 2023 Shane Saxon. Licensed under [Apache-2.0.](https://www.apache.org/licenses/LICENSE-2.0)
+ANTz Copyright 2024 Shane Saxon. Licensed under [Apache-2.0.](https://www.apache.org/licenses/LICENSE-2.0)
 
-ANTz+Xr™ Copyright 2023 Shane Saxon. Licensed under [CC BY-ND 4.0.](https://creativecommons.org/licenses/by-nd/4.0/)
+ANTz+Xr™ Copyright 2024 Shane Saxon. Licensed under [CC BY-ND 4.0.](https://creativecommons.org/licenses/by-nd/4.0/)
 
 All trademarks are property of their respective owners.
